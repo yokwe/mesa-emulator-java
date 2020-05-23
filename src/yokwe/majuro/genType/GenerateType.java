@@ -27,8 +27,6 @@ package yokwe.majuro.genType;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,169 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.util.AutoIndentPrintWriter;
-import yokwe.util.CSVUtil;
 
 public class GenerateType {
 	static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenerateType.class);
-
-	static Map<String, RecordInfo> buildRecordMap(List<Record> recordList) {
-		// Sanity check
-		{
-			for(Record record: recordList) {
-				if (record.isEmpty()) continue;
-				
-				if (record.name.isEmpty()) {
-					logger.error("name is empty");
-					throw new UnexpectedException();
-				}
-				if (record.field.isEmpty()) {
-					logger.error("field is empty");
-					throw new UnexpectedException();
-				}
-				if (record.offset.isEmpty()) {
-					logger.error("offset is empty");
-					throw new UnexpectedException();
-				}
-				if (record.size.isEmpty()) {
-					logger.error("size is empty");
-					throw new UnexpectedException();
-				}
-				if (record.startBit.isEmpty()) {
-					if (!record.stopBit.isEmpty()) {
-						logger.error("startBit is empty but stopBit is not emtpty");
-						throw new UnexpectedException();
-					}
-				}
-				if (record.stopBit.isEmpty()) {
-					if (!record.startBit.isEmpty()) {
-						logger.error("stopBit is empty but startBit is not emtpty");
-						throw new UnexpectedException();
-					}
-				}
-				if (record.elementSize.isEmpty()) {
-					if (!record.elementLength.isEmpty()) {
-						logger.error("elementSize is empty but elementLength is not emtpty");
-						throw new UnexpectedException();
-					}
-				}
-				if (record.elementLength.isEmpty()) {
-					if (!record.elementSize.isEmpty()) {
-						logger.error("elementLength is empty but elementSize is not emtpty");
-						throw new UnexpectedException();
-					}
-				}
-			}
-		}
-			
-		Map<String, RecordInfo> map = new TreeMap<>();
-		
-		String name = null;
-		List<Record> list = new ArrayList<>();
-		
-		for(Record record: recordList) {
-			if (record.isEmpty()) {
-				if (name != null) {
-					Record last = list.get(list.size() - 1);
-					int size = Integer.parseInt(last.offset) + Integer.parseInt(last.size);
-					
-					List<FieldInfo> fields = new ArrayList<>();
-					
-					for(Record e: list) {
-						if (!e.startBit.isEmpty() && e.elementType.isEmpty()) {
-							// BIT
-							fields.add(new BitFieldInfo(
-								e.field, e.type, Integer.parseInt(e.offset), Integer.parseInt(e.size),
-								Integer.parseInt(e.startBit), Integer.parseInt(e.stopBit)));
-						} else if (e.startBit.isEmpty() && !e.elementType.isEmpty()) {
-							// ARRAY
-							fields.add(new ArrayFieldInfo(
-								e.field, e.type, Integer.parseInt(e.offset), Integer.parseInt(e.size),
-								e.indexType, e.elementType, Integer.parseInt(e.elementSize), Integer.parseInt(e.elementLength)));
-						} else if (e.startBit.isEmpty() && e.elementType.isEmpty()) {
-							// NORMAL
-							fields.add(new FieldInfo(
-								e.field, e.type, Integer.parseInt(e.offset), Integer.parseInt(e.size)));
-						} else {
-							logger.error("Unexpected field type");
-							throw new UnexpectedException("Unexpected field type");
-						}
-					}
-					
-					map.put(name, new RecordInfo(name, size, fields));
-				}
-				//
-				list = new ArrayList<>();
-				name = null;
-			} else {
-				if (name == null) {
-					name = record.name;
-				}
-				list.add(record);
-			}
-		}
-		if (name != null) {
-			Record last = list.get(list.size() - 1);
-			int size = Integer.parseInt(last.offset) + Integer.parseInt(last.size);
-			
-			List<FieldInfo> fields = new ArrayList<>();
-			
-			for(Record e: list) {
-				if (!e.startBit.isEmpty() && e.elementType.isEmpty()) {
-					// BIT
-					fields.add(new BitFieldInfo(
-						e.field, e.type, Integer.parseInt(e.offset), Integer.parseInt(e.size),
-						Integer.parseInt(e.startBit), Integer.parseInt(e.stopBit)));
-				} else if (e.startBit.isEmpty() && !e.elementType.isEmpty()) {
-					// ARRAY
-					fields.add(new ArrayFieldInfo(
-						e.field, e.type, Integer.parseInt(e.offset), Integer.parseInt(e.size),
-						e.indexType, e.elementType, Integer.parseInt(e.elementSize), Integer.parseInt(e.elementLength)));
-				} else if (e.startBit.isEmpty() && e.elementType.isEmpty()) {
-					// NORMAL
-					fields.add(new FieldInfo(
-						e.field, e.type, Integer.parseInt(e.offset), Integer.parseInt(e.size)));
-				} else {
-					logger.error("Unexpected field type");
-					throw new UnexpectedException("Unexpected field type");
-				}
-			}
-			
-			map.put(name, new RecordInfo(name, size, fields));
-		}
-		return map;
-	}
-	
-	static Map<String, TypeInfo> buildTypeMap(List<Type> typeList) {
-		Map<String, TypeInfo> map = new TreeMap<>();
-
-		for(Type type: typeList) {
-			if (type.isEmpty() && type.type.isEmpty() && type.minValue.isEmpty() && type.maxValue.isEmpty()) continue;
-			
-			// Sanity check
-			{
-				if (type.name.isEmpty()) {
-					logger.error("name is empty");
-					throw new UnexpectedException();
-				}
-				if (type.type.isEmpty()) {
-					logger.error("type is empty");
-					throw new UnexpectedException();
-				}
-				if (type.minValue.isEmpty()) {
-					logger.error("minValue is empty");
-					throw new UnexpectedException();
-				}
-				if (type.maxValue.isEmpty()) {
-					logger.error("maxValue is empty");
-					throw new UnexpectedException();
-				}
-			}
-			
-			map.put(type.name, new TypeInfo(type.name, type.type, Integer.parseInt(type.minValue), Integer.parseInt(type.maxValue)));
-		}
-		
-		return map;
-	}
 
 	static final String PATH_DIR = "src/yokwe/majuro/mesa/type";
 	
@@ -546,18 +384,11 @@ public class GenerateType {
 	public static void main(String[] args) {
 		logger.info("START");
 		
-		List<Record> recordList = CSVUtil.read(Record.class).file("tmp/Record.csv");
-		List<Type>   typeList   = CSVUtil.read(Type.class).file("tmp/Type.csv");
+		Map<String, RecordInfo> recordMap = new TreeMap<>();
+		Map<String, TypeInfo>   typeMap   = new TreeMap<>();
 		
-		logger.info("typeList   {}", typeList.size());
-		logger.info("recordList {}", recordList.size());
-		
-		Map<String, TypeInfo> typeMap = buildTypeMap(typeList);
-		logger.info("typeInfoMap  {} {}", typeMap.size(), typeMap.keySet());
-
-		Map<String, RecordInfo> recordMap = buildRecordMap(recordList);
-		logger.info("recordInfoMap {} {}", recordMap.size(), recordMap.keySet());
-		
+		Data.readData(recordMap, typeMap);
+	
 		Context context = new Context(recordMap, typeMap);
 		// Sanity check
 		context.sanityCheck();
