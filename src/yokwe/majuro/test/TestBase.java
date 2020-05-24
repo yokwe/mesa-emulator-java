@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Perf;
+import yokwe.majuro.mesa.Processor;
 
 public class TestBase {
 	protected static final Logger logger = LoggerFactory.getLogger(TestBase.class);
@@ -55,6 +56,12 @@ public class TestBase {
 		fillPage(va, 0);
 	}
 	
+	protected static void fillStackZero() {
+		for(int i = 0; i < Processor.stack.length; i++) {
+			Processor.stack[i] = 0;
+		}
+	}
+	
 	protected static final int DEFAULT_MDS = 0x0004_0000;
 	protected static final int DEFAULT_CB  = 0x0003_0080;
 	protected static final int DEFAULT_PC  = 0x0020;
@@ -72,6 +79,13 @@ public class TestBase {
 
 		CodeCache.setCB(DEFAULT_CB);
 		CodeCache.setPC(DEFAULT_PC);
+		
+		Processor.SP = 0;
+		
+		Processor.savedPC = Processor.SP;
+		Processor.savedPC = CodeCache.getPC();
+		
+		fillStackZero();
 		
 		fillPage(0x0003_0000, 0x3000, 1);
 		fillPage(0x0003_0000, 0x3000, 1);
