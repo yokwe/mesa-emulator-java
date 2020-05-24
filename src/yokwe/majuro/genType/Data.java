@@ -245,7 +245,7 @@ public class Data {
 	}
 
 	
-	public static final String URL_DATA_FILE = "file:///home/hasegawa/git/mesa-emulator-java/tmp/MesaRecordType.ods";
+	public static final String URL_DATA_FILE = "file:///home/hasegawa/git/mesa-emulator-java/data/type/MesaRecordType.fods";
 	
 	public static void readData(Map<String, RecordInfo> recordMap, Map<String, TypeInfo> typeMap) {
 		try (SpreadSheet docActivity = new SpreadSheet(URL_DATA_FILE, true)) {
@@ -283,6 +283,7 @@ public class Data {
 		}
 
 		logger.info("STOP");
+		System.exit(0);
 	}
 
 
