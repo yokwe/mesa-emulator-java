@@ -28,15 +28,15 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Type.*;
 
-public final class LocalWord {
+public final class StateWord {
     public static final int SIZE = 1;
 
-    // offset    0  size    1  type CARD8     name available
+    // offset    0  size    1  type CARD8     name breakByte
     //   bit startBit  0  stopBit  7
-    // offset    0  size    1  type CARD8     name fsi
+    // offset    0  size    1  type CARD8     name stkptr
     //   bit startBit  8  stopBit 15
 
-    public static final class available {
+    public static final class breakByte {
         public static final         int SIZE       =  1;
         public static final         int OFFSET     =  0;
 
@@ -57,10 +57,10 @@ public final class LocalWord {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
-            Memory.modify(getAddress(base), LocalWord.available::setBit, newValue);
+            Memory.modify(getAddress(base), StateWord.breakByte::setBit, newValue);
         }
     }
-    public static final class fsi {
+    public static final class stkptr {
         public static final         int SIZE       =  1;
         public static final         int OFFSET     =  0;
 
@@ -81,7 +81,7 @@ public final class LocalWord {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
-            Memory.modify(getAddress(base), LocalWord.fsi::setBit, newValue);
+            Memory.modify(getAddress(base), StateWord.stkptr::setBit, newValue);
         }
     }
 }

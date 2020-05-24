@@ -25,41 +25,34 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Type.*;
 
-public final class Queue {
-    public static final int SIZE = 1;
+public enum XferType {
+    RETURN           (0),
+    CALL             (1),
+    LOCAL_CALL       (2),
+    PORT             (3),
+    XFER             (4),
+    TRAP             (5),
+    PROCESS_SWITCH   (6),
+    UNUSED           (7);
 
-    // offset    0  size    1  type           name reserved
-    //   bit startBit  0  stopBit  2
-    // offset    0  size    1  type PsbIndex  name tail
-    //   bit startBit  3  stopBit 12
-    // offset    0  size    1  type           name reserved2
-    //   bit startBit 13  stopBit 15
+    public static XferType getInstance(int value) {
+        for(XferType e: XferType.values()) {
+            if (e.value == value) return e;
+        }
+        Logger logger = LoggerFactory.getLogger(XferType.class);
+        logger.error("Unexpected value = {}", value);
+        throw new UnexpectedException();
+    }
 
-    public static final class tail {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
+    public final @CARD16 int value;
 
-        public static final         int SHIFT      =  3;
-        public static final @CARD16 int MASK       = 0b0001_1111_1111_1000;
-
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
-        }
-
-        public static @CARD16 int get(@LONG_POINTER int base) {
-            return getBit(Memory.fetch(getAddress(base)));
-        }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-            Memory.modify(getAddress(base), Queue.tail::setBit, newValue);
-        }
+    private XferType(int value) {
+        this.value = value;
     }
 }
