@@ -30,6 +30,7 @@ import yokwe.majuro.mesa.Type.CARD16;
 import yokwe.majuro.mesa.Type.CARD32;
 import yokwe.majuro.mesa.Type.CARD8;
 import yokwe.majuro.mesa.Type.LONG_POINTER;
+import yokwe.majuro.mesa.Type.LongNumber;
 
 public final class Processor {
 	public static final int StackDepth = Constant.cSS;
@@ -56,8 +57,8 @@ public final class Processor {
 //		Long t = {data};
 //		Push(t.low);
 //		Push(t.high);
-		push(Type.lowHalf(data));
-		push(Type.highHalf(data));
+		push(LongNumber.lowHalf(data));
+		push(LongNumber.highHalf(data));
 	}
 	public static @CARD32 int popLong() {
 //		Long t;
@@ -66,7 +67,7 @@ public final class Processor {
 //		return t.u;
 		int t0 = pop();
 		int t1 = pop();
-		return Type.makeLong(t0, t1);
+		return LongNumber.make(t0, t1);
 	}
 	public static void minimalStack() {
 		if (SP != 0) ControlTransfers.stackError();

@@ -25,10 +25,10 @@
  *******************************************************************************/
 package yokwe.majuro.mesa;
 
+import yokwe.majuro.mesa.Type.BytePair;
 import yokwe.majuro.mesa.Type.CARD16;
 import yokwe.majuro.mesa.Type.CARD8;
 import yokwe.majuro.mesa.Type.LONG_POINTER;
-import yokwe.majuro.mesa.type.BytePair;
 
 public final class CodeCache {
 	private static final int PAGE_SIZE_IN_BYTE = Memory.PAGE_SIZE * 2;

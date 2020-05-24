@@ -29,15 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.Type.BytePair;
 import yokwe.majuro.mesa.Type.CARD16;
 import yokwe.majuro.mesa.Type.CARD32;
 import yokwe.majuro.mesa.Type.CARD8;
 import yokwe.majuro.mesa.Type.FIELD_SPEC;
 import yokwe.majuro.mesa.Type.LONG_POINTER;
+import yokwe.majuro.mesa.Type.LongNumber;
 import yokwe.majuro.mesa.Type.PAGE_NUMBER;
 import yokwe.majuro.mesa.Type.PDA_POINTER;
 import yokwe.majuro.mesa.Type.POINTER;
-import yokwe.majuro.mesa.type.BytePair;
 
 public final class Memory {
 	private static final Logger logger = LoggerFactory.getLogger(Memory.class);
@@ -183,11 +184,11 @@ public final class Memory {
 		int t0 = rawRead(va + 0);
 		int t1 = rawRead(va + 1);
 		
-		return Type.makeLong(t1, t0);
+		return LongNumber.make(t1, t0);
 	}
 	public static void rawWriteDbl(@LONG_POINTER int va, @CARD32 int newValue) {
-		int t0 = Type.lowHalf(newValue);
-		int t1 = Type.highHalf(newValue);
+		int t0 = LongNumber.lowHalf(newValue);
+		int t1 = LongNumber.highHalf(newValue);
 		
 		rawWrite(va + 0, t0);
 		rawWrite(va + 1, t1);
@@ -276,9 +277,9 @@ public final class Memory {
 		short[] page = fetchPage(va);
 		int     vo   = va & PAGE_OFFSET_MASK;
 		if (vo != PAGE_END) {
-			return Type.makeLong(page[vo + 1], page[vo]);
+			return LongNumber.make(page[vo + 1], page[vo]);
 		} else {
-			return Type.makeLong(fetchPage(va + 1)[0], page[PAGE_END]);
+			return LongNumber.make(fetchPage(va + 1)[0], page[PAGE_END]);
 		}
 	}
 	public static void writeDbl(@LONG_POINTER int va, @CARD32 int newValue) {
@@ -287,12 +288,12 @@ public final class Memory {
 		short[] page = storePage(va);
 		int     vo   = va & PAGE_OFFSET_MASK;
 		if (vo != PAGE_END) {
-			page[vo + 0] = (short)Type.lowHalf(newValue);
-			page[vo + 1] = (short)Type.highHalf(newValue);
+			page[vo + 0] = (short)LongNumber.lowHalf(newValue);
+			page[vo + 1] = (short)LongNumber.highHalf(newValue);
 		} else {
 			short[] page1 = storePage(va + 1);
-			page [PAGE_END] = (short)Type.lowHalf(newValue);
-			page1[0]        = (short)Type.highHalf(newValue);
+			page [PAGE_END] = (short)LongNumber.lowHalf(newValue);
+			page1[0]        = (short)LongNumber.highHalf(newValue);
 		}
 	}
 	
@@ -310,14 +311,14 @@ public final class Memory {
 		short[] page = storePage(va);
 		int     vo   = va & PAGE_OFFSET_MASK;
 		if (vo != PAGE_END) {
-			int value = valueFunc.apply(Type.makeLong(page[vo + 1], page[vo]), newValue);
-			page[vo + 0] = (short)Type.lowHalf(value);
-			page[vo + 1] = (short)Type.highHalf(value);
+			int value = valueFunc.apply(LongNumber.make(page[vo + 1], page[vo]), newValue);
+			page[vo + 0] = (short)LongNumber.lowHalf(value);
+			page[vo + 1] = (short)LongNumber.highHalf(value);
 		} else {
 			short[] page1 = storePage(va + 1);
-			int value = valueFunc.apply(Type.makeLong(page1[0], page[PAGE_END]), newValue);
-			page [PAGE_END] = (short)Type.lowHalf(value);
-			page1[0]        = (short)Type.highHalf(value);
+			int value = valueFunc.apply(LongNumber.make(page1[0], page[PAGE_END]), newValue);
+			page [PAGE_END] = (short)LongNumber.lowHalf(value);
+			page1[0]        = (short)LongNumber.highHalf(value);
 		}
 	}
 
