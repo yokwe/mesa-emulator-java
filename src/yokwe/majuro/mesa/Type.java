@@ -92,6 +92,32 @@ public final class Type {
 	}
 
 	
+	// 2.1.2 Bit, Nibble, Byte
+	// NibblePair: TYPE = MACHINE DEPENDENT RECORD[left (0:0..3) NIBBLE, right(0:4..7) NIBBLE];
+	public static class NibblePair {
+		public static @CARD16 int left(@CARD16 int value) {
+			return (value >>> 4) & 0x0F;
+		}
+		public static @CARD16 int right(@CARD16 int value) {
+			return value & 0x0F;
+		}
+		public static @CARD16 int make(@CARD16 int left, @CARD16 int right) {
+			return ((left << 4) & 0xF0) | (right & 0x0f);
+		}
+	}
+	// BytePair: TYPE =  MACHINE DEPENDENT RECORD [left (0: 0..7), right (0: 8..15): BYTE];
+	public static class BytePair {
+		public static @CARD8 int left(@CARD16 int value) {
+			return (value >>> 8) & 0xFF;
+		}
+		public static @CARD8 int right(@CARD16 int value) {
+			return value & 0xFF;
+		}
+		public static @CARD16 int make(@CARD8 int left, @CARD8 int right) {
+			return ((left << 8) & 0xFF00) | (right & 0x00FF);
+		}
+	}
+
 	// 2.1.3.1 Basic Logical Operators
 	public static @CARD16 int shift(@CARD16 int data, int count) {
 		if (0 < count) {
@@ -129,13 +155,24 @@ public final class Type {
 	}
 
 	// 2.3.1 Long Types
-	public static @CARD16 int lowHalf(@CARD32 int value) {
-		return value & 0xFFFF;
-	}
-	public static @CARD16 int highHalf(@CARD32 int value) {
-		return (value >>> 16) & 0xFFFF;
-	}
-	public static @CARD32 int makeLong(@CARD16 int high, @CARD16 int low) {
-		return ((high << 16) & 0xFFFF0000) | (low & 0x0000FFFF);
+//	  Long, LongNumber: TYPE = MACHINE DEPENDENT RECORD [
+//	     SELECT OVERLAID * FROM
+//	       lc => [lc: LONG CARDINAL],
+//	       li => [li: LONG INTEGER],
+//	       lp => [lp: LONG POINTER],
+//	       lu => [lu: LONG UNSPECIFIED],
+//	       num => [lowbits, highbits: CARDINAL],
+//	       any => [low, high: UNSPECIFIED],
+//       ENDCASE];
+	public static class LongNumber {
+		public static @CARD16 int lowHalf(@CARD32 int value) {
+			return value & 0xFFFF;
+		}
+		public static @CARD16 int highHalf(@CARD32 int value) {
+			return (value >>> 16) & 0xFFFF;
+		}
+		public static @CARD32 int make(@CARD16 int high, @CARD16 int low) {
+			return ((high << 16) & 0xFFFF0000) | (low & 0x0000FFFF);
+		}
 	}
 }
