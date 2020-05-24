@@ -39,10 +39,12 @@ public class Context {
 
 	final Map<String, RecordInfo> recordMap;
 	final Map<String, TypeInfo>   typeMap;
+	final Map<String, EnumInfo>   enumMap;
 	
-	Context(Map<String, RecordInfo> recordMap, Map<String, TypeInfo> typeMap) {
+	Context(Map<String, RecordInfo> recordMap, Map<String, TypeInfo> typeMap, Map<String, EnumInfo> enumMap) {
 		this.recordMap = recordMap;
 		this.typeMap   = typeMap;
+		this.enumMap   = enumMap;
 	}
 	
 	boolean isPrimitive(String name) {
@@ -51,6 +53,8 @@ public class Context {
 		case "CARD8":
 		case "CARD16":
 		case "CARD32":
+		case "POINTER":
+		case "LONG_POINTER":
 			return true;
 		default:
 			return false;
@@ -61,6 +65,9 @@ public class Context {
 	}
 	boolean isType(String name) {
 		return typeMap.containsKey(name);
+	}
+	boolean isEnum(String name) {
+		return enumMap.containsKey(name);
 	}
 	RecordInfo getRecordInfo(String name) {
 		if (recordMap.containsKey(name)) {
@@ -77,8 +84,10 @@ public class Context {
 			case "boolean":
 			case "CARD8":
 			case "CARD16":
+			case "POINTER":
 				return 1;
 			case "CARD32":
+			case "LONG_POINTER":
 				return 2;
 			default:
 				if (typeMap.containsKey(type)) {
@@ -87,6 +96,8 @@ public class Context {
 				}
 				if (recordMap.containsKey(name)) {
 					return recordMap.get(name).size;
+				} else if (enumMap.containsKey(name)) {
+					return 1;
 				} else {
 					logger.error("name {}", name);
 					throw new UnexpectedException();
@@ -102,6 +113,8 @@ public class Context {
 			case "CARD8":
 			case "CARD16":
 			case "CARD32":
+			case "POINTER":
+			case "LONG_POINTER":
 				return type;
 			default:
 				if (typeMap.containsKey(type)) {
@@ -110,6 +123,8 @@ public class Context {
 				}
 				if (recordMap.containsKey(type)) {
 					return type;
+				} else if (enumMap.containsKey(name)) {
+					return "CARD16";
 				} else {
 					logger.error("name {}", name);
 					logger.error("type {}", type);
@@ -455,6 +470,23 @@ public class Context {
 							}
 							hasProblem = true;
 						}
+					}
+				}
+			}
+		}
+		
+		{
+			for(EnumInfo enumInfo: enumMap.values()) {
+				Map<String, ElementInfo> nameMap = new TreeMap<>();
+				for(ElementInfo e: enumInfo.elementList) {
+					if (nameMap.containsKey(e.name)) {
+						logger.error("ENUM duplicate element name");
+						logger.error("  enum      {}", enumInfo);
+						logger.error("  element   {}", e);
+						logger.error("  duplicate {}", nameMap.get(e.name));
+						hasProblem = true;
+					} else {
+						nameMap.put(e.name, e);
 					}
 				}
 			}

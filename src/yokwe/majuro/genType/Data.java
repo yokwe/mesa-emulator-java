@@ -120,6 +120,32 @@ public class Data {
 		}
 	}
 	
+	
+	@Sheet.SheetName("Enum")
+	@Sheet.HeaderRow(0)
+	@Sheet.DataRow(1)
+	public static class MesaEnum extends Sheet {
+		@ColumnName("name")      public String name;
+		@ColumnName("enumValue") public String enumValue;
+		@ColumnName("enumName")  public String enumName;
+		
+		public MesaEnum() {
+		}
+		
+		public boolean isEmpty() {
+			return name.isEmpty();
+		}
+		
+		public void normalize() {
+			if (name     == null) name = "";
+			
+			if (enumValue == null) enumValue = "";
+			else enumValue = Integer.toString((int)Double.parseDouble(enumValue));
+
+			if (enumName  == null) enumName = "";
+		}
+	}
+	
 	static void buildRecordMap(Map<String, RecordInfo> map, List<Record> recordList) {
 		// Sanity check
 		{
@@ -244,21 +270,71 @@ public class Data {
 		}
 	}
 
+	static void buildEnumMap(Map<String, EnumInfo> map, List<MesaEnum> enumList) {
+		// Sanity check
+		{
+			for(MesaEnum e: enumList) {
+				e.normalize();
+				
+				if (e.name.isEmpty()) {
+					logger.error("name is empty");
+					throw new UnexpectedException();
+				}
+				if (e.enumValue.isEmpty()) {
+					logger.error("enumValue is empty");
+					throw new UnexpectedException();
+				}
+				if (e.enumName.isEmpty()) {
+					logger.error("enumName is empty");
+					throw new UnexpectedException();
+				}
+			}
+		}
+
+		Map<String, List<MesaEnum>> enumMap = new TreeMap<>();
+		for(MesaEnum e: enumList) {
+			List<MesaEnum> myList;
+			if (enumMap.containsKey(e.name)) {
+				myList = enumMap.get(e.name);
+			} else {
+				myList = new ArrayList<>();
+				enumMap.put(e.name, myList);
+			}
+			myList.add(e);
+		}
+		
+		for(List<MesaEnum> list: enumMap.values()) {
+			List<ElementInfo> elementList = new ArrayList<>();
+			
+			for(MesaEnum e: list) {
+				elementList.add(new ElementInfo(e.enumName, Integer.parseInt(e.enumValue)));
+			}
+			
+			String name = list.get(0).name;
+			map.put(name, new EnumInfo(name, elementList));
+		}
+	}
+
+
 	
 	public static final String URL_DATA_FILE = "file:///home/hasegawa/git/mesa-emulator-java/data/type/MesaRecordType.fods";
 	
-	public static void readData(Map<String, RecordInfo> recordMap, Map<String, TypeInfo> typeMap) {
+	public static void readData(Map<String, RecordInfo> recordMap, Map<String, TypeInfo> typeMap, Map<String, EnumInfo> enumMap) {
 		try (SpreadSheet docActivity = new SpreadSheet(URL_DATA_FILE, true)) {
 
-			List<Record> recordList = Sheet.extractSheet(docActivity, Record.class);
-			List<Type>   typeList   = Sheet.extractSheet(docActivity, Type.class);
+			List<Record>   recordList = Sheet.extractSheet(docActivity, Record.class);
+			List<Type>     typeList   = Sheet.extractSheet(docActivity, Type.class);
+			List<MesaEnum> enumList   = Sheet.extractSheet(docActivity, MesaEnum.class);
 
 			logger.info("recordList {}", recordList.size());
 			logger.info("typeList   {}", typeList.size());
+			logger.info("enumList   {}", enumList.size());
 			buildRecordMap(recordMap, recordList);
 			buildTypeMap  (typeMap,   typeList);
+			buildEnumMap  (enumMap,   enumList);
 			logger.info("recordMap  {}", recordMap.size());
 			logger.info("typeMap    {}", typeMap.size());
+			logger.info("enumMap    {}", enumMap.size());
 		}
 	}
 	
@@ -267,11 +343,13 @@ public class Data {
 		
 		Map<String, RecordInfo> recordMap = new TreeMap<>();
 		Map<String, TypeInfo>   typeMap   = new TreeMap<>();
+		Map<String, EnumInfo>   enumMap   = new TreeMap<>();
 		
-		readData(recordMap, typeMap);
+		readData(recordMap, typeMap, enumMap);
 		
 		logger.info("recordMap {}", recordMap.size());
 		logger.info("typeMap {}",   typeMap.size());
+		logger.info("enumMap {}",   enumMap.size());
 		
 		logger.info("====");
 		for(RecordInfo e: recordMap.values()) {
@@ -280,6 +358,10 @@ public class Data {
 		logger.info("====");
 		for(TypeInfo e: typeMap.values()) {
 			logger.info("TYPE {}", StringUtil.toString(e));
+		}
+		logger.info("====");
+		for(EnumInfo e: enumMap.values()) {
+			logger.info("ENUM {}", StringUtil.toString(e));
 		}
 
 		logger.info("STOP");

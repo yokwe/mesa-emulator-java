@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.util.AutoIndentPrintWriter;
+import yokwe.util.StringUtil;
 
 public class GenerateType {
 	static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenerateType.class);
@@ -52,24 +53,29 @@ public class GenerateType {
 			out.println("public static final class %s {", fieldInfo.name);
 			out.println("public static final int OFFSET = %s.OFFSET + %2d;", prefix, fieldInfo.offset);
 			out.println();
+			out.println("public static int getAddress(@LONG_POINTER int base) {");
+			out.println("return base + OFFSET;");
+			out.println("}");
 
 			switch(fieldType) {
 			case "boolean":
 				out.println("public static boolean get(@LONG_POINTER int base) {");
-				out.println("return %s.get(base + OFFSET);", qClassName);
+				out.println("return %s.get(getAddress(base));", qClassName);
 				out.println("}");
 				out.println("public static void set(@LONG_POINTER int base, boolean newValue) {");
-				out.println("%s.set(base + OFFSET, newValue);", qClassName);
+				out.println("%s.set(getAddress(base), newValue);", qClassName);
 				out.println("}");
 				break;
 			case "CARD8":
 			case "CARD16":
 			case "CARD32":
+			case "POINTER":
+			case "LONG_POINTER":
 				out.println("public static @%s int get(@LONG_POINTER int base) {", fieldType);
-				out.println("return %s.get(base + OFFSET);", qClassName);
+				out.println("return %s.get(getAddress(base));", qClassName);
 				out.println("}");
 				out.println("public static void set(@LONG_POINTER int base, @%s int newValue) {", fieldType);
-				out.println("%s.set(base + OFFSET, newValue);", qClassName);
+				out.println("%s.set(getAddress(base), newValue);", qClassName);
 				out.println("}");
 				break;
 			default:
@@ -95,24 +101,29 @@ public class GenerateType {
 			out.println("public static final class %s {", fieldInfo.name);
 			out.println("public static final int OFFSET = %s.OFFSET + %2d;", prefix, fieldInfo.offset);
 			out.println();
+			out.println("public static int getAddress(@LONG_POINTER int base, int index) {");
+			out.println("return base + OFFSET + (ARRAY_SIZE * index);");
+			out.println("}");
 			
 			switch(fieldType) {
 			case "boolean":
 				out.println("public static boolean get(@LONG_POINTER int base, int index) {");
-				out.println("return %s.get(base + OFFSET + (ARRAY_SIZE * index));", qClassName);
+				out.println("return %s.get(getAddress(base, index));", qClassName);
 				out.println("}");
 				out.println("public static void set(@LONG_POINTER int base, int index, boolean newValue) {");
-				out.println("%s.set(base + OFFSET + (ARRAY_SIZE * index), newValue);", qClassName);
+				out.println("%s.set(getAddress(base, index), newValue);", qClassName);
 				out.println("}");
 				break;
 			case "CARD8":
 			case "CARD16":
 			case "CARD32":
+			case "POINTER":
+			case "LONG_POINTER":
 				out.println("public static @%s int get(@LONG_POINTER int base, int index) {", fieldType);
-				out.println("return %s.get(base + OFFSET + (ARRAY_SIZE * index));", qClassName);
+				out.println("return %s.get(getAddress(base, index));", qClassName);
 				out.println("}");
 				out.println("public static void set(@LONG_POINTER int base, int index, @%s int newValue) {", fieldType);
-				out.println("%s.set(base + OFFSET + (ARRAY_SIZE * index), newValue);", qClassName);
+				out.println("%s.set(getAddress(base, index), newValue);", qClassName);
 				out.println("}");
 				break;
 			default:
@@ -140,6 +151,8 @@ public class GenerateType {
 				case "CARD8":
 				case "CARD16":
 				case "CARD32":
+				case "POINTER":
+				case "LONG_POINTER":
 					return true;
 				default:
 					break;
@@ -157,6 +170,8 @@ public class GenerateType {
 				case "boolean":
 				case "CARD8":
 				case "CARD32":
+				case "POINTER":
+				case "LONG_POINTER":
 					throw new UnexpectedException();
 				default:
 					break;
@@ -208,6 +223,7 @@ public class GenerateType {
 				out.println("public static final class %s {", fieldInfo.name);
 				out.println("public static final         int SIZE       = %2d;", fieldInfo.size);
 				out.println("public static final         int OFFSET     = %2d;", fieldInfo.offset);
+				out.println();
 
 				{
 					switch (fieldInfo.fieldType) {
@@ -270,31 +286,38 @@ public class GenerateType {
 					switch(fieldInfo.fieldType) {
 					case SIMPLE:
 					{
+						out.println("public static int getAddress(@LONG_POINTER int base) {");
+						out.println("return base + OFFSET;");
+						out.println("}");
+						out.println();
+
 						String type = context.getBaseType(fieldInfo.type);
 						switch(type) {
 						case "boolean":
 							out.println("public static boolean get(@LONG_POINTER int base) {");
-							out.println("return Memory.fetch(base + OFFSET) != 0;");
+							out.println("return Memory.fetch(getAddress(base)) != 0;");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, boolean newValue) {");
-							out.println("Memory.store(base + OFFSET, (newValue ? 1 : 0));");
+							out.println("Memory.store(getAddress(base), (newValue ? 1 : 0));");
 							out.println("}");
 							break;
 						case "CARD8":
 						case "CARD16":
+						case "POINTER":
 							out.println("public static @%s int get(@LONG_POINTER int base) {", type);
-							out.println("return Memory.fetch(base + OFFSET);");
+							out.println("return Memory.fetch(getAddress(base));");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, @%s int newValue) {", type);
-							out.println("Memory.store(base + OFFSET, newValue);");
+							out.println("Memory.store(getAddress(base), newValue);");
 							out.println("}");
 							break;
 						case "CARD32":
+						case "LONG_POINTER":
 							out.println("public static @%s int get(@LONG_POINTER int base) {", type);
-							out.println("return Memory.readDbl(base + OFFSET);");
+							out.println("return Memory.readDbl(getAddress(base));");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, @%s int newValue) {", type);
-							out.println("Memory.writeDbl(base + OFFSET, newValue);");
+							out.println("Memory.writeDbl(getAddress(base), newValue);");
 							out.println("}");
 							break;
 						default:
@@ -309,31 +332,38 @@ public class GenerateType {
 						break;
 					case BIT:
 					{
+						out.println("public static int getAddress(@LONG_POINTER int base) {");
+						out.println("return base + OFFSET;");
+						out.println("}");
+						out.println();
+
 						String type = context.getBaseType(fieldInfo.type);
 						switch(type) {
 						case "boolean":
 							out.println("public static boolean get(@LONG_POINTER int base) {");
-							out.println("return getBit(Memory.fetch(base + OFFSET)) != 0;");
+							out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, boolean newValue) {");
-							out.println("Memory.modify(base + OFFSET, %1$s::setBit, (newValue ? 1 : 0));", qClassName);
+							out.println("Memory.modify(getAddress(base), %1$s::setBit, (newValue ? 1 : 0));", qClassName);
 							out.println("}");
 							break;
 						case "CARD8":
 						case "CARD16":
+						case "POINTER":
 							out.println("public static @%s int get(@LONG_POINTER int base) {", type);
-							out.println("return getBit(Memory.fetch(base + OFFSET));");
+							out.println("return getBit(Memory.fetch(getAddress(base)));");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, @%s int newValue) {", type);
-							out.println("Memory.modify(base + OFFSET, %1$s::setBit, newValue);", qClassName);
+							out.println("Memory.modify(getAddress(base), %1$s::setBit, newValue);", qClassName);
 							out.println("}");
 							break;
 						case "CARD32":
+						case "LONG_POINTER":
 							out.println("public static @%s int get(@LONG_POINTER int base) {", type);
-							out.println("return getBit(Memory.readDbl(base + OFFSET));");
+							out.println("return getBit(Memory.readDbl(getAddress(base)));");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, @%s int newValue) {", type);
-							out.println("Memory.modifyDbl(base + OFFSET, %1$s::setBit, newValue);", qClassName);
+							out.println("Memory.modifyDbl(getAddress(base), %1$s::setBit, newValue);", qClassName);
 							out.println("}");
 							break;
 						default:
@@ -344,17 +374,22 @@ public class GenerateType {
 						break;
 					case ARRAY:
 					{
+						out.println("public static int getAddress(@LONG_POINTER int base, int index) {");
+						out.println("return base + OFFSET + (ARRAY_SIZE * index);");
+						out.println("}");
+
 						ArrayFieldInfo arrayFieldInfo = (ArrayFieldInfo)fieldInfo;
 						ArrayInfo arrayInfo = arrayFieldInfo.arrayInfo;
 						String type = context.getBaseType(arrayInfo.type);
 						
 						switch(type) {
 						case "CARD16":
+						case "POINTER":
 							out.println("public static @%s int get(@LONG_POINTER int base, int index) {", type);
-							out.println("return Memory.fetch(base + OFFSET + (ARRAY_SIZE * index));");
+							out.println("return Memory.fetch(getAddress(base, index));");
 							out.println("}");
 							out.println("public static void set(@LONG_POINTER int base, int index, @%s int newValue) {", type);
-							out.println("Memory.store(base + OFFSET + (ARRAY_SIZE * index), newValue);");
+							out.println("Memory.store(getAddress(base, index), newValue);");
 							out.println("}");
 							break;
 						default:
@@ -381,24 +416,79 @@ public class GenerateType {
 		}
 	}
 
+	static void generateEnumClass(Context context, EnumInfo enumInfo) {
+		String path = String.format("%s/%s.java", PATH_DIR, enumInfo.name);
+		logger.info("path {}",path);
+		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
+			out.println("package yokwe.majuro.mesa.type;");
+			out.println();
+			out.println("import org.slf4j.Logger;");
+			out.println("import org.slf4j.LoggerFactory;");
+			out.println();
+			out.println("import yokwe.majuro.UnexpectedException;");
+			out.println("import yokwe.majuro.mesa.Type.*;");
+			out.println();
+			out.println("public enum %s {", enumInfo.name);
+			
+			int elementSize = enumInfo.elementList.size();
+			for(int i = 0; i < elementSize; i++) {
+				ElementInfo elementInfo = enumInfo.elementList.get(i);
+				String sep = (i == (elementSize - 1)) ? ";" : ",";
+				
+				out.println("%-16s (%d)%s", StringUtil.toJavaConstName(elementInfo.name), elementInfo.value, sep);
+				
+			}
+			out.println();
+			
+			out.println("public static %s getInstance(int value) {", enumInfo.name);
+			out.println("for(%1$s e: %1$s.values()) {", enumInfo.name);
+			out.println("if (e.value == value) return e;");
+			out.println("}");
+			out.println("Logger logger = LoggerFactory.getLogger(XferType.class);");
+			out.println("logger.error(\"Unexpected value = {}\", value);");
+			out.println("throw new UnexpectedException();");
+			out.println("}");
+			out.println();
+			out.println("public final @CARD16 int value;");
+			out.println();
+
+			out.println("private %s(int value) {", enumInfo.name);
+			out.println("this.value = value;");
+			out.println("}");
+
+			out.println("}");
+		} catch (FileNotFoundException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
+	}
+
 	public static void main(String[] args) {
 		logger.info("START");
 		
 		Map<String, RecordInfo> recordMap = new TreeMap<>();
 		Map<String, TypeInfo>   typeMap   = new TreeMap<>();
+		Map<String, EnumInfo>   enumMap   = new TreeMap<>();
 		
-		Data.readData(recordMap, typeMap);
-	
-		Context context = new Context(recordMap, typeMap);
-		// Sanity check
-		context.sanityCheck();
-		
-		for(RecordInfo e: recordMap.values()) {
-			generateRecordClass(context, e);
+		try {
+			Data.readData(recordMap, typeMap, enumMap);
+			
+			Context context = new Context(recordMap, typeMap, enumMap);
+			// Sanity check
+			context.sanityCheck();
+			
+			for(RecordInfo e: recordMap.values()) {
+				generateRecordClass(context, e);
+			}
+			for(EnumInfo e: enumMap.values()) {
+				generateEnumClass(context, e);
+			}
+			
+			logger.info("STOP");
+		} finally {
+			System.exit(0);
 		}
-		
-		logger.info("STOP");
-		System.exit(0);
 	}
 
 }
