@@ -29,6 +29,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.nio.ByteOrder;
 
 public final class Type {
 	@Retention(RetentionPolicy.SOURCE)
@@ -164,7 +165,22 @@ public final class Type {
 //	       num => [lowbits, highbits: CARDINAL],
 //	       any => [low, high: UNSPECIFIED],
 //       ENDCASE];
-	public static class LongNumber {
+	//   Mesa CPU use big endian and x86 CPU use little endian
+	//   Memory layout of LongNumber depends on CPU endianness.
+	//   So LongNuber implementation depend of CPU endianness.
+	//   And LongNuber implementation is selected at run time. 
+	public static class LongNumber_BE {
+		public static @CARD16 int lowHalf(@CARD32 int value) {
+			return (value >>> 16) & 0xFFFF;
+		}
+		public static @CARD16 int highHalf(@CARD32 int value) {
+			return value & 0xFFFF;
+		}
+		public static @CARD32 int make(@CARD16 int high, @CARD16 int low) {
+			return ((low << 16) & 0xFFFF0000) | (high & 0x0000FFFF);
+		}
+	}
+	public static class LongNumber_LE {
 		public static @CARD16 int lowHalf(@CARD32 int value) {
 			return value & 0xFFFF;
 		}
@@ -175,4 +191,17 @@ public final class Type {
 			return ((high << 16) & 0xFFFF0000) | (low & 0x0000FFFF);
 		}
 	}
+	private static final ByteOrder NATIVE_ORDER = ByteOrder.nativeOrder();
+	public static class LongNumber {
+		public static @CARD16 int lowHalf(@CARD32 int value) {
+			return NATIVE_ORDER == ByteOrder.BIG_ENDIAN ? LongNumber_BE.lowHalf(value)  : LongNumber_LE.lowHalf(value);
+		}
+		public static @CARD16 int highHalf(@CARD32 int value) {
+			return NATIVE_ORDER == ByteOrder.BIG_ENDIAN ? LongNumber_BE.highHalf(value) : LongNumber_LE.highHalf(value);
+		}
+		public static @CARD32 int make(@CARD16 int high, @CARD16 int low) {
+			return NATIVE_ORDER == ByteOrder.BIG_ENDIAN ? LongNumber_BE.make(high, low) : LongNumber_LE.make(high, low);
+		}
+	}
+
 }
