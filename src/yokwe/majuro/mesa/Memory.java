@@ -181,8 +181,8 @@ public final class Memory {
 		rawPage(va)[va & PAGE_OFFSET_MASK] = (short)newValue;
 	}
 	public static @CARD32 int rawReadDbl(@LONG_POINTER int va) {
-		int t0 = rawRead(va + 0);
-		int t1 = rawRead(va + 1);
+		int t0 = rawRead(va + 0); // low  word - MESA use little endian
+		int t1 = rawRead(va + 1); // high word - MESA use little endian
 		
 		return LongNumber.make(t1, t0);
 	}
@@ -190,8 +190,8 @@ public final class Memory {
 		int t0 = LongNumber.lowHalf(newValue);
 		int t1 = LongNumber.highHalf(newValue);
 		
-		rawWrite(va + 0, t0);
-		rawWrite(va + 1, t1);
+		rawWrite(va + 0, t0); // low  word - MESA use little endian
+		rawWrite(va + 1, t1); // high word - MESA use little endian
 	}
 
 	//
@@ -277,8 +277,10 @@ public final class Memory {
 		short[] page = fetchPage(va);
 		int     vo   = va & PAGE_OFFSET_MASK;
 		if (vo != PAGE_END) {
+			//                     high word      low word
 			return LongNumber.make(page[vo + 1], page[vo]);
 		} else {
+			//                     high word             low word
 			return LongNumber.make(fetchPage(va + 1)[0], page[PAGE_END]);
 		}
 	}
@@ -288,12 +290,12 @@ public final class Memory {
 		short[] page = storePage(va);
 		int     vo   = va & PAGE_OFFSET_MASK;
 		if (vo != PAGE_END) {
-			page[vo + 0] = (short)LongNumber.lowHalf(newValue);
-			page[vo + 1] = (short)LongNumber.highHalf(newValue);
+			page[vo + 0] = (short)LongNumber.lowHalf(newValue);  // low  word - MESA use little endian
+			page[vo + 1] = (short)LongNumber.highHalf(newValue); // high word - MESA use little endian
 		} else {
 			short[] page1 = storePage(va + 1);
-			page [PAGE_END] = (short)LongNumber.lowHalf(newValue);
-			page1[0]        = (short)LongNumber.highHalf(newValue);
+			page [PAGE_END] = (short)LongNumber.lowHalf(newValue);  // low  word - MESA use little endian
+			page1[0]        = (short)LongNumber.highHalf(newValue); // high word - MESA use little endian
 		}
 	}
 	
@@ -312,13 +314,13 @@ public final class Memory {
 		int     vo   = va & PAGE_OFFSET_MASK;
 		if (vo != PAGE_END) {
 			int value = valueFunc.apply(LongNumber.make(page[vo + 1], page[vo]), newValue);
-			page[vo + 0] = (short)LongNumber.lowHalf(value);
-			page[vo + 1] = (short)LongNumber.highHalf(value);
+			page[vo + 0] = (short)LongNumber.lowHalf(value);  // low  word - MESA use little endian
+			page[vo + 1] = (short)LongNumber.highHalf(value); // high word - MESA use little endian
 		} else {
 			short[] page1 = storePage(va + 1);
 			int value = valueFunc.apply(LongNumber.make(page1[0], page[PAGE_END]), newValue);
-			page [PAGE_END] = (short)LongNumber.lowHalf(value);
-			page1[0]        = (short)LongNumber.highHalf(value);
+			page [PAGE_END] = (short)LongNumber.lowHalf(value);  // low  word - MESA use little endian
+			page1[0]        = (short)LongNumber.highHalf(value); // high word - MESA use little endian
 		}
 	}
 
