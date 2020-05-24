@@ -398,6 +398,7 @@ public class GenerateType {
 		}
 		
 		logger.info("STOP");
+		System.exit(0);
 	}
 
 }
