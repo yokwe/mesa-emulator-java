@@ -95,7 +95,7 @@ public final class Type {
 	
 	// 2.1.2 Bit, Nibble, Byte
 	// NibblePair: TYPE = MACHINE DEPENDENT RECORD[left (0:0..3) NIBBLE, right(0:4..7) NIBBLE];
-	public static class NibblePair {
+	public static final class NibblePair {
 		public static @CARD16 int left(@CARD16 int value) {
 			return (value >>> 4) & 0x0F;
 		}
@@ -107,7 +107,7 @@ public final class Type {
 		}
 	}
 	// BytePair: TYPE =  MACHINE DEPENDENT RECORD [left (0: 0..7), right (0: 8..15): BYTE];
-	public static class BytePair {
+	public static final class BytePair {
 		public static @CARD8 int left(@CARD16 int value) {
 			return (value >>> 8) & 0xFF;
 		}
@@ -168,8 +168,8 @@ public final class Type {
 	//   Mesa CPU use big endian and x86 CPU use little endian
 	//   Memory layout of LongNumber depends on CPU endianness.
 	//   So LongNuber implementation depend of CPU endianness.
-	//   And LongNuber implementation is selected at run time. 
-	public static class LongNumber_BE {
+	//   And LongNuber implementation need to be selected at run time. 
+	private static final class LongNumber_BE {
 		public static @CARD16 int lowHalf(@CARD32 int value) {
 			return (value >>> 16) & 0xFFFF;
 		}
@@ -180,7 +180,7 @@ public final class Type {
 			return ((low << 16) & 0xFFFF0000) | (high & 0x0000FFFF);
 		}
 	}
-	public static class LongNumber_LE {
+	private static final class LongNumber_LE {
 		public static @CARD16 int lowHalf(@CARD32 int value) {
 			return value & 0xFFFF;
 		}
@@ -192,7 +192,7 @@ public final class Type {
 		}
 	}
 	private static final ByteOrder NATIVE_ORDER = ByteOrder.nativeOrder();
-	public static class LongNumber {
+	public static final class LongNumber {
 		public static @CARD16 int lowHalf(@CARD32 int value) {
 			return NATIVE_ORDER == ByteOrder.BIG_ENDIAN ? LongNumber_BE.lowHalf(value)  : LongNumber_LE.lowHalf(value);
 		}
