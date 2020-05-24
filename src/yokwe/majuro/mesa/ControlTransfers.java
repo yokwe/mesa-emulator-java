@@ -34,11 +34,23 @@ import yokwe.majuro.mesa.Type.CARD32;
 import yokwe.majuro.mesa.Type.CARD8;
 import yokwe.majuro.mesa.Type.LONG_POINTER;
 import yokwe.majuro.mesa.Type.POINTER;
+import yokwe.majuro.mesa.type.XferType;
 
 public final class ControlTransfers {
 	private static final Logger logger = LoggerFactory.getLogger(ControlTransfers.class);
 
 	// 9.5.3 Trap Handlers
+	
+//	StateWord: TYPE = MACHINE DEPENDENT RECORD [
+//        break(0: 0..7),
+//        stkptr(0: 8..14): BYTE];
+//
+//  StateVector: TYPE = MACHINE DEPENDENT RECORD [
+//        stack(0): ARRAY [0..StackDepth) OF UNSPECIFIED,
+//        word(14): StateWord,
+//        frame(15): LocalFrameHandle,
+//        data(16): BLOCK];
+	
 	public static void SaveStack(@LONG_POINTER int state) {
 		// FIXME
 	}
@@ -46,35 +58,6 @@ public final class ControlTransfers {
 		// FIXME
 	}
 
-	// 9.3 Control Transfer primitives
-	// XferType: TYPE = MACHINE DEPENDENT {
-	//   return(0), call(l), local(2), port(3),
-	//   xfer(4), trap(5), processSwitch(6), unused(7));
-	public static enum XferType {
-		RETURN        (0),
-		CALL          (1),
-		LOCAL_CALL    (2),
-		PORT          (3),
-		XFER          (4),
-		TRAP          (5),
-		PROCESS_SWITCH(6),
-		UNUSED        (7);
-		
-		public static XferType getInstance(int value) {
-			for(XferType xferType: XferType.values()) {
-				if (xferType.value == value) return xferType;
-			}
-			logger.error("Unexpected value = {}", value);
-			throw new UnexpectedException();
-		}
-		
-		public final @CARD8 int value;
-		
-		XferType(int value) {
-			this.value = value;
-		}
-	}
-	
 	public static void XFER(@CARD32 int dst, @CARD16 int src, XferType type, boolean freeFlag) {
 		// FIXME
 	}
