@@ -91,6 +91,19 @@ public final class Type {
 	@Target({ElementType.TYPE_USE})
 	public static @interface FIELD_DESC {
 	}
+	
+	//PsbIndex: TYPE = [0..1024)
+	@Retention(RetentionPolicy.SOURCE)
+	@Target({ElementType.TYPE_USE})
+	public static @interface PSB_INDEX {
+	}
+	
+	// Faultlndex: TYPE = [0..8);
+	@Retention(RetentionPolicy.SOURCE)
+	@Target({ElementType.TYPE_USE})
+	public static @interface FAULT_INDEX {
+	}
+
 
 	
 	// 2.1.2 Bit, Nibble, Byte
