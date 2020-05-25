@@ -223,7 +223,6 @@ public class GenerateType {
 				out.println("public static final class %s {", fieldInfo.name);
 				out.println("public static final         int SIZE       = %2d;", fieldInfo.size);
 				out.println("public static final         int OFFSET     = %2d;", fieldInfo.offset);
-				out.println();
 
 				{
 					switch (fieldInfo.fieldType) {
@@ -269,14 +268,13 @@ public class GenerateType {
 
 						out.println("public static final         int ARRAY_SIZE = %2d;", arrayFieldInfo.arrayInfo.size);
 						out.println("public static final         int ARRAY_LEN  = %2d;", arrayFieldInfo.arrayInfo.length);
-						out.println();
 					}
 						break;
 					default:
 						throw new UnexpectedException();
 					}
-
 				}
+				out.println();
 				
 				//
 				// get set methods
@@ -289,7 +287,6 @@ public class GenerateType {
 						out.println("public static int getAddress(@LONG_POINTER int base) {");
 						out.println("return base + OFFSET;");
 						out.println("}");
-						out.println();
 
 						String type = context.getBaseType(fieldInfo.type);
 						switch(type) {
@@ -335,7 +332,6 @@ public class GenerateType {
 						out.println("public static int getAddress(@LONG_POINTER int base) {");
 						out.println("return base + OFFSET;");
 						out.println("}");
-						out.println();
 
 						String type = context.getBaseType(fieldInfo.type);
 						switch(type) {
