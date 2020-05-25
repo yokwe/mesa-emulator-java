@@ -41,7 +41,6 @@ public final class GlobalOverhead {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -56,7 +55,6 @@ public final class GlobalOverhead {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   GlobalWord  gfi
         public static final class gfi {
             public static final int OFFSET = word.OFFSET +  0;

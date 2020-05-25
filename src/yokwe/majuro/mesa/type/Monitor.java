@@ -43,7 +43,6 @@ public final class Monitor {
     public static final class tail {
         public static final         int SIZE       =  1;
         public static final         int OFFSET     =  0;
-
         public static final         int SHIFT      =  3;
         public static final @CARD16 int MASK       = 0b0001_1111_1111_1000;
 
@@ -53,10 +52,10 @@ public final class Monitor {
         public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
             return ((newValue << SHIFT) & MASK) | (value & ~MASK);
         }
+
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
@@ -67,7 +66,6 @@ public final class Monitor {
     public static final class locked {
         public static final         int SIZE       =  1;
         public static final         int OFFSET     =  0;
-
         public static final         int SHIFT      =  0;
         public static final @CARD16 int MASK       = 0b0000_0000_0000_0001;
 
@@ -77,10 +75,10 @@ public final class Monitor {
         public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
             return ((newValue << SHIFT) & MASK) | (value & ~MASK);
         }
+
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static boolean get(@LONG_POINTER int base) {
             return getBit(Memory.fetch(getAddress(base))) != 0;
         }

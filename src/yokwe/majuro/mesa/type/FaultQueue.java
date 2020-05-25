@@ -40,7 +40,6 @@ public final class FaultQueue {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   Queue  tail
         public static final class tail {
             public static final int OFFSET = queue.OFFSET +  0;
@@ -63,7 +62,6 @@ public final class FaultQueue {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   Condition  tail
         public static final class tail {
             public static final int OFFSET = condition.OFFSET +  0;

@@ -51,7 +51,6 @@ public final class ProcessDataArea {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   Queue  tail
         public static final class tail {
             public static final int OFFSET = ready.OFFSET +  0;
@@ -74,7 +73,6 @@ public final class ProcessDataArea {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -85,7 +83,6 @@ public final class ProcessDataArea {
     public static final class state {
         public static final         int SIZE       =  8;
         public static final         int OFFSET     =  8;
-
         public static final         int ARRAY_SIZE =  1;
         public static final         int ARRAY_LEN  =  8;
 
@@ -102,7 +99,6 @@ public final class ProcessDataArea {
     public static final class interrupt {
         public static final         int SIZE       = 32;
         public static final         int OFFSET     = 16;
-
         public static final         int ARRAY_SIZE =  2;
         public static final         int ARRAY_LEN  = 16;
 
@@ -163,7 +159,6 @@ public final class ProcessDataArea {
     public static final class fault {
         public static final         int SIZE       = 16;
         public static final         int OFFSET     = 48;
-
         public static final         int ARRAY_SIZE =  2;
         public static final         int ARRAY_LEN  =  8;
 
@@ -246,7 +241,6 @@ public final class ProcessDataArea {
     public static final class block {
         public static final         int SIZE       = 8192;
         public static final         int OFFSET     =  0;
-
         public static final         int ARRAY_SIZE =  8;
         public static final         int ARRAY_LEN  = 1024;
 

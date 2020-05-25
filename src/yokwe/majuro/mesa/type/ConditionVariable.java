@@ -41,7 +41,6 @@ public final class ConditionVariable {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   Condition  tail
         public static final class tail {
             public static final int OFFSET = condition.OFFSET +  0;
@@ -92,7 +91,6 @@ public final class ConditionVariable {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }

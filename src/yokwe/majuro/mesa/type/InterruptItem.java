@@ -40,7 +40,6 @@ public final class InterruptItem {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   Condition  tail
         public static final class tail {
             public static final int OFFSET = condition.OFFSET +  0;

@@ -41,7 +41,6 @@ public final class StateVector {
     public static final class stack {
         public static final         int SIZE       = 14;
         public static final         int OFFSET     =  0;
-
         public static final         int ARRAY_SIZE =  1;
         public static final         int ARRAY_LEN  = 14;
 
@@ -62,7 +61,6 @@ public final class StateVector {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   StateWord  breakByte
         public static final class breakByte {
             public static final int OFFSET = word.OFFSET +  0;
@@ -99,7 +97,6 @@ public final class StateVector {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @POINTER int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -110,7 +107,6 @@ public final class StateVector {
     public static final class data {
         public static final         int SIZE       =  2;
         public static final         int OFFSET     = 16;
-
         public static final         int ARRAY_SIZE =  1;
         public static final         int ARRAY_LEN  =  2;
 

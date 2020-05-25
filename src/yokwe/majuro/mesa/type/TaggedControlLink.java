@@ -41,7 +41,6 @@ public final class TaggedControlLink {
     public static final class data {
         public static final         int SIZE       =  2;
         public static final         int OFFSET     =  0;
-
         public static final @CARD32 int MASK       = 0b1111_1111_1111_1100_0000_0000_0000_0000;
         public static final         int SHIFT      = 18;
 
@@ -51,10 +50,10 @@ public final class TaggedControlLink {
         public static @CARD32 int setBit(@CARD32 int value, @CARD32 int newValue) {
             return ((newValue << SHIFT) & MASK) | (value & ~MASK);
         }
+
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD32 int get(@LONG_POINTER int base) {
             return getBit(Memory.readDbl(getAddress(base)));
         }
@@ -65,7 +64,6 @@ public final class TaggedControlLink {
     public static final class tag {
         public static final         int SIZE       =  2;
         public static final         int OFFSET     =  0;
-
         public static final @CARD32 int MASK       = 0b0000_0000_0000_0011_0000_0000_0000_0000;
         public static final         int SHIFT      = 16;
 
@@ -75,10 +73,10 @@ public final class TaggedControlLink {
         public static @CARD32 int setBit(@CARD32 int value, @CARD32 int newValue) {
             return ((newValue << SHIFT) & MASK) | (value & ~MASK);
         }
+
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD32 int get(@LONG_POINTER int base) {
             return getBit(Memory.readDbl(getAddress(base)));
         }
@@ -89,7 +87,6 @@ public final class TaggedControlLink {
     public static final class fill {
         public static final         int SIZE       =  2;
         public static final         int OFFSET     =  0;
-
         public static final @CARD32 int MASK       = 0b0000_0000_0000_0000_1111_1111_1111_1111;
         public static final         int SHIFT      = 0;
 
@@ -99,10 +96,10 @@ public final class TaggedControlLink {
         public static @CARD32 int setBit(@CARD32 int value, @CARD32 int newValue) {
             return ((newValue << SHIFT) & MASK) | (value & ~MASK);
         }
+
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD32 int get(@LONG_POINTER int base) {
             return getBit(Memory.readDbl(getAddress(base)));
         }

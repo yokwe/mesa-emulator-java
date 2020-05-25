@@ -46,7 +46,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   PsbLink  priority
         public static final class priority {
             public static final int OFFSET = link.OFFSET +  0;
@@ -125,7 +124,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   PsbFlags  cleanup
         public static final class cleanup {
             public static final int OFFSET = flags.OFFSET +  0;
@@ -176,7 +174,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         //   Context  frame
         public static final class frame {
             public static final int OFFSET = conext.OFFSET +  0;
@@ -213,7 +210,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -228,7 +224,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -243,7 +238,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -258,7 +252,6 @@ public final class ProcessStateBlock {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD32 int get(@LONG_POINTER int base) {
             return Memory.readDbl(getAddress(base));
         }

@@ -43,7 +43,6 @@ public final class LocalOverhead {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -58,7 +57,6 @@ public final class LocalOverhead {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -73,7 +71,6 @@ public final class LocalOverhead {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
@@ -88,7 +85,6 @@ public final class LocalOverhead {
         public static int getAddress(@LONG_POINTER int base) {
             return base + OFFSET;
         }
-
         public static @CARD16 int get(@LONG_POINTER int base) {
             return Memory.fetch(getAddress(base));
         }
