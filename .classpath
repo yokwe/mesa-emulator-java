@@ -32,5 +32,6 @@
 	<classpathentry kind="lib" path="/usr/lib/libreoffice/program/classes/ridl.jar"/>
 	<classpathentry kind="lib" path="/usr/lib/libreoffice/program/classes/unoil.jar"/>
 	<classpathentry kind="lib" path="/usr/lib/libreoffice/program/classes/unoloader.jar"/>
+	<classpathentry kind="lib" path="data/jar/antlr-4.8-complete.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
