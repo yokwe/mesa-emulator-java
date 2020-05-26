@@ -154,7 +154,7 @@ pointerType
 // SUBRANGE
 //
 subrangeType
-    :   (INTEGER | CARDINAL) rangeType   # TypeSubrange
+    :    (INTEGER | CARDINAL) rangeType   # TypeSubrange
     ;
 
 
@@ -170,11 +170,8 @@ recordFieldList
     ;
 
 recordField
-    :    fieldNameList ':' fieldType
-    ;
-
-fieldNameList
-    :    elements+= fieldName (',' elements+=fieldName)*
+    :    fieldName      ':' fieldType                                                      # TypeRecordField
+    |    correspondence ':' ARRAY (CARDINAL | INTEGER) '[' '0' '..' '0' ')' OF UNSPECIFIED # TypeRecoddFieldBlock
     ;
 
 fieldName
@@ -193,13 +190,22 @@ select
     ;
 
 selectCaseList
-    :   elements+= selectCase (',' selectCase ',')*
+    :   elements+=selectCase (',' elements+=selectCase ',')*
     ;
 
 selectCase
     :   correspondence '=>' '[' ']'                 # TypeSelectCaseEmpty
     |   correspondence '=>' '[' recordFieldList ']' # TypeSelectCaseList
     ;
+
+
+//
+// REFERENCE
+//
+referencedType
+    :    name=ID # TypeRef
+    ;
+
 
 //
 // SIMPLE
@@ -213,14 +219,6 @@ simpleType
 //  |    LONG INTEGER     # TypeLongInteger
     |    UNSPECIFIED      # TypeUnspecified
     |    LONG UNSPECIFIED # TypeLongUnspecified
-    ;
-
-
-//
-// REFERENCE
-//
-referencedType
-    :    name=ID # TypeRef
     ;
 
 
@@ -256,4 +254,4 @@ componentList
 component
     :    name=ID ':' value=constant
     ;
- *''
+ */
