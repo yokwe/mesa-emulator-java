@@ -3,5 +3,13 @@
 #
 bin/
 tmp/
+#
+src/yokwe/majuro/study/
+# Ignore files in data/jar and data/makret. Because they are copied from misc-lib
+data/jar/
+data/market/
+# Ignore files in src/yokwe/majur/study. Because they are temporary
+src/yokwe/majuro/study/
+
 # LibreOffice locks
 .~lock.*#
