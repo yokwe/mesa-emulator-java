@@ -56,4 +56,14 @@
         </target>
         -->
 	
+        <target name="run-antlr-compile">
+                <java jar="data/jar/antlr-4.8-complete.jar" fork="true">
+                        <arg line="-o tmp/antlr"/>
+                        <arg line="-package yokwe.majuro.symbol.antlr"/>
+                        <arg line="-no-listener"/>
+                        <arg line="-visitor"/>
+                        <arg line="src/yokwe/majuro/symbol/antlr/Symbol.g4"/>
+                </java>
+        </target>
+
 </project>

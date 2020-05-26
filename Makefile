@@ -22,3 +22,17 @@ copy-misc-lib-files:
 
 build-misc-lib:
 	pushd ../misc-lib/; ant build ; popd; make copy-misc-lib-files
+
+
+#
+# ANTLR
+#
+clean-antlr:
+	rm -rf src/yokwe/majuro/antlr/*.java
+	
+gen-antlr:
+	rm    -rf tmp/antlr
+	mkdir -p  tmp/antlr
+	ant       run-antlr-compile
+	rm    -rf src/yokwe/majuro/symbol/antlr/*.java
+	cp    -p  tmp/antlr/src/yokwe/majuro/symbol/antlr/*.java src/yokwe/majuro/symbol/antlr
