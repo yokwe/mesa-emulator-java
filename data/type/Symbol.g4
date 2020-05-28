@@ -7,7 +7,6 @@ grammar Symbol;
 ARRAY        : 'ARRAY';
 BEGIN        : 'BEGIN';
 BOOLEAN      : 'BOOLEAN';
-BYTE         : 'BYTE';
 CARDINAL     : 'CARDINAL';
 END          : 'END';
 ENDCASE      : 'ENDCASE';
@@ -20,7 +19,7 @@ PACKED       : 'PACKED';
 POINTER      : 'POINTER';
 RECORD       : 'RECORD';
 SELECT       : 'SELECT';
-TO           : 'TO';
+SYMBOL       : 'SYMBOL';
 TYPE         : 'TYPE';
 UNSPECIFIED  : 'UNSPECIFIED';
 WORD         : 'WORD';
@@ -34,14 +33,9 @@ fragment CHAR_OCT   : [0-7];
 
 ID  : CHAR_ALPHA (CHAR_ALPHA | CHAR_DEC | '_')*;
 
-NUMBER
-    : CHAR_DEC+
-    ;
-
-ANY_NUMBER
-    : NUMBER
-    | '-' NUMBER
-    ;
+NUMBER_8  : CHAR_OCT+[Bb];
+NUMBER_10 : CHAR_DEC+;
+NUMBER_16 : CHAR_DEC(CHAR_DEC|CHAR_AF)*[Xx];
 
 COMMENT_PARTIAL
     : '--' ~[\n\r]*? '--'      ->skip;
@@ -51,6 +45,38 @@ COMMENT_LINE
 
 SPACE
     : [ \r\t\n]                ->skip;
+
+//
+// common rule
+//
+qName
+    :   name+=ID ('.' name+=ID)*
+    ;
+    
+number
+    :   NUMBER_8       # Number8
+    |   '-'? NUMBER_10 # Number10
+    |   NUMBER_16      # Number16
+    ;
+
+positive_number
+    :   NUMBER_8  # PositiveNumber8
+    |   NUMBER_10 # PositiveNumber10
+    |   NUMBER_16 # PositiveNumber16
+    ;
+
+constant
+    : number # ConstNumber
+    | ID     # ConstRef
+    ;
+    
+correspondence
+    :    name=ID '(' value=positive_number ')'
+    ;
+
+correspondenceList
+    :    elements+=correspondence (',' elements+=correspondence)*
+    ;
 
 
 //
@@ -62,34 +88,37 @@ symbol
     ;
 
 header
-    :    name=ID
+    :    name=ID ':' SYMBOL
     ;
 
 body
     :    BEGIN declList END
     ;
 
-
 declList
     :    elements+=decl+
     ;
 
 decl
-    :    name=ID ':' TYPE '=' type ';'                  # DeclType
-//    |    name=ID ':' constantType '=' constantValue ';' # DeclConst
+    :   declType
+    |   declConst
     ;
 
 //
 // TYPE
 //
-type
+declType
+    :   name=ID ':' TYPE      '=' typeType ';'
+    ;
+
+
+typeType
     :    arrayType
     |    enumType
-    |    pointerType
     |    subrangeType
     |    recordType
-    |    referencedType
     |    simpleType
+    |    referenceType
     ;
 
 
@@ -97,30 +126,30 @@ type
 // ARRAY
 //
 arrayType
-    :    ARRAY arrayTypeIndex OF arrayTypeElement # TypeArray
+    :   arrayTypeType
+    |   arrayTypeRange
+    ;
+    
+arrayTypeType    
+    :    ARRAY rangeType  OF arrayTypeElement # TypeArrayType
+    ;
+    
+arrayTypeRange
+    :    ARRAY rangeRange OF arrayTypeElement # TypeArrayRange
     ;
 
-arrayTypeIndex
-    :    ID         // ID must be enum or range type
-    |    rangeType
+rangeType
+    :    name=ID                                                                # TypeRangeType
+    ;
+   
+rangeRange
+    :    (name=ID)? '[' start=constant '..' stop=constant closeChar=(']' | ')') # TypeRangeRange
     ;
 
 arrayTypeElement
     :   simpleType
     |   recordType
-    ;
-
-rangeType
-    :    rangeTypeInclusive
-    |    rangeTypeExclusive
-    ;
-
-rangeTypeInclusive
-    :             '[' start=ANY_NUMBER ',' stop=ANY_NUMBER ']' # TypeRangeInclusive
-    ;
-
-rangeTypeExclusive
-    :             '[' start=ANY_NUMBER ',' stop=ANY_NUMBER ')' # TypeRangeExclusive
+    |   referenceType
     ;
 
 
@@ -131,30 +160,13 @@ enumType
     :    '{' correspondenceList '}' # TypeEnum
     ;
 
-correspondenceList
-    :    elements+=correspondence (',' elements+=correspondence)*
-    ;
-
-correspondence
-    :    name=ID '(' value=NUMBER ')'
-    ;
-
-//
-// POINTER
-//
-pointerType
-    :    POINTER                              # TypePointer
-    |    LONG POINTER                         # TypeLongPointer
-//  |    POINTER TO      pointerTypeReference # TypePointerTo
-//  |    LONG POINTER TO pointerTypeReference # TypeLongPointerTo
-    ;
-
 
 //
 // SUBRANGE
 //
 subrangeType
-    :    (INTEGER | CARDINAL) rangeType   # TypeSubrange
+    :   rangeType  # TypeSubrangeType
+    |   rangeRange # TypeSubrangeInclusive
     ;
 
 
@@ -170,23 +182,21 @@ recordFieldList
     ;
 
 recordField
-    :    fieldName      ':' fieldType                                                      # TypeRecordField
-    |    correspondence ':' ARRAY (CARDINAL | INTEGER) '[' '0' '..' '0' ')' OF UNSPECIFIED # TypeRecoddFieldBlock
+    :    fieldName      ':' fieldType                        # TypeRecordField
+    |    correspondence ':' (referenceType | arrayTypeRange) # TypeRecoddFieldBlock
     ;
 
 fieldName
-    :    name=ID '(' offset=NUMBER ':' bitStart=NUMBER '..' bitStop=NUMBER ')'
+    :    name=ID '(' offset=positive_number ':' bitStart=positive_number '..' bitStop=positive_number ')'
     ;
 
 fieldType
-    :   type
+    :   typeType
     |   select
     ;
 
 select
-    :   SELECT fieldName ':' name=ID FROM selectCaseList ENDCASE # TypeSelectTyped
-    |   SELECT fieldName ':' '*'     FROM selectCaseList ENDCASE # TypeSelectAnon
-    |   SELECT OVERLAID      '*'     FROM selectCaseList ENDCASE # TypeSelectAny
+    :   SELECT OVERLAID '*' FROM selectCaseList ENDCASE # TypeSelectAny
     ;
 
 selectCaseList
@@ -202,7 +212,7 @@ selectCase
 //
 // REFERENCE
 //
-referencedType
+referenceType
     :    name=ID # TypeRef
     ;
 
@@ -212,46 +222,31 @@ referencedType
 //
 simpleType
     :    BOOLEAN          # TypeBoolean
-    |    BYTE             # TypeByte
     |    CARDINAL         # TypeCardinal
     |    LONG CARDINAL    # TypeLongCardinal
     |    INTEGER          # TypeInteger
-//  |    LONG INTEGER     # TypeLongInteger
+    |    LONG INTEGER     # TypeLongInteger
     |    UNSPECIFIED      # TypeUnspecified
     |    LONG UNSPECIFIED # TypeLongUnspecified
+    |    POINTER          # TypePointer
+    |    LONG POINTER     # TypeLongPointer
     ;
 
 
 //
 // CONSTANT
 //
-/*
-constantType
-    :
+
+declConst
+    :   name=ID ':' constType '=' constValue ';'
+    ;
+
+constType
+    :   CARDINAL
+    |   POINTER
+    |   LONG POINTER
     ;
     
-constantValue
-    :    ANY_NMBER # ConstantNumber
-    |    name=ID   # ConstRef
-    |    '[' constList ']' # ConstArray
+constValue
+    :   qName // value is taken from yokwe.majuro.mesa.Constant
     ;
-
-constructedConstant
-    :    '[' constantList  ']' # ConstArray
-    |    '[' componentList ']' # ConstRecord
-    |    '[' ']'               # ConstEmpty
-    |    ID constant           # ConstChoice
-    ;
-
-constantList
-    :    elements+=constant (',' elements+=constant)*
-    ;
-
-componentList
-    :    elements+=component (',' elements+=component)*
-    ;
-
-component
-    :    name=ID ':' value=constant
-    ;
- */
