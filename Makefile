@@ -27,9 +27,9 @@ build-misc-lib:
 #
 # ANTLR
 #
-antlr-compile-symbol:
+compile-antlr-symbol:
 	rm    -rf tmp/antlr
 	mkdir -p  tmp/antlr
-	ant       antlr-compile-symbol
+	ant       compile-antlr-symbol
 	rm    -rf src/yokwe/majuro/symbol/antlr/*
 	cp    -p  tmp/antlr/*.java src/yokwe/majuro/symbol/antlr
