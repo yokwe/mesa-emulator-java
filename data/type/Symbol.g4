@@ -46,13 +46,16 @@ COMMENT_LINE
 SPACE
     : [ \r\t\n]                ->skip;
 
+
+//
+// PARSER
+//
+
+
 //
 // common rule
 //
-qName
-    :   name+=ID ('.' name+=ID)*
-    ;
-    
+
 number
     :   NUMBER_8       # Number8
     |   '-'? NUMBER_10 # Number10
@@ -70,19 +73,28 @@ constant
     | ID     # ConstRef
     ;
     
-correspondence
-    :    name=ID '(' value=positive_number ')'
+rangeType
+    :    name=ID
+    ;
+   
+rangeTypeRange
+    :    (name=ID)? '[' start=constant '..' stop=constant closeChar=(']' | ')')
     ;
 
-correspondenceList
-    :    elements+=correspondence (',' elements+=correspondence)*
+// qName qualified name
+qualifiedName
+    :   name+=ID ('.' name+=ID)*
+    ;
+    
+// nameNumbe is used in enum, record field and select case selector
+numberedName
+    :   name=ID '(' value=positive_number ')'
     ;
 
 
 //
-// PARSER
+// SYMBOL
 //
-
 symbol
     :    header '=' body '.'
     ;
@@ -108,7 +120,7 @@ decl
 // TYPE
 //
 declType
-    :   name=ID ':' TYPE      '=' typeType ';'
+    :   name=ID ':' TYPE      '=' typeType ';' # TypeDecl
     ;
 
 
@@ -135,15 +147,7 @@ arrayTypeType
     ;
     
 arrayTypeRange
-    :    ARRAY rangeRange OF arrayTypeElement # TypeArrayRange
-    ;
-
-rangeType
-    :    name=ID                                                                # TypeRangeType
-    ;
-   
-rangeRange
-    :    (name=ID)? '[' start=constant '..' stop=constant closeChar=(']' | ')') # TypeRangeRange
+    :    ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
     ;
 
 arrayTypeElement
@@ -157,16 +161,23 @@ arrayTypeElement
 // ENUM
 //
 enumType
-    :    '{' correspondenceList '}' # TypeEnum
+    :    '{' enumElementList '}' # TypeEnum
     ;
 
+enumElementList
+    :    elements+=eumElement (',' elements+=eumElement)*
+    ;
+
+eumElement
+    :   numberedName
+    ;
 
 //
 // SUBRANGE
 //
 subrangeType
-    :   rangeType  # TypeSubrangeType
-    |   rangeRange # TypeSubrangeInclusive
+    :   rangeType      # TypeSubrangeType
+    |   rangeTypeRange # TypeSubrangeTypeRange
     ;
 
 
@@ -182,12 +193,16 @@ recordFieldList
     ;
 
 recordField
-    :    fieldName      ':' fieldType                        # TypeRecordField
-    |    correspondence ':' (referenceType | arrayTypeRange) # TypeRecoddFieldBlock
+    :    fieldName ':' fieldType # TypeRecordField
     ;
 
 fieldName
-    :    name=ID '(' offset=positive_number ':' bitStart=positive_number '..' bitStop=positive_number ')'
+    :    numberedName
+    |    bitfieldName
+    ;
+    
+bitfieldName
+    :   name=ID '(' offset=positive_number ':' bitStart=positive_number '..' bitStop=positive_number ')' # TypeBitfieldName
     ;
 
 fieldType
@@ -204,8 +219,13 @@ selectCaseList
     ;
 
 selectCase
-    :   correspondence '=>' '[' ']'                 # TypeSelectCaseEmpty
-    |   correspondence '=>' '[' recordFieldList ']' # TypeSelectCaseList
+    :   selectCaseSelector '=>' '[' ']'                 # TypeSelectCaseEmpty
+    |   selectCaseSelector '=>' '[' recordFieldList ']' # TypeSelectCaseList
+    ;
+
+selectCaseSelector
+    :   name=ID
+    |   numberedName
     ;
 
 
@@ -238,7 +258,7 @@ simpleType
 //
 
 declConst
-    :   name=ID ':' constType '=' constValue ';'
+    :   name=ID ':' constType '=' constValue ';' # ConstDecl
     ;
 
 constType
@@ -248,5 +268,5 @@ constType
     ;
     
 constValue
-    :   qName // value is taken from yokwe.majuro.mesa.Constant
+    :   qualifiedName // refer to static field in Java class
     ;
