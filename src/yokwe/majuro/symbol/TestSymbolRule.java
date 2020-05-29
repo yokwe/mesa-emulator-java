@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
+import yokwe.majuro.symbol.antlr.model.Symbol;
 
 public class TestSymbolRule {
 	private static final Logger logger = LoggerFactory.getLogger(TestSymbolRule.class);
 
-	static final String  PATH_RULE_FILE = "data/type/MesaType.symbol";
-	static final boolean VERBOSE        = false;
+	private static final boolean VERBOSE = false;
 
     private static void printPrettyLispTree(String tree) {
         int indentation = 1;
@@ -74,9 +74,11 @@ public class TestSymbolRule {
 	public static void main(String[] args) {
 		logger.info("START");
 
-		logger.info("file {}", PATH_RULE_FILE);
+		String path = Symbol.PATH_RULE_FILE;
+		
+		logger.info("path {}", path);
 		try {
-			CharStream input = CharStreams.fromFileName(PATH_RULE_FILE);
+			CharStream input = CharStreams.fromFileName(path);
 			
 			SymbolLexer       lexer   = new SymbolLexer(input);
 			CommonTokenStream tokens  = new CommonTokenStream(lexer);
