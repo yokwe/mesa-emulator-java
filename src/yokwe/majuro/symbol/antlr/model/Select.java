@@ -11,7 +11,7 @@ public class Select {
 		public final Select      select;
 		
 		public boolean needsFix;
-		public long    size;
+		public int     size;
 
 		public CaseField(RecordField recordField) {
 			this.recordField = recordField;
@@ -55,7 +55,7 @@ public class Select {
 		public List<CaseField> caseFieldList;
 		
 		public boolean needsFix;
-		public long    size;
+		public int     size;
 
 		public SelectCase(String selector, int value, List<CaseField> caseFieldList) {
 			this.selector      = selector;
@@ -113,7 +113,7 @@ public class Select {
 	
 	// FIXME
 	public boolean needsFix;
-	public long    size;
+	public int     size;
 	
 	public Select(List<SelectCase> selectCaseList) {
 		this.kind           = Kind.OVERLAID;
