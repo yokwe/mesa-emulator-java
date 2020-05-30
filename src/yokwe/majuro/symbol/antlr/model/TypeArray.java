@@ -29,6 +29,9 @@ public class TypeArray extends Type {
 		
 		fix();
 	}
+	public TypeArray(String name, String elementName, long rangeMinMax) {
+		this(name, elementName, "CARDINAL", rangeMinMax);
+	}
 
 	// for subrange array
 	public TypeArray(String name, String elementName, String indexName, long rangeMin, long rangeMax) {
@@ -42,6 +45,9 @@ public class TypeArray extends Type {
 		this.rangeMax          = rangeMax;
 		
 		fix();
+	}
+	public TypeArray(String name, String elementName, long rangeMin, long rangeMax) {
+		this(name, elementName, "CARDINAL", rangeMin, rangeMax);
 	}
 	
 	// for full range array
