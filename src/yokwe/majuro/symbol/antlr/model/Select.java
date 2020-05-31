@@ -30,23 +30,20 @@ public class Select {
 	
 	public static class SelectCase {
 		public final String selector;
-		public final int    value;
 		
 		public List<CaseField> caseFieldList;
 		
 		public boolean needsFix;
 		public int     size;
 
-		public SelectCase(String selector, int value, List<CaseField> caseFieldList) {
+		public SelectCase(String selector, List<CaseField> caseFieldList) {
 			this.selector      = selector;
-			this.value         = value;
 			this.caseFieldList = caseFieldList;
 			this.needsFix      = true;
 			this.size          = Type.UNKNOWN_SIZE;
 		}
-		public SelectCase(String selector, int value) {
+		public SelectCase(String selector) {
 			this.selector      = selector;
-			this.value         = value;
 			this.caseFieldList = new ArrayList<>();
 			this.needsFix      = true;
 			this.size          = Type.UNKNOWN_SIZE;
@@ -76,14 +73,12 @@ public class Select {
 		}
 	}
 	
-	// FIXME should I create separate file for overlaid, ano, enum?
-	public static enum Kind {
-		OVERLAID,
-		ANON,
-		ENUM
-	}
-	
-	public final Kind kind;
+	// FIXME handle only "SELECT OVERLAID *"
+
+	// SELECT OVERLAID              * FROM
+	// SELECT OVERLAID ControlLinkTag FROM
+	// SELECT type (0:0..15):       * FROM
+	// SELECT tag (0:0..1):   LinkTag FROM
 	
 	public final List<SelectCase> selectCaseList;
 	
@@ -91,12 +86,10 @@ public class Select {
 	public int     size;
 	
 	public Select(List<SelectCase> selectCaseList) {
-		this.kind           = Kind.OVERLAID;
 		this.selectCaseList = selectCaseList;
 		this.needsFix       = true;
 		this.size           = Type.UNKNOWN_SIZE;
 	}
-	
 
 	public void fix() {
 		if (needsFix) {
