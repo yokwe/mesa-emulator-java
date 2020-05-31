@@ -16,7 +16,7 @@ public class TypeReference extends Type {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %d %s %s %s}", name, size, kind, baseName, baseType);
+		return String.format("{%s %d %s %s %s}", name, size, kind, baseName, needsFix);
 	}
 	
 	@Override
