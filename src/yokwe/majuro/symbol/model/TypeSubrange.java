@@ -1,4 +1,4 @@
-package yokwe.majuro.symbol.antlr.model;
+package yokwe.majuro.symbol.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

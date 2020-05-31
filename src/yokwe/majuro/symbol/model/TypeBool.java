@@ -1,4 +1,4 @@
-package yokwe.majuro.symbol.antlr.model;
+package yokwe.majuro.symbol.model;
 
 public class TypeBool extends Type {
 	TypeBool() {

@@ -1,4 +1,4 @@
-package yokwe.majuro.symbol.antlr.model;
+package yokwe.majuro.symbol.model;
 
 public class TypeReference extends Type {
 	public final String baseName;
