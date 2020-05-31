@@ -16,6 +16,7 @@ import yokwe.majuro.symbol.antlr.SymbolBaseVisitor;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeCardinalContext;
@@ -73,8 +74,14 @@ public class Symbol {
 			throw new UnexpectedException(exceptionName, e);
 		}
 	}
+	
+	private static class TypeVisitors extends SymbolBaseVisitor<Type> {
+		public final String name;
 		
-	private static final SymbolBaseVisitor<Type> typeVisitors = new SymbolBaseVisitor<>() {
+		public TypeVisitors(String name) {
+			this.name = name;
+		}
+		
 		// ARRAY
 		@Override public Type visitTypeArrayType(SymbolParser.TypeArrayTypeContext context) {
 			logger.info("  {}", context.getClass().getName());
@@ -94,7 +101,17 @@ public class Symbol {
 		// SUBRANGE
 		@Override public Type visitTypeSubrangeType(SymbolParser.TypeSubrangeTypeContext context) {
 			logger.info("  {}", context.getClass().getName());
-			return null;
+			
+			RangeTypeContext rangeTypeContext = context.rangeType();
+			if (rangeTypeContext != null) {
+				String typeName = rangeTypeContext.name.getText();
+				
+				return new TypeSubrangeFull(name, typeName);
+			} else {
+				logger.error("Unexpected rangeTypeContext");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected rangeTypeContext");
+			}
 		}
 		@Override public Type visitTypeSubrangeTypeRange(SymbolParser.TypeSubrangeTypeRangeContext context) {
 			logger.info("  {}", context.getClass().getName());
@@ -155,7 +172,7 @@ public class Symbol {
 			logger.info("  {}", context.getClass().getName());
 			return null;
 		}
-	};
+	}
 
 	private static final SymbolBaseVisitor<Type> declTypeVisitor = new SymbolBaseVisitor<>() {
 		@Override
@@ -165,6 +182,8 @@ public class Symbol {
 			
 			logger.info("TYPE   {} == {}", name, typeType.getText());
 			logger.info("       {}", name, typeType.getText());
+			
+			TypeVisitors typeVisitors = new TypeVisitors(name);
 			
 			Type type = typeVisitors.visit(typeType);
 			logger.info("       {}", type);
