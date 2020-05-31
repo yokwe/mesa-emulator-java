@@ -5,22 +5,13 @@ import java.util.List;
 
 public class Select {
 	public static class CaseField {
-		public final Field recordField;
-		public final Select      select;
+		public final Field field;
 		
 		public boolean needsFix;
 		public int     size;
 
-		public CaseField(Field recordField) {
-			this.recordField = recordField;
-			this.select      = null;
-			
-			this.needsFix = true;
-			this.size     = 0;
-		}
-		public CaseField(Select select) {
-			this.recordField = null;
-			this.select      = select;
+		public CaseField(Field field) {
+			this.field = field;
 			
 			this.needsFix = true;
 			this.size     = 0;
@@ -28,19 +19,10 @@ public class Select {
 		
 		public void fix() {
 			if (needsFix) {
-				if (recordField != null) {
-					recordField.fix();
-					if (!recordField.needsFix) {
-						this.size = recordField.size;
-						this.needsFix = false;
-					}
-				}
-				if (select != null) {
-					recordField.fix();
-					if (!select.needsFix) {
-						this.size = select.size;
-						this.needsFix = false;
-					}
+				field.fix();
+				if (!field.needsFix) {
+					this.size = field.size;
+					this.needsFix = false;
 				}
 			}
 		}
@@ -73,9 +55,6 @@ public class Select {
 		public void addField(Field newValue) {
 			caseFieldList.add(new CaseField(newValue));
 		}
-		public void addField(Select newValue) {
-			caseFieldList.add(new CaseField(newValue));
-		}
 		
 		public void fix() {
 			if (needsFix) {
@@ -97,8 +76,7 @@ public class Select {
 		}
 	}
 	
-	
-	
+	// FIXME should I create separate file for overlaid, ano, enum?
 	public static enum Kind {
 		OVERLAID,
 		ANON,
@@ -109,7 +87,6 @@ public class Select {
 	
 	public final List<SelectCase> selectCaseList;
 	
-	// FIXME
 	public boolean needsFix;
 	public int     size;
 	
