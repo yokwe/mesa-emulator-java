@@ -25,12 +25,19 @@ public class TypeSubrange extends Type {
 			logger.error("  length   {}", length);
 			throw new UnexpectedException("Unexpected length");
 		}
-		if (Integer.MAX_VALUE <= length) {
-			logger.error("Unexpected length");
-			logger.error("  valueMin {}", valueMin);
-			logger.error("  valueMax {}", valueMax);
-			logger.error("  length   {}", length);
-			throw new UnexpectedException("Unexpected length");
+		
+		if (valueMin == Type.INTEGER_MIN && valueMax == Type.INTEGER_MAX) {
+		} else if (valueMin == Type.LONG_INTEGER_MIN && valueMax == Type.LONG_INTEGER_MAX) {
+		} else if (valueMin == Type.CARDINAL_MIN && valueMax == Type.CARDINAL_MAX) {
+		} else if (valueMin == Type.LONG_CARDINAL_MIN && valueMax == Type.LONG_CARDINAL_MAX) {
+		} else {			
+			if (Integer.MAX_VALUE <= length) {
+				logger.error("Unexpected length");
+				logger.error("  valueMin {}", valueMin);
+				logger.error("  valueMax {}", valueMax);
+				logger.error("  this     {}", this);
+				throw new UnexpectedException("Unexpected length");
+			}		
 		}
 
 		this.baseType = new TypeReference(name + "#base", baseName);
@@ -63,7 +70,7 @@ public class TypeSubrange extends Type {
 
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %d}", name, size, kind, baseType, valueMin, valueMax);
+		return String.format("{%s %d %s %s %d %d}", name, size, kind, baseType, valueMin, valueMax);
 	}
 	
 	@Override
