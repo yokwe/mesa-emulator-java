@@ -14,9 +14,6 @@ public abstract class Type {
 	public enum Kind {
 		// predefined
 		BOOL,
-		CARDINAL,    LONG_CARDINAL,
-		INTEGER,     LONG_INTEGER,
-		UNSPECIFIED, LONG_UNSPECIFIED,
 		// subrange of CARDINAL, INTEGER
 		SUBRANGE,
 		// constructed
@@ -72,21 +69,49 @@ public abstract class Type {
 		}
 	}
 	
+	public static void stats() {
+		int needsFix = 0;
+		Map<Type.Kind, Integer> kindMap = new TreeMap<>();
+		for(Type.Kind e: Type.Kind.values()) {
+			kindMap.put(e, 0);
+		}
+		
+		for(Type type: map.values()) {
+			if (type.needsFix) needsFix++;
+			kindMap.put(type.kind, kindMap.get(type.kind) + 1);
+		}
+		
+		logger.info("stats");
+		logger.info("  {}", String.format("%-9s  %3d", "all", map.size()));
+		logger.info("  {}", String.format("%-9s  %3d", "needsFix", needsFix));
+		logger.info("  ==");
+		for(Type.Kind e: Type.Kind.values()) {
+			logger.info("  {}", String.format("%-9s  %3d", e, kindMap.get(e)));
+		}
+		
+		logger.info("  ==");
+		for(Type type: map.values()) {
+			if (type.needsFix) {
+				logger.info("needsFix {}", type);
+			}
+		}
+	}
+	
 	public boolean isReference() {
 		return kind == Kind.REFERENCE;
 	}
 	
-	private static final long CARDINAL_MIN = 0;
-	private static final long CARDINAL_MAX = (1L << 16) - 1;
+	public static final long CARDINAL_MIN = 0;
+	public static final long CARDINAL_MAX = (1L << 16) - 1;
 	
-	private static final long LONG_CARDINAL_MIN = 0;
-	private static final long LONG_CARDINAL_MAX = (1L << 32) - 1;
+	public static final long LONG_CARDINAL_MIN = 0;
+	public static final long LONG_CARDINAL_MAX = (1L << 32) - 1;
 
-	private static final long INTEGER_MIN = Integer.MIN_VALUE;
-	private static final long INTEGER_MAX = Integer.MIN_VALUE;
+	public static final long INTEGER_MIN = Integer.MIN_VALUE;
+	public static final long INTEGER_MAX = Integer.MIN_VALUE;
 
-	private static final long LONG_INTEGER_MIN = Long.MIN_VALUE;
-	private static final long LONG_INTEGER_MAX = Long.MIN_VALUE;
+	public static final long LONG_INTEGER_MIN = Long.MIN_VALUE;
+	public static final long LONG_INTEGER_MAX = Long.MIN_VALUE;
 
 	// Define predefined class
 	public static final Type BOOL             = new TypeBool();
