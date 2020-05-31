@@ -69,6 +69,12 @@ public abstract class Type {
 		}
 	}
 	
+	public static void fixAll() {
+		for(Type type: map.values()) {
+			type.fix();
+		}
+	}
+	
 	public static void stats() {
 		int needsFix = 0;
 		Map<Type.Kind, Integer> kindMap = new TreeMap<>();
@@ -92,8 +98,24 @@ public abstract class Type {
 		logger.info("  ==");
 		for(Type type: map.values()) {
 			if (type.needsFix) {
-				logger.info("needsFix {}", type);
+				switch(type.kind) {
+				case SUBRANGE:
+					logger.info("needsFix {}", String.format("%-24s %-10s %s", type.name, type.kind, ((TypeSubrange)type).baseType.baseName));
+					break;
+				case REFERENCE:
+					logger.info("needsFix {}", String.format("%-24s %-10s %s", type.name, type.kind, ((TypeReference)type).baseName));
+					break;
+				default:
+					logger.info("needsFix {}", String.format("%-24s %-10s", type.name, type.kind));
+					break;
+				}
 			}
+		}
+		logger.info("  ==");
+		for(Type type: map.values()) {
+			if (type.name.contains("#")) continue;
+			if (type.needsFix) continue;
+			logger.info("         {}", String.format("%-24s %-10s", type.name, type.kind));
 		}
 	}
 	
@@ -113,13 +135,26 @@ public abstract class Type {
 	public static final long LONG_INTEGER_MIN = Long.MIN_VALUE;
 	public static final long LONG_INTEGER_MAX = Long.MIN_VALUE;
 
+	public static final String BOOL             = "BOOL";
+	public static final String CARDINAL         = "CARDINAL";
+	public static final String LONG_CARDINAL    = "LONG_CARDINAL";
+	public static final String INTEGER          = "INTEGER";
+	public static final String LONG_INTEGER     = "LONG_INTEGER";
+	public static final String UNSPECIFIED      = "UNSPECIFIED";
+	public static final String LONG_UNSPECIFIED = "LONG_UNSPECIFIED";
+	public static final String POINTER          = "POINTER";
+	public static final String LONG_POINTER     = "LONG_POINTER";
+	
 	// Define predefined class
-	public static final Type BOOL             = new TypeBool();
-	public static final Type CARDINAL         = new TypeSubrangeRange("CARDINAL",         1, "CARDINAL",         CARDINAL_MIN,      CARDINAL_MAX);
-	public static final Type LONG_CARDINAL    = new TypeSubrangeRange("LONG_CARDINAL",    2, "LONG_CARDINAL",    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
-	public static final Type INTEGER          = new TypeSubrangeRange("INTEGER",          1, "INTEGER",          INTEGER_MIN,       INTEGER_MAX);
-	public static final Type LONG_INTEGER     = new TypeSubrangeRange("LONG_INTEGER",     2, "LONG_INTEGER",     LONG_INTEGER_MIN,  LONG_INTEGER_MAX);
-	public static final Type UNSPECIFIED      = new TypeSubrangeRange("UNSPECIFIED",      1, "UNSPECIFIED",      CARDINAL_MIN,      CARDINAL_MAX);
-	public static final Type LONG_UNSPECIFIED = new TypeSubrangeRange("LONG_UNSPECIFIED", 2, "LONG_UNSPECIFIED", LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
-
+	static {
+		new TypeBool();
+		new TypeSubrangeRange(CARDINAL,         1, CARDINAL,         CARDINAL_MIN,      CARDINAL_MAX);
+		new TypeSubrangeRange(LONG_CARDINAL,    2, LONG_CARDINAL,    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
+		new TypeSubrangeRange(INTEGER,          1, INTEGER,          INTEGER_MIN,       INTEGER_MAX);
+		new TypeSubrangeRange(LONG_INTEGER,     2, LONG_INTEGER,     LONG_INTEGER_MIN,  LONG_INTEGER_MAX);
+		new TypeSubrangeRange(UNSPECIFIED,      1, UNSPECIFIED,      CARDINAL_MIN,      CARDINAL_MAX);
+		new TypeSubrangeRange(LONG_UNSPECIFIED, 2, LONG_UNSPECIFIED, LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
+		new TypeSubrangeRange(POINTER,          1, POINTER,          CARDINAL_MIN,      CARDINAL_MAX);
+		new TypeSubrangeRange(LONG_POINTER,     2, LONG_POINTER,     LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
+	}
 }
