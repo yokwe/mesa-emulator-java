@@ -32,6 +32,8 @@ public abstract class Type {
 	public boolean needsFix;
 	public int     size;
 	
+	public static final int UNKNOWN_SIZE = -1;
+	
 	protected Type(String name, Kind kind, int size) {
 		this.name         = name;
 		this.kind         = kind;
@@ -42,13 +44,13 @@ public abstract class Type {
 			this.size     = size;
 		} else {
 			this.needsFix = true;
-			this.size     = -1;
+			this.size     = UNKNOWN_SIZE;
 		}
 		
 		register(this);
 	}
 	protected Type(String name, Kind kind) {
-		this(name, kind, -1);
+		this(name, kind, UNKNOWN_SIZE);
 	}
 	
 	protected abstract void fix();
