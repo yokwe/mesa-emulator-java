@@ -24,7 +24,7 @@ public class TypeReference extends Type {
 		if (needsFix) {
 			if (map.containsKey(baseName)) {
 				Type nextType = map.get(baseName);
-				if (needsFix) nextType.fix();
+				if (nextType.needsFix) nextType.fix();
 				if (!nextType.needsFix) {
 					size     = nextType.size;
 					baseType = nextType.isReference() ? ((TypeReference)nextType).baseType : nextType;
