@@ -100,8 +100,6 @@ public class Symbol {
 
 		// SUBRANGE
 		@Override public Type visitTypeSubrangeType(SymbolParser.TypeSubrangeTypeContext context) {
-			logger.info("  {}", context.getClass().getName());
-			
 			RangeTypeContext rangeTypeContext = context.rangeType();
 			if (rangeTypeContext != null) {
 				String typeName = rangeTypeContext.name.getText();
@@ -130,47 +128,37 @@ public class Symbol {
 		
 		// REFERENCE
 		@Override public Type visitTypeRef(SymbolParser.TypeRefContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			String baseName = context.name.getText();
+			return new TypeReference(name, baseName);
 		}
 		
 		// SIMPLE
 		@Override public Type visitTypeBoolean(TypeBooleanContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.BOOL);
 		}
-
 		@Override public Type visitTypeCardinal(TypeCardinalContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.CARDINAL);
 		}
 		@Override public Type visitTypeLongCardinal(TypeLongCardinalContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.LONG_CARDINAL);
 		}
 		@Override public Type visitTypeInteger(TypeIntegerContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.INTEGER);
 		}
 		@Override public Type visitTypeLongInteger(TypeLongIntegerContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.LONG_INTEGER);
 		}
 		@Override public Type visitTypeUnspecified(TypeUnspecifiedContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.UNSPECIFIED);
 		}
 		@Override public Type visitTypeLongUnspecified(TypeLongUnspecifiedContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.LONG_UNSPECIFIED);
 		}
 		@Override public Type visitTypePointer(TypePointerContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.POINTER);
 		}
 		@Override public Type visitTypeLongPointer(TypeLongPointerContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			return new TypeReference(name, Type.LONG_POINTER);
 		}
 	}
 
@@ -197,10 +185,7 @@ public class Symbol {
 		public Const visitConstDecl(SymbolParser.ConstDeclContext context) {
 			String name      = context.name.getText();
 			String typeName  = context.constType().getText();
-			String value     = context.constValue().getText();
-			
-			logger.info("CONST  {}  {}  {}", name, typeName, value);
-			
+			String value     = context.constValue().getText();			
 			return new Const(name, typeName, value);
 		}
 	};
@@ -222,6 +207,8 @@ public class Symbol {
 		
 		Symbol symbol = Symbol.getInstance(PATH_RULE_FILE);
 		logger.info("symbol {}", symbol);
+		
+		Type.fixAll();
 		
 		Type.stats();
 		
