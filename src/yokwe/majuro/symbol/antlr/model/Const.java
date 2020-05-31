@@ -12,16 +12,18 @@ public class Const {
 	private static final Logger logger = LoggerFactory.getLogger(Const.class);
 
 	public String name;
+	public String typeName;
 	public String value;
 	
-	public Const(String name, String value) {
-		this.name  = name;
-		this.value = value;
+	public Const(String name, String typeName, String value) {
+		this.name     = name;
+		this.typeName = typeName;
+		this.value    = value;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s}", name, value);
+		return String.format("{%s %s %s}", name, typeName, value);
 	}
 	
 	public static Map<String, Const> map = new TreeMap<>();
