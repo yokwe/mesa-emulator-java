@@ -1,8 +1,6 @@
 package yokwe.majuro.symbol.antlr.model;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -17,8 +15,6 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolBaseVisitor;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
-import yokwe.majuro.symbol.antlr.SymbolParser.ConstTypeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.ConstValueContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
@@ -45,6 +41,11 @@ public class Symbol {
 		this.name     = tree.header().name.getText();
 		this.constMap = new TreeMap<>();
 		this.typeMap  = new TreeMap<>();
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("{%s %d %d}", name, constMap.size(), typeMap.size());
 	}
 	
 	public static Symbol getInstance(String filePath) {
@@ -165,48 +166,45 @@ public class Symbol {
 			logger.info("TYPE   {} == {}", name, typeType.getText());
 			logger.info("       {}", name, typeType.getText());
 			
+			Type type = typeVisitors.visit(typeType);
+			logger.info("       {}", type);
 			
-			typeVisitors.visit(typeType);
-			
-			return null;
+			return type;
 		}
 	};
 
 	private static final SymbolBaseVisitor<Const> declConstVisitor = new SymbolBaseVisitor<>() {
 		@Override
 		public Const visitConstDecl(SymbolParser.ConstDeclContext context) {
-//			declConst
-//		    :   name=ID ':' constType  '=' constValue ';' # ConstDecl
-//		    ;
-			String name = context.name.getText();
-			ConstTypeContext constType = context.constType();
-			ConstValueContext constValue = context.constValue();
+			String name      = context.name.getText();
+			String typeName  = context.constType().getText();
+			String value     = context.constValue().getText();
 			
-			logger.info("CONST  {}  {}  {}", name, constType.toStringTree(), constValue.toStringTree());
-
-			return null;
+			logger.info("CONST  {}  {}  {}", name, typeName, value);
+			
+			return new Const(name, typeName, value);
 		}
 	};
 
 
 	void build(SymbolContext tree) {
-		List<Const> constList = new ArrayList<>();
-		List<Type>  typeList  = new ArrayList<>();
 		for(DeclContext e: tree.body().declList().elements) {
-			constList.add(declConstVisitor.visit(e));
+			Const v = declConstVisitor.visit(e);
+			if (v != null) this.constMap.put(v.name, v);
 		}
 		for(DeclContext e: tree.body().declList().elements) {
-			typeList.add(declTypeVisitor.visit(e));
+			Type v = declTypeVisitor.visit(e);
+			if (v != null) this.typeMap.put(v.name, v);
 		}
 	}
 	
 	public static void main(String[] args) {
 		logger.info("START");
 		
-		{
-			Symbol symbol = Symbol.getInstance(PATH_RULE_FILE);
-			logger.info("symbol {}", symbol);
-		}
+		Symbol symbol = Symbol.getInstance(PATH_RULE_FILE);
+		logger.info("symbol {}", symbol);
+		
+		Type.stats();
 		
 		logger.info("STOP");
 	}
