@@ -3,17 +3,15 @@ package yokwe.majuro.symbol.antlr.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import yokwe.majuro.symbol.antlr.model.TypeRecord.RecordField;
-
 public class Select {
 	public static class CaseField {
-		public final RecordField recordField;
+		public final Field recordField;
 		public final Select      select;
 		
 		public boolean needsFix;
 		public int     size;
 
-		public CaseField(RecordField recordField) {
+		public CaseField(Field recordField) {
 			this.recordField = recordField;
 			this.select      = null;
 			
@@ -62,17 +60,17 @@ public class Select {
 			this.value         = value;
 			this.caseFieldList = caseFieldList;
 			this.needsFix      = true;
-			this.size          = -1;
+			this.size          = Type.UNKNOWN_SIZE;
 		}
 		public SelectCase(String selector, int value) {
 			this.selector      = selector;
 			this.value         = value;
 			this.caseFieldList = new ArrayList<>();
 			this.needsFix      = true;
-			this.size          = -1;
+			this.size          = Type.UNKNOWN_SIZE;
 		}
 		
-		public void addField(RecordField newValue) {
+		public void addField(Field newValue) {
 			caseFieldList.add(new CaseField(newValue));
 		}
 		public void addField(Select newValue) {
@@ -119,7 +117,7 @@ public class Select {
 		this.kind           = Kind.OVERLAID;
 		this.selectCaseList = selectCaseList;
 		this.needsFix       = true;
-		this.size           = -1;
+		this.size           = Type.UNKNOWN_SIZE;
 	}
 	
 
