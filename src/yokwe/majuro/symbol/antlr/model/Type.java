@@ -115,11 +115,11 @@ public abstract class Type {
 
 	// Define predefined class
 	public static final Type BOOL             = new TypeBool();
-	public static final Type CARDINAL         = new TypeSubrange("CARDINAL",         1, "CARDINAL",         CARDINAL_MIN,      CARDINAL_MAX);
-	public static final Type LONG_CARDINAL    = new TypeSubrange("LONG_CARDINAL",    2, "LONG_CARDINAL",    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
-	public static final Type INTEGER          = new TypeSubrange("INTEGER",          1, "INTEGER",          INTEGER_MIN,       INTEGER_MAX);
-	public static final Type LONG_INTEGER     = new TypeSubrange("LONG_INTEGER",     2, "LONG_INTEGER",     LONG_INTEGER_MIN,  LONG_INTEGER_MAX);
-	public static final Type UNSPECIFIED      = new TypeSubrange("UNSPECIFIED",      1, "UNSPECIFIED",      CARDINAL_MIN,      CARDINAL_MAX);
-	public static final Type LONG_UNSPECIFIED = new TypeSubrange("LONG_UNSPECIFIED", 2, "LONG_UNSPECIFIED", LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
+	public static final Type CARDINAL         = new TypeSubrangeRange("CARDINAL",         1, "CARDINAL",         CARDINAL_MIN,      CARDINAL_MAX);
+	public static final Type LONG_CARDINAL    = new TypeSubrangeRange("LONG_CARDINAL",    2, "LONG_CARDINAL",    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
+	public static final Type INTEGER          = new TypeSubrangeRange("INTEGER",          1, "INTEGER",          INTEGER_MIN,       INTEGER_MAX);
+	public static final Type LONG_INTEGER     = new TypeSubrangeRange("LONG_INTEGER",     2, "LONG_INTEGER",     LONG_INTEGER_MIN,  LONG_INTEGER_MAX);
+	public static final Type UNSPECIFIED      = new TypeSubrangeRange("UNSPECIFIED",      1, "UNSPECIFIED",      CARDINAL_MIN,      CARDINAL_MAX);
+	public static final Type LONG_UNSPECIFIED = new TypeSubrangeRange("LONG_UNSPECIFIED", 2, "LONG_UNSPECIFIED", LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
 
 }

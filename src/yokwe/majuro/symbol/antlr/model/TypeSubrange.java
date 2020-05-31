@@ -5,13 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 
-public class TypeSubrange extends Type {
+public abstract class TypeSubrange extends Type {
 	private static final Logger logger = LoggerFactory.getLogger(TypeSubrange.class);
 
 	public final TypeReference baseType;
-	public final long          valueMin;
-	public final long          valueMax;
-	public final int           length;
+	
+	public long valueMin;
+	public long valueMax;
+	public int  length;
 	
 	public TypeSubrange(String name, int size, String baseName, long valueMin, long valueMax) {
 		super(name, Kind.SUBRANGE, size);
@@ -78,7 +79,7 @@ public class TypeSubrange extends Type {
 		if (needsFix) {
 			baseType.fix();
 			if (!baseType.needsFix) {
-				switch(baseType.kind) {
+				switch(baseType.baseType.kind) {
 				case SUBRANGE:
 					break;
 				default:
@@ -93,3 +94,43 @@ public class TypeSubrange extends Type {
 		}
 	}
 }
+
+class TypeSubrangeFull extends TypeSubrange {
+	private static final Logger logger = LoggerFactory.getLogger(TypeSubrangeFull.class);
+	public TypeSubrangeFull(String name, String baseName) {
+		super(name, baseName, 0, 0);
+	}
+	
+	@Override
+	protected void fix() {
+		{
+			baseType.fix();
+			if (!baseType.needsFix) {
+				switch(baseType.baseType.kind) {
+				case SUBRANGE:
+				{
+					TypeSubrange typeSubrange = (TypeSubrange)baseType.baseType;
+					this.valueMin = typeSubrange.valueMin;
+					this.valueMax = typeSubrange.valueMax;
+				}
+					break;
+				default:
+					logger.error("Unexpected baseType");
+					logger.error("  baseType {}", baseType);
+					throw new UnexpectedException("Unexpected baseType");
+				}
+			}
+		}
+		super.fix();
+	}
+}
+
+class TypeSubrangeRange extends TypeSubrange {
+	public TypeSubrangeRange(String name, String baseName, long valueMin, long valueMax) {
+		super(name, baseName, valueMin, valueMax);
+	}
+	public TypeSubrangeRange(String name, int size, String baseName, long valueMin, long valueMax) {
+		super(name, size, baseName, valueMin, valueMax);
+	}
+}
+
