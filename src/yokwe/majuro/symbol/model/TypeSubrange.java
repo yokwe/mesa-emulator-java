@@ -1,5 +1,8 @@
 package yokwe.majuro.symbol.model;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +52,7 @@ public abstract class TypeSubrange extends Type {
 		this(name, Type.UNKNOWN_SIZE, baseName, valueMin, valueMax, valueMaxInclusive);
 	}
 	
+	// FIXME rangeMin, rangeMax
 	public void checkValue(long rangeMax, long rangeMin) {
 		if (!needsFix) {
 			if (rangeMin < this.valueMin.numericValue) {
@@ -88,6 +92,17 @@ public abstract class TypeSubrange extends Type {
 		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType, valueMin, valueMax, valueMaxInclusive);
 	}
 	
+	private static Set<String> predefinedNameSet = new TreeSet<>();
+	static {
+		predefinedNameSet.add(Type.CARDINAL);
+		predefinedNameSet.add(Type.LONG_CARDINAL);
+		predefinedNameSet.add(Type.INTEGER);
+		predefinedNameSet.add(Type.LONG_INTEGER);
+		predefinedNameSet.add(Type.UNSPECIFIED);
+		predefinedNameSet.add(Type.LONG_UNSPECIFIED);
+		predefinedNameSet.add(Type.POINTER);
+		predefinedNameSet.add(Type.LONG_POINTER);
+	}
 	@Override
 	protected void fix() {
 		if (needsFix) {
@@ -112,10 +127,8 @@ public abstract class TypeSubrange extends Type {
 					throw new UnexpectedException("Unexpected length");
 				}
 				
-				// FIXME
-				if (valueMin.typeSubrange != null && valueMax.typeSubrange != null &&
-					valueMin.numericValue == valueMin.typeSubrange.valueMin.numericValue && valueMax.numericValue == valueMax.typeSubrange.valueMax.numericValue) {
-					//
+				if (predefinedNameSet.contains(name)) {
+					// don't check for predefined type
 				} else {
 					if (Integer.MAX_VALUE <= length) {
 						logger.error("Unexpected length");

@@ -59,6 +59,7 @@ public class TypeEnum extends Type {
 		this.length      = (int)length;
 	}
 	
+	// FIXME change to rangeMin rangeMax
 	public void checkValue(long rangeMax, long rangeMin) {
 		if (!needsFix) {
 			if (rangeMin < this.valueMin) {

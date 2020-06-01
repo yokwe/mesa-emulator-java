@@ -17,33 +17,57 @@ public abstract class TypeArray extends Type {
 	public final TypeReference elementType;
 	public final TypeReference indexType;
 	
-	public long rangeMin;
-	public long rangeMax;
-	
-	protected TypeArray(String name, int size, RecordKind recordKind, String elementName, String indexName, long rangeMin, long rangeMax) {
+	public       Const         rangeMin;
+	public       Const         rangeMax;
+	public final boolean       rangeMaxInclusive;
+
+	protected TypeArray(String name, int size, RecordKind recordKind, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
 		super(name, Kind.SUBRANGE, size);
 		
 		this.recordKind   = recordKind;
 		this.elementType  = new TypeReference(name + "#element", elementName);
 		this.indexType    = new TypeReference(name + "#index", indexName);
-		this.rangeMin     = rangeMin;
-		this.rangeMax     = rangeMax;
+		if (rangeMin.matches("^-?[0-9]+$")) {
+			this.rangeMin = new Const(name + "#valueMin", Type.LONG_CARDINAL, Long.parseLong(rangeMin));
+		} else {
+			this.rangeMin = new Const(name + "#valueMin", Type.LONG_CARDINAL, rangeMin);
+		}
+		if (rangeMax.matches("^-?[0-9]+$")) {
+			this.rangeMax = new Const(name + "#valueMax", Type.LONG_CARDINAL, Long.parseLong(rangeMax));
+		} else {
+			this.rangeMax = new Const(name + "#valueMax", Type.LONG_CARDINAL, rangeMax);
+		}
+		this.rangeMaxInclusive = rangeMaxInclusive;
+
+		fix();
+	}
+	protected TypeArray(String name, int size, RecordKind recordKind, String elementName, String indexName, long rangeMin, long rangeMax, boolean rangeMaxInclusive) {
+		super(name, Kind.SUBRANGE, size);
 		
+		this.recordKind   = recordKind;
+		this.elementType  = new TypeReference(name + "#element", elementName);
+		this.indexType    = new TypeReference(name + "#index", indexName);
+		this.rangeMin     = new Const(name + "#valueMinLong", Type.LONG_CARDINAL, rangeMin);
+		this.rangeMax     = new Const(name + "#valueMaxLong", Type.LONG_CARDINAL, rangeMax);
+		this.rangeMaxInclusive = rangeMaxInclusive;
+
 		fix();
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %s %s %d %d}", name, kind, size, elementType, indexType, rangeMin, rangeMax);
+		return String.format("{%s %s %d %s %s %s %s}", name, kind, size, elementType, indexType, rangeMin, rangeMax);
 	}
 
 	@Override
 	protected void fix() {
 		if (needsFix) {
-			if (indexType.needsFix)   indexType.fix();
-			if (elementType.needsFix) elementType.fix();
+			indexType.fix();
+			elementType.fix();
+			rangeMin.fix();
+			rangeMax.fix();
 			
-			if (!indexType.needsFix && !elementType.needsFix) {
+			if (!indexType.needsFix && !elementType.needsFix && !rangeMin.needsFix && !rangeMax.needsFix) {
 				int length;
 				
 				// sanity check
@@ -51,14 +75,14 @@ public abstract class TypeArray extends Type {
 				case ENUM:
 				{
 					TypeEnum baseType = (TypeEnum)indexType.baseType;
-					baseType.checkValue(rangeMax, rangeMin);
+					baseType.checkValue(rangeMin.numericValue, rangeMax.numericValue);
 					length = baseType.length;
 				}
 					break;
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					baseType.checkValue(rangeMax, rangeMin);
+					baseType.checkValue(rangeMin.numericValue, rangeMax.numericValue);
 					length = baseType.length;
 				}
 					break;
@@ -76,8 +100,8 @@ public abstract class TypeArray extends Type {
 }
 
 class TypeArrayOpen extends TypeArray {
-	TypeArrayOpen(String name, String elementName, String indexName, long rangeMinMax) {
-		super(name, 0, RecordKind.OPEN, elementName, indexName, rangeMinMax, rangeMinMax);
+	TypeArrayOpen(String name, String elementName, String indexName, String rangeMinMax) {
+		super(name, 0, RecordKind.OPEN, elementName, indexName, rangeMinMax, rangeMinMax, false);
 	}
 	@Override
 	public void fix() {
@@ -88,26 +112,30 @@ class TypeArrayFull extends TypeArray {
 	private static final Logger logger = LoggerFactory.getLogger(TypeArrayFull.class);
 
 	TypeArrayFull(String name, String elementName, String indexName) {
-		super(name, Type.UNKNOWN_SIZE, RecordKind.FULL, elementName, indexName, 0, 0);
+		super(name, Type.UNKNOWN_SIZE, RecordKind.FULL, elementName, indexName, 0, 0, true);
 	}
 	@Override
 	public void fix() {
 		{
 			indexType.fix();
-			if (!indexType.needsFix) {
+			rangeMin.fix();
+			rangeMax.fix();
+			
+			if (!indexType.needsFix && !rangeMin.needsFix && !rangeMax.needsFix) {
 				switch(indexType.baseType.kind) {
 				case ENUM:
 				{
 					TypeEnum baseType = (TypeEnum)indexType.baseType;
-					this.rangeMin = baseType.valueMin;
-					this.rangeMax = baseType.valueMax;
+					// FIXME
+//					this.rangeMin = baseType.valueMin;
+//					this.rangeMax = baseType.valueMax;
 				}
 					break;
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					this.rangeMin = baseType.valueMin.numericValue;
-					this.rangeMax = baseType.valueMax.numericValue;
+					this.rangeMin = baseType.valueMin;
+					this.rangeMax = baseType.valueMax;
 				}
 					break;
 				default:
@@ -121,8 +149,8 @@ class TypeArrayFull extends TypeArray {
 	}
 }
 class TypeArraySubrange extends TypeArray {
-	TypeArraySubrange(String name, String elementName, String indexName, long rangeMin, long rangeMax) {
-		super(name, Type.UNKNOWN_SIZE, RecordKind.SUBRANGE, elementName, indexName, rangeMin, rangeMax);
+	TypeArraySubrange(String name, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
+		super(name, Type.UNKNOWN_SIZE, RecordKind.SUBRANGE, elementName, indexName, rangeMin, rangeMax, rangeMaxInclusive);
 	}
 }
 

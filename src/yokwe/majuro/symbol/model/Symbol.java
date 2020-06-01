@@ -15,8 +15,11 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolBaseVisitor;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
+import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeElementContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeRangeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ReferenceTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeCardinalContext;
@@ -26,6 +29,7 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongIntegerContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongPointerContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongUnspecifiedContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeRefContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
 
@@ -84,10 +88,43 @@ public class Symbol {
 		
 		// ARRAY
 		@Override public Type visitTypeArrayType(SymbolParser.TypeArrayTypeContext context) {
+			// ARRAY rangeType  OF arrayTypeElement # TypeArrayType
+			RangeTypeContext        rangeType        = context.rangeType();
+			ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
+			
+			if (rangeType == null) {
+				logger.error("Unexpected rangeType is null");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected rangeType is null");
+			}
+			if (arrayTypeElement == null) {
+				logger.error("Unexpected arrayTypeElement is null");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected arrayTypeElement is null");
+			}
+			
+			// FIXME
+			
 			logger.info("  {}", context.getClass().getName());
 			return null;
 		}
 		@Override public Type visitTypeArrayRange(SymbolParser.TypeArrayRangeContext context) {
+			// ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
+			RangeTypeRangeContext   rangeTypeRange   = context.rangeTypeRange();
+			ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
+			
+			if (rangeTypeRange == null) {
+				logger.error("Unexpected rangeTypeRange is null");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected rangeTypeRange is null");
+			}
+			if (arrayTypeElement == null) {
+				logger.error("Unexpected arrayTypeElement is null");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected arrayTypeElement is null");
+			}
+			
+			// FIXME
 			logger.info("  {}", context.getClass().getName());
 			return null;
 		}
@@ -101,18 +138,17 @@ public class Symbol {
 		// SUBRANGE
 		@Override public Type visitTypeSubrangeTypeRange(SymbolParser.TypeSubrangeTypeRangeContext context) {
 			RangeTypeRangeContext rangeTypeRangeContext = context.rangeTypeRange();
-			if (rangeTypeRangeContext != null) {
-				String baseName   = rangeTypeRangeContext.name == null ? Type.CARDINAL : rangeTypeRangeContext.name.getText();
-				String startIndex = rangeTypeRangeContext.startIndex.getText();
-				String stopIndex  = rangeTypeRangeContext.stopIndex.getText();
-				String closeChar  = rangeTypeRangeContext.getText();
-				
-				return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
-			} else {
+			if (rangeTypeRangeContext == null) {
 				logger.error("Unexpected rangeTypeRangeContext");
 				logger.error("  context {}", context.getText());
 				throw new UnexpectedException("Unexpected rangeTypeRangeContext");
 			}
+			String baseName   = rangeTypeRangeContext.name == null ? Type.CARDINAL : rangeTypeRangeContext.name.getText();
+			String startIndex = rangeTypeRangeContext.startIndex.getText();
+			String stopIndex  = rangeTypeRangeContext.stopIndex.getText();
+			String closeChar  = rangeTypeRangeContext.getText();
+			
+			return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
 		}
 		
 		// RECORD
