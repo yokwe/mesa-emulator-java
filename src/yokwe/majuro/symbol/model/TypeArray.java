@@ -106,8 +106,8 @@ class TypeArrayFull extends TypeArray {
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					this.rangeMin = baseType.valueMin;
-					this.rangeMax = baseType.valueMax;
+					this.rangeMin = baseType.valueMin.numericValue;
+					this.rangeMax = baseType.valueMax.numericValue;
 				}
 					break;
 				default:

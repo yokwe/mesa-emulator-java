@@ -68,6 +68,15 @@ public abstract class Type {
 			map.put(name, type);
 		}
 	}
+	public static Type get(String name) {
+		if (map.containsKey(name)) {
+			return map.get(name);
+		} else {
+			logger.error("Unexpected name");
+			logger.error("  name {}", name);
+			throw new UnexpectedException("Unexpected name");
+		}
+	}
 	
 	public static void fixAll() {
 		for(Type type: map.values()) {
@@ -95,32 +104,37 @@ public abstract class Type {
 			logger.info("  {}", String.format("%-9s  %3d", e, kindMap.get(e)));
 		}
 		
-		logger.info("  ==");
-		for(Type type: map.values()) {
-			if (type.needsFix) {
-				switch(type.kind) {
-				case SUBRANGE:
-					logger.info("needsFix {}", String.format("%-24s %-10s %s", type.name, type.kind, ((TypeSubrange)type).baseType.baseName));
-					break;
-				case REFERENCE:
-					logger.info("needsFix {}", String.format("%-24s %-10s %s", type.name, type.kind, ((TypeReference)type).baseName));
-					break;
-				default:
-					logger.info("needsFix {}", String.format("%-24s %-10s", type.name, type.kind));
-					break;
+		if (0 < needsFix) {
+			logger.info("  == needs fix");
+			for(Type type: map.values()) {
+				if (type.needsFix) {
+					switch(type.kind) {
+					case SUBRANGE:
+						logger.info("  {}", String.format("%-24s %-10s %s", type.name, type.kind, ((TypeSubrange)type).baseType.baseName));
+						break;
+					case REFERENCE:
+						logger.info("  {}", String.format("%-24s %-10s %s", type.name, type.kind, ((TypeReference)type).baseName));
+						break;
+					default:
+						logger.info("  {}", String.format("%-24s %-10s", type.name, type.kind));
+						break;
+					}
 				}
 			}
 		}
-		logger.info("  ==");
+		logger.info("  == fixed");
 		for(Type type: map.values()) {
 			if (type.name.contains("#")) continue;
 			if (type.needsFix) continue;
-			logger.info("         {}", String.format("%-24s %-10s", type.name, type.kind));
+			logger.info("  {}", String.format("%-24s %-10s", type.name, type.kind));
 		}
 	}
 	
 	public boolean isReference() {
 		return kind == Kind.REFERENCE;
+	}
+	public boolean isSubrange() {
+		return kind == Kind.SUBRANGE;
 	}
 	
 	public static final long CARDINAL_MIN = 0;
@@ -148,13 +162,36 @@ public abstract class Type {
 	// Define predefined class
 	static {
 		new TypeBool();
-		new TypeSubrangeRange(CARDINAL,         1, CARDINAL,         CARDINAL_MIN,      CARDINAL_MAX);
-		new TypeSubrangeRange(LONG_CARDINAL,    2, LONG_CARDINAL,    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
-		new TypeSubrangeRange(INTEGER,          1, INTEGER,          INTEGER_MIN,       INTEGER_MAX);
-		new TypeSubrangeRange(LONG_INTEGER,     2, LONG_INTEGER,     LONG_INTEGER_MIN,  LONG_INTEGER_MAX);
-		new TypeSubrangeRange(UNSPECIFIED,      1, UNSPECIFIED,      CARDINAL_MIN,      CARDINAL_MAX);
-		new TypeSubrangeRange(LONG_UNSPECIFIED, 2, LONG_UNSPECIFIED, LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
-		new TypeSubrangeRange(POINTER,          1, POINTER,          CARDINAL_MIN,      CARDINAL_MAX);
-		new TypeSubrangeRange(LONG_POINTER,     2, LONG_POINTER,     LONG_CARDINAL_MIN, LONG_CARDINAL_MAX);
+		new TypeSubrangeRange(CARDINAL,         1, CARDINAL,         CARDINAL_MIN,      CARDINAL_MAX,      true);
+		new TypeSubrangeRange(LONG_CARDINAL,    2, LONG_CARDINAL,    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
+		new TypeSubrangeRange(INTEGER,          1, INTEGER,          INTEGER_MIN,       INTEGER_MAX,       true);
+		new TypeSubrangeRange(LONG_INTEGER,     2, LONG_INTEGER,     LONG_INTEGER_MIN,  LONG_INTEGER_MAX,  true);
+		new TypeSubrangeRange(UNSPECIFIED,      1, UNSPECIFIED,      CARDINAL_MIN,      CARDINAL_MAX,      true);
+		new TypeSubrangeRange(LONG_UNSPECIFIED, 2, LONG_UNSPECIFIED, LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
+		new TypeSubrangeRange(POINTER,          1, POINTER,          CARDINAL_MIN,      CARDINAL_MAX,      true);
+		new TypeSubrangeRange(LONG_POINTER,     2, LONG_POINTER,     LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
+	}
+	
+	public static Long getNumericValue(String value) {
+		if (value.matches("^[0-9]")) {
+			// number
+			if (value.matches("^[0-9]+[Bb]$")) {
+				// octal
+				return Long.parseUnsignedLong(value.substring(0, value.length() - 1), 8);
+			} else if (value.matches("^[0-9]+[Xx]$")) {
+				// hexadecimal
+				return Long.parseUnsignedLong(value.substring(0, value.length() - 1), 16);
+			} else if (value.matches("^[0-9]$")) {
+				// decimal
+				return Long.parseUnsignedLong(value.substring(0, value.length()), 10);
+			} else {
+				logger.error("Unexpected value");
+				logger.error("  value {}", value);
+				throw new UnexpectedException("Unexpected value");
+			}
+		} else {
+			// symbol
+			return null;
+		}
 	}
 }

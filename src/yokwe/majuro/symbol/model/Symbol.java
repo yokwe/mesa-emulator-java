@@ -16,7 +16,7 @@ import yokwe.majuro.symbol.antlr.SymbolBaseVisitor;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeRangeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeCardinalContext;
@@ -99,21 +99,20 @@ public class Symbol {
 		}
 
 		// SUBRANGE
-		@Override public Type visitTypeSubrangeType(SymbolParser.TypeSubrangeTypeContext context) {
-			RangeTypeContext rangeTypeContext = context.rangeType();
-			if (rangeTypeContext != null) {
-				String typeName = rangeTypeContext.name.getText();
-				
-				return new TypeSubrangeFull(name, typeName);
-			} else {
-				logger.error("Unexpected rangeTypeContext");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected rangeTypeContext");
-			}
-		}
 		@Override public Type visitTypeSubrangeTypeRange(SymbolParser.TypeSubrangeTypeRangeContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			RangeTypeRangeContext rangeTypeRangeContext = context.rangeTypeRange();
+			if (rangeTypeRangeContext != null) {
+				String baseName   = rangeTypeRangeContext.name == null ? Type.CARDINAL : rangeTypeRangeContext.name.getText();
+				String startIndex = rangeTypeRangeContext.startIndex.getText();
+				String stopIndex  = rangeTypeRangeContext.stopIndex.getText();
+				String closeChar  = rangeTypeRangeContext.getText();
+				
+				return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
+			} else {
+				logger.error("Unexpected rangeTypeRangeContext");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected rangeTypeRangeContext");
+			}
 		}
 		
 		// RECORD
@@ -209,8 +208,10 @@ public class Symbol {
 		logger.info("symbol {}", symbol);
 		
 		Type.fixAll();
-		
 		Type.stats();
+		
+		Const.fixAll();
+		Const.stats();
 		
 		logger.info("STOP");
 	}
