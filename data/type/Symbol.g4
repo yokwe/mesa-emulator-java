@@ -78,7 +78,7 @@ rangeType
     ;
    
 rangeTypeRange
-    :    (name=ID)? '[' start=constant '..' stop=constant closeChar=(']' | ')')
+    :    (name=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')')
     ;
 
 // qName qualified name
@@ -176,8 +176,7 @@ eumElement
 // SUBRANGE
 //
 subrangeType
-    :   rangeType      # TypeSubrangeType
-    |   rangeTypeRange # TypeSubrangeTypeRange
+    :   rangeTypeRange # TypeSubrangeTypeRange
     ;
 
 
@@ -202,7 +201,7 @@ fieldName
     ;
     
 bitfieldName
-    :   name=ID '(' offset=positive_number ':' bitStart=positive_number '..' bitStop=positive_number ')' # TypeBitfieldName
+    :   name=ID '(' offset=positive_number ':' startPos=positive_number '..' stopPos=positive_number ')' # TypeBitfieldName
     ;
 
 fieldType
