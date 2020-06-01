@@ -204,13 +204,6 @@ public interface SymbolVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEumElement(SymbolParser.EumElementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code TypeSubrangeType}
-	 * labeled alternative in {@link SymbolParser#subrangeType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSubrangeType(SymbolParser.TypeSubrangeTypeContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code TypeSubrangeTypeRange}
 	 * labeled alternative in {@link SymbolParser#subrangeType}.
 	 * @param ctx the parse tree
