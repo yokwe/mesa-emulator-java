@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
-import yokwe.majuro.symbol.antlr.model.Symbol;
+import yokwe.majuro.symbol.model.Symbol;
 
 public class TestSymbolRule {
 	private static final Logger logger = LoggerFactory.getLogger(TestSymbolRule.class);
