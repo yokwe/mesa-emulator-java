@@ -1,3 +1,28 @@
+/*******************************************************************************
+ * Copyright (c) 2020, Yasuhiro Hasegawa
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
+ *      and/or other materials provided with the distribution.
+ *   3. The name of the author may not be used to endorse or promote products derived
+ *      from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
+ *******************************************************************************/
 package yokwe.majuro.symbol.model;
 
 import java.lang.reflect.Modifier;
@@ -18,64 +43,58 @@ public class Const {
 	public final TypeSubrange typeSubrange;
 	
 	public       boolean needsFix;
-	public       Long    numericValue;
+	public       long    numericValue;
 	
 	public Const(String name, String typeName, String value) {
-		// sanity check
-		TypeSubrange typeSubrange;
-		{
-			Type type = Type.get(typeName);
-			if (type.isSubrange()) {
-				typeSubrange = (TypeSubrange)type;
-			} else {
-				logger.error("Unexpected type");
-				logger.error("  typeName {}", typeName);
-				logger.error("  type     {}", type);
-				throw new UnexpectedException("Unexpected type");
-			}
-		}
-
 		this.name         = name;
 		this.typeName     = typeName;
 		this.stringValue  = value;
-		this.typeSubrange = typeSubrange;
+
+		this.typeSubrange = Type.getSubrange(typeName);
+		this.numericValue = 0;	
+		
 		this.needsFix     = true;
-		this.numericValue = null;
 		
 		fix();
 		
 		register(this);
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("{%s %s %s %s %s}", name, typeName, stringValue, needsFix, numericValue);
+	}
+	
+	// special constructor for Type.XXX_VALUE
 	public Const(String name, String typeName, long value) {
-		// sanity check
 		this.name         = name;
 		this.typeName     = typeName;
 		this.stringValue  = null;
+		
 		this.typeSubrange = null;
-		this.needsFix     = false;
 		this.numericValue = value;
 		
-		register(this);
-	}
+		this.needsFix     = false;
 
-	
-	public boolean hasNumeriValue() {
-		return numericValue != null;
+		register(this);
 	}
 	
 	public void fix() {
-		if (this.needsFix) {
-			if (Type.getNumericValue(stringValue) != null) {
-				this.numericValue = Type.getNumericValue(stringValue);
-				this.needsFix = false;
+		if (needsFix) {
+			Long longValue = Type.getNumericValue(stringValue);
+			if (longValue != null) {
+				this.numericValue = longValue;
+				this.needsFix     = false;
 			} else {
 				if (stringValue.contains(".")) {
+					// If stringValue is qualified name, take value from target static field
 					this.numericValue = getNumericStaticFieldValue(stringValue);
-					this.needsFix = false;
+					this.needsFix     = false;
 				} else {
+					// If stringValue is NOT qualified name, take value from map
 					if (map.containsKey(stringValue)) {
 						Const nextConst = map.get(stringValue);
-						if (nextConst.needsFix) nextConst.fix();
+						nextConst.fix();
 						if (!nextConst.needsFix) {
 							this.numericValue = nextConst.numericValue;
 							this.needsFix = false;
@@ -86,14 +105,9 @@ public class Const {
 			
 			// Sanity check
 			if (!needsFix) {
-				typeSubrange.checkValue(this.numericValue);
+				typeSubrange.checkValue(numericValue);
 			}
 		}
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("{%s %s %s %s %s}", name, typeName, stringValue, needsFix, numericValue);
 	}
 	
 	public static Map<String, Const> map = new TreeMap<>();
@@ -143,7 +157,8 @@ public class Const {
 			logger.info("  == needs fix");
 			for(Const e: map.values()) {
 				if (!e.needsFix) continue;
-				logger.info("{}", String.format("%-14s %-10s %s", e.name, e.typeName, e.stringValue));
+				logger.info("{}", String.format("%-14s %-10s %s %s", e.name, e.typeName, e.stringValue, e.numericValue));
+				logger.info("{}", String.format("    %s", e.typeSubrange));
 			}
 		}
 		logger.info("  == fixed");
