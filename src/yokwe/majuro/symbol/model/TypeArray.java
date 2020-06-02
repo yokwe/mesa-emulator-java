@@ -50,7 +50,7 @@ public abstract class TypeArray extends Type {
 	public       long rangeMax;
 
 	protected TypeArray(String name, int size, RecordKind recordKind, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
-		super(name, Kind.SUBRANGE, size);
+		super(name, Kind.ARRAY, size);
 		
 		this.recordKind        = recordKind;
 		this.elementType       = new TypeReference(name + "#element", elementName);
@@ -69,7 +69,7 @@ public abstract class TypeArray extends Type {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %s %s %s %s}", name, kind, size, elementType, indexType, rangeMinConst, rangeMaxConst);
+		return String.format("{%s %s %d %s %s %s %s}", name, kind, size, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
 	}
 
 	@Override
@@ -105,7 +105,12 @@ public abstract class TypeArray extends Type {
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					baseType.checkValue(rangeMin, rangeMax);
+					
+					if (rangeMinConst.numericValue == rangeMaxConst.numericValue && !rangeMaxInclusive) {
+						// don't check for open array [0..0)
+					} else {
+						baseType.checkValue(rangeMin, rangeMax);
+					}
 				}
 					break;
 				default:
