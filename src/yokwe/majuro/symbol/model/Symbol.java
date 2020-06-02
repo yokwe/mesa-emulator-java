@@ -171,7 +171,7 @@ public class Symbol {
 			String baseName   = rangeTypeRangeContext.name == null ? Type.CARDINAL : rangeTypeRangeContext.name.getText();
 			String startIndex = rangeTypeRangeContext.startIndex.getText();
 			String stopIndex  = rangeTypeRangeContext.stopIndex.getText();
-			String closeChar  = rangeTypeRangeContext.getText();
+			String closeChar  = rangeTypeRangeContext.closeChar.getText();
 			
 			return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
 		}
@@ -229,7 +229,6 @@ public class Symbol {
 			TypeTypeContext typeType = context.typeType();
 			
 			logger.info("TYPE   {} == {}", name, typeType.getText());
-			logger.info("       {}", name, typeType.getText());
 			
 			TypeVisitors typeVisitors = new TypeVisitors(name);
 			
