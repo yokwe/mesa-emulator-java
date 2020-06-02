@@ -83,22 +83,29 @@ public abstract class TypeArray extends Type {
 			if (!indexType.needsFix && !elementType.needsFix && !rangeMinConst.needsFix && !rangeMaxConst.needsFix) {				
 				long rangeMin = rangeMinConst.numericValue;
 				long rangeMax = rangeMaxConst.numericValue + (rangeMaxInclusive ? 0 : -1);
-				int length;
+				long length   = rangeMax - rangeMin + 1;
+				long size     = elementType.size * length;
 				
 				// sanity check
+				if (Type.CARDINAL_MAX < size) {
+					logger.error("Unexpected size");
+					logger.error("  rangeMin {}", rangeMin);
+					logger.error("  rangeMax {}", rangeMax);
+					logger.error("  length   {}", length);
+					logger.error("  size     {}", size);
+					throw new UnexpectedException("Unexpected size");
+				}
 				switch(indexType.baseType.kind) {
 				case ENUM:
 				{
 					TypeEnum baseType = (TypeEnum)indexType.baseType;
 					baseType.checkValue(rangeMin, rangeMax);
-					length = baseType.length;
 				}
 					break;
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
 					baseType.checkValue(rangeMin, rangeMax);
-					length = baseType.length;
 				}
 					break;
 				default:
@@ -107,7 +114,7 @@ public abstract class TypeArray extends Type {
 					throw new UnexpectedException("Unexpected indexType");
 				}
 
-				this.size     = elementType.size * length;
+				this.size     = (int)size;
 				this.rangeMin = rangeMin;
 				this.rangeMax = rangeMax;
 				
