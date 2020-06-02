@@ -45,6 +45,7 @@ import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeRangeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.ReferenceTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SimpleTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeCardinalContext;
@@ -127,11 +128,23 @@ public class Symbol {
 				logger.error("  context {}", context.getText());
 				throw new UnexpectedException("Unexpected arrayTypeElement is null");
 			}
+			String indexName = rangeType.name.getText();
 			
-			// FIXME
+			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
+			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
+
+			if (simpleType != null) {
+				Type type = simpleTypeVisitor.visit(simpleType);
+				return new TypeArrayFull(name, type.name, indexName);
+			} else if (referenceType != null) {
+				TypeRefContext typeRef = (TypeRefContext)referenceType;
+				return new TypeArrayFull(name, typeRef.name.getText(), indexName);
+			} else {
+				logger.error("Unexpected arrayTypeElement");
+				logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
+				throw new UnexpectedException("Unexpected arrayTypeElement");
+			}
 			
-			logger.info("  {}", context.getClass().getName());
-			return null;
 		}
 		@Override public Type visitTypeArrayRange(SymbolParser.TypeArrayRangeContext context) {
 			// ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
@@ -149,9 +162,25 @@ public class Symbol {
 				throw new UnexpectedException("Unexpected arrayTypeElement is null");
 			}
 			
-			// FIXME
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			String indexName  = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
+			String startIndex = rangeTypeRange.startIndex.getText();
+			String stopIndex  = rangeTypeRange.stopIndex.getText();
+			String closeChar  = rangeTypeRange.closeChar.getText();
+
+			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
+			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
+
+			if (simpleType != null) {
+				Type type = simpleTypeVisitor.visit(simpleType);
+				return new TypeArraySubrange(name, type.name, indexName, startIndex, stopIndex, closeChar.equals("]"));
+			} else if (referenceType != null) {
+				TypeRefContext typeRef = (TypeRefContext)referenceType;
+				return new TypeArraySubrange(name, typeRef.name.getText(), indexName, startIndex, stopIndex, closeChar.equals("]"));
+			} else {
+				logger.error("Unexpected arrayTypeElement");
+				logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
+				throw new UnexpectedException("Unexpected arrayTypeElement");
+			}
 		}
 		
 		// ENUM
@@ -162,16 +191,16 @@ public class Symbol {
 
 		// SUBRANGE
 		@Override public Type visitTypeSubrangeTypeRange(SymbolParser.TypeSubrangeTypeRangeContext context) {
-			RangeTypeRangeContext rangeTypeRangeContext = context.rangeTypeRange();
-			if (rangeTypeRangeContext == null) {
+			RangeTypeRangeContext rangeTypeRange = context.rangeTypeRange();
+			if (rangeTypeRange == null) {
 				logger.error("Unexpected rangeTypeRangeContext");
 				logger.error("  context {}", context.getText());
 				throw new UnexpectedException("Unexpected rangeTypeRangeContext");
 			}
-			String baseName   = rangeTypeRangeContext.name == null ? Type.CARDINAL : rangeTypeRangeContext.name.getText();
-			String startIndex = rangeTypeRangeContext.startIndex.getText();
-			String stopIndex  = rangeTypeRangeContext.stopIndex.getText();
-			String closeChar  = rangeTypeRangeContext.closeChar.getText();
+			String baseName   = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
+			String startIndex = rangeTypeRange.startIndex.getText();
+			String stopIndex  = rangeTypeRange.stopIndex.getText();
+			String closeChar  = rangeTypeRange.closeChar.getText();
 			
 			return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
 		}
@@ -221,6 +250,54 @@ public class Symbol {
 			return new TypeReference(name, Type.LONG_POINTER);
 		}
 	}
+	
+	private static final SymbolBaseVisitor<Type> simpleTypeVisitor = new SymbolBaseVisitor<>() {
+		@Override
+		public Type visitTypeBoolean(SymbolParser.TypeBooleanContext ctx) {
+			return Type.BOOL_VALUE;
+		}
+
+		@Override
+		public Type visitTypeCardinal(SymbolParser.TypeCardinalContext ctx) {
+			return Type.CARDINAL_VALUE;
+		}
+
+		@Override
+		public Type visitTypeLongCardinal(SymbolParser.TypeLongCardinalContext ctx) {
+			return Type.LONG_CARDINAL_VALUE;
+		}
+
+		@Override
+		public Type visitTypeInteger(SymbolParser.TypeIntegerContext ctx) {
+			return Type.INTEGER_VALUE;
+		}
+
+		@Override
+		public Type visitTypeLongInteger(SymbolParser.TypeLongIntegerContext ctx) {
+			return Type.LONG_INTEGER_VALUE;
+		}
+
+		@Override
+		public Type visitTypeUnspecified(SymbolParser.TypeUnspecifiedContext ctx) {
+			return Type.UNSPECIFIED_VALUE;
+		}
+
+		@Override
+		public Type visitTypeLongUnspecified(SymbolParser.TypeLongUnspecifiedContext ctx) {
+			return Type.LONG_UNSPECIFIED_VALUE;
+		}
+
+		@Override
+		public Type visitTypePointer(SymbolParser.TypePointerContext ctx) {
+			return Type.POINTER_VALUE;
+		}
+
+		@Override
+		public Type visitTypeLongPointer(SymbolParser.TypeLongPointerContext ctx) {
+			return Type.LONG_POINTER_VALUE;
+		}
+	};
+
 
 	private static final SymbolBaseVisitor<Type> declTypeVisitor = new SymbolBaseVisitor<>() {
 		@Override
