@@ -82,7 +82,7 @@ public abstract class TypeArray extends Type {
 			
 			if (!indexType.needsFix && !elementType.needsFix && !rangeMinConst.needsFix && !rangeMaxConst.needsFix) {				
 				long rangeMin = rangeMinConst.numericValue;
-				long rangeMax = rangeMaxConst.numericValue;
+				long rangeMax = rangeMaxConst.numericValue + (rangeMaxInclusive ? 0 : -1);
 				int length;
 				
 				// sanity check
