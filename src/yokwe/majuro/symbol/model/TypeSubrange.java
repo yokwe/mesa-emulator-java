@@ -112,7 +112,8 @@ public abstract class TypeSubrange extends Type {
 
 	@Override
 	public String toString() {
-		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType, valueMin, valueMax, valueMaxInclusive);
+//		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType, valueMin, valueMax, valueMaxInclusive);
+		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType.baseName, valueMin, valueMax, valueMaxInclusive);
 	}
 	
 	private static Set<String> predefinedNameSet = new TreeSet<>();
@@ -142,8 +143,8 @@ public abstract class TypeSubrange extends Type {
 				}
 				
 				long valueMin = valueMinConst.numericValue;
-				long valueMax = valueMaxConst.numericValue;
-				long length = valueMax - valueMin + 1;
+				long valueMax = valueMaxConst.numericValue + (valueMaxInclusive ? 0 : -1);
+				long length   = valueMax - valueMin + 1;
 				// sanity check
 				if (length < 0) {
 					logger.error("Unexpected length");
@@ -167,7 +168,7 @@ public abstract class TypeSubrange extends Type {
 				
 				this.size     = baseType.size;
 				this.valueMin = valueMin;
-				this.valueMax = valueMax + (valueMaxInclusive ? 0 : -1);
+				this.valueMax = valueMax;
 				this.length   = (int)length;
 				this.needsFix = false;
 			}
