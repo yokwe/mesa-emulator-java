@@ -26,6 +26,8 @@
 package yokwe.majuro.symbol.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,6 +44,8 @@ import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
 import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeElementContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.EnumElementListContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.EumElementContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeRangeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.ReferenceTypeContext;
@@ -58,6 +62,7 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeRefContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
+import yokwe.majuro.symbol.model.TypeEnum.Element;
 
 public class Symbol {
 	private static final Logger logger = LoggerFactory.getLogger(Symbol.class);
@@ -185,8 +190,26 @@ public class Symbol {
 		
 		// ENUM
 		@Override public Type visitTypeEnum(SymbolParser.TypeEnumContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
+			EnumElementListContext enumElementList = context.enumElementList();
+			if (enumElementList == null) {
+				logger.error("Unexpected enumElementList");
+				logger.error("  context {}", context.getText());
+				throw new UnexpectedException("Unexpected enumElementList");
+			}
+			List<Element> elementList = new ArrayList<>();
+			for(EumElementContext e: enumElementList.elements) {
+				String name  = e.numberedName().name.getText();
+				long   value = Type.getNumericValue(e.numberedName().value.getText());
+				if (Type.CARDINAL_MAX < value) {
+					logger.error("Unexpeced value");
+					logger.error("  value {}", value);
+					throw new UnexpectedException("Unexpeced value");
+				}
+				
+				elementList.add(new TypeEnum.Element(name, (int)value));
+			}
+			
+			return new TypeEnum(name, elementList);
 		}
 
 		// SUBRANGE
