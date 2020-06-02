@@ -77,6 +77,15 @@ public abstract class Type {
 			throw new UnexpectedException("Unexpected name");
 		}
 	}
+	public static TypeSubrange getSubrange(String name) {
+		Type type = get(name);
+		if (type.isSubrange()) return (TypeSubrange)type;
+		
+		logger.error("Unexpected type");
+		logger.error("  name {}", name);
+		logger.error("  type {}", type);
+		throw new UnexpectedException("Unexpected type");
+	}
 	
 	public static void fixAll() {
 		for(Type type: map.values()) {
@@ -144,10 +153,10 @@ public abstract class Type {
 	public static final long LONG_CARDINAL_MAX = (1L << 32) - 1;
 
 	public static final long INTEGER_MIN = Integer.MIN_VALUE;
-	public static final long INTEGER_MAX = Integer.MIN_VALUE;
+	public static final long INTEGER_MAX = Integer.MAX_VALUE;
 
 	public static final long LONG_INTEGER_MIN = Long.MIN_VALUE;
-	public static final long LONG_INTEGER_MAX = Long.MIN_VALUE;
+	public static final long LONG_INTEGER_MAX = Long.MAX_VALUE;
 
 	public static final String BOOL             = "BOOL";
 	public static final String CARDINAL         = "CARDINAL";
@@ -159,39 +168,43 @@ public abstract class Type {
 	public static final String POINTER          = "POINTER";
 	public static final String LONG_POINTER     = "LONG_POINTER";
 	
-	// Define predefined class
+	// Define predefined type
+	public static final TypeBool     BOOL_VALUE;
+	public static final TypeSubrange CARDINAL_VALUE;
+	public static final TypeSubrange LONG_CARDINAL_VALUE;
+	public static final TypeSubrange INTEGER_VALUE;
+	public static final TypeSubrange LONG_INTEGER_VALUE;
+	public static final TypeSubrange UNSPECIFIED_VALUE;
+	public static final TypeSubrange LONG_UNSPECIFIED_VALUE;
+	public static final TypeSubrange POINTER_VALUE;
+	public static final TypeSubrange LONG_POINTER_VALUE;
+
 	static {
-		new TypeBool();
-		new TypeSubrangeRange(CARDINAL,         1, CARDINAL,         CARDINAL_MIN,      CARDINAL_MAX,      true);
-		new TypeSubrangeRange(LONG_CARDINAL,    2, LONG_CARDINAL,    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
-		new TypeSubrangeRange(INTEGER,          1, INTEGER,          INTEGER_MIN,       INTEGER_MAX,       true);
-		new TypeSubrangeRange(LONG_INTEGER,     2, LONG_INTEGER,     LONG_INTEGER_MIN,  LONG_INTEGER_MAX,  true);
-		new TypeSubrangeRange(UNSPECIFIED,      1, UNSPECIFIED,      CARDINAL_MIN,      CARDINAL_MAX,      true);
-		new TypeSubrangeRange(LONG_UNSPECIFIED, 2, LONG_UNSPECIFIED, LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
-		new TypeSubrangeRange(POINTER,          1, POINTER,          CARDINAL_MIN,      CARDINAL_MAX,      true);
-		new TypeSubrangeRange(LONG_POINTER,     2, LONG_POINTER,     LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
+		BOOL_VALUE             = new TypeBool();
+		CARDINAL_VALUE         = new TypeSubrangeRange(CARDINAL,         1, CARDINAL,         CARDINAL_MIN,      CARDINAL_MAX,      true);
+		LONG_CARDINAL_VALUE    = new TypeSubrangeRange(LONG_CARDINAL,    2, LONG_CARDINAL,    LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
+		INTEGER_VALUE          = new TypeSubrangeRange(INTEGER,          1, INTEGER,          INTEGER_MIN,       INTEGER_MAX,       true);
+		LONG_INTEGER_VALUE     = new TypeSubrangeRange(LONG_INTEGER,     2, LONG_INTEGER,     LONG_INTEGER_MIN,  LONG_INTEGER_MAX,  true);
+		UNSPECIFIED_VALUE      = new TypeSubrangeRange(UNSPECIFIED,      1, UNSPECIFIED,      CARDINAL_MIN,      CARDINAL_MAX,      true);
+		LONG_UNSPECIFIED_VALUE = new TypeSubrangeRange(LONG_UNSPECIFIED, 2, LONG_UNSPECIFIED, LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
+		POINTER_VALUE          = new TypeSubrangeRange(POINTER,          1, POINTER,          CARDINAL_MIN,      CARDINAL_MAX,      true);
+		LONG_POINTER_VALUE     = new TypeSubrangeRange(LONG_POINTER,     2, LONG_POINTER,     LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
 	}
 	
 	public static Long getNumericValue(String value) {
-		if (value.matches("^[0-9]")) {
-			// number
-			if (value.matches("^[0-9]+[Bb]$")) {
-				// octal
-				return Long.parseUnsignedLong(value.substring(0, value.length() - 1), 8);
-			} else if (value.matches("^[0-9]+[Xx]$")) {
-				// hexadecimal
-				return Long.parseUnsignedLong(value.substring(0, value.length() - 1), 16);
-			} else if (value.matches("^[0-9]$")) {
-				// decimal
-				return Long.parseUnsignedLong(value.substring(0, value.length()), 10);
-			} else {
-				logger.error("Unexpected value");
-				logger.error("  value {}", value);
-				throw new UnexpectedException("Unexpected value");
-			}
-		} else {
-			// symbol
-			return null;
+		if (value.matches("^-?[0-9]+$")) {
+			// decimal
+			return Long.parseUnsignedLong(value.substring(0, value.length()), 10);
 		}
+		if (value.matches("^[0-9]+[Bb]$")) {
+			// octal
+			return Long.parseUnsignedLong(value.substring(0, value.length() - 1), 8);
+		}
+		if (value.matches("^[0-9][0-9A-Fa-f]+[Xx]$")) {
+			// hexadecimal
+			return Long.parseUnsignedLong(value.substring(0, value.length() - 1), 16);
+		}
+
+		return null;
 	}
 }
