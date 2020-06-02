@@ -152,7 +152,6 @@ arrayTypeRange
 
 arrayTypeElement
     :   simpleType
-    |   recordType
     |   referenceType
     ;
 
