@@ -134,7 +134,7 @@ public class Symbol {
 			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
 
 			if (simpleType != null) {
-				Type type = simpleTypeVisitor.visit(simpleType);
+				Type type = getType(simpleType);
 				return new TypeArrayFull(name, type.name, indexName);
 			} else if (referenceType != null) {
 				TypeRefContext typeRef = (TypeRefContext)referenceType;
@@ -171,7 +171,7 @@ public class Symbol {
 			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
 
 			if (simpleType != null) {
-				Type type = simpleTypeVisitor.visit(simpleType);
+				Type type = getType(simpleType);
 				return new TypeArraySubrange(name, type.name, indexName, startIndex, stopIndex, closeChar.equals("]"));
 			} else if (referenceType != null) {
 				TypeRefContext typeRef = (TypeRefContext)referenceType;
@@ -220,84 +220,23 @@ public class Symbol {
 			String baseName = context.name.getText();
 			return new TypeReference(name, baseName);
 		}
-		
-		// SIMPLE
-		@Override public Type visitTypeBoolean(TypeBooleanContext context) {
-			return new TypeReference(name, Type.BOOL);
-		}
-		@Override public Type visitTypeCardinal(TypeCardinalContext context) {
-			return new TypeReference(name, Type.CARDINAL);
-		}
-		@Override public Type visitTypeLongCardinal(TypeLongCardinalContext context) {
-			return new TypeReference(name, Type.LONG_CARDINAL);
-		}
-		@Override public Type visitTypeInteger(TypeIntegerContext context) {
-			return new TypeReference(name, Type.INTEGER);
-		}
-		@Override public Type visitTypeLongInteger(TypeLongIntegerContext context) {
-			return new TypeReference(name, Type.LONG_INTEGER);
-		}
-		@Override public Type visitTypeUnspecified(TypeUnspecifiedContext context) {
-			return new TypeReference(name, Type.UNSPECIFIED);
-		}
-		@Override public Type visitTypeLongUnspecified(TypeLongUnspecifiedContext context) {
-			return new TypeReference(name, Type.LONG_UNSPECIFIED);
-		}
-		@Override public Type visitTypePointer(TypePointerContext context) {
-			return new TypeReference(name, Type.POINTER);
-		}
-		@Override public Type visitTypeLongPointer(TypeLongPointerContext context) {
-			return new TypeReference(name, Type.LONG_POINTER);
-		}
 	}
 	
-	private static final SymbolBaseVisitor<Type> simpleTypeVisitor = new SymbolBaseVisitor<>() {
-		@Override
-		public Type visitTypeBoolean(SymbolParser.TypeBooleanContext ctx) {
-			return Type.BOOL_VALUE;
-		}
-
-		@Override
-		public Type visitTypeCardinal(SymbolParser.TypeCardinalContext ctx) {
-			return Type.CARDINAL_VALUE;
-		}
-
-		@Override
-		public Type visitTypeLongCardinal(SymbolParser.TypeLongCardinalContext ctx) {
-			return Type.LONG_CARDINAL_VALUE;
-		}
-
-		@Override
-		public Type visitTypeInteger(SymbolParser.TypeIntegerContext ctx) {
-			return Type.INTEGER_VALUE;
-		}
-
-		@Override
-		public Type visitTypeLongInteger(SymbolParser.TypeLongIntegerContext ctx) {
-			return Type.LONG_INTEGER_VALUE;
-		}
-
-		@Override
-		public Type visitTypeUnspecified(SymbolParser.TypeUnspecifiedContext ctx) {
-			return Type.UNSPECIFIED_VALUE;
-		}
-
-		@Override
-		public Type visitTypeLongUnspecified(SymbolParser.TypeLongUnspecifiedContext ctx) {
-			return Type.LONG_UNSPECIFIED_VALUE;
-		}
-
-		@Override
-		public Type visitTypePointer(SymbolParser.TypePointerContext ctx) {
-			return Type.POINTER_VALUE;
-		}
-
-		@Override
-		public Type visitTypeLongPointer(SymbolParser.TypeLongPointerContext ctx) {
-			return Type.LONG_POINTER_VALUE;
-		}
-	};
-
+	private static Type getType(SimpleTypeContext context) {
+		if (context instanceof TypeBooleanContext)         return Type.BOOL_VALUE;
+		if (context instanceof TypeCardinalContext)        return Type.CARDINAL_VALUE;
+		if (context instanceof TypeLongCardinalContext)    return Type.LONG_CARDINAL_VALUE;
+		if (context instanceof TypeIntegerContext)         return Type.INTEGER_VALUE;
+		if (context instanceof TypeLongIntegerContext)     return Type.LONG_INTEGER_VALUE;
+		if (context instanceof TypeUnspecifiedContext)     return Type.UNSPECIFIED_VALUE;
+		if (context instanceof TypeLongUnspecifiedContext) return Type.LONG_UNSPECIFIED_VALUE;
+		if (context instanceof TypePointerContext)         return Type.POINTER_VALUE;
+		if (context instanceof TypeLongPointerContext)     return Type.LONG_POINTER_VALUE;
+		
+		logger.error("Unexpected clazz");
+		logger.error("  context {}", context.getClass().getName());
+		throw new UnexpectedException("Unexpected clazz");
+	}
 
 	private static final SymbolBaseVisitor<Type> declTypeVisitor = new SymbolBaseVisitor<>() {
 		@Override
