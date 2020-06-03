@@ -46,14 +46,12 @@ public abstract class TypeSubrange extends Type {
 	protected int  length;
 	
 	public TypeSubrange(String name, int size, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
-		super(name, Kind.SUBRANGE, size);
+		super(name, Kind.SUBRANGE);
 		
 		this.baseType          = new TypeReference(name + "#base", baseName);
 		this.valueMinConst     = new Constant(name + "#valueMin", Type.LONG_CARDINAL, valueMin);
 		this.valueMaxConst     = new Constant(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
 		this.valueMaxInclusive = valueMaxInclusive;
-		
-		this.needsFix = true;
 		
 		fix();
 	}
@@ -66,41 +64,41 @@ public abstract class TypeSubrange extends Type {
 		this.valueMaxConst     = new Constant(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
 		this.valueMaxInclusive = valueMaxInclusive;
 		
-		this.needsFix = true;
-		
-		fix();
+		this.valueMin = valueMin;
+		this.valueMax = valueMax + (valueMaxInclusive ? 0 : -1);
+		this.length   = -1;
 	}
 	public TypeSubrange(String name, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		this(name, Type.UNKNOWN_SIZE, baseName, valueMin, valueMax, valueMaxInclusive);
 	}
 	
 	public long getValueMin() {
-		if (needsFix) {
+		if (needsFix()) {
 			logger.error("Unexpected needsFix");
-			logger.error("  needsFix {}", needsFix);
+			logger.error("  needsFix {}", needsFix());
 			throw new UnexpectedException("Unexpected needsFix");
 		}
 		return valueMin;
 	}
 	public long getValueMax() {
-		if (needsFix) {
+		if (needsFix()) {
 			logger.error("Unexpected needsFix");
-			logger.error("  needsFix {}", needsFix);
+			logger.error("  needsFix {}", needsFix());
 			throw new UnexpectedException("Unexpected needsFix");
 		}
 		return valueMax;
 	}
 	public long getLength() {
-		if (needsFix) {
+		if (needsFix()) {
 			logger.error("Unexpected needsFix");
-			logger.error("  needsFix {}", needsFix);
+			logger.error("  needsFix {}", needsFix());
 			throw new UnexpectedException("Unexpected needsFix");
 		}
 		return length;
 	}
 	
 	public void checkValue(long valueMax, long valueMin) {
-		if (!needsFix) {
+		if (hasValue()) {
 			if (valueMin < getValueMin()) {
 				logger.error("Unexpected rangeMin");
 				logger.error("  rangeMin {}", valueMin);
@@ -117,7 +115,7 @@ public abstract class TypeSubrange extends Type {
 	}
 
 	public void checkValue(long value) {
-		if (!needsFix) {
+		if (hasValue()) {
 			if (value < getValueMin()) {
 				logger.error("Unexpected value");
 				logger.error("  value    {}", value);
@@ -138,7 +136,11 @@ public abstract class TypeSubrange extends Type {
 	@Override
 	public String toString() {
 //		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType, valueMin, valueMax, valueMaxInclusive);
-		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType.baseName, valueMin, valueMax, valueMaxInclusive);
+		if (hasValue()) {
+			return String.format("{%s %d %s %s %s %s %s}", name, getSize(), kind, baseType.baseName, valueMin, valueMax, valueMaxInclusive);
+		} else {
+			return String.format("{%s %s %s %s %s %s %s}", name, "*UNKNOWN*", kind, baseType.baseName, valueMin, valueMax, valueMaxInclusive);
+		}
 	}
 	
 	private static Set<String> predefinedNameSet = new TreeSet<>();
@@ -155,12 +157,14 @@ public abstract class TypeSubrange extends Type {
 
 	@Override
 	protected void fix() {
-		if (needsFix) {
+		if (needsFix()) {
+			logger.info("this {}", name);
+			
 			baseType.fix();
 			valueMinConst.fix();
 			valueMaxConst.fix();
 			
-			if (!baseType.needsFix && !valueMinConst.needsFix && !valueMaxConst.needsFix) {
+			if (baseType.hasValue() && valueMinConst.hasValue() && valueMaxConst.hasValue()) {
 				if (!baseType.baseType.isSubrange()) {
 					logger.error("Unexpected baseType");
 					logger.error("  baseType {}", baseType);
@@ -191,11 +195,11 @@ public abstract class TypeSubrange extends Type {
 					}		
 				}
 				
-				this.size     = baseType.size;
 				this.valueMin = valueMin;
 				this.valueMax = valueMax;
 				this.length   = (int)length;
-				this.needsFix = false;
+				
+				setSize(baseType.getSize());
 			}
 		}
 	}
@@ -212,7 +216,7 @@ class TypeSubrangeFull extends TypeSubrange {
 		{
 			baseType.fix();
 			
-			if (!baseType.needsFix) {
+			if (baseType.hasValue()) {
 				if (!baseType.baseType.isSubrange()) {
 					logger.error("Unexpected baseType");
 					logger.error("  baseType {}", baseType);

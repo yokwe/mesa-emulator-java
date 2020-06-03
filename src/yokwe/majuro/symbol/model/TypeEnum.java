@@ -94,32 +94,28 @@ public class TypeEnum extends Type {
 		return length;
 	}
 
-	// FIXME change to rangeMin rangeMax
 	public void checkValue(long rangeMax, long rangeMin) {
-		if (!needsFix) {
-			if (rangeMin < this.valueMin) {
-				logger.error("Unexpected rangeMin");
-				logger.error("  rangeMin {}", rangeMin);
-				logger.error("  valueMin {}", this.valueMin);
-				throw new UnexpectedException("Unexpected rangeMin");
-			}
-			if (this.valueMax < rangeMax) {
-				logger.error("Unexpected rangeMax");
-				logger.error("  rangeMax {}", rangeMax);
-				logger.error("  valueMax {}", this.valueMax);
-				throw new UnexpectedException("Unexpected rangeMax");
-			}
+		if (rangeMin < this.valueMin) {
+			logger.error("Unexpected rangeMin");
+			logger.error("  rangeMin {}", rangeMin);
+			logger.error("  valueMin {}", this.valueMin);
+			throw new UnexpectedException("Unexpected rangeMin");
+		}
+		if (this.valueMax < rangeMax) {
+			logger.error("Unexpected rangeMax");
+			logger.error("  rangeMax {}", rangeMax);
+			logger.error("  valueMax {}", this.valueMax);
+			throw new UnexpectedException("Unexpected rangeMax");
 		}
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %d %d %s}", name, kind, size, valueMin, valueMax, elementList);
+		return String.format("{%s %s %d %d %d %s}", name, kind, getSize(), valueMin, valueMax, elementList);
 //		return String.format("{%s %s %d %s}", name, kind, size, elementList);
 	}
 	
 	@Override
 	protected void fix() {
-		this.needsFix = false;
 	}
 }

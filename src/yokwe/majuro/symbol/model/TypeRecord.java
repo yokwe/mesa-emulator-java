@@ -45,25 +45,28 @@ public class TypeRecord extends Type {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %s}", name, kind, size, fieldList);
+		if (hasValue()) {
+			return String.format("{%s %s %d %s}", name, kind, getSize(), fieldList);
+		} else {
+			return String.format("{%s %s %s %s}", name, kind, "*UNKNOWN*", fieldList);
+		}
 	}
 	
 	@Override
 	protected void fix() {
-		if (needsFix) {
+		if (needsFix()) {
 			boolean foundProblem = false;
 			int recordSize = 0;
 			for(Field field: fieldList) {
-				if (field.needsFix) field.fix();
-				if (field.needsFix) {
+				field.fix();
+				if (field.needsFix()) {
 					foundProblem = true;
 				} else {
-					recordSize += field.size;
+					recordSize += field.getSize();
 				}
 			}
 			if (!foundProblem) {
-				this.size     = recordSize;
-				this.needsFix = false;
+				setSize(recordSize);
 			}
 		}
 	}

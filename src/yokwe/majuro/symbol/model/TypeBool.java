@@ -35,6 +35,5 @@ public class TypeBool extends Type {
 	}
 	@Override
 	protected void fix() {
-		this.needsFix = false;
 	}
 }

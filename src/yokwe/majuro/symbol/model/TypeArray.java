@@ -51,7 +51,7 @@ public abstract class TypeArray extends Type {
 	protected int  length;
 
 	protected TypeArray(String name, int size, ArrayKind arrayKind, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
-		super(name, Kind.ARRAY, size);
+		super(name, Kind.ARRAY);
 		
 		this.arrayKind         = arrayKind;
 		this.elementType       = new TypeReference(name + "#element", elementName);
@@ -62,24 +62,23 @@ public abstract class TypeArray extends Type {
 		
 		this.rangeMin = 0;
 		this.rangeMax = 0;
+		this.length   = 0;
 		
-		this.needsFix = true;
-
 		fix();
 	}
 	
 	public long getRangeMin() {
-		if (needsFix) {
+		if (needsFix()) {
 			logger.error("Unexpected needsFix");
-			logger.error("  needsFix {}", needsFix);
+			logger.error("  needsFix {}", needsFix());
 			throw new UnexpectedException("Unexpected needsFix");
 		}
 		return rangeMin;
 	}
 	public long getRangeMax() {
-		if (needsFix) {
+		if (needsFix()) {
 			logger.error("Unexpected needsFix");
-			logger.error("  needsFix {}", needsFix);
+			logger.error("  needsFix {}", needsFix());
 			throw new UnexpectedException("Unexpected needsFix");
 		}
 		return rangeMax;
@@ -87,22 +86,26 @@ public abstract class TypeArray extends Type {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %s %s %s %s %s}", name, kind, size, arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+		if (hasValue()) {
+			return String.format("{%s %s %d %s %s %s %s %s}", name, kind, getSize(), arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+		} else {
+			return String.format("{%s %s %s %s %s %s %s %s}", name, kind, "*UNKNOWN*", arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+		}
 	}
 
 	@Override
 	protected void fix() {
-		if (needsFix) {
+		if (needsFix()) {
 			elementType.fix();
 			indexType.fix();
 			rangeMinConst.fix();
 			rangeMaxConst.fix();
 			
-			if (!indexType.needsFix && !elementType.needsFix && !rangeMinConst.needsFix && !rangeMaxConst.needsFix) {				
+			if (indexType.hasValue() && elementType.hasValue() && rangeMinConst.hasValue() && rangeMaxConst.hasValue()) {				
 				long rangeMin = rangeMinConst.getNumericValue();
 				long rangeMax = rangeMaxConst.getNumericValue() + (rangeMaxInclusive ? 0 : -1);
 				long length   = rangeMax - rangeMin + 1;
-				long size     = elementType.size * length;
+				long size     = elementType.getSize() * length;
 				
 				// sanity check
 				if (Type.CARDINAL_MAX < length) {
@@ -146,12 +149,11 @@ public abstract class TypeArray extends Type {
 					throw new UnexpectedException("Unexpected indexType");
 				}
 
-				this.size     = (int)size;
 				this.rangeMin = rangeMin;
 				this.rangeMax = rangeMax;
 				this.length   = (int)length;
 				
-				this.needsFix = false;
+				setSize((int)size);
 			}
 		}
 	}
@@ -160,10 +162,6 @@ public abstract class TypeArray extends Type {
 class TypeArrayOpen extends TypeArray {
 	TypeArrayOpen(String name, String elementName, String indexName, String rangeMinMax) {
 		super(name, 0, ArrayKind.OPEN, elementName, indexName, rangeMinMax, rangeMinMax, false);
-	}
-	@Override
-	public void fix() {
-		needsFix = false;
 	}
 }
 class TypeArrayFull extends TypeArray {
@@ -176,7 +174,7 @@ class TypeArrayFull extends TypeArray {
 	public void fix() {
 		{
 			indexType.fix();
-			if (!indexType.needsFix) {
+			if (indexType.hasValue()) {
 				switch(indexType.baseType.kind) {
 				case ENUM:
 				{

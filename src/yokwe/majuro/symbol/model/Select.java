@@ -28,7 +28,14 @@ package yokwe.majuro.symbol.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import yokwe.majuro.UnexpectedException;
+
 public class Select {
+	private static final Logger logger = LoggerFactory.getLogger(Select.class);
+
 	public static class CaseField {
 		public final Field field;
 		
@@ -45,8 +52,8 @@ public class Select {
 		public void fix() {
 			if (needsFix) {
 				field.fix();
-				if (!field.needsFix) {
-					this.size = field.size;
+				if (field.hasValue()) {
+					this.size = field.getSize();
 					this.needsFix = false;
 				}
 			}
@@ -107,14 +114,34 @@ public class Select {
 	
 	public final List<SelectCase> selectCaseList;
 	
-	public boolean needsFix;
-	public int     size;
+	private boolean needsFix;
+	private int     size;
 	
 	public Select(List<SelectCase> selectCaseList) {
 		this.selectCaseList = selectCaseList;
 		this.needsFix       = true;
 		this.size           = Type.UNKNOWN_SIZE;
 	}
+	
+	protected boolean needsFix() {
+		return needsFix;
+	}
+	protected boolean hasValue() {
+		return !needsFix;
+	}
+	public int getSize() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return size;
+	}
+	protected void setSize(int newValue) {
+		size     = newValue;
+		needsFix = false;
+	}
+
 
 	public void fix() {
 		if (needsFix) {

@@ -51,8 +51,8 @@ public abstract class Type {
 	public final Kind   kind;
 	public final int    originalSize;
 	
-	public boolean needsFix;
-	public int     size;
+	private boolean needsFix;
+	private int     size;
 	
 	public static final int UNKNOWN_SIZE = -1;
 	
@@ -74,6 +74,26 @@ public abstract class Type {
 	protected Type(String name, Kind kind) {
 		this(name, kind, UNKNOWN_SIZE);
 	}
+	
+	protected boolean needsFix() {
+		return needsFix;
+	}
+	protected boolean hasValue() {
+		return !needsFix;
+	}
+	public int getSize() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return size;
+	}
+	protected void setSize(int newValue) {
+		size     = newValue;
+		needsFix = false;
+	}
+
 	
 	protected abstract void fix();
 	

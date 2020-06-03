@@ -42,8 +42,8 @@ public class Constant {
 	public final String       stringValue;
 	public final TypeSubrange typeSubrange;
 	
-	public       boolean needsFix;
-	private      long    numericValue;
+	private boolean needsFix;
+	private long    numericValue;
 	
 	public Constant(String name, String typeName, String value) {
 		this.name         = name;
@@ -60,6 +60,12 @@ public class Constant {
 		register(this);
 	}
 	
+	protected boolean needsFix() {
+		return needsFix;
+	}
+	protected boolean hasValue() {
+		return !needsFix;
+	}	
 	public long getNumericValue() {
 		if (needsFix) {
 			logger.error("Unexpected needsFix");

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import yokwe.majuro.UnexpectedException;
 
 abstract class Field {
-	private static final Logger logger = LoggerFactory.getLogger(Type.class);
+	private static final Logger logger = LoggerFactory.getLogger(Field.class);
 
 	public enum TargetKind {
 		TYPE, SELECT
@@ -46,8 +46,8 @@ abstract class Field {
 	public final TargetKind targetKind;
 	public final FieldKind  fieldKind;
 	
-	public boolean needsFix;
-	public int     size;
+	private boolean needsFix;
+	private int     size;
 	
 	protected Field(String name, int offset, TargetKind targetKind, FieldKind fieldKind) {
 		this.name       = name;
@@ -58,6 +58,26 @@ abstract class Field {
 		this.needsFix  = true;
 		this.size      = Type.UNKNOWN_SIZE;
 	}
+	
+	protected boolean needsFix() {
+		return needsFix;
+	}
+	protected boolean hasValue() {
+		return !needsFix;
+	}
+	public int getSize() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return size;
+	}
+	protected void setSize(int newValue) {
+		size     = newValue;
+		needsFix = false;
+	}
+
 	
 	@Override
 	public String toString() {
@@ -82,11 +102,10 @@ class FieldType extends Field {
 
 	@Override
 	public void fix() {
-		if (type.needsFix) {
+		if (type.needsFix()) {
 			type.fix();
-			if (!type.needsFix) {
-				size = type.size;
-				needsFix = false;
+			if (type.hasValue()) {
+				setSize(type.getSize());
 			}
 		}
 	}
@@ -119,11 +138,10 @@ class FieldSelect extends Field {
 
 	@Override
 	public void fix() {
-		if (select.needsFix) {
+		if (select.needsFix()) {
 			select.fix();
-			if (!select.needsFix) {
-				size = select.size;
-				needsFix = false;
+			if (select.hasValue()) {
+				setSize(select.getSize());
 			}
 		}
 	}
