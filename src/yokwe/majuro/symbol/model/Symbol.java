@@ -42,26 +42,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolBaseVisitor;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
-import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeElementContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.EnumElementListContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.EumElementContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.RangeTypeRangeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.ReferenceTypeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.SimpleTypeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeCardinalContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeIntegerContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongCardinalContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongIntegerContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongPointerContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongUnspecifiedContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeRefContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.*;
 import yokwe.majuro.symbol.model.TypeEnum.Element;
 
 public class Symbol {
@@ -118,7 +99,7 @@ public class Symbol {
 		}
 		
 		// ARRAY
-		@Override public Type visitTypeArrayType(SymbolParser.TypeArrayTypeContext context) {
+		@Override public Type visitTypeArrayType(TypeArrayTypeContext context) {
 			// ARRAY rangeType  OF arrayTypeElement # TypeArrayType
 			RangeTypeContext        rangeType        = context.rangeType();
 			ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
@@ -151,7 +132,7 @@ public class Symbol {
 			}
 			
 		}
-		@Override public Type visitTypeArrayRange(SymbolParser.TypeArrayRangeContext context) {
+		@Override public Type visitTypeArrayRange(TypeArrayRangeContext context) {
 			// ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
 			RangeTypeRangeContext   rangeTypeRange   = context.rangeTypeRange();
 			ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
@@ -201,7 +182,7 @@ public class Symbol {
 		}
 		
 		// ENUM
-		@Override public Type visitTypeEnum(SymbolParser.TypeEnumContext context) {
+		@Override public Type visitTypeEnum(TypeEnumContext context) {
 			EnumElementListContext enumElementList = context.enumElementList();
 			if (enumElementList == null) {
 				logger.error("Unexpected enumElementList");
@@ -225,7 +206,7 @@ public class Symbol {
 		}
 
 		// SUBRANGE
-		@Override public Type visitTypeSubrangeTypeRange(SymbolParser.TypeSubrangeTypeRangeContext context) {
+		@Override public Type visitTypeSubrangeTypeRange(TypeSubrangeTypeRangeContext context) {
 			RangeTypeRangeContext rangeTypeRange = context.rangeTypeRange();
 			if (rangeTypeRange == null) {
 				logger.error("Unexpected rangeTypeRangeContext");
@@ -241,17 +222,17 @@ public class Symbol {
 		}
 		
 		// RECORD
-		@Override public Type visitTypeRecordField(SymbolParser.TypeRecordFieldContext context) {
+		@Override public Type visitTypeRecordField(TypeRecordFieldContext context) {
 			logger.info("  {}", context.getClass().getName());
 			return null;
 		}
-		@Override public Type visitTypeRecord(SymbolParser.TypeRecordContext context) {
+		@Override public Type visitTypeRecord(TypeRecordContext context) {
 			logger.info("  {}", context.getClass().getName());
 			return null;
 		}
 		
 		// REFERENCE
-		@Override public Type visitTypeRef(SymbolParser.TypeRefContext context) {
+		@Override public Type visitTypeRef(TypeRefContext context) {
 			String baseName = context.name.getText();
 			return new TypeReference(name, baseName);
 		}
@@ -273,41 +254,71 @@ public class Symbol {
 		throw new UnexpectedException("Unexpected clazz");
 	}
 
-	private static final SymbolBaseVisitor<Type> declTypeVisitor = new SymbolBaseVisitor<>() {
-		@Override
-		public Type visitTypeDecl(SymbolParser.TypeDeclContext context) {
-			String name = context.name.getText();
-			TypeTypeContext typeType = context.typeType();
-			
-			logger.info("TYPE   {} == {}", name, typeType.getText());
-			
-			TypeVisitors typeVisitors = new TypeVisitors(name);
-			
-			Type type = typeVisitors.visit(typeType);
-			logger.info("       {}", type);
-			
-			return type;
+	private static Type getType(DeclContext context) {
+		if (context.declConst() != null) return null;
+		
+		{
+			DeclTypeContext declType = context.declType();
+			if (declType != null) {
+				if (declType instanceof TypeDeclContext) {
+					TypeDeclContext typeDecl = (TypeDeclContext)declType;
+					
+					String name = typeDecl.name.getText();
+					TypeTypeContext typeType = typeDecl.typeType();
+					
+					logger.info("TYPE   {} == {}", name, typeType.getText());
+					
+					// FXME
+					TypeVisitors typeVisitors = new TypeVisitors(name);
+					
+					Type type = typeVisitors.visit(typeType);
+					logger.info("       {}", type);
+					
+					return type;
+				}
+				logger.error("Unexpected declType");
+				logger.error("  declType {}", declType.getText());
+				throw new UnexpectedException("Unexpected declType");
+			}
 		}
-	};
+		
+		logger.error("Unexpected context");
+		logger.error("  context {}", context.getText());
+		throw new UnexpectedException("Unexpected context");
+	}
 
-	private static final SymbolBaseVisitor<Constant> declConstVisitor = new SymbolBaseVisitor<>() {
-		@Override
-		public Constant visitConstDecl(SymbolParser.ConstDeclContext context) {
-			String name      = context.name.getText();
-			String typeName  = context.constType().getText();
-			String value     = context.constValue().getText();			
-			return new Constant(name, typeName, value);
+	private static Constant getConstant(DeclContext context) {
+		{
+			DeclConstContext declConst = context.declConst();		
+			if (declConst != null) {
+				if (declConst instanceof ConstDeclContext) {
+					ConstDeclContext constDecl = (ConstDeclContext)declConst;
+					String name      = constDecl.name.getText();
+					String typeName  = constDecl.constType().getText();
+					String value     = constDecl.constValue().getText();			
+					return new Constant(name, typeName, value);
+				}
+				logger.error("Unexpected declConst");
+				logger.error("  declConst {}", declConst.getText());
+				throw new UnexpectedException("Unexpected declConst");
+			}
 		}
-	};
-
+		
+		if (context.declType() != null) return null;
+		
+		logger.error("Unexpected context");
+		logger.error("  context {}", context.getText());
+		throw new UnexpectedException("Unexpected context");
+	}
+	
 
 	void build(SymbolContext tree) {
 		for(DeclContext e: tree.body().declList().elements) {
-			Constant v = declConstVisitor.visit(e);
+			Constant v = getConstant(e);
 			if (v != null) this.constMap.put(v.name, v);
 		}
 		for(DeclContext e: tree.body().declList().elements) {
-			Type v = declTypeVisitor.visit(e);
+			Type v = getType(e);
 			if (v != null) this.typeMap.put(v.name, v);
 		}
 	}
