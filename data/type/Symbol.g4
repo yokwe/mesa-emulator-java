@@ -204,7 +204,9 @@ bitfieldName
     ;
 
 fieldType
-    :   typeType
+    :   arrayType
+    |   simpleType
+    |   referenceType
     |   select
     ;
 
