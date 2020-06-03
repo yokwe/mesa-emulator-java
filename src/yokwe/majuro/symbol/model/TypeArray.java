@@ -33,30 +33,31 @@ import yokwe.majuro.UnexpectedException;
 public abstract class TypeArray extends Type {
 	private static final Logger logger = LoggerFactory.getLogger(TypeArray.class);
 	
-	public enum RecordKind {
+	public enum ArrayKind {
 		OPEN, SUBRANGE, FULL,
 	}
 	
-	public final RecordKind recordKind;
+	public final ArrayKind arrayKind;
 
 	public final TypeReference elementType;
 	public final TypeReference indexType;
 	
-	public final Const         rangeMinConst;
-	public final Const         rangeMaxConst;
+	public final Constant      rangeMinConst;
+	public final Constant      rangeMaxConst;
 	public final boolean       rangeMaxInclusive;
 	
-	public       long rangeMin;
-	public       long rangeMax;
+	protected long rangeMin;
+	protected long rangeMax;
+	protected int  length;
 
-	protected TypeArray(String name, int size, RecordKind recordKind, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
+	protected TypeArray(String name, int size, ArrayKind arrayKind, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
 		super(name, Kind.ARRAY, size);
 		
-		this.recordKind        = recordKind;
+		this.arrayKind         = arrayKind;
 		this.elementType       = new TypeReference(name + "#element", elementName);
 		this.indexType         = new TypeReference(name + "#index", indexName);
-		this.rangeMinConst     = new Const(name + "#valueMin", Type.LONG_CARDINAL, rangeMin);
-		this.rangeMaxConst     = new Const(name + "#valueMax", Type.LONG_CARDINAL, rangeMax);
+		this.rangeMinConst     = new Constant(name + "#valueMin", Type.LONG_CARDINAL, rangeMin);
+		this.rangeMaxConst     = new Constant(name + "#valueMax", Type.LONG_CARDINAL, rangeMax);
 		this.rangeMaxInclusive = rangeMaxInclusive;
 		
 		this.rangeMin = 0;
@@ -67,9 +68,26 @@ public abstract class TypeArray extends Type {
 		fix();
 	}
 	
+	public long getRangeMin() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return rangeMin;
+	}
+	public long getRangeMax() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return rangeMax;
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %s %s %s %s}", name, kind, size, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+		return String.format("{%s %s %d %s %s %s %s %s}", name, kind, size, arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
 	}
 
 	@Override
@@ -81,12 +99,20 @@ public abstract class TypeArray extends Type {
 			rangeMaxConst.fix();
 			
 			if (!indexType.needsFix && !elementType.needsFix && !rangeMinConst.needsFix && !rangeMaxConst.needsFix) {				
-				long rangeMin = rangeMinConst.numericValue;
-				long rangeMax = rangeMaxConst.numericValue + (rangeMaxInclusive ? 0 : -1);
+				long rangeMin = rangeMinConst.getNumericValue();
+				long rangeMax = rangeMaxConst.getNumericValue() + (rangeMaxInclusive ? 0 : -1);
 				long length   = rangeMax - rangeMin + 1;
 				long size     = elementType.size * length;
 				
 				// sanity check
+				if (Type.CARDINAL_MAX < length) {
+					logger.error("Unexpected length");
+					logger.error("  rangeMin {}", rangeMin);
+					logger.error("  rangeMax {}", rangeMax);
+					logger.error("  length   {}", length);
+					logger.error("  size     {}", size);
+					throw new UnexpectedException("Unexpected size");
+				}
 				if (Type.CARDINAL_MAX < size) {
 					logger.error("Unexpected size");
 					logger.error("  rangeMin {}", rangeMin);
@@ -106,9 +132,10 @@ public abstract class TypeArray extends Type {
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
 					
-					if (rangeMinConst.numericValue == rangeMaxConst.numericValue && !rangeMaxInclusive) {
-						// don't check for open array [0..0)
+					if (arrayKind == ArrayKind.OPEN) {
+						// don't check for open array
 					} else {
+						logger.info("array {}", this);
 						baseType.checkValue(rangeMin, rangeMax);
 					}
 				}
@@ -122,6 +149,7 @@ public abstract class TypeArray extends Type {
 				this.size     = (int)size;
 				this.rangeMin = rangeMin;
 				this.rangeMax = rangeMax;
+				this.length   = (int)length;
 				
 				this.needsFix = false;
 			}
@@ -131,7 +159,7 @@ public abstract class TypeArray extends Type {
 
 class TypeArrayOpen extends TypeArray {
 	TypeArrayOpen(String name, String elementName, String indexName, String rangeMinMax) {
-		super(name, 0, RecordKind.OPEN, elementName, indexName, rangeMinMax, rangeMinMax, false);
+		super(name, 0, ArrayKind.OPEN, elementName, indexName, rangeMinMax, rangeMinMax, false);
 	}
 	@Override
 	public void fix() {
@@ -142,7 +170,7 @@ class TypeArrayFull extends TypeArray {
 	private static final Logger logger = LoggerFactory.getLogger(TypeArrayFull.class);
 
 	TypeArrayFull(String name, String elementName, String indexName) {
-		super(name, Type.UNKNOWN_SIZE, RecordKind.FULL, elementName, indexName, "0", "0", true);
+		super(name, Type.UNKNOWN_SIZE, ArrayKind.FULL, elementName, indexName, "0", "0", true);
 	}
 	@Override
 	public void fix() {
@@ -153,15 +181,15 @@ class TypeArrayFull extends TypeArray {
 				case ENUM:
 				{
 					TypeEnum baseType = (TypeEnum)indexType.baseType;
-					this.rangeMin = baseType.valueMin;
-					this.rangeMax = baseType.valueMax;
+					this.rangeMin = baseType.getValueMin();
+					this.rangeMax = baseType.getValueMax();
 				}
 					break;
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					this.rangeMin = baseType.valueMin;
-					this.rangeMax = baseType.valueMax;
+					this.rangeMin = baseType.getValueMin();
+					this.rangeMax = baseType.getValueMax();
 				}
 					break;
 				default:
@@ -176,7 +204,7 @@ class TypeArrayFull extends TypeArray {
 }
 class TypeArraySubrange extends TypeArray {
 	TypeArraySubrange(String name, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
-		super(name, Type.UNKNOWN_SIZE, RecordKind.SUBRANGE, elementName, indexName, rangeMin, rangeMax, rangeMaxInclusive);
+		super(name, Type.UNKNOWN_SIZE, ArrayKind.SUBRANGE, elementName, indexName, rangeMin, rangeMax, rangeMaxInclusive);
 	}
 }
 

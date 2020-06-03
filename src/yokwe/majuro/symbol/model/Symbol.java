@@ -69,9 +69,9 @@ public class Symbol {
 	
 	public static final String  PATH_RULE_FILE = "data/type/MesaType.symbol";
 
-	public final String             name;
-	public final Map<String, Const> constMap;
-	public final Map<String, Type>  typeMap;
+	public final String                name;
+	public final Map<String, Constant> constMap;
+	public final Map<String, Type>     typeMap;
 	
 	private Symbol(SymbolContext tree) {
 		this.name     = tree.header().name.getText();
@@ -175,12 +175,24 @@ public class Symbol {
 			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
 			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
 
+			boolean rangeMaxInclusive = closeChar.equals("]");
+			
 			if (simpleType != null) {
 				Type type = getType(simpleType);
-				return new TypeArraySubrange(name, type.name, indexName, startIndex, stopIndex, closeChar.equals("]"));
+				
+				if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
+					return new TypeArrayOpen(name, type.name, indexName, startIndex);
+				} else {
+					return new TypeArraySubrange(name, type.name, indexName, startIndex, stopIndex, rangeMaxInclusive);
+				}
 			} else if (referenceType != null) {
 				TypeRefContext typeRef = (TypeRefContext)referenceType;
-				return new TypeArraySubrange(name, typeRef.name.getText(), indexName, startIndex, stopIndex, closeChar.equals("]"));
+				
+				if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
+					return new TypeArrayOpen(name, typeRef.name.getText(), indexName, startIndex);
+				} else {
+					return new TypeArraySubrange(name, typeRef.name.getText(), indexName, startIndex, stopIndex, rangeMaxInclusive);
+				}
 			} else {
 				logger.error("Unexpected arrayTypeElement");
 				logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
@@ -278,20 +290,20 @@ public class Symbol {
 		}
 	};
 
-	private static final SymbolBaseVisitor<Const> declConstVisitor = new SymbolBaseVisitor<>() {
+	private static final SymbolBaseVisitor<Constant> declConstVisitor = new SymbolBaseVisitor<>() {
 		@Override
-		public Const visitConstDecl(SymbolParser.ConstDeclContext context) {
+		public Constant visitConstDecl(SymbolParser.ConstDeclContext context) {
 			String name      = context.name.getText();
 			String typeName  = context.constType().getText();
 			String value     = context.constValue().getText();			
-			return new Const(name, typeName, value);
+			return new Constant(name, typeName, value);
 		}
 	};
 
 
 	void build(SymbolContext tree) {
 		for(DeclContext e: tree.body().declList().elements) {
-			Const v = declConstVisitor.visit(e);
+			Constant v = declConstVisitor.visit(e);
 			if (v != null) this.constMap.put(v.name, v);
 		}
 		for(DeclContext e: tree.body().declList().elements) {
@@ -309,8 +321,8 @@ public class Symbol {
 		Type.fixAll();
 		Type.stats();
 		
-		Const.fixAll();
-		Const.stats();
+		Constant.fixAll();
+		Constant.stats();
 		
 		logger.info("STOP");
 	}

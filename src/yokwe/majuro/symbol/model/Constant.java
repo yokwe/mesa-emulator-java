@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 
-public class Const {
-	private static final Logger logger = LoggerFactory.getLogger(Const.class);
+public class Constant {
+	private static final Logger logger = LoggerFactory.getLogger(Constant.class);
 
 	public final String       name;
 	public final String       typeName;
@@ -43,9 +43,9 @@ public class Const {
 	public final TypeSubrange typeSubrange;
 	
 	public       boolean needsFix;
-	public       long    numericValue;
+	private      long    numericValue;
 	
-	public Const(String name, String typeName, String value) {
+	public Constant(String name, String typeName, String value) {
 		this.name         = name;
 		this.typeName     = typeName;
 		this.stringValue  = value;
@@ -60,13 +60,26 @@ public class Const {
 		register(this);
 	}
 	
+	public long getNumericValue() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return numericValue;
+	}
+	public void setNumericValue(long newValue) {
+		numericValue = newValue;
+		needsFix = false;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("{%s %s %s %s %s}", name, typeName, stringValue, needsFix, numericValue);
 	}
 	
 	// special constructor for Type.XXX_VALUE
-	public Const(String name, String typeName, long value) {
+	public Constant(String name, String typeName, long value) {
 		this.name         = name;
 		this.typeName     = typeName;
 		this.stringValue  = null;
@@ -93,7 +106,7 @@ public class Const {
 				} else {
 					// If stringValue is NOT qualified name, take value from map
 					if (map.containsKey(stringValue)) {
-						Const nextConst = map.get(stringValue);
+						Constant nextConst = map.get(stringValue);
 						nextConst.fix();
 						if (!nextConst.needsFix) {
 							this.numericValue = nextConst.numericValue;
@@ -110,13 +123,13 @@ public class Const {
 		}
 	}
 	
-	public static Map<String, Const> map = new TreeMap<>();
+	public static Map<String, Constant> map = new TreeMap<>();
 	
-	private static void register(Const constant) {
+	private static void register(Constant constant) {
 		String name = constant.name;
 		
 		if (map.containsKey(name)) {
-			Const old = map.get(name);
+			Constant old = map.get(name);
 			
 			logger.error("Duplicate const name");
 			logger.error("  new {} {}", name, constant);
@@ -127,7 +140,7 @@ public class Const {
 		}
 	}
 	public static void fixAll() {
-		for(Const e: map.values()) {
+		for(Constant e: map.values()) {
 			e.fix();
 		}
 	}
@@ -136,7 +149,7 @@ public class Const {
 		int needsFix = 0;
 		Map<String, Integer> typeNameMap = new TreeMap<>();
 
-		for(Const e: map.values()) {
+		for(Constant e: map.values()) {
 			if (e.needsFix) needsFix++;
 			if (typeNameMap.containsKey(e.typeName)) {
 				typeNameMap.put(e.typeName, typeNameMap.get(e.typeName) + 1);
@@ -155,21 +168,21 @@ public class Const {
 
 		if (0 < needsFix) {
 			logger.info("  == needs fix");
-			for(Const e: map.values()) {
+			for(Constant e: map.values()) {
 				if (!e.needsFix) continue;
 				logger.info("{}", String.format("%-14s %-10s %s %s", e.name, e.typeName, e.stringValue, e.numericValue));
 				logger.info("{}", String.format("    %s", e.typeSubrange));
 			}
 		}
 		logger.info("  == fixed");
-		for(Const e: map.values()) {
+		for(Constant e: map.values()) {
 			if (e.needsFix) continue;
 			if (e.name.contains("#")) continue;
 			logger.info("  {}", String.format("%-24s %-10s %-10s %s", e.name, e.typeName, e.stringValue, e.numericValue));
 		}
 	}
 
-	public static Const get(String name) {
+	public static Constant get(String name) {
 		if (map.containsKey(name)) {
 			return map.get(name);
 		} else {

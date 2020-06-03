@@ -37,20 +37,20 @@ public abstract class TypeSubrange extends Type {
 	private static final Logger logger = LoggerFactory.getLogger(TypeSubrange.class);
 
 	public final TypeReference baseType;
-	public       Const         valueMinConst;
-	public       Const         valueMaxConst;
+	public final Constant      valueMinConst;
+	public final Constant      valueMaxConst;
 	public final boolean       valueMaxInclusive;
 	
-	public long valueMin;
-	public long valueMax;
-	public int  length;
+	protected long valueMin;
+	protected long valueMax;
+	protected int  length;
 	
 	public TypeSubrange(String name, int size, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		super(name, Kind.SUBRANGE, size);
 		
 		this.baseType          = new TypeReference(name + "#base", baseName);
-		this.valueMinConst     = new Const(name + "#valueMin", Type.LONG_CARDINAL, valueMin);
-		this.valueMaxConst     = new Const(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
+		this.valueMinConst     = new Constant(name + "#valueMin", Type.LONG_CARDINAL, valueMin);
+		this.valueMaxConst     = new Constant(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
 		this.valueMaxInclusive = valueMaxInclusive;
 		
 		this.needsFix = true;
@@ -62,8 +62,8 @@ public abstract class TypeSubrange extends Type {
 		super(name, Kind.SUBRANGE, size);
 		
 		this.baseType          = new TypeReference(name + "#base", baseName);
-		this.valueMinConst     = new Const(name + "#valueMin", Type.LONG_CARDINAL, valueMin);
-		this.valueMaxConst     = new Const(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
+		this.valueMinConst     = new Constant(name + "#valueMin", Type.LONG_CARDINAL, valueMin);
+		this.valueMaxConst     = new Constant(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
 		this.valueMaxInclusive = valueMaxInclusive;
 		
 		this.needsFix = true;
@@ -74,18 +74,43 @@ public abstract class TypeSubrange extends Type {
 		this(name, Type.UNKNOWN_SIZE, baseName, valueMin, valueMax, valueMaxInclusive);
 	}
 	
+	public long getValueMin() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return valueMin;
+	}
+	public long getValueMax() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return valueMax;
+	}
+	public long getLength() {
+		if (needsFix) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix);
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		return length;
+	}
+	
 	public void checkValue(long valueMax, long valueMin) {
 		if (!needsFix) {
-			if (valueMin < this.valueMin) {
+			if (valueMin < getValueMin()) {
 				logger.error("Unexpected rangeMin");
 				logger.error("  rangeMin {}", valueMin);
-				logger.error("  valueMin {}", this.valueMin);
+				logger.error("  valueMin {}", getValueMin());
 				throw new UnexpectedException("Unexpected rangeMin");
 			}
-			if (this.valueMax < valueMax) {
+			if (getValueMax() < valueMax) {
 				logger.error("Unexpected rangeMax");
 				logger.error("  rangeMax {}", valueMax);
-				logger.error("  valueMax {}", this.valueMax);
+				logger.error("  valueMax {}", getValueMax());
 				throw new UnexpectedException("Unexpected rangeMax");
 			}
 		}
@@ -93,17 +118,17 @@ public abstract class TypeSubrange extends Type {
 
 	public void checkValue(long value) {
 		if (!needsFix) {
-			if (value < this.valueMin) {
+			if (value < getValueMin()) {
 				logger.error("Unexpected value");
 				logger.error("  value    {}", value);
-				logger.error("  valueMin {}", this.valueMin);
+				logger.error("  valueMin {}", getValueMin());
 				logger.error("  this     {}", this);
 				throw new UnexpectedException("Unexpected rangeMin");
 			}
-			if (this.valueMax < value) {
+			if (getValueMax() < value) {
 				logger.error("Unexpected value");
 				logger.error("  value    {}", value);
-				logger.error("  valueMax {}", this.valueMax);
+				logger.error("  valueMax {}", getValueMax());
 				logger.error("  this     {}", this);
 				throw new UnexpectedException("Unexpected rangeMax");
 			}
@@ -142,8 +167,8 @@ public abstract class TypeSubrange extends Type {
 					throw new UnexpectedException("Unexpected baseType");
 				}
 				
-				long valueMin = valueMinConst.numericValue;
-				long valueMax = valueMaxConst.numericValue + (valueMaxInclusive ? 0 : -1);
+				long valueMin = valueMinConst.getNumericValue();
+				long valueMax = valueMaxConst.getNumericValue() + (valueMaxInclusive ? 0 : -1);
 				long length   = valueMax - valueMin + 1;
 				// sanity check
 				if (length < 0) {
@@ -193,9 +218,10 @@ class TypeSubrangeFull extends TypeSubrange {
 					logger.error("  baseType {}", baseType);
 					throw new UnexpectedException("Unexpected baseType");
 				}
+				// Update valueMin/Max with subrange valueMin/Max
 				TypeSubrange typeSubrange = (TypeSubrange)baseType.baseType;
-				this.valueMin = typeSubrange.valueMin;
-				this.valueMax = typeSubrange.valueMax;
+				this.valueMinConst.setNumericValue(typeSubrange.getValueMin());
+				this.valueMinConst.setNumericValue(typeSubrange.getValueMax());
 			}
 		}
 		super.fix();

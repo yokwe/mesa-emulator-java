@@ -49,10 +49,10 @@ public class TypeEnum extends Type {
 		}
 	}
 	
-	public final List<Element> elementList;
-	public final int           valueMin;
-	public final int           valueMax;
-	public final int           length;
+	public  final List<Element> elementList;
+	private final int           valueMin;
+	private final int           valueMax;
+	private final int           length;
 	
 	public TypeEnum(String name, List<Element> elementList) {
 		super(name, Kind.ENUM, 1);
@@ -84,6 +84,16 @@ public class TypeEnum extends Type {
 		this.length      = (int)length;
 	}
 	
+	public long getValueMin() {
+		return valueMin;
+	}
+	public long getValueMax() {
+		return valueMax;
+	}
+	public long getLength() {
+		return length;
+	}
+
 	// FIXME change to rangeMin rangeMax
 	public void checkValue(long rangeMax, long rangeMin) {
 		if (!needsFix) {
