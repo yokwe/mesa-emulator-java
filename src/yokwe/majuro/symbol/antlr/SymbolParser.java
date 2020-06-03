@@ -1,28 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2020, Yasuhiro Hasegawa
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- *   1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright notice,
- *      this list of conditions and the following disclaimer in the documentation
- *      and/or other materials provided with the distribution.
- *   3. The name of the author may not be used to endorse or promote products derived
- *      from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *******************************************************************************/
 // Generated from data/type/Symbol.g4 by ANTLR 4.8
 package yokwe.majuro.symbol.antlr;
 import org.antlr.v4.runtime.atn.*;
@@ -145,42 +120,13 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class NumberContext extends ParserRuleContext {
+		public TerminalNode NUMBER_8() { return getToken(SymbolParser.NUMBER_8, 0); }
+		public TerminalNode NUMBER_10() { return getToken(SymbolParser.NUMBER_10, 0); }
+		public TerminalNode NUMBER_16() { return getToken(SymbolParser.NUMBER_16, 0); }
 		public NumberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_number; }
-	 
-		public NumberContext() { }
-		public void copyFrom(NumberContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class Number10Context extends NumberContext {
-		public TerminalNode NUMBER_10() { return getToken(SymbolParser.NUMBER_10, 0); }
-		public Number10Context(NumberContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitNumber10(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Number8Context extends NumberContext {
-		public TerminalNode NUMBER_8() { return getToken(SymbolParser.NUMBER_8, 0); }
-		public Number8Context(NumberContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitNumber8(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Number16Context extends NumberContext {
-		public TerminalNode NUMBER_16() { return getToken(SymbolParser.NUMBER_16, 0); }
-		public Number16Context(NumberContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitNumber16(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final NumberContext number() throws RecognitionException {
@@ -192,7 +138,6 @@ public class SymbolParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NUMBER_8:
-				_localctx = new Number8Context(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(74);
@@ -201,7 +146,6 @@ public class SymbolParser extends Parser {
 				break;
 			case T__0:
 			case NUMBER_10:
-				_localctx = new Number10Context(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(76);
@@ -219,7 +163,6 @@ public class SymbolParser extends Parser {
 				}
 				break;
 			case NUMBER_16:
-				_localctx = new Number16Context(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(79);
@@ -242,77 +185,32 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class Positive_numberContext extends ParserRuleContext {
+		public TerminalNode NUMBER_8() { return getToken(SymbolParser.NUMBER_8, 0); }
+		public TerminalNode NUMBER_10() { return getToken(SymbolParser.NUMBER_10, 0); }
+		public TerminalNode NUMBER_16() { return getToken(SymbolParser.NUMBER_16, 0); }
 		public Positive_numberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_positive_number; }
-	 
-		public Positive_numberContext() { }
-		public void copyFrom(Positive_numberContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class PositiveNumber16Context extends Positive_numberContext {
-		public TerminalNode NUMBER_16() { return getToken(SymbolParser.NUMBER_16, 0); }
-		public PositiveNumber16Context(Positive_numberContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitPositiveNumber16(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PositiveNumber10Context extends Positive_numberContext {
-		public TerminalNode NUMBER_10() { return getToken(SymbolParser.NUMBER_10, 0); }
-		public PositiveNumber10Context(Positive_numberContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitPositiveNumber10(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PositiveNumber8Context extends Positive_numberContext {
-		public TerminalNode NUMBER_8() { return getToken(SymbolParser.NUMBER_8, 0); }
-		public PositiveNumber8Context(Positive_numberContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitPositiveNumber8(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Positive_numberContext positive_number() throws RecognitionException {
 		Positive_numberContext _localctx = new Positive_numberContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_positive_number);
+		int _la;
 		try {
-			setState(85);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case NUMBER_8:
-				_localctx = new PositiveNumber8Context(_localctx);
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(82);
-				match(NUMBER_8);
-				}
-				break;
-			case NUMBER_10:
-				_localctx = new PositiveNumber10Context(_localctx);
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(83);
-				match(NUMBER_10);
-				}
-				break;
-			case NUMBER_16:
-				_localctx = new PositiveNumber16Context(_localctx);
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(84);
-				match(NUMBER_16);
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(82);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NUMBER_8) | (1L << NUMBER_10) | (1L << NUMBER_16))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -340,29 +238,19 @@ public class SymbolParser extends Parser {
 	public static class ConstRefContext extends ConstantContext {
 		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
 		public ConstRefContext(ConstantContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitConstRef(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ConstNumberContext extends ConstantContext {
 		public NumberContext number() {
 			return getRuleContext(NumberContext.class,0);
 		}
 		public ConstNumberContext(ConstantContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitConstNumber(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ConstantContext constant() throws RecognitionException {
 		ConstantContext _localctx = new ConstantContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_constant);
 		try {
-			setState(89);
+			setState(86);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__0:
@@ -372,7 +260,7 @@ public class SymbolParser extends Parser {
 				_localctx = new ConstNumberContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(87);
+				setState(84);
 				number();
 				}
 				break;
@@ -380,7 +268,7 @@ public class SymbolParser extends Parser {
 				_localctx = new ConstRefContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(88);
+				setState(85);
 				match(ID);
 				}
 				break;
@@ -406,11 +294,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rangeType; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitRangeType(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final RangeTypeContext rangeType() throws RecognitionException {
@@ -419,7 +302,7 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(91);
+			setState(88);
 			((RangeTypeContext)_localctx).name = match(ID);
 			}
 		}
@@ -450,11 +333,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_rangeTypeRange; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitRangeTypeRange(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final RangeTypeRangeContext rangeTypeRange() throws RecognitionException {
@@ -464,25 +342,25 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(94);
+			setState(91);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(93);
+				setState(90);
 				((RangeTypeRangeContext)_localctx).name = match(ID);
 				}
 			}
 
-			setState(96);
+			setState(93);
 			match(T__1);
-			setState(97);
+			setState(94);
 			((RangeTypeRangeContext)_localctx).startIndex = constant();
-			setState(98);
+			setState(95);
 			match(T__2);
-			setState(99);
+			setState(96);
 			((RangeTypeRangeContext)_localctx).stopIndex = constant();
-			setState(100);
+			setState(97);
 			((RangeTypeRangeContext)_localctx).closeChar = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==T__3 || _la==T__4) ) {
@@ -517,11 +395,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_qualifiedName; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitQualifiedName(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final QualifiedNameContext qualifiedName() throws RecognitionException {
@@ -531,23 +404,23 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(102);
+			setState(99);
 			((QualifiedNameContext)_localctx).ID = match(ID);
 			((QualifiedNameContext)_localctx).name.add(((QualifiedNameContext)_localctx).ID);
-			setState(107);
+			setState(104);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__5) {
 				{
 				{
-				setState(103);
+				setState(100);
 				match(T__5);
-				setState(104);
+				setState(101);
 				((QualifiedNameContext)_localctx).ID = match(ID);
 				((QualifiedNameContext)_localctx).name.add(((QualifiedNameContext)_localctx).ID);
 				}
 				}
-				setState(109);
+				setState(106);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -575,11 +448,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_numberedName; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitNumberedName(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final NumberedNameContext numberedName() throws RecognitionException {
@@ -588,13 +456,13 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(110);
+			setState(107);
 			((NumberedNameContext)_localctx).name = match(ID);
-			setState(111);
+			setState(108);
 			match(T__6);
-			setState(112);
+			setState(109);
 			((NumberedNameContext)_localctx).value = positive_number();
-			setState(113);
+			setState(110);
 			match(T__4);
 			}
 		}
@@ -620,11 +488,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_symbol; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitSymbol(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SymbolContext symbol() throws RecognitionException {
@@ -633,13 +496,13 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(115);
+			setState(112);
 			header();
-			setState(116);
+			setState(113);
 			match(T__7);
-			setState(117);
+			setState(114);
 			body();
-			setState(118);
+			setState(115);
 			match(T__5);
 			}
 		}
@@ -662,11 +525,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_header; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitHeader(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final HeaderContext header() throws RecognitionException {
@@ -675,11 +533,11 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(120);
+			setState(117);
 			((HeaderContext)_localctx).name = match(ID);
-			setState(121);
+			setState(118);
 			match(T__8);
-			setState(122);
+			setState(119);
 			match(SYMBOL);
 			}
 		}
@@ -704,11 +562,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_body; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitBody(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final BodyContext body() throws RecognitionException {
@@ -717,11 +570,11 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(124);
+			setState(121);
 			match(BEGIN);
-			setState(125);
+			setState(122);
 			declList();
-			setState(126);
+			setState(123);
 			match(END);
 			}
 		}
@@ -749,11 +602,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_declList; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitDeclList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final DeclListContext declList() throws RecognitionException {
@@ -763,18 +611,18 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(129); 
+			setState(126); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(128);
+				setState(125);
 				((DeclListContext)_localctx).decl = decl();
 				((DeclListContext)_localctx).elements.add(((DeclListContext)_localctx).decl);
 				}
 				}
-				setState(131); 
+				setState(128); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==ID );
@@ -802,31 +650,26 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_decl; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitDecl(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final DeclContext decl() throws RecognitionException {
 		DeclContext _localctx = new DeclContext(_ctx, getState());
 		enterRule(_localctx, 22, RULE_decl);
 		try {
-			setState(135);
+			setState(132);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(133);
+				setState(130);
 				declType();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(134);
+				setState(131);
 				declConst();
 				}
 				break;
@@ -844,49 +687,35 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class DeclTypeContext extends ParserRuleContext {
-		public DeclTypeContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_declType; }
-	 
-		public DeclTypeContext() { }
-		public void copyFrom(DeclTypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeDeclContext extends DeclTypeContext {
 		public Token name;
 		public TerminalNode TYPE() { return getToken(SymbolParser.TYPE, 0); }
 		public TypeTypeContext typeType() {
 			return getRuleContext(TypeTypeContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
-		public TypeDeclContext(DeclTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeDecl(this);
-			else return visitor.visitChildren(this);
+		public DeclTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_declType; }
 	}
 
 	public final DeclTypeContext declType() throws RecognitionException {
 		DeclTypeContext _localctx = new DeclTypeContext(_ctx, getState());
 		enterRule(_localctx, 24, RULE_declType);
 		try {
-			_localctx = new TypeDeclContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(137);
-			((TypeDeclContext)_localctx).name = match(ID);
-			setState(138);
+			setState(134);
+			((DeclTypeContext)_localctx).name = match(ID);
+			setState(135);
 			match(T__8);
-			setState(139);
+			setState(136);
 			match(TYPE);
-			setState(140);
+			setState(137);
 			match(T__7);
-			setState(141);
+			setState(138);
 			typeType();
-			setState(142);
+			setState(139);
 			match(T__9);
 			}
 		}
@@ -924,59 +753,54 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_typeType; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeType(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final TypeTypeContext typeType() throws RecognitionException {
 		TypeTypeContext _localctx = new TypeTypeContext(_ctx, getState());
 		enterRule(_localctx, 26, RULE_typeType);
 		try {
-			setState(150);
+			setState(147);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(144);
+				setState(141);
 				arrayType();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(145);
+				setState(142);
 				enumType();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(146);
+				setState(143);
 				subrangeType();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(147);
+				setState(144);
 				recordType();
 				}
 				break;
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(148);
+				setState(145);
 				simpleType();
 				}
 				break;
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(149);
+				setState(146);
 				referenceType();
 				}
 				break;
@@ -1004,31 +828,26 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_arrayType; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitArrayType(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ArrayTypeContext arrayType() throws RecognitionException {
 		ArrayTypeContext _localctx = new ArrayTypeContext(_ctx, getState());
 		enterRule(_localctx, 28, RULE_arrayType);
 		try {
-			setState(154);
+			setState(151);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(152);
+				setState(149);
 				arrayTypeType();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(153);
+				setState(150);
 				arrayTypeRange();
 				}
 				break;
@@ -1046,17 +865,6 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class ArrayTypeTypeContext extends ParserRuleContext {
-		public ArrayTypeTypeContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_arrayTypeType; }
-	 
-		public ArrayTypeTypeContext() { }
-		public void copyFrom(ArrayTypeTypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeArrayTypeContext extends ArrayTypeTypeContext {
 		public TerminalNode ARRAY() { return getToken(SymbolParser.ARRAY, 0); }
 		public RangeTypeContext rangeType() {
 			return getRuleContext(RangeTypeContext.class,0);
@@ -1065,28 +873,25 @@ public class SymbolParser extends Parser {
 		public ArrayTypeElementContext arrayTypeElement() {
 			return getRuleContext(ArrayTypeElementContext.class,0);
 		}
-		public TypeArrayTypeContext(ArrayTypeTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeArrayType(this);
-			else return visitor.visitChildren(this);
+		public ArrayTypeTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_arrayTypeType; }
 	}
 
 	public final ArrayTypeTypeContext arrayTypeType() throws RecognitionException {
 		ArrayTypeTypeContext _localctx = new ArrayTypeTypeContext(_ctx, getState());
 		enterRule(_localctx, 30, RULE_arrayTypeType);
 		try {
-			_localctx = new TypeArrayTypeContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(156);
+			setState(153);
 			match(ARRAY);
-			setState(157);
+			setState(154);
 			rangeType();
-			setState(158);
+			setState(155);
 			match(OF);
-			setState(159);
+			setState(156);
 			arrayTypeElement();
 			}
 		}
@@ -1102,17 +907,6 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class ArrayTypeRangeContext extends ParserRuleContext {
-		public ArrayTypeRangeContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_arrayTypeRange; }
-	 
-		public ArrayTypeRangeContext() { }
-		public void copyFrom(ArrayTypeRangeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeArrayRangeContext extends ArrayTypeRangeContext {
 		public TerminalNode ARRAY() { return getToken(SymbolParser.ARRAY, 0); }
 		public RangeTypeRangeContext rangeTypeRange() {
 			return getRuleContext(RangeTypeRangeContext.class,0);
@@ -1121,28 +915,25 @@ public class SymbolParser extends Parser {
 		public ArrayTypeElementContext arrayTypeElement() {
 			return getRuleContext(ArrayTypeElementContext.class,0);
 		}
-		public TypeArrayRangeContext(ArrayTypeRangeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeArrayRange(this);
-			else return visitor.visitChildren(this);
+		public ArrayTypeRangeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_arrayTypeRange; }
 	}
 
 	public final ArrayTypeRangeContext arrayTypeRange() throws RecognitionException {
 		ArrayTypeRangeContext _localctx = new ArrayTypeRangeContext(_ctx, getState());
 		enterRule(_localctx, 32, RULE_arrayTypeRange);
 		try {
-			_localctx = new TypeArrayRangeContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(161);
+			setState(158);
 			match(ARRAY);
-			setState(162);
+			setState(159);
 			rangeTypeRange();
-			setState(163);
+			setState(160);
 			match(OF);
-			setState(164);
+			setState(161);
 			arrayTypeElement();
 			}
 		}
@@ -1168,18 +959,13 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_arrayTypeElement; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitArrayTypeElement(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ArrayTypeElementContext arrayTypeElement() throws RecognitionException {
 		ArrayTypeElementContext _localctx = new ArrayTypeElementContext(_ctx, getState());
 		enterRule(_localctx, 34, RULE_arrayTypeElement);
 		try {
-			setState(168);
+			setState(165);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOLEAN:
@@ -1190,14 +976,14 @@ public class SymbolParser extends Parser {
 			case UNSPECIFIED:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(166);
+				setState(163);
 				simpleType();
 				}
 				break;
 			case ID:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(167);
+				setState(164);
 				referenceType();
 				}
 				break;
@@ -1217,40 +1003,26 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class EnumTypeContext extends ParserRuleContext {
+		public EnumElementListContext enumElementList() {
+			return getRuleContext(EnumElementListContext.class,0);
+		}
 		public EnumTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_enumType; }
-	 
-		public EnumTypeContext() { }
-		public void copyFrom(EnumTypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeEnumContext extends EnumTypeContext {
-		public EnumElementListContext enumElementList() {
-			return getRuleContext(EnumElementListContext.class,0);
-		}
-		public TypeEnumContext(EnumTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeEnum(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final EnumTypeContext enumType() throws RecognitionException {
 		EnumTypeContext _localctx = new EnumTypeContext(_ctx, getState());
 		enterRule(_localctx, 36, RULE_enumType);
 		try {
-			_localctx = new TypeEnumContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(170);
+			setState(167);
 			match(T__10);
-			setState(171);
+			setState(168);
 			enumElementList();
-			setState(172);
+			setState(169);
 			match(T__11);
 			}
 		}
@@ -1278,11 +1050,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_enumElementList; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitEnumElementList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final EnumElementListContext enumElementList() throws RecognitionException {
@@ -1292,23 +1059,23 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(174);
+			setState(171);
 			((EnumElementListContext)_localctx).eumElement = eumElement();
 			((EnumElementListContext)_localctx).elements.add(((EnumElementListContext)_localctx).eumElement);
-			setState(179);
+			setState(176);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__12) {
 				{
 				{
-				setState(175);
+				setState(172);
 				match(T__12);
-				setState(176);
+				setState(173);
 				((EnumElementListContext)_localctx).eumElement = eumElement();
 				((EnumElementListContext)_localctx).elements.add(((EnumElementListContext)_localctx).eumElement);
 				}
 				}
-				setState(181);
+				setState(178);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1333,11 +1100,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_eumElement; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitEumElement(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final EumElementContext eumElement() throws RecognitionException {
@@ -1346,7 +1108,7 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(182);
+			setState(179);
 			numberedName();
 			}
 		}
@@ -1362,36 +1124,22 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class SubrangeTypeContext extends ParserRuleContext {
+		public RangeTypeRangeContext rangeTypeRange() {
+			return getRuleContext(RangeTypeRangeContext.class,0);
+		}
 		public SubrangeTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_subrangeType; }
-	 
-		public SubrangeTypeContext() { }
-		public void copyFrom(SubrangeTypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeSubrangeTypeRangeContext extends SubrangeTypeContext {
-		public RangeTypeRangeContext rangeTypeRange() {
-			return getRuleContext(RangeTypeRangeContext.class,0);
-		}
-		public TypeSubrangeTypeRangeContext(SubrangeTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeSubrangeTypeRange(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SubrangeTypeContext subrangeType() throws RecognitionException {
 		SubrangeTypeContext _localctx = new SubrangeTypeContext(_ctx, getState());
 		enterRule(_localctx, 42, RULE_subrangeType);
 		try {
-			_localctx = new TypeSubrangeTypeRangeContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(184);
+			setState(181);
 			rangeTypeRange();
 			}
 		}
@@ -1407,43 +1155,29 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class RecordTypeContext extends ParserRuleContext {
-		public RecordTypeContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_recordType; }
-	 
-		public RecordTypeContext() { }
-		public void copyFrom(RecordTypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeRecordContext extends RecordTypeContext {
 		public TerminalNode RECORD() { return getToken(SymbolParser.RECORD, 0); }
 		public RecordFieldListContext recordFieldList() {
 			return getRuleContext(RecordFieldListContext.class,0);
 		}
-		public TypeRecordContext(RecordTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeRecord(this);
-			else return visitor.visitChildren(this);
+		public RecordTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_recordType; }
 	}
 
 	public final RecordTypeContext recordType() throws RecognitionException {
 		RecordTypeContext _localctx = new RecordTypeContext(_ctx, getState());
 		enterRule(_localctx, 44, RULE_recordType);
 		try {
-			_localctx = new TypeRecordContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(186);
+			setState(183);
 			match(RECORD);
-			setState(187);
+			setState(184);
 			match(T__1);
-			setState(188);
+			setState(185);
 			recordFieldList();
-			setState(189);
+			setState(186);
 			match(T__3);
 			}
 		}
@@ -1471,11 +1205,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_recordFieldList; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitRecordFieldList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final RecordFieldListContext recordFieldList() throws RecognitionException {
@@ -1485,23 +1214,23 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(191);
+			setState(188);
 			((RecordFieldListContext)_localctx).recordField = recordField();
 			((RecordFieldListContext)_localctx).elements.add(((RecordFieldListContext)_localctx).recordField);
-			setState(196);
+			setState(193);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__12) {
 				{
 				{
-				setState(192);
+				setState(189);
 				match(T__12);
-				setState(193);
+				setState(190);
 				((RecordFieldListContext)_localctx).recordField = recordField();
 				((RecordFieldListContext)_localctx).elements.add(((RecordFieldListContext)_localctx).recordField);
 				}
 				}
-				setState(198);
+				setState(195);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1519,43 +1248,29 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class RecordFieldContext extends ParserRuleContext {
-		public RecordFieldContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_recordField; }
-	 
-		public RecordFieldContext() { }
-		public void copyFrom(RecordFieldContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeRecordFieldContext extends RecordFieldContext {
 		public FieldNameContext fieldName() {
 			return getRuleContext(FieldNameContext.class,0);
 		}
 		public FieldTypeContext fieldType() {
 			return getRuleContext(FieldTypeContext.class,0);
 		}
-		public TypeRecordFieldContext(RecordFieldContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeRecordField(this);
-			else return visitor.visitChildren(this);
+		public RecordFieldContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_recordField; }
 	}
 
 	public final RecordFieldContext recordField() throws RecognitionException {
 		RecordFieldContext _localctx = new RecordFieldContext(_ctx, getState());
 		enterRule(_localctx, 48, RULE_recordField);
 		try {
-			_localctx = new TypeRecordFieldContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(199);
+			setState(196);
 			fieldName();
-			setState(200);
+			setState(197);
 			match(T__8);
-			setState(201);
+			setState(198);
 			fieldType();
 			}
 		}
@@ -1581,31 +1296,26 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_fieldName; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitFieldName(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final FieldNameContext fieldName() throws RecognitionException {
 		FieldNameContext _localctx = new FieldNameContext(_ctx, getState());
 		enterRule(_localctx, 50, RULE_fieldName);
 		try {
-			setState(205);
+			setState(202);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(203);
+				setState(200);
 				numberedName();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(204);
+				setState(201);
 				bitfieldName();
 				}
 				break;
@@ -1623,17 +1333,6 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class BitfieldNameContext extends ParserRuleContext {
-		public BitfieldNameContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_bitfieldName; }
-	 
-		public BitfieldNameContext() { }
-		public void copyFrom(BitfieldNameContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeBitfieldNameContext extends BitfieldNameContext {
 		public Token name;
 		public Positive_numberContext offset;
 		public Positive_numberContext startPos;
@@ -1645,36 +1344,33 @@ public class SymbolParser extends Parser {
 		public Positive_numberContext positive_number(int i) {
 			return getRuleContext(Positive_numberContext.class,i);
 		}
-		public TypeBitfieldNameContext(BitfieldNameContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeBitfieldName(this);
-			else return visitor.visitChildren(this);
+		public BitfieldNameContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_bitfieldName; }
 	}
 
 	public final BitfieldNameContext bitfieldName() throws RecognitionException {
 		BitfieldNameContext _localctx = new BitfieldNameContext(_ctx, getState());
 		enterRule(_localctx, 52, RULE_bitfieldName);
 		try {
-			_localctx = new TypeBitfieldNameContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(207);
-			((TypeBitfieldNameContext)_localctx).name = match(ID);
-			setState(208);
+			setState(204);
+			((BitfieldNameContext)_localctx).name = match(ID);
+			setState(205);
 			match(T__6);
-			setState(209);
-			((TypeBitfieldNameContext)_localctx).offset = positive_number();
-			setState(210);
+			setState(206);
+			((BitfieldNameContext)_localctx).offset = positive_number();
+			setState(207);
 			match(T__8);
-			setState(211);
-			((TypeBitfieldNameContext)_localctx).startPos = positive_number();
-			setState(212);
+			setState(208);
+			((BitfieldNameContext)_localctx).startPos = positive_number();
+			setState(209);
 			match(T__2);
-			setState(213);
-			((TypeBitfieldNameContext)_localctx).stopPos = positive_number();
-			setState(214);
+			setState(210);
+			((BitfieldNameContext)_localctx).stopPos = positive_number();
+			setState(211);
 			match(T__4);
 			}
 		}
@@ -1690,8 +1386,14 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class FieldTypeContext extends ParserRuleContext {
-		public TypeTypeContext typeType() {
-			return getRuleContext(TypeTypeContext.class,0);
+		public ArrayTypeContext arrayType() {
+			return getRuleContext(ArrayTypeContext.class,0);
+		}
+		public SimpleTypeContext simpleType() {
+			return getRuleContext(SimpleTypeContext.class,0);
+		}
+		public ReferenceTypeContext referenceType() {
+			return getRuleContext(ReferenceTypeContext.class,0);
 		}
 		public SelectContext select() {
 			return getRuleContext(SelectContext.class,0);
@@ -1700,41 +1402,45 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_fieldType; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitFieldType(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final FieldTypeContext fieldType() throws RecognitionException {
 		FieldTypeContext _localctx = new FieldTypeContext(_ctx, getState());
 		enterRule(_localctx, 54, RULE_fieldType);
 		try {
-			setState(218);
+			setState(217);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case T__1:
-			case T__10:
 			case ARRAY:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(213);
+				arrayType();
+				}
+				break;
 			case BOOLEAN:
 			case CARDINAL:
 			case INTEGER:
 			case LONG:
 			case POINTER:
-			case RECORD:
 			case UNSPECIFIED:
-			case ID:
-				enterOuterAlt(_localctx, 1);
+				enterOuterAlt(_localctx, 2);
 				{
-				setState(216);
-				typeType();
+				setState(214);
+				simpleType();
+				}
+				break;
+			case ID:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(215);
+				referenceType();
 				}
 				break;
 			case SELECT:
-				enterOuterAlt(_localctx, 2);
+				enterOuterAlt(_localctx, 4);
 				{
-				setState(217);
+				setState(216);
 				select();
 				}
 				break;
@@ -1754,17 +1460,6 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class SelectContext extends ParserRuleContext {
-		public SelectContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_select; }
-	 
-		public SelectContext() { }
-		public void copyFrom(SelectContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeSelectAnyContext extends SelectContext {
 		public TerminalNode SELECT() { return getToken(SymbolParser.SELECT, 0); }
 		public TerminalNode OVERLAID() { return getToken(SymbolParser.OVERLAID, 0); }
 		public TerminalNode FROM() { return getToken(SymbolParser.FROM, 0); }
@@ -1772,32 +1467,29 @@ public class SymbolParser extends Parser {
 			return getRuleContext(SelectCaseListContext.class,0);
 		}
 		public TerminalNode ENDCASE() { return getToken(SymbolParser.ENDCASE, 0); }
-		public TypeSelectAnyContext(SelectContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeSelectAny(this);
-			else return visitor.visitChildren(this);
+		public SelectContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_select; }
 	}
 
 	public final SelectContext select() throws RecognitionException {
 		SelectContext _localctx = new SelectContext(_ctx, getState());
 		enterRule(_localctx, 56, RULE_select);
 		try {
-			_localctx = new TypeSelectAnyContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(220);
+			setState(219);
 			match(SELECT);
-			setState(221);
+			setState(220);
 			match(OVERLAID);
-			setState(222);
+			setState(221);
 			match(T__13);
-			setState(223);
+			setState(222);
 			match(FROM);
-			setState(224);
+			setState(223);
 			selectCaseList();
-			setState(225);
+			setState(224);
 			match(ENDCASE);
 			}
 		}
@@ -1825,11 +1517,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_selectCaseList; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitSelectCaseList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SelectCaseListContext selectCaseList() throws RecognitionException {
@@ -1839,25 +1526,25 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(227);
+			setState(226);
 			((SelectCaseListContext)_localctx).selectCase = selectCase();
 			((SelectCaseListContext)_localctx).elements.add(((SelectCaseListContext)_localctx).selectCase);
-			setState(234);
+			setState(233);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__12) {
 				{
 				{
-				setState(228);
+				setState(227);
 				match(T__12);
-				setState(229);
+				setState(228);
 				((SelectCaseListContext)_localctx).selectCase = selectCase();
 				((SelectCaseListContext)_localctx).elements.add(((SelectCaseListContext)_localctx).selectCase);
-				setState(230);
+				setState(229);
 				match(T__12);
 				}
 				}
-				setState(236);
+				setState(235);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1893,42 +1580,32 @@ public class SymbolParser extends Parser {
 			return getRuleContext(RecordFieldListContext.class,0);
 		}
 		public TypeSelectCaseListContext(SelectCaseContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeSelectCaseList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeSelectCaseEmptyContext extends SelectCaseContext {
 		public SelectCaseSelectorContext selectCaseSelector() {
 			return getRuleContext(SelectCaseSelectorContext.class,0);
 		}
 		public TypeSelectCaseEmptyContext(SelectCaseContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeSelectCaseEmpty(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SelectCaseContext selectCase() throws RecognitionException {
 		SelectCaseContext _localctx = new SelectCaseContext(_ctx, getState());
 		enterRule(_localctx, 60, RULE_selectCase);
 		try {
-			setState(248);
+			setState(247);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,15,_ctx) ) {
 			case 1:
 				_localctx = new TypeSelectCaseEmptyContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(237);
+				setState(236);
 				selectCaseSelector();
-				setState(238);
+				setState(237);
 				match(T__14);
-				setState(239);
+				setState(238);
 				match(T__1);
-				setState(240);
+				setState(239);
 				match(T__3);
 				}
 				break;
@@ -1936,15 +1613,15 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeSelectCaseListContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(242);
+				setState(241);
 				selectCaseSelector();
-				setState(243);
+				setState(242);
 				match(T__14);
-				setState(244);
+				setState(243);
 				match(T__1);
-				setState(245);
+				setState(244);
 				recordFieldList();
-				setState(246);
+				setState(245);
 				match(T__3);
 				}
 				break;
@@ -1971,31 +1648,26 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_selectCaseSelector; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitSelectCaseSelector(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SelectCaseSelectorContext selectCaseSelector() throws RecognitionException {
 		SelectCaseSelectorContext _localctx = new SelectCaseSelectorContext(_ctx, getState());
 		enterRule(_localctx, 62, RULE_selectCaseSelector);
 		try {
-			setState(252);
+			setState(251);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(250);
+				setState(249);
 				((SelectCaseSelectorContext)_localctx).name = match(ID);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(251);
+				setState(250);
 				numberedName();
 				}
 				break;
@@ -2013,36 +1685,22 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class ReferenceTypeContext extends ParserRuleContext {
+		public Token name;
+		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
 		public ReferenceTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_referenceType; }
-	 
-		public ReferenceTypeContext() { }
-		public void copyFrom(ReferenceTypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeRefContext extends ReferenceTypeContext {
-		public Token name;
-		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
-		public TypeRefContext(ReferenceTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeRef(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ReferenceTypeContext referenceType() throws RecognitionException {
 		ReferenceTypeContext _localctx = new ReferenceTypeContext(_ctx, getState());
 		enterRule(_localctx, 64, RULE_referenceType);
 		try {
-			_localctx = new TypeRefContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(254);
-			((TypeRefContext)_localctx).name = match(ID);
+			setState(253);
+			((ReferenceTypeContext)_localctx).name = match(ID);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2070,101 +1728,56 @@ public class SymbolParser extends Parser {
 	public static class TypeCardinalContext extends SimpleTypeContext {
 		public TerminalNode CARDINAL() { return getToken(SymbolParser.CARDINAL, 0); }
 		public TypeCardinalContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeCardinal(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeLongIntegerContext extends SimpleTypeContext {
 		public TerminalNode LONG() { return getToken(SymbolParser.LONG, 0); }
 		public TerminalNode INTEGER() { return getToken(SymbolParser.INTEGER, 0); }
 		public TypeLongIntegerContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeLongInteger(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeBooleanContext extends SimpleTypeContext {
 		public TerminalNode BOOLEAN() { return getToken(SymbolParser.BOOLEAN, 0); }
 		public TypeBooleanContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeBoolean(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeIntegerContext extends SimpleTypeContext {
 		public TerminalNode INTEGER() { return getToken(SymbolParser.INTEGER, 0); }
 		public TypeIntegerContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeInteger(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypePointerContext extends SimpleTypeContext {
 		public TerminalNode POINTER() { return getToken(SymbolParser.POINTER, 0); }
 		public TypePointerContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypePointer(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeUnspecifiedContext extends SimpleTypeContext {
 		public TerminalNode UNSPECIFIED() { return getToken(SymbolParser.UNSPECIFIED, 0); }
 		public TypeUnspecifiedContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeUnspecified(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeLongPointerContext extends SimpleTypeContext {
 		public TerminalNode LONG() { return getToken(SymbolParser.LONG, 0); }
 		public TerminalNode POINTER() { return getToken(SymbolParser.POINTER, 0); }
 		public TypeLongPointerContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeLongPointer(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeLongCardinalContext extends SimpleTypeContext {
 		public TerminalNode LONG() { return getToken(SymbolParser.LONG, 0); }
 		public TerminalNode CARDINAL() { return getToken(SymbolParser.CARDINAL, 0); }
 		public TypeLongCardinalContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeLongCardinal(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class TypeLongUnspecifiedContext extends SimpleTypeContext {
 		public TerminalNode LONG() { return getToken(SymbolParser.LONG, 0); }
 		public TerminalNode UNSPECIFIED() { return getToken(SymbolParser.UNSPECIFIED, 0); }
 		public TypeLongUnspecifiedContext(SimpleTypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitTypeLongUnspecified(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SimpleTypeContext simpleType() throws RecognitionException {
 		SimpleTypeContext _localctx = new SimpleTypeContext(_ctx, getState());
 		enterRule(_localctx, 66, RULE_simpleType);
 		try {
-			setState(269);
+			setState(268);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 			case 1:
 				_localctx = new TypeBooleanContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(256);
+				setState(255);
 				match(BOOLEAN);
 				}
 				break;
@@ -2172,7 +1785,7 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeCardinalContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(257);
+				setState(256);
 				match(CARDINAL);
 				}
 				break;
@@ -2180,9 +1793,9 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeLongCardinalContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(258);
+				setState(257);
 				match(LONG);
-				setState(259);
+				setState(258);
 				match(CARDINAL);
 				}
 				break;
@@ -2190,7 +1803,7 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeIntegerContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(260);
+				setState(259);
 				match(INTEGER);
 				}
 				break;
@@ -2198,9 +1811,9 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeLongIntegerContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(261);
+				setState(260);
 				match(LONG);
-				setState(262);
+				setState(261);
 				match(INTEGER);
 				}
 				break;
@@ -2208,7 +1821,7 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeUnspecifiedContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(263);
+				setState(262);
 				match(UNSPECIFIED);
 				}
 				break;
@@ -2216,9 +1829,9 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeLongUnspecifiedContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(264);
+				setState(263);
 				match(LONG);
-				setState(265);
+				setState(264);
 				match(UNSPECIFIED);
 				}
 				break;
@@ -2226,7 +1839,7 @@ public class SymbolParser extends Parser {
 				_localctx = new TypePointerContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(266);
+				setState(265);
 				match(POINTER);
 				}
 				break;
@@ -2234,9 +1847,9 @@ public class SymbolParser extends Parser {
 				_localctx = new TypeLongPointerContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(267);
+				setState(266);
 				match(LONG);
-				setState(268);
+				setState(267);
 				match(POINTER);
 				}
 				break;
@@ -2254,17 +1867,6 @@ public class SymbolParser extends Parser {
 	}
 
 	public static class DeclConstContext extends ParserRuleContext {
-		public DeclConstContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_declConst; }
-	 
-		public DeclConstContext() { }
-		public void copyFrom(DeclConstContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class ConstDeclContext extends DeclConstContext {
 		public Token name;
 		public ConstTypeContext constType() {
 			return getRuleContext(ConstTypeContext.class,0);
@@ -2273,32 +1875,29 @@ public class SymbolParser extends Parser {
 			return getRuleContext(ConstValueContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
-		public ConstDeclContext(DeclConstContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitConstDecl(this);
-			else return visitor.visitChildren(this);
+		public DeclConstContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
 		}
+		@Override public int getRuleIndex() { return RULE_declConst; }
 	}
 
 	public final DeclConstContext declConst() throws RecognitionException {
 		DeclConstContext _localctx = new DeclConstContext(_ctx, getState());
 		enterRule(_localctx, 68, RULE_declConst);
 		try {
-			_localctx = new ConstDeclContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(270);
+			((DeclConstContext)_localctx).name = match(ID);
 			setState(271);
-			((ConstDeclContext)_localctx).name = match(ID);
-			setState(272);
 			match(T__8);
-			setState(273);
+			setState(272);
 			constType();
-			setState(274);
+			setState(273);
 			match(T__7);
-			setState(275);
+			setState(274);
 			constValue();
-			setState(276);
+			setState(275);
 			match(T__9);
 			}
 		}
@@ -2321,40 +1920,35 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_constType; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitConstType(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ConstTypeContext constType() throws RecognitionException {
 		ConstTypeContext _localctx = new ConstTypeContext(_ctx, getState());
 		enterRule(_localctx, 70, RULE_constType);
 		try {
-			setState(282);
+			setState(281);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case CARDINAL:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(278);
+				setState(277);
 				match(CARDINAL);
 				}
 				break;
 			case POINTER:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(279);
+				setState(278);
 				match(POINTER);
 				}
 				break;
 			case LONG:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(280);
+				setState(279);
 				match(LONG);
-				setState(281);
+				setState(280);
 				match(POINTER);
 				}
 				break;
@@ -2381,11 +1975,6 @@ public class SymbolParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_constValue; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SymbolVisitor ) return ((SymbolVisitor<? extends T>)visitor).visitConstValue(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ConstValueContext constValue() throws RecognitionException {
@@ -2394,7 +1983,7 @@ public class SymbolParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(284);
+			setState(283);
 			qualifiedName();
 			}
 		}
@@ -2410,97 +1999,98 @@ public class SymbolParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u0121\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u0120\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
 		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\3\2\3\2\5\2O\n\2\3\2\3\2\5\2S\n\2"+
-		"\3\3\3\3\3\3\5\3X\n\3\3\4\3\4\5\4\\\n\4\3\5\3\5\3\6\5\6a\n\6\3\6\3\6\3"+
-		"\6\3\6\3\6\3\6\3\7\3\7\3\7\7\7l\n\7\f\7\16\7o\13\7\3\b\3\b\3\b\3\b\3\b"+
-		"\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\f\6\f\u0084"+
-		"\n\f\r\f\16\f\u0085\3\r\3\r\5\r\u008a\n\r\3\16\3\16\3\16\3\16\3\16\3\16"+
-		"\3\16\3\17\3\17\3\17\3\17\3\17\3\17\5\17\u0099\n\17\3\20\3\20\5\20\u009d"+
-		"\n\20\3\21\3\21\3\21\3\21\3\21\3\22\3\22\3\22\3\22\3\22\3\23\3\23\5\23"+
-		"\u00ab\n\23\3\24\3\24\3\24\3\24\3\25\3\25\3\25\7\25\u00b4\n\25\f\25\16"+
-		"\25\u00b7\13\25\3\26\3\26\3\27\3\27\3\30\3\30\3\30\3\30\3\30\3\31\3\31"+
-		"\3\31\7\31\u00c5\n\31\f\31\16\31\u00c8\13\31\3\32\3\32\3\32\3\32\3\33"+
-		"\3\33\5\33\u00d0\n\33\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\35"+
-		"\3\35\5\35\u00dd\n\35\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\37\3\37\3\37"+
-		"\3\37\3\37\7\37\u00eb\n\37\f\37\16\37\u00ee\13\37\3 \3 \3 \3 \3 \3 \3"+
-		" \3 \3 \3 \3 \5 \u00fb\n \3!\3!\5!\u00ff\n!\3\"\3\"\3#\3#\3#\3#\3#\3#"+
-		"\3#\3#\3#\3#\3#\3#\3#\5#\u0110\n#\3$\3$\3$\3$\3$\3$\3$\3%\3%\3%\3%\5%"+
-		"\u011d\n%\3&\3&\3&\2\2\'\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&("+
-		"*,.\60\62\64\668:<>@BDFHJ\2\3\3\2\6\7\2\u011d\2R\3\2\2\2\4W\3\2\2\2\6"+
-		"[\3\2\2\2\b]\3\2\2\2\n`\3\2\2\2\fh\3\2\2\2\16p\3\2\2\2\20u\3\2\2\2\22"+
-		"z\3\2\2\2\24~\3\2\2\2\26\u0083\3\2\2\2\30\u0089\3\2\2\2\32\u008b\3\2\2"+
-		"\2\34\u0098\3\2\2\2\36\u009c\3\2\2\2 \u009e\3\2\2\2\"\u00a3\3\2\2\2$\u00aa"+
-		"\3\2\2\2&\u00ac\3\2\2\2(\u00b0\3\2\2\2*\u00b8\3\2\2\2,\u00ba\3\2\2\2."+
-		"\u00bc\3\2\2\2\60\u00c1\3\2\2\2\62\u00c9\3\2\2\2\64\u00cf\3\2\2\2\66\u00d1"+
-		"\3\2\2\28\u00dc\3\2\2\2:\u00de\3\2\2\2<\u00e5\3\2\2\2>\u00fa\3\2\2\2@"+
-		"\u00fe\3\2\2\2B\u0100\3\2\2\2D\u010f\3\2\2\2F\u0111\3\2\2\2H\u011c\3\2"+
-		"\2\2J\u011e\3\2\2\2LS\7(\2\2MO\7\3\2\2NM\3\2\2\2NO\3\2\2\2OP\3\2\2\2P"+
-		"S\7)\2\2QS\7*\2\2RL\3\2\2\2RN\3\2\2\2RQ\3\2\2\2S\3\3\2\2\2TX\7(\2\2UX"+
-		"\7)\2\2VX\7*\2\2WT\3\2\2\2WU\3\2\2\2WV\3\2\2\2X\5\3\2\2\2Y\\\5\2\2\2Z"+
-		"\\\7\'\2\2[Y\3\2\2\2[Z\3\2\2\2\\\7\3\2\2\2]^\7\'\2\2^\t\3\2\2\2_a\7\'"+
-		"\2\2`_\3\2\2\2`a\3\2\2\2ab\3\2\2\2bc\7\4\2\2cd\5\6\4\2de\7\5\2\2ef\5\6"+
-		"\4\2fg\t\2\2\2g\13\3\2\2\2hm\7\'\2\2ij\7\b\2\2jl\7\'\2\2ki\3\2\2\2lo\3"+
-		"\2\2\2mk\3\2\2\2mn\3\2\2\2n\r\3\2\2\2om\3\2\2\2pq\7\'\2\2qr\7\t\2\2rs"+
-		"\5\4\3\2st\7\7\2\2t\17\3\2\2\2uv\5\22\n\2vw\7\n\2\2wx\5\24\13\2xy\7\b"+
-		"\2\2y\21\3\2\2\2z{\7\'\2\2{|\7\13\2\2|}\7!\2\2}\23\3\2\2\2~\177\7\23\2"+
-		"\2\177\u0080\5\26\f\2\u0080\u0081\7\26\2\2\u0081\25\3\2\2\2\u0082\u0084"+
-		"\5\30\r\2\u0083\u0082\3\2\2\2\u0084\u0085\3\2\2\2\u0085\u0083\3\2\2\2"+
-		"\u0085\u0086\3\2\2\2\u0086\27\3\2\2\2\u0087\u008a\5\32\16\2\u0088\u008a"+
-		"\5F$\2\u0089\u0087\3\2\2\2\u0089\u0088\3\2\2\2\u008a\31\3\2\2\2\u008b"+
-		"\u008c\7\'\2\2\u008c\u008d\7\13\2\2\u008d\u008e\7\"\2\2\u008e\u008f\7"+
-		"\n\2\2\u008f\u0090\5\34\17\2\u0090\u0091\7\f\2\2\u0091\33\3\2\2\2\u0092"+
-		"\u0099\5\36\20\2\u0093\u0099\5&\24\2\u0094\u0099\5,\27\2\u0095\u0099\5"+
-		".\30\2\u0096\u0099\5D#\2\u0097\u0099\5B\"\2\u0098\u0092\3\2\2\2\u0098"+
-		"\u0093\3\2\2\2\u0098\u0094\3\2\2\2\u0098\u0095\3\2\2\2\u0098\u0096\3\2"+
-		"\2\2\u0098\u0097\3\2\2\2\u0099\35\3\2\2\2\u009a\u009d\5 \21\2\u009b\u009d"+
-		"\5\"\22\2\u009c\u009a\3\2\2\2\u009c\u009b\3\2\2\2\u009d\37\3\2\2\2\u009e"+
-		"\u009f\7\22\2\2\u009f\u00a0\5\b\5\2\u00a0\u00a1\7\33\2\2\u00a1\u00a2\5"+
-		"$\23\2\u00a2!\3\2\2\2\u00a3\u00a4\7\22\2\2\u00a4\u00a5\5\n\6\2\u00a5\u00a6"+
-		"\7\33\2\2\u00a6\u00a7\5$\23\2\u00a7#\3\2\2\2\u00a8\u00ab\5D#\2\u00a9\u00ab"+
-		"\5B\"\2\u00aa\u00a8\3\2\2\2\u00aa\u00a9\3\2\2\2\u00ab%\3\2\2\2\u00ac\u00ad"+
-		"\7\r\2\2\u00ad\u00ae\5(\25\2\u00ae\u00af\7\16\2\2\u00af\'\3\2\2\2\u00b0"+
-		"\u00b5\5*\26\2\u00b1\u00b2\7\17\2\2\u00b2\u00b4\5*\26\2\u00b3\u00b1\3"+
-		"\2\2\2\u00b4\u00b7\3\2\2\2\u00b5\u00b3\3\2\2\2\u00b5\u00b6\3\2\2\2\u00b6"+
-		")\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b8\u00b9\5\16\b\2\u00b9+\3\2\2\2\u00ba"+
-		"\u00bb\5\n\6\2\u00bb-\3\2\2\2\u00bc\u00bd\7\37\2\2\u00bd\u00be\7\4\2\2"+
-		"\u00be\u00bf\5\60\31\2\u00bf\u00c0\7\6\2\2\u00c0/\3\2\2\2\u00c1\u00c6"+
-		"\5\62\32\2\u00c2\u00c3\7\17\2\2\u00c3\u00c5\5\62\32\2\u00c4\u00c2\3\2"+
-		"\2\2\u00c5\u00c8\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c6\u00c7\3\2\2\2\u00c7"+
-		"\61\3\2\2\2\u00c8\u00c6\3\2\2\2\u00c9\u00ca\5\64\33\2\u00ca\u00cb\7\13"+
-		"\2\2\u00cb\u00cc\58\35\2\u00cc\63\3\2\2\2\u00cd\u00d0\5\16\b\2\u00ce\u00d0"+
-		"\5\66\34\2\u00cf\u00cd\3\2\2\2\u00cf\u00ce\3\2\2\2\u00d0\65\3\2\2\2\u00d1"+
-		"\u00d2\7\'\2\2\u00d2\u00d3\7\t\2\2\u00d3\u00d4\5\4\3\2\u00d4\u00d5\7\13"+
-		"\2\2\u00d5\u00d6\5\4\3\2\u00d6\u00d7\7\5\2\2\u00d7\u00d8\5\4\3\2\u00d8"+
-		"\u00d9\7\7\2\2\u00d9\67\3\2\2\2\u00da\u00dd\5\34\17\2\u00db\u00dd\5:\36"+
-		"\2\u00dc\u00da\3\2\2\2\u00dc\u00db\3\2\2\2\u00dd9\3\2\2\2\u00de\u00df"+
-		"\7 \2\2\u00df\u00e0\7\34\2\2\u00e0\u00e1\7\20\2\2\u00e1\u00e2\7\30\2\2"+
-		"\u00e2\u00e3\5<\37\2\u00e3\u00e4\7\27\2\2\u00e4;\3\2\2\2\u00e5\u00ec\5"+
-		"> \2\u00e6\u00e7\7\17\2\2\u00e7\u00e8\5> \2\u00e8\u00e9\7\17\2\2\u00e9"+
-		"\u00eb\3\2\2\2\u00ea\u00e6\3\2\2\2\u00eb\u00ee\3\2\2\2\u00ec\u00ea\3\2"+
-		"\2\2\u00ec\u00ed\3\2\2\2\u00ed=\3\2\2\2\u00ee\u00ec\3\2\2\2\u00ef\u00f0"+
-		"\5@!\2\u00f0\u00f1\7\21\2\2\u00f1\u00f2\7\4\2\2\u00f2\u00f3\7\6\2\2\u00f3"+
-		"\u00fb\3\2\2\2\u00f4\u00f5\5@!\2\u00f5\u00f6\7\21\2\2\u00f6\u00f7\7\4"+
-		"\2\2\u00f7\u00f8\5\60\31\2\u00f8\u00f9\7\6\2\2\u00f9\u00fb\3\2\2\2\u00fa"+
-		"\u00ef\3\2\2\2\u00fa\u00f4\3\2\2\2\u00fb?\3\2\2\2\u00fc\u00ff\7\'\2\2"+
-		"\u00fd\u00ff\5\16\b\2\u00fe\u00fc\3\2\2\2\u00fe\u00fd\3\2\2\2\u00ffA\3"+
-		"\2\2\2\u0100\u0101\7\'\2\2\u0101C\3\2\2\2\u0102\u0110\7\24\2\2\u0103\u0110"+
-		"\7\25\2\2\u0104\u0105\7\32\2\2\u0105\u0110\7\25\2\2\u0106\u0110\7\31\2"+
-		"\2\u0107\u0108\7\32\2\2\u0108\u0110\7\31\2\2\u0109\u0110\7#\2\2\u010a"+
-		"\u010b\7\32\2\2\u010b\u0110\7#\2\2\u010c\u0110\7\36\2\2\u010d\u010e\7"+
-		"\32\2\2\u010e\u0110\7\36\2\2\u010f\u0102\3\2\2\2\u010f\u0103\3\2\2\2\u010f"+
-		"\u0104\3\2\2\2\u010f\u0106\3\2\2\2\u010f\u0107\3\2\2\2\u010f\u0109\3\2"+
-		"\2\2\u010f\u010a\3\2\2\2\u010f\u010c\3\2\2\2\u010f\u010d\3\2\2\2\u0110"+
-		"E\3\2\2\2\u0111\u0112\7\'\2\2\u0112\u0113\7\13\2\2\u0113\u0114\5H%\2\u0114"+
-		"\u0115\7\n\2\2\u0115\u0116\5J&\2\u0116\u0117\7\f\2\2\u0117G\3\2\2\2\u0118"+
-		"\u011d\7\25\2\2\u0119\u011d\7\36\2\2\u011a\u011b\7\32\2\2\u011b\u011d"+
-		"\7\36\2\2\u011c\u0118\3\2\2\2\u011c\u0119\3\2\2\2\u011c\u011a\3\2\2\2"+
-		"\u011dI\3\2\2\2\u011e\u011f\5\f\7\2\u011fK\3\2\2\2\26NRW[`m\u0085\u0089"+
-		"\u0098\u009c\u00aa\u00b5\u00c6\u00cf\u00dc\u00ec\u00fa\u00fe\u010f\u011c";
+		"\3\3\3\3\3\4\3\4\5\4Y\n\4\3\5\3\5\3\6\5\6^\n\6\3\6\3\6\3\6\3\6\3\6\3\6"+
+		"\3\7\3\7\3\7\7\7i\n\7\f\7\16\7l\13\7\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3"+
+		"\t\3\t\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\f\6\f\u0081\n\f\r\f\16\f"+
+		"\u0082\3\r\3\r\5\r\u0087\n\r\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\17\3"+
+		"\17\3\17\3\17\3\17\3\17\5\17\u0096\n\17\3\20\3\20\5\20\u009a\n\20\3\21"+
+		"\3\21\3\21\3\21\3\21\3\22\3\22\3\22\3\22\3\22\3\23\3\23\5\23\u00a8\n\23"+
+		"\3\24\3\24\3\24\3\24\3\25\3\25\3\25\7\25\u00b1\n\25\f\25\16\25\u00b4\13"+
+		"\25\3\26\3\26\3\27\3\27\3\30\3\30\3\30\3\30\3\30\3\31\3\31\3\31\7\31\u00c2"+
+		"\n\31\f\31\16\31\u00c5\13\31\3\32\3\32\3\32\3\32\3\33\3\33\5\33\u00cd"+
+		"\n\33\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\35\3\35\3\35\3\35"+
+		"\5\35\u00dc\n\35\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\37\3\37\3\37\3\37"+
+		"\3\37\7\37\u00ea\n\37\f\37\16\37\u00ed\13\37\3 \3 \3 \3 \3 \3 \3 \3 \3"+
+		" \3 \3 \5 \u00fa\n \3!\3!\5!\u00fe\n!\3\"\3\"\3#\3#\3#\3#\3#\3#\3#\3#"+
+		"\3#\3#\3#\3#\3#\5#\u010f\n#\3$\3$\3$\3$\3$\3$\3$\3%\3%\3%\3%\5%\u011c"+
+		"\n%\3&\3&\3&\2\2\'\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60"+
+		"\62\64\668:<>@BDFHJ\2\4\3\2(*\3\2\6\7\2\u011c\2R\3\2\2\2\4T\3\2\2\2\6"+
+		"X\3\2\2\2\bZ\3\2\2\2\n]\3\2\2\2\fe\3\2\2\2\16m\3\2\2\2\20r\3\2\2\2\22"+
+		"w\3\2\2\2\24{\3\2\2\2\26\u0080\3\2\2\2\30\u0086\3\2\2\2\32\u0088\3\2\2"+
+		"\2\34\u0095\3\2\2\2\36\u0099\3\2\2\2 \u009b\3\2\2\2\"\u00a0\3\2\2\2$\u00a7"+
+		"\3\2\2\2&\u00a9\3\2\2\2(\u00ad\3\2\2\2*\u00b5\3\2\2\2,\u00b7\3\2\2\2."+
+		"\u00b9\3\2\2\2\60\u00be\3\2\2\2\62\u00c6\3\2\2\2\64\u00cc\3\2\2\2\66\u00ce"+
+		"\3\2\2\28\u00db\3\2\2\2:\u00dd\3\2\2\2<\u00e4\3\2\2\2>\u00f9\3\2\2\2@"+
+		"\u00fd\3\2\2\2B\u00ff\3\2\2\2D\u010e\3\2\2\2F\u0110\3\2\2\2H\u011b\3\2"+
+		"\2\2J\u011d\3\2\2\2LS\7(\2\2MO\7\3\2\2NM\3\2\2\2NO\3\2\2\2OP\3\2\2\2P"+
+		"S\7)\2\2QS\7*\2\2RL\3\2\2\2RN\3\2\2\2RQ\3\2\2\2S\3\3\2\2\2TU\t\2\2\2U"+
+		"\5\3\2\2\2VY\5\2\2\2WY\7\'\2\2XV\3\2\2\2XW\3\2\2\2Y\7\3\2\2\2Z[\7\'\2"+
+		"\2[\t\3\2\2\2\\^\7\'\2\2]\\\3\2\2\2]^\3\2\2\2^_\3\2\2\2_`\7\4\2\2`a\5"+
+		"\6\4\2ab\7\5\2\2bc\5\6\4\2cd\t\3\2\2d\13\3\2\2\2ej\7\'\2\2fg\7\b\2\2g"+
+		"i\7\'\2\2hf\3\2\2\2il\3\2\2\2jh\3\2\2\2jk\3\2\2\2k\r\3\2\2\2lj\3\2\2\2"+
+		"mn\7\'\2\2no\7\t\2\2op\5\4\3\2pq\7\7\2\2q\17\3\2\2\2rs\5\22\n\2st\7\n"+
+		"\2\2tu\5\24\13\2uv\7\b\2\2v\21\3\2\2\2wx\7\'\2\2xy\7\13\2\2yz\7!\2\2z"+
+		"\23\3\2\2\2{|\7\23\2\2|}\5\26\f\2}~\7\26\2\2~\25\3\2\2\2\177\u0081\5\30"+
+		"\r\2\u0080\177\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0080\3\2\2\2\u0082\u0083"+
+		"\3\2\2\2\u0083\27\3\2\2\2\u0084\u0087\5\32\16\2\u0085\u0087\5F$\2\u0086"+
+		"\u0084\3\2\2\2\u0086\u0085\3\2\2\2\u0087\31\3\2\2\2\u0088\u0089\7\'\2"+
+		"\2\u0089\u008a\7\13\2\2\u008a\u008b\7\"\2\2\u008b\u008c\7\n\2\2\u008c"+
+		"\u008d\5\34\17\2\u008d\u008e\7\f\2\2\u008e\33\3\2\2\2\u008f\u0096\5\36"+
+		"\20\2\u0090\u0096\5&\24\2\u0091\u0096\5,\27\2\u0092\u0096\5.\30\2\u0093"+
+		"\u0096\5D#\2\u0094\u0096\5B\"\2\u0095\u008f\3\2\2\2\u0095\u0090\3\2\2"+
+		"\2\u0095\u0091\3\2\2\2\u0095\u0092\3\2\2\2\u0095\u0093\3\2\2\2\u0095\u0094"+
+		"\3\2\2\2\u0096\35\3\2\2\2\u0097\u009a\5 \21\2\u0098\u009a\5\"\22\2\u0099"+
+		"\u0097\3\2\2\2\u0099\u0098\3\2\2\2\u009a\37\3\2\2\2\u009b\u009c\7\22\2"+
+		"\2\u009c\u009d\5\b\5\2\u009d\u009e\7\33\2\2\u009e\u009f\5$\23\2\u009f"+
+		"!\3\2\2\2\u00a0\u00a1\7\22\2\2\u00a1\u00a2\5\n\6\2\u00a2\u00a3\7\33\2"+
+		"\2\u00a3\u00a4\5$\23\2\u00a4#\3\2\2\2\u00a5\u00a8\5D#\2\u00a6\u00a8\5"+
+		"B\"\2\u00a7\u00a5\3\2\2\2\u00a7\u00a6\3\2\2\2\u00a8%\3\2\2\2\u00a9\u00aa"+
+		"\7\r\2\2\u00aa\u00ab\5(\25\2\u00ab\u00ac\7\16\2\2\u00ac\'\3\2\2\2\u00ad"+
+		"\u00b2\5*\26\2\u00ae\u00af\7\17\2\2\u00af\u00b1\5*\26\2\u00b0\u00ae\3"+
+		"\2\2\2\u00b1\u00b4\3\2\2\2\u00b2\u00b0\3\2\2\2\u00b2\u00b3\3\2\2\2\u00b3"+
+		")\3\2\2\2\u00b4\u00b2\3\2\2\2\u00b5\u00b6\5\16\b\2\u00b6+\3\2\2\2\u00b7"+
+		"\u00b8\5\n\6\2\u00b8-\3\2\2\2\u00b9\u00ba\7\37\2\2\u00ba\u00bb\7\4\2\2"+
+		"\u00bb\u00bc\5\60\31\2\u00bc\u00bd\7\6\2\2\u00bd/\3\2\2\2\u00be\u00c3"+
+		"\5\62\32\2\u00bf\u00c0\7\17\2\2\u00c0\u00c2\5\62\32\2\u00c1\u00bf\3\2"+
+		"\2\2\u00c2\u00c5\3\2\2\2\u00c3\u00c1\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4"+
+		"\61\3\2\2\2\u00c5\u00c3\3\2\2\2\u00c6\u00c7\5\64\33\2\u00c7\u00c8\7\13"+
+		"\2\2\u00c8\u00c9\58\35\2\u00c9\63\3\2\2\2\u00ca\u00cd\5\16\b\2\u00cb\u00cd"+
+		"\5\66\34\2\u00cc\u00ca\3\2\2\2\u00cc\u00cb\3\2\2\2\u00cd\65\3\2\2\2\u00ce"+
+		"\u00cf\7\'\2\2\u00cf\u00d0\7\t\2\2\u00d0\u00d1\5\4\3\2\u00d1\u00d2\7\13"+
+		"\2\2\u00d2\u00d3\5\4\3\2\u00d3\u00d4\7\5\2\2\u00d4\u00d5\5\4\3\2\u00d5"+
+		"\u00d6\7\7\2\2\u00d6\67\3\2\2\2\u00d7\u00dc\5\36\20\2\u00d8\u00dc\5D#"+
+		"\2\u00d9\u00dc\5B\"\2\u00da\u00dc\5:\36\2\u00db\u00d7\3\2\2\2\u00db\u00d8"+
+		"\3\2\2\2\u00db\u00d9\3\2\2\2\u00db\u00da\3\2\2\2\u00dc9\3\2\2\2\u00dd"+
+		"\u00de\7 \2\2\u00de\u00df\7\34\2\2\u00df\u00e0\7\20\2\2\u00e0\u00e1\7"+
+		"\30\2\2\u00e1\u00e2\5<\37\2\u00e2\u00e3\7\27\2\2\u00e3;\3\2\2\2\u00e4"+
+		"\u00eb\5> \2\u00e5\u00e6\7\17\2\2\u00e6\u00e7\5> \2\u00e7\u00e8\7\17\2"+
+		"\2\u00e8\u00ea\3\2\2\2\u00e9\u00e5\3\2\2\2\u00ea\u00ed\3\2\2\2\u00eb\u00e9"+
+		"\3\2\2\2\u00eb\u00ec\3\2\2\2\u00ec=\3\2\2\2\u00ed\u00eb\3\2\2\2\u00ee"+
+		"\u00ef\5@!\2\u00ef\u00f0\7\21\2\2\u00f0\u00f1\7\4\2\2\u00f1\u00f2\7\6"+
+		"\2\2\u00f2\u00fa\3\2\2\2\u00f3\u00f4\5@!\2\u00f4\u00f5\7\21\2\2\u00f5"+
+		"\u00f6\7\4\2\2\u00f6\u00f7\5\60\31\2\u00f7\u00f8\7\6\2\2\u00f8\u00fa\3"+
+		"\2\2\2\u00f9\u00ee\3\2\2\2\u00f9\u00f3\3\2\2\2\u00fa?\3\2\2\2\u00fb\u00fe"+
+		"\7\'\2\2\u00fc\u00fe\5\16\b\2\u00fd\u00fb\3\2\2\2\u00fd\u00fc\3\2\2\2"+
+		"\u00feA\3\2\2\2\u00ff\u0100\7\'\2\2\u0100C\3\2\2\2\u0101\u010f\7\24\2"+
+		"\2\u0102\u010f\7\25\2\2\u0103\u0104\7\32\2\2\u0104\u010f\7\25\2\2\u0105"+
+		"\u010f\7\31\2\2\u0106\u0107\7\32\2\2\u0107\u010f\7\31\2\2\u0108\u010f"+
+		"\7#\2\2\u0109\u010a\7\32\2\2\u010a\u010f\7#\2\2\u010b\u010f\7\36\2\2\u010c"+
+		"\u010d\7\32\2\2\u010d\u010f\7\36\2\2\u010e\u0101\3\2\2\2\u010e\u0102\3"+
+		"\2\2\2\u010e\u0103\3\2\2\2\u010e\u0105\3\2\2\2\u010e\u0106\3\2\2\2\u010e"+
+		"\u0108\3\2\2\2\u010e\u0109\3\2\2\2\u010e\u010b\3\2\2\2\u010e\u010c\3\2"+
+		"\2\2\u010fE\3\2\2\2\u0110\u0111\7\'\2\2\u0111\u0112\7\13\2\2\u0112\u0113"+
+		"\5H%\2\u0113\u0114\7\n\2\2\u0114\u0115\5J&\2\u0115\u0116\7\f\2\2\u0116"+
+		"G\3\2\2\2\u0117\u011c\7\25\2\2\u0118\u011c\7\36\2\2\u0119\u011a\7\32\2"+
+		"\2\u011a\u011c\7\36\2\2\u011b\u0117\3\2\2\2\u011b\u0118\3\2\2\2\u011b"+
+		"\u0119\3\2\2\2\u011cI\3\2\2\2\u011d\u011e\5\f\7\2\u011eK\3\2\2\2\25NR"+
+		"X]j\u0082\u0086\u0095\u0099\u00a7\u00b2\u00c3\u00cc\u00db\u00eb\u00f9"+
+		"\u00fd\u010e\u011b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
