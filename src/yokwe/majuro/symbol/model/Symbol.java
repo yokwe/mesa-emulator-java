@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.symbol.antlr.SymbolBaseVisitor;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
 import yokwe.majuro.symbol.antlr.SymbolParser.*;
@@ -91,195 +90,229 @@ public class Symbol {
 		}
 	}
 	
-	private static class TypeVisitors extends SymbolBaseVisitor<Type> {
-		public final String name;
-		
-		public TypeVisitors(String name) {
-			this.name = name;
-		}
-		
-		// ARRAY
-		@Override public Type visitTypeArrayType(TypeArrayTypeContext context) {
-			// ARRAY rangeType  OF arrayTypeElement # TypeArrayType
-			RangeTypeContext        rangeType        = context.rangeType();
-			ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
-			
-			if (rangeType == null) {
-				logger.error("Unexpected rangeType is null");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected rangeType is null");
-			}
-			if (arrayTypeElement == null) {
-				logger.error("Unexpected arrayTypeElement is null");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected arrayTypeElement is null");
-			}
-			String indexName = rangeType.name.getText();
-			
-			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
-			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
-
-			if (simpleType != null) {
-				Type type = getType(simpleType);
-				return new TypeArrayFull(name, type.name, indexName);
-			} else if (referenceType != null) {
-				TypeRefContext typeRef = (TypeRefContext)referenceType;
-				return new TypeArrayFull(name, typeRef.name.getText(), indexName);
-			} else {
-				logger.error("Unexpected arrayTypeElement");
-				logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
-				throw new UnexpectedException("Unexpected arrayTypeElement");
-			}
-			
-		}
-		@Override public Type visitTypeArrayRange(TypeArrayRangeContext context) {
-			// ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
-			RangeTypeRangeContext   rangeTypeRange   = context.rangeTypeRange();
-			ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
-			
-			if (rangeTypeRange == null) {
-				logger.error("Unexpected rangeTypeRange is null");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected rangeTypeRange is null");
-			}
-			if (arrayTypeElement == null) {
-				logger.error("Unexpected arrayTypeElement is null");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected arrayTypeElement is null");
-			}
-			
-			String indexName  = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
-			String startIndex = rangeTypeRange.startIndex.getText();
-			String stopIndex  = rangeTypeRange.stopIndex.getText();
-			String closeChar  = rangeTypeRange.closeChar.getText();
-
-			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
-			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
-
-			boolean rangeMaxInclusive = closeChar.equals("]");
-			
-			if (simpleType != null) {
-				Type type = getType(simpleType);
-				
-				if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
-					return new TypeArrayOpen(name, type.name, indexName, startIndex);
-				} else {
-					return new TypeArraySubrange(name, type.name, indexName, startIndex, stopIndex, rangeMaxInclusive);
-				}
-			} else if (referenceType != null) {
-				TypeRefContext typeRef = (TypeRefContext)referenceType;
-				
-				if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
-					return new TypeArrayOpen(name, typeRef.name.getText(), indexName, startIndex);
-				} else {
-					return new TypeArraySubrange(name, typeRef.name.getText(), indexName, startIndex, stopIndex, rangeMaxInclusive);
-				}
-			} else {
-				logger.error("Unexpected arrayTypeElement");
-				logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
-				throw new UnexpectedException("Unexpected arrayTypeElement");
-			}
-		}
-		
-		// ENUM
-		@Override public Type visitTypeEnum(TypeEnumContext context) {
-			EnumElementListContext enumElementList = context.enumElementList();
-			if (enumElementList == null) {
-				logger.error("Unexpected enumElementList");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected enumElementList");
-			}
-			List<Element> elementList = new ArrayList<>();
-			for(EumElementContext e: enumElementList.elements) {
-				String name  = e.numberedName().name.getText();
-				long   value = Type.getNumericValue(e.numberedName().value.getText());
-				if (Type.CARDINAL_MAX < value) {
-					logger.error("Unexpeced value");
-					logger.error("  value {}", value);
-					throw new UnexpectedException("Unexpeced value");
-				}
-				
-				elementList.add(new TypeEnum.Element(name, (int)value));
-			}
-			
-			return new TypeEnum(name, elementList);
-		}
-
-		// SUBRANGE
-		@Override public Type visitTypeSubrangeTypeRange(TypeSubrangeTypeRangeContext context) {
-			RangeTypeRangeContext rangeTypeRange = context.rangeTypeRange();
-			if (rangeTypeRange == null) {
-				logger.error("Unexpected rangeTypeRangeContext");
-				logger.error("  context {}", context.getText());
-				throw new UnexpectedException("Unexpected rangeTypeRangeContext");
-			}
-			String baseName   = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
-			String startIndex = rangeTypeRange.startIndex.getText();
-			String stopIndex  = rangeTypeRange.stopIndex.getText();
-			String closeChar  = rangeTypeRange.closeChar.getText();
-			
-			return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
-		}
-		
-		// RECORD
-		@Override public Type visitTypeRecordField(TypeRecordFieldContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
-		}
-		@Override public Type visitTypeRecord(TypeRecordContext context) {
-			logger.info("  {}", context.getClass().getName());
-			return null;
-		}
-		
-		// REFERENCE
-		@Override public Type visitTypeRef(TypeRefContext context) {
-			String baseName = context.name.getText();
-			return new TypeReference(name, baseName);
-		}
-	}
-	
-	private static Type getType(SimpleTypeContext context) {
-		if (context instanceof TypeBooleanContext)         return Type.BOOL_VALUE;
-		if (context instanceof TypeCardinalContext)        return Type.CARDINAL_VALUE;
-		if (context instanceof TypeLongCardinalContext)    return Type.LONG_CARDINAL_VALUE;
-		if (context instanceof TypeIntegerContext)         return Type.INTEGER_VALUE;
-		if (context instanceof TypeLongIntegerContext)     return Type.LONG_INTEGER_VALUE;
-		if (context instanceof TypeUnspecifiedContext)     return Type.UNSPECIFIED_VALUE;
-		if (context instanceof TypeLongUnspecifiedContext) return Type.LONG_UNSPECIFIED_VALUE;
-		if (context instanceof TypePointerContext)         return Type.POINTER_VALUE;
-		if (context instanceof TypeLongPointerContext)     return Type.LONG_POINTER_VALUE;
+	private static String getTypeName(SimpleTypeContext context) {
+		if (context instanceof TypeBooleanContext)         return Type.BOOL_VALUE.name;
+		if (context instanceof TypeCardinalContext)        return Type.CARDINAL_VALUE.name;
+		if (context instanceof TypeLongCardinalContext)    return Type.LONG_CARDINAL_VALUE.name;
+		if (context instanceof TypeIntegerContext)         return Type.INTEGER_VALUE.name;
+		if (context instanceof TypeLongIntegerContext)     return Type.LONG_INTEGER_VALUE.name;
+		if (context instanceof TypeUnspecifiedContext)     return Type.UNSPECIFIED_VALUE.name;
+		if (context instanceof TypeLongUnspecifiedContext) return Type.LONG_UNSPECIFIED_VALUE.name;
+		if (context instanceof TypePointerContext)         return Type.POINTER_VALUE.name;
+		if (context instanceof TypeLongPointerContext)     return Type.LONG_POINTER_VALUE.name;
 		
 		logger.error("Unexpected clazz");
 		logger.error("  context {}", context.getClass().getName());
 		throw new UnexpectedException("Unexpected clazz");
 	}
+	
+	private static Type getType(String name, TypeArrayTypeContext context) {
+		// ARRAY rangeType  OF arrayTypeElement # TypeArrayType
+		RangeTypeContext        rangeType        = context.rangeType();
+		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
+		
+		if (rangeType == null) {
+			logger.error("Unexpected rangeType is null");
+			logger.error("  context {}", context.getText());
+			throw new UnexpectedException("Unexpected rangeType is null");
+		}
+		if (arrayTypeElement == null) {
+			logger.error("Unexpected arrayTypeElement is null");
+			logger.error("  context {}", context.getText());
+			throw new UnexpectedException("Unexpected arrayTypeElement is null");
+		}
+		String indexName = rangeType.name.getText();
+		
+		SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
+		ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
+
+		if (simpleType != null) {
+			return new TypeArrayFull(name, getTypeName(simpleType), indexName);
+		} else if (referenceType != null) {
+			TypeRefContext typeRef = (TypeRefContext)referenceType;
+			return new TypeArrayFull(name, typeRef.name.getText(), indexName);
+		} else {
+			logger.error("Unexpected arrayTypeElement");
+			logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
+			throw new UnexpectedException("Unexpected arrayTypeElement");
+		}	
+	}
+	private static Type getType(String name, TypeArrayRangeContext context) {
+		// ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
+		RangeTypeRangeContext   rangeTypeRange   = context.rangeTypeRange();
+		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
+		
+		if (rangeTypeRange == null) {
+			logger.error("Unexpected rangeTypeRange is null");
+			logger.error("  context {}", context.getText());
+			throw new UnexpectedException("Unexpected rangeTypeRange is null");
+		}
+		if (arrayTypeElement == null) {
+			logger.error("Unexpected arrayTypeElement is null");
+			logger.error("  context {}", context.getText());
+			throw new UnexpectedException("Unexpected arrayTypeElement is null");
+		}
+		
+		String indexName  = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
+		String startIndex = rangeTypeRange.startIndex.getText();
+		String stopIndex  = rangeTypeRange.stopIndex.getText();
+		String closeChar  = rangeTypeRange.closeChar.getText();
+
+		SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
+		ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
+
+		boolean rangeMaxInclusive = closeChar.equals("]");
+		
+		if (simpleType != null) {
+			if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
+				return new TypeArrayOpen(name, getTypeName(simpleType), indexName, startIndex);
+			} else {
+				return new TypeArraySubrange(name, getTypeName(simpleType), indexName, startIndex, stopIndex, rangeMaxInclusive);
+			}
+		} else if (referenceType != null) {
+			TypeRefContext typeRef = (TypeRefContext)referenceType;
+			
+			if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
+				return new TypeArrayOpen(name, typeRef.name.getText(), indexName, startIndex);
+			} else {
+				return new TypeArraySubrange(name, typeRef.name.getText(), indexName, startIndex, stopIndex, rangeMaxInclusive);
+			}
+		} else {
+			logger.error("Unexpected arrayTypeElement");
+			logger.error("  arrayTypeElement {}", arrayTypeElement.getText());
+			throw new UnexpectedException("Unexpected arrayTypeElement");
+		}
+	}
+	private static Type getType(String name, TypeEnumContext context) {
+		EnumElementListContext enumElementList = context.enumElementList();
+		if (enumElementList == null) {
+			logger.error("Unexpected enumElementList");
+			logger.error("  context {}", context.getText());
+			throw new UnexpectedException("Unexpected enumElementList");
+		}
+		List<Element> elementList = new ArrayList<>();
+		for(EumElementContext e: enumElementList.elements) {
+			String elementName  = e.numberedName().name.getText();
+			long   elementValue = Type.getNumericValue(e.numberedName().value.getText());
+			if (Type.CARDINAL_MAX < elementValue) {
+				logger.error("Unexpeced value");
+				logger.error("  elementValue {}", elementValue);
+				throw new UnexpectedException("Unexpeced value");
+			}
+			
+			elementList.add(new TypeEnum.Element(elementName, (int)elementValue));
+		}
+		
+		return new TypeEnum(name, elementList);
+	}
+	private static Type getType(String name, TypeSubrangeTypeRangeContext context) {
+		RangeTypeRangeContext rangeTypeRange = context.rangeTypeRange();
+		if (rangeTypeRange == null) {
+			logger.error("Unexpected rangeTypeRangeContext");
+			logger.error("  context {}", context.getText());
+			throw new UnexpectedException("Unexpected rangeTypeRangeContext");
+		}
+		String baseName   = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
+		String startIndex = rangeTypeRange.startIndex.getText();
+		String stopIndex  = rangeTypeRange.stopIndex.getText();
+		String closeChar  = rangeTypeRange.closeChar.getText();
+		
+		return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
+	}
+	private static Type getType(String name, TypeRecordContext context) {
+		// FIXME
+		return null;
+	}
+	private static Type getType(String name, SimpleTypeContext context) {
+		if (context instanceof TypeBooleanContext) {
+			return new TypeReference(name, Type.BOOL);
+		}
+		if (context instanceof TypeCardinalContext) {
+			return new TypeReference(name, Type.CARDINAL);
+		}
+		if (context instanceof TypeLongCardinalContext) {
+			return new TypeReference(name, Type.LONG_CARDINAL);
+		}
+		if (context instanceof TypeIntegerContext) {
+			return new TypeReference(name, Type.INTEGER);
+		}
+		if (context instanceof TypeLongIntegerContext) {
+			return new TypeReference(name, Type.LONG_INTEGER);
+		}
+		if (context instanceof TypeUnspecifiedContext) {
+			return new TypeReference(name, Type.UNSPECIFIED);
+		}
+		if (context instanceof TypeLongUnspecifiedContext) {
+			return new TypeReference(name, Type.LONG_UNSPECIFIED);
+		}
+		if (context instanceof TypePointerContext) {
+			return new TypeReference(name, Type.POINTER);
+		}
+		if (context instanceof TypeLongPointerContext) {
+			return new TypeReference(name, Type.LONG_POINTER);
+		}
+		logger.error("Unexpected context");
+		logger.error("  name    {}", name);
+		logger.error("  context {}", context.getText());
+		throw new UnexpectedException("Unexpected typeType");
+	}
+	private static Type getType(String name, TypeRefContext context) {
+		return new TypeReference(name, context.name.getText());
+	}
+	
+	private static Type getType(String name, TypeTypeContext context) {
+		if (context.arrayType() != null) {
+			ArrayTypeContext arrayType = context.arrayType();
+			if (arrayType.arrayTypeType() != null) {
+				return getType(name, (TypeArrayTypeContext) arrayType.arrayTypeType());
+			}
+			if (arrayType.arrayTypeRange() != null) {
+				return getType(name, (TypeArrayRangeContext) arrayType.arrayTypeRange());
+			}
+			logger.error("Unexpected arrayType");
+			logger.error("  name     {}", name);
+			logger.error("  typeType {}", arrayType.getText());
+			throw new UnexpectedException("Unexpected arrayType");
+		}
+		if (context.enumType() != null) {
+			EnumTypeContext enumType = context.enumType();
+			return getType(name, (TypeEnumContext) enumType);
+		}
+		if (context.subrangeType() != null) {
+			SubrangeTypeContext subrangeType = context.subrangeType();
+			return getType(name, (TypeSubrangeTypeRangeContext)subrangeType);
+		}
+		if (context.recordType() != null) {
+			RecordTypeContext recordType = context.recordType();
+			return getType(name, (TypeRecordContext) recordType);
+		}
+		if (context.simpleType() != null) {
+			SimpleTypeContext simpleType = context.simpleType();
+			return getType(name, simpleType);
+		}
+		if (context.referenceType() != null) {
+			ReferenceTypeContext referenceType = context.referenceType();
+			return getType(name, (TypeRefContext) referenceType);
+		}
+		logger.error("Unexpected context");
+		logger.error("  name    {}", name);
+		logger.error("  context {}", context.getText());
+		throw new UnexpectedException("Unexpected typeType");
+	}
 
 	private static Type getType(DeclContext context) {
 		if (context.declConst() != null) return null;
-		
-		{
-			DeclTypeContext declType = context.declType();
-			if (declType != null) {
-				if (declType instanceof TypeDeclContext) {
-					TypeDeclContext typeDecl = (TypeDeclContext)declType;
-					
-					String name = typeDecl.name.getText();
-					TypeTypeContext typeType = typeDecl.typeType();
-					
-					logger.info("TYPE   {} == {}", name, typeType.getText());
-					
-					// FXME
-					TypeVisitors typeVisitors = new TypeVisitors(name);
-					
-					Type type = typeVisitors.visit(typeType);
-					logger.info("       {}", type);
-					
-					return type;
-				}
-				logger.error("Unexpected declType");
-				logger.error("  declType {}", declType.getText());
-				throw new UnexpectedException("Unexpected declType");
-			}
+		if (context.declType() != null) {
+			TypeDeclContext typeDecl = (TypeDeclContext)context.declType();
+			
+			String name = typeDecl.name.getText();
+			TypeTypeContext typeType = typeDecl.typeType();
+			
+			logger.info("TYPE   {} == {}", name, typeType.getText());
+			
+			Type type = getType(name, typeType);
+			logger.info("       {}", type);			
+			return type;
 		}
 		
 		logger.error("Unexpected context");
@@ -288,22 +321,14 @@ public class Symbol {
 	}
 
 	private static Constant getConstant(DeclContext context) {
-		{
-			DeclConstContext declConst = context.declConst();		
-			if (declConst != null) {
-				if (declConst instanceof ConstDeclContext) {
-					ConstDeclContext constDecl = (ConstDeclContext)declConst;
-					String name      = constDecl.name.getText();
-					String typeName  = constDecl.constType().getText();
-					String value     = constDecl.constValue().getText();			
-					return new Constant(name, typeName, value);
-				}
-				logger.error("Unexpected declConst");
-				logger.error("  declConst {}", declConst.getText());
-				throw new UnexpectedException("Unexpected declConst");
-			}
+		if (context.declConst() != null) {
+			ConstDeclContext constDecl = (ConstDeclContext)context.declConst();
+			
+			String name      = constDecl.name.getText();
+			String typeName  = constDecl.constType().getText();
+			String value     = constDecl.constValue().getText();			
+			return new Constant(name, typeName, value);
 		}
-		
 		if (context.declType() != null) return null;
 		
 		logger.error("Unexpected context");
