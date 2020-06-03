@@ -63,7 +63,7 @@
                         <arg line="-o tmp/antlr"/>
                         <arg line="-package yokwe.majuro.symbol.antlr"/>
                         <arg line="-no-listener"/>
-                        <arg line="-visitor"/>
+                        <arg line="-no-visitor"/>
                         <arg line="data/type/Symbol.g4"/>
                 </java>
         </target>
