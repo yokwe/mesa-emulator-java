@@ -158,8 +158,6 @@ public abstract class TypeSubrange extends Type {
 	@Override
 	protected void fix() {
 		if (needsFix()) {
-			logger.info("this {}", name);
-			
 			baseType.fix();
 			valueMinConst.fix();
 			valueMaxConst.fix();

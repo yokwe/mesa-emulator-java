@@ -138,7 +138,6 @@ public abstract class TypeArray extends Type {
 					if (arrayKind == ArrayKind.OPEN) {
 						// don't check for open array
 					} else {
-						logger.info("array {}", this);
 						baseType.checkValue(rangeMin, rangeMax);
 					}
 				}
