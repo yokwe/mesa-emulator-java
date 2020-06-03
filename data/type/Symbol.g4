@@ -57,15 +57,15 @@ SPACE
 //
 
 number
-    :   NUMBER_8       # Number8
-    |   '-'? NUMBER_10 # Number10
-    |   NUMBER_16      # Number16
+    :   NUMBER_8
+    |   '-'? NUMBER_10
+    |   NUMBER_16
     ;
 
 positive_number
-    :   NUMBER_8  # PositiveNumber8
-    |   NUMBER_10 # PositiveNumber10
-    |   NUMBER_16 # PositiveNumber16
+    :   NUMBER_8
+    |   NUMBER_10
+    |   NUMBER_16
     ;
 
 constant
@@ -120,7 +120,7 @@ decl
 // TYPE
 //
 declType
-    :   name=ID ':' TYPE      '=' typeType ';' # TypeDecl
+    :   name=ID ':' TYPE      '=' typeType ';'
     ;
 
 
@@ -143,11 +143,11 @@ arrayType
     ;
     
 arrayTypeType    
-    :    ARRAY rangeType  OF arrayTypeElement # TypeArrayType
+    :    ARRAY rangeType  OF arrayTypeElement
     ;
     
 arrayTypeRange
-    :    ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
+    :    ARRAY rangeTypeRange OF arrayTypeElement
     ;
 
 arrayTypeElement
@@ -160,7 +160,7 @@ arrayTypeElement
 // ENUM
 //
 enumType
-    :    '{' enumElementList '}' # TypeEnum
+    :    '{' enumElementList '}'
     ;
 
 enumElementList
@@ -175,7 +175,7 @@ eumElement
 // SUBRANGE
 //
 subrangeType
-    :   rangeTypeRange # TypeSubrangeTypeRange
+    :   rangeTypeRange
     ;
 
 
@@ -183,7 +183,7 @@ subrangeType
 // RECORD
 //
 recordType
-    :    RECORD '[' recordFieldList ']' # TypeRecord
+    :    RECORD '[' recordFieldList ']'
     ;
 
 recordFieldList
@@ -191,7 +191,7 @@ recordFieldList
     ;
 
 recordField
-    :    fieldName ':' fieldType # TypeRecordField
+    :    fieldName ':' fieldType
     ;
 
 fieldName
@@ -200,7 +200,7 @@ fieldName
     ;
     
 bitfieldName
-    :   name=ID '(' offset=positive_number ':' startPos=positive_number '..' stopPos=positive_number ')' # TypeBitfieldName
+    :   name=ID '(' offset=positive_number ':' startPos=positive_number '..' stopPos=positive_number ')'
     ;
 
 fieldType
@@ -211,7 +211,7 @@ fieldType
     ;
 
 select
-    :   SELECT OVERLAID '*' FROM selectCaseList ENDCASE # TypeSelectAny
+    :   SELECT OVERLAID '*' FROM selectCaseList ENDCASE
     ;
 
 selectCaseList
@@ -233,7 +233,7 @@ selectCaseSelector
 // REFERENCE
 //
 referenceType
-    :    name=ID # TypeRef
+    :    name=ID
     ;
 
 
@@ -258,7 +258,7 @@ simpleType
 //
 
 declConst
-    :   name=ID ':' constType '=' constValue ';' # ConstDecl
+    :   name=ID ':' constType '=' constValue ';'
     ;
 
 constType
