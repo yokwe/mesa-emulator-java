@@ -1,3 +1,28 @@
+/*******************************************************************************
+ * Copyright (c) 2020, Yasuhiro Hasegawa
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
+ *      and/or other materials provided with the distribution.
+ *   3. The name of the author may not be used to endorse or promote products derived
+ *      from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
+ *******************************************************************************/
 // Generated from data/type/Symbol.g4 by ANTLR 4.8
 package yokwe.majuro.symbol.antlr;
 import org.antlr.v4.runtime.Lexer;
@@ -46,8 +71,8 @@ public class SymbolLexer extends Lexer {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'-'", "'['", "'..'", "']'", "')'", "'.'", "'('", "'='", "':'", 
-			"';'", "'{'", "'}'", "','", "'*'", "'=>'", "'ARRAY'", "'BEGIN'", "'BOOLEAN'", 
+			null, "'-'", "'='", "'.'", "':'", "';'", "'['", "'..'", "']'", "')'", 
+			"'{'", "'}'", "','", "'('", "'*'", "'=>'", "'ARRAY'", "'BEGIN'", "'BOOLEAN'", 
 			"'CARDINAL'", "'END'", "'ENDCASE'", "'FROM'", "'INTEGER'", "'LONG'", 
 			"'OF'", "'OVERLAID'", "'PACKED'", "'POINTER'", "'RECORD'", "'SELECT'", 
 			"'SYMBOL'", "'TYPE'", "'UNSPECIFIED'", "'WORD'", "'TRUE'", "'FALSE'"
@@ -129,8 +154,8 @@ public class SymbolLexer extends Lexer {
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
 		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\4)\t)\4*\t*\4+\t+\4"+
-		",\t,\4-\t-\4.\t.\4/\t/\4\60\t\60\3\2\3\2\3\3\3\3\3\4\3\4\3\4\3\5\3\5\3"+
-		"\6\3\6\3\7\3\7\3\b\3\b\3\t\3\t\3\n\3\n\3\13\3\13\3\f\3\f\3\r\3\r\3\16"+
+		",\t,\4-\t-\4.\t.\4/\t/\4\60\t\60\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3"+
+		"\6\3\7\3\7\3\b\3\b\3\b\3\t\3\t\3\n\3\n\3\13\3\13\3\f\3\f\3\r\3\r\3\16"+
 		"\3\16\3\17\3\17\3\20\3\20\3\20\3\21\3\21\3\21\3\21\3\21\3\21\3\22\3\22"+
 		"\3\22\3\22\3\22\3\22\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\24\3\24"+
 		"\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\25\3\25\3\25\3\25\3\26\3\26\3\26"+
@@ -157,7 +182,7 @@ public class SymbolLexer extends Lexer {
 		"\2\2\2\29\3\2\2\2\2;\3\2\2\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2"+
 		"\2\2E\3\2\2\2\2G\3\2\2\2\2I\3\2\2\2\2S\3\2\2\2\2U\3\2\2\2\2W\3\2\2\2\2"+
 		"Y\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2_\3\2\2\2\3a\3\2\2\2\5c\3\2\2\2\7e\3"+
-		"\2\2\2\th\3\2\2\2\13j\3\2\2\2\rl\3\2\2\2\17n\3\2\2\2\21p\3\2\2\2\23r\3"+
+		"\2\2\2\tg\3\2\2\2\13i\3\2\2\2\rk\3\2\2\2\17m\3\2\2\2\21p\3\2\2\2\23r\3"+
 		"\2\2\2\25t\3\2\2\2\27v\3\2\2\2\31x\3\2\2\2\33z\3\2\2\2\35|\3\2\2\2\37"+
 		"~\3\2\2\2!\u0081\3\2\2\2#\u0087\3\2\2\2%\u008d\3\2\2\2\'\u0095\3\2\2\2"+
 		")\u009e\3\2\2\2+\u00a2\3\2\2\2-\u00aa\3\2\2\2/\u00af\3\2\2\2\61\u00b7"+
@@ -166,10 +191,10 @@ public class SymbolLexer extends Lexer {
 		"\3\2\2\2E\u00fd\3\2\2\2G\u0102\3\2\2\2I\u0107\3\2\2\2K\u010d\3\2\2\2M"+
 		"\u010f\3\2\2\2O\u0111\3\2\2\2Q\u0113\3\2\2\2S\u0115\3\2\2\2U\u011f\3\2"+
 		"\2\2W\u0126\3\2\2\2Y\u012a\3\2\2\2[\u0134\3\2\2\2]\u0142\3\2\2\2_\u0152"+
-		"\3\2\2\2ab\7/\2\2b\4\3\2\2\2cd\7]\2\2d\6\3\2\2\2ef\7\60\2\2fg\7\60\2\2"+
-		"g\b\3\2\2\2hi\7_\2\2i\n\3\2\2\2jk\7+\2\2k\f\3\2\2\2lm\7\60\2\2m\16\3\2"+
-		"\2\2no\7*\2\2o\20\3\2\2\2pq\7?\2\2q\22\3\2\2\2rs\7<\2\2s\24\3\2\2\2tu"+
-		"\7=\2\2u\26\3\2\2\2vw\7}\2\2w\30\3\2\2\2xy\7\177\2\2y\32\3\2\2\2z{\7."+
+		"\3\2\2\2ab\7/\2\2b\4\3\2\2\2cd\7?\2\2d\6\3\2\2\2ef\7\60\2\2f\b\3\2\2\2"+
+		"gh\7<\2\2h\n\3\2\2\2ij\7=\2\2j\f\3\2\2\2kl\7]\2\2l\16\3\2\2\2mn\7\60\2"+
+		"\2no\7\60\2\2o\20\3\2\2\2pq\7_\2\2q\22\3\2\2\2rs\7+\2\2s\24\3\2\2\2tu"+
+		"\7}\2\2u\26\3\2\2\2vw\7\177\2\2w\30\3\2\2\2xy\7.\2\2y\32\3\2\2\2z{\7*"+
 		"\2\2{\34\3\2\2\2|}\7,\2\2}\36\3\2\2\2~\177\7?\2\2\177\u0080\7@\2\2\u0080"+
 		" \3\2\2\2\u0081\u0082\7C\2\2\u0082\u0083\7T\2\2\u0083\u0084\7T\2\2\u0084"+
 		"\u0085\7C\2\2\u0085\u0086\7[\2\2\u0086\"\3\2\2\2\u0087\u0088\7D\2\2\u0088"+
