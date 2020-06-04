@@ -1,28 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2020, Yasuhiro Hasegawa
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- *   1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright notice,
- *      this list of conditions and the following disclaimer in the documentation
- *      and/or other materials provided with the distribution.
- *   3. The name of the author may not be used to endorse or promote products derived
- *      from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *******************************************************************************/
 // Generated from data/type/Symbol.g4 by ANTLR 4.8
 package yokwe.majuro.symbol.antlr;
 import org.antlr.v4.runtime.atn.*;
@@ -1323,19 +1298,9 @@ public class SymbolParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class TypeSelectOverlaidAnyContext extends SelectContext {
-		public TerminalNode SELECT() { return getToken(SymbolParser.SELECT, 0); }
-		public TerminalNode OVERLAID() { return getToken(SymbolParser.OVERLAID, 0); }
-		public TerminalNode FROM() { return getToken(SymbolParser.FROM, 0); }
-		public SelectCaseListContext selectCaseList() {
-			return getRuleContext(SelectCaseListContext.class,0);
-		}
-		public TerminalNode ENDCASE() { return getToken(SymbolParser.ENDCASE, 0); }
-		public TypeSelectOverlaidAnyContext(SelectContext ctx) { copyFrom(ctx); }
-	}
-	public static class TypeSelectTypeContext extends SelectContext {
-		public FieldNameContext selectorName;
-		public Token selectorType;
+	public static class TypeSelectTagTypeContext extends SelectContext {
+		public FieldNameContext tagName;
+		public Token tagTypeName;
 		public TerminalNode SELECT() { return getToken(SymbolParser.SELECT, 0); }
 		public TerminalNode FROM() { return getToken(SymbolParser.FROM, 0); }
 		public SelectCaseListContext selectCaseList() {
@@ -1346,10 +1311,10 @@ public class SymbolParser extends Parser {
 			return getRuleContext(FieldNameContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
-		public TypeSelectTypeContext(SelectContext ctx) { copyFrom(ctx); }
+		public TypeSelectTagTypeContext(SelectContext ctx) { copyFrom(ctx); }
 	}
 	public static class TypeSelectOverlaidTypeContext extends SelectContext {
-		public Token selectorType;
+		public Token tagTypeName;
 		public TerminalNode SELECT() { return getToken(SymbolParser.SELECT, 0); }
 		public TerminalNode OVERLAID() { return getToken(SymbolParser.OVERLAID, 0); }
 		public TerminalNode FROM() { return getToken(SymbolParser.FROM, 0); }
@@ -1360,8 +1325,18 @@ public class SymbolParser extends Parser {
 		public TerminalNode ID() { return getToken(SymbolParser.ID, 0); }
 		public TypeSelectOverlaidTypeContext(SelectContext ctx) { copyFrom(ctx); }
 	}
-	public static class TypeSelectAnonContext extends SelectContext {
-		public FieldNameContext selectorName;
+	public static class TypeSelectOverlaidAnonContext extends SelectContext {
+		public TerminalNode SELECT() { return getToken(SymbolParser.SELECT, 0); }
+		public TerminalNode OVERLAID() { return getToken(SymbolParser.OVERLAID, 0); }
+		public TerminalNode FROM() { return getToken(SymbolParser.FROM, 0); }
+		public SelectCaseListContext selectCaseList() {
+			return getRuleContext(SelectCaseListContext.class,0);
+		}
+		public TerminalNode ENDCASE() { return getToken(SymbolParser.ENDCASE, 0); }
+		public TypeSelectOverlaidAnonContext(SelectContext ctx) { copyFrom(ctx); }
+	}
+	public static class TypeSelectTagAnonContext extends SelectContext {
+		public FieldNameContext tagName;
 		public TerminalNode SELECT() { return getToken(SymbolParser.SELECT, 0); }
 		public TerminalNode FROM() { return getToken(SymbolParser.FROM, 0); }
 		public SelectCaseListContext selectCaseList() {
@@ -1371,7 +1346,7 @@ public class SymbolParser extends Parser {
 		public FieldNameContext fieldName() {
 			return getRuleContext(FieldNameContext.class,0);
 		}
-		public TypeSelectAnonContext(SelectContext ctx) { copyFrom(ctx); }
+		public TypeSelectTagAnonContext(SelectContext ctx) { copyFrom(ctx); }
 	}
 
 	public final SelectContext select() throws RecognitionException {
@@ -1382,7 +1357,7 @@ public class SymbolParser extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
-				_localctx = new TypeSelectOverlaidAnyContext(_localctx);
+				_localctx = new TypeSelectOverlaidAnonContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(198);
@@ -1408,7 +1383,7 @@ public class SymbolParser extends Parser {
 				setState(206);
 				match(OVERLAID);
 				setState(207);
-				((TypeSelectOverlaidTypeContext)_localctx).selectorType = match(ID);
+				((TypeSelectOverlaidTypeContext)_localctx).tagTypeName = match(ID);
 				setState(208);
 				match(FROM);
 				setState(209);
@@ -1418,13 +1393,13 @@ public class SymbolParser extends Parser {
 				}
 				break;
 			case 3:
-				_localctx = new TypeSelectAnonContext(_localctx);
+				_localctx = new TypeSelectTagAnonContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(212);
 				match(SELECT);
 				setState(213);
-				((TypeSelectAnonContext)_localctx).selectorName = fieldName();
+				((TypeSelectTagAnonContext)_localctx).tagName = fieldName();
 				setState(214);
 				match(T__3);
 				setState(215);
@@ -1438,17 +1413,17 @@ public class SymbolParser extends Parser {
 				}
 				break;
 			case 4:
-				_localctx = new TypeSelectTypeContext(_localctx);
+				_localctx = new TypeSelectTagTypeContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(220);
 				match(SELECT);
 				setState(221);
-				((TypeSelectTypeContext)_localctx).selectorName = fieldName();
+				((TypeSelectTagTypeContext)_localctx).tagName = fieldName();
 				setState(222);
 				match(T__3);
 				setState(223);
-				((TypeSelectTypeContext)_localctx).selectorType = match(ID);
+				((TypeSelectTagTypeContext)_localctx).tagTypeName = match(ID);
 				setState(224);
 				match(FROM);
 				setState(225);
