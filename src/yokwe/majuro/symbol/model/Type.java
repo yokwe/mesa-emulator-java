@@ -187,9 +187,9 @@ public abstract class Type {
 		}
 		logger.info("  == fixed");
 		for(Type type: map.values()) {
-			if (type.name.contains("#")) continue;
+			if (type.isReference()) continue;
 			if (type.needsFix) continue;
-			logger.info("  {}", String.format("%-24s %-10s", type.name, type.kind));
+			logger.info("  {}", String.format("%-34s %-10s", type.name, type.kind));
 		}
 	}
 	
