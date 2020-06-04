@@ -73,25 +73,6 @@ constant
     | ID     # ConstRef
     ;
     
-rangeType
-    :    name=ID
-    ;
-   
-rangeTypeRange
-    :    (name=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')')
-    ;
-
-// qName qualified name
-qualifiedName
-    :   name+=ID ('.' name+=ID)*
-    ;
-    
-// nameNumbe is used in enum, record field and select case selector
-numberedName
-    :   name=ID '(' value=positive_number ')'
-    ;
-
-
 //
 // SYMBOL
 //
@@ -129,7 +110,7 @@ typeType
     |    enumType
     |    subrangeType
     |    recordType
-    |    simpleType
+    |    predefinedType
     |    referenceType
     ;
 
@@ -138,20 +119,13 @@ typeType
 // ARRAY
 //
 arrayType
-    :   arrayTypeType
-    |   arrayTypeRange
-    ;
-    
-arrayTypeType    
-    :    ARRAY rangeType  OF arrayTypeElement
-    ;
-    
-arrayTypeRange
-    :    ARRAY rangeTypeRange OF arrayTypeElement
+    :   ARRAY indexName=ID                                                                          OF arrayTypeElement # TypeArrayType
+    |   ARRAY (indexName=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')') OF arrayTypeElement # TypeArrayRange
     ;
 
+
 arrayTypeElement
-    :   simpleType
+    :   predefinedType
     |   referenceType
     ;
 
@@ -168,14 +142,14 @@ enumElementList
     ;
 
 eumElement
-    :   numberedName
+    :   name=ID '(' value=positive_number ')'
     ;
 
 //
 // SUBRANGE
 //
 subrangeType
-    :   rangeTypeRange
+    :    (baseName=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')')
     ;
 
 
@@ -183,35 +157,34 @@ subrangeType
 // RECORD
 //
 recordType
-    :    RECORD '[' recordFieldList ']'
+    :   RECORD '[' recordFieldList ']'
     ;
 
 recordFieldList
-    :    elements+=recordField (',' elements+=recordField)*
+    :   elements+=recordField (',' elements+=recordField)*
     ;
 
 recordField
-    :    fieldName ':' fieldType
+    :   fieldName ':' fieldType
     ;
 
 fieldName
-    :    numberedName
-    |    bitfieldName
+    :   name=ID '(' offset=positive_number ')'                                                           # TypeFieldName
+    |   name=ID '(' offset=positive_number ':' startPos=positive_number '..' stopPos=positive_number ')' # TypeFieldNameBit
     ;
     
-bitfieldName
-    :   name=ID '(' offset=positive_number ':' startPos=positive_number '..' stopPos=positive_number ')'
-    ;
-
 fieldType
     :   arrayType
-    |   simpleType
+    |   predefinedType
     |   referenceType
     |   select
     ;
 
 select
-    :   SELECT OVERLAID '*' FROM selectCaseList ENDCASE
+    :   SELECT OVERLAID                   '*'             FROM selectCaseList ENDCASE # TypeSelectOverlaidAny
+    |   SELECT OVERLAID                   selectorType=ID FROM selectCaseList ENDCASE # TypeSelectOverlaidType
+    |   SELECT selectorName=fieldName ':' '*'             FROM selectCaseList ENDCASE # TypeSelectAnon
+    |   SELECT selectorName=fieldName ':' selectorType=ID FROM selectCaseList ENDCASE # TypeSelectType
     ;
 
 selectCaseList
@@ -219,13 +192,12 @@ selectCaseList
     ;
 
 selectCase
-    :   selectCaseSelector '=>' '[' ']'                 # TypeSelectCaseEmpty
-    |   selectCaseSelector '=>' '[' recordFieldList ']' # TypeSelectCaseList
+    :   selectCaseSelector '=>' '[' (recordFieldList)? ']'
     ;
 
 selectCaseSelector
-    :   name=ID
-    |   numberedName
+    :   selectorName=ID                                       # TypeSelectCaseSelector
+    |   selectorName=ID '(' selectorValue=positive_number ')' # TypeSelectCaseSelectorValue
     ;
 
 
@@ -238,9 +210,9 @@ referenceType
 
 
 //
-// SIMPLE
+// PREDEFINED
 //
-simpleType
+predefinedType
     :    BOOLEAN          # TypeBoolean
     |    CARDINAL         # TypeCardinal
     |    LONG CARDINAL    # TypeLongCardinal
@@ -268,5 +240,5 @@ constType
     ;
     
 constValue
-    :   qualifiedName // refer to static field in Java class
+    :   name+=ID ('.' name+=ID)* // refer to static field in Java class
     ;
