@@ -437,10 +437,10 @@ public class Symbol {
 			
 			String          name     = declType.name.getText();
 			TypeTypeContext typeType = declType.typeType();
-			logger.info("TYPE   {} == {}", name, typeType.getText());
+//			logger.info("TYPE   {} == {}", name, typeType.getText());
 			
 			Type type = getType(name, typeType);
-			logger.info("       {}", type);			
+//			logger.info("TYPE   {}", type);			
 			return type;
 		}
 		
