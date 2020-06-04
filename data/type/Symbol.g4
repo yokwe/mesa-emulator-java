@@ -181,10 +181,10 @@ fieldType
     ;
 
 select
-    :   SELECT OVERLAID                   '*'             FROM selectCaseList ENDCASE # TypeSelectOverlaidAny
-    |   SELECT OVERLAID                   selectorType=ID FROM selectCaseList ENDCASE # TypeSelectOverlaidType
-    |   SELECT selectorName=fieldName ':' '*'             FROM selectCaseList ENDCASE # TypeSelectAnon
-    |   SELECT selectorName=fieldName ':' selectorType=ID FROM selectCaseList ENDCASE # TypeSelectType
+    :   SELECT OVERLAID              '*'            FROM selectCaseList ENDCASE # TypeSelectOverlaidAnon
+    |   SELECT OVERLAID              tagTypeName=ID FROM selectCaseList ENDCASE # TypeSelectOverlaidType
+    |   SELECT tagName=fieldName ':' '*'            FROM selectCaseList ENDCASE # TypeSelectTagAnon
+    |   SELECT tagName=fieldName ':' tagTypeName=ID FROM selectCaseList ENDCASE # TypeSelectTagType
     ;
 
 selectCaseList
