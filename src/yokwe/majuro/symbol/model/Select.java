@@ -25,7 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.symbol.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -36,96 +35,45 @@ import yokwe.majuro.UnexpectedException;
 public class Select {
 	private static final Logger logger = LoggerFactory.getLogger(Select.class);
 
-	public static class CaseField {
-		public final Field field;
-		
-		private boolean needsFix;
-		private int     size;
-
-		public CaseField(Field field) {
-			this.field = field;
-			
-			this.needsFix = true;
-			this.size     = Type.UNKNOWN_SIZE;
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("%", field);
-		}
-		
-		public void fix() {
-			if (needsFix) {
-				field.fix();
-				if (hasValue()) {
-					setSize(field.getSize());
-				}
-			}
-		}
-		
-		protected boolean needsFix() {
-			return needsFix;
-		}
-		protected boolean hasValue() {
-			return !needsFix;
-		}
-		public int getSize() {
-			if (needsFix) {
-				logger.error("Unexpected needsFix");
-				logger.error("  needsFix {}", needsFix);
-				throw new UnexpectedException("Unexpected needsFix");
-			}
-			return size;
-		}
-		protected void setSize(int newValue) {
-			size     = newValue;
-			needsFix = false;
-		}
-	}
-	
 	public static class SelectCase {
 		public final String selector;
 		public final int    value;
 		
-		public List<CaseField> caseFieldList;
+		public List<Field> fieldList;
 		
 		private boolean needsFix;
 		private int     size;
 
-		public SelectCase(String selector, int value, List<CaseField> caseFieldList) {
-			this.selector      = selector;
-			this.value         = value;
-			this.caseFieldList = caseFieldList;
-			this.needsFix      = true;
-			this.size          = Type.UNKNOWN_SIZE;
+		public SelectCase(String selector, int value, List<Field> fieldList) {
+			this.selector  = selector;
+			this.value     = value;
+			this.fieldList = fieldList;
+			this.needsFix  = true;
+			this.size      = Type.UNKNOWN_SIZE;
 		}
-		public SelectCase(String selector, List<CaseField> caseFieldList) {
-			this(selector, -1, caseFieldList);
+		public SelectCase(String selector, List<Field> fieldList) {
+			this(selector, -1, fieldList);
 		}
 		
 		@Override
 		public String toString() {
 			if (value == -1) {
-				return String.format("{%s %s}", selector, caseFieldList);
+				return String.format("{%s %s}", selector, fieldList);
 			} else {
-				return String.format("{%s(%d) %s}", selector, value, caseFieldList);
+				return String.format("{%s(%d) %s}", selector, value, fieldList);
 			}
-		}
-		
-		public void addField(Field newValue) {
-			caseFieldList.add(new CaseField(newValue));
 		}
 		
 		public void fix() {
 			if (needsFix) {
 				boolean foundProblem   = false;
 				int     selectCaseSize = 0;
-				for(CaseField caseFeld: caseFieldList) {
-					if (caseFeld.needsFix) caseFeld.fix();
-					if (caseFeld.needsFix) {
-						foundProblem = true;
+				for(Field field: fieldList) {
+					field.fix();
+					if (field.hasValue()) {
+						selectCaseSize += field.getSize();
 					} else {
-						selectCaseSize += caseFeld.size;
+						foundProblem = true;
 					}
 				}
 				if (!foundProblem) {
