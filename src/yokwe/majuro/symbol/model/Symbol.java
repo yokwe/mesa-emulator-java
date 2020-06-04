@@ -108,6 +108,17 @@ public class Symbol {
 		throw new UnexpectedException("Unexpected clazz");
 	}
 	
+	private static Type getType(String name, ArrayTypeContext context) {
+		if (context instanceof TypeArrayTypeContext) {
+			return getType(name, (TypeArrayTypeContext)context);
+		}
+		if (context instanceof TypeArrayRangeContext) {
+			return getType(name, (TypeArrayRangeContext)context);
+		}
+		logger.error("Unexpected context");
+		logger.error("  context {}", context.getText());
+		throw new UnexpectedException("Unexpected context");
+	}
 	private static Type getType(String name, TypeArrayTypeContext context) {
 		// ARRAY indexName=ID OF arrayTypeElement # TypeArrayType
 		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
@@ -293,7 +304,22 @@ public class Symbol {
 			{
 				FieldTypeContext fieldType = recordField.fieldType();
 				if (fieldType.arrayType() != null) {
-					// FIXME
+					ArrayTypeContext arrayType = fieldType.arrayType();
+					String arrayName = prefix + "#" + fieldName;
+					getType(arrayName, arrayType);
+					
+					switch(fieldKind) {
+					case FIELD:
+						ret.add(new FieldType(prefix, fieldName, offset, arrayName));
+						break;
+					case BIT_FIELD:
+						ret.add(new FieldType(prefix, fieldName, offset, startPos, stopPos, arrayName));
+						break;
+					default:
+						logger.error("Unexpected fieldKind");
+						logger.error("  fieldKind {}", fieldKind);
+						throw new UnexpectedException("Unexpected fieldKind");
+					}
 				} else if (fieldType.predefinedType() != null) {
 					switch(fieldKind) {
 					case FIELD:
@@ -382,13 +408,7 @@ public class Symbol {
 	}
 	private static Type getType(String name, TypeTypeContext context) {
 		if (context.arrayType() != null) {
-			ArrayTypeContext arrayType = context.arrayType();
-			if (arrayType instanceof TypeArrayTypeContext) {
-				return getType(name, (TypeArrayTypeContext)arrayType);
-			}
-			if (arrayType instanceof TypeArrayRangeContext) {
-				return getType(name, (TypeArrayRangeContext)arrayType);
-			}
+			return getType(name, context.arrayType());
 		}
 		if (context.enumType() != null) {
 			return getType(name, context.enumType());
