@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import yokwe.majuro.UnexpectedException;
 
 abstract class Field {
-	private static final Logger logger = LoggerFactory.getLogger(Field.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Field.class);
 
 	public enum TargetKind {
 		TYPE, SELECT
@@ -42,6 +42,8 @@ abstract class Field {
 	
 	public final String    name;
 	public final int       offset;
+	public final int       startPos;
+	public final int       stopPos;
 	
 	public final TargetKind targetKind;
 	public final FieldKind  fieldKind;
@@ -49,11 +51,24 @@ abstract class Field {
 	private boolean needsFix;
 	private int     size;
 	
-	protected Field(String name, int offset, TargetKind targetKind, FieldKind fieldKind) {
+	protected Field(String name, int offset, int startPos, int stopPos, TargetKind targetKind) {
 		this.name       = name;
 		this.offset     = offset;
+		this.startPos   = startPos;
+		this.stopPos    = stopPos;
 		this.targetKind = targetKind;
-		this.fieldKind  = fieldKind;
+		this.fieldKind  = FieldKind.BIT_FIELD;
+		
+		this.needsFix  = true;
+		this.size      = Type.UNKNOWN_SIZE;
+	}
+	protected Field(String name, int offset, TargetKind targetKind) {
+		this.name       = name;
+		this.offset     = offset;
+		this.startPos   = -1;
+		this.stopPos    = -1;
+		this.targetKind = targetKind;
+		this.fieldKind  = FieldKind.FIELD;
 		
 		this.needsFix  = true;
 		this.size      = Type.UNKNOWN_SIZE;
@@ -90,24 +105,40 @@ abstract class Field {
 class FieldType extends Field {
 	public final TypeReference type;
 	
-	protected FieldType(String prefix, String name, int offset, FieldKind fieldKind, String typeName) {
-		super(name, offset, TargetKind.TYPE, fieldKind);
+	public FieldType(String prefix, String name, int offset, String typeName) {
+		super(name, offset, TargetKind.TYPE);
 		
 		this.type = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
 		
 		fix();
 	}
-	public FieldType(String prefix, String name, int offset, String typeName) {
-		this(prefix, name, offset, FieldKind.FIELD, typeName);
+	public FieldType(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
+		super(name, offset, startPos, stopPos, TargetKind.TYPE);
+		
+		this.type = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
+		
+		fix();
 	}
 
 	@Override
 	public String toString() {
 		if (hasValue()) {
-			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), type.baseName);
+			switch (fieldKind) {
+			case FIELD:
+				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), type.baseName);
+			case BIT_FIELD:
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), type);
+			}
 		} else {
-			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
+			switch (fieldKind) {
+			case FIELD:
+				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
+			case BIT_FIELD:
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", type);
+			}
 		}
+		logger.error("Unexpected");
+		throw new UnexpectedException("Unexpected");
 	}
 
 	@Override
@@ -120,48 +151,45 @@ class FieldType extends Field {
 		}
 	}
 }
-class BitFieldType extends FieldType {
-	public final int startPos;
-	public final int stopPos;
-	
-	public BitFieldType(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
-		super(prefix, name, offset, FieldKind.BIT_FIELD, typeName);
-		
-		this.startPos = startPos;
-		this.stopPos  = stopPos;
-	}
-	
-	@Override
-	public String toString() {
-		if (hasValue()) {
-			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), type.baseName);
-		} else {
-			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
-		}
-	}
-}
-
 
 
 class FieldSelect extends Field {
 	public final Select select;
 	
-	protected FieldSelect(String name, int offset, FieldKind fieldKind, Select select) {
-		super(name, offset, TargetKind.SELECT, fieldKind);
+	public FieldSelect(String prefix, String name, int offset, Select select) {
+		super(name, offset, TargetKind.SELECT);
 		
 		this.select = select;
+		
+		fix();
 	}
-	public FieldSelect(String name, int offset, Select select) {
-		this(name, offset, FieldKind.FIELD, select);
+	public FieldSelect(String prefix, String name, int offset, int startPos, int stopPos, Select select) {
+		super(name, offset, startPos, stopPos, TargetKind.SELECT);
+		
+		this.select = select;
+		
+		fix();
 	}
 
 	@Override
 	public String toString() {
 		if (hasValue()) {
-			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), select);
+			switch (fieldKind) {
+			case FIELD:
+				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), select);
+			case BIT_FIELD:
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), select);
+			}
 		} else {
-			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", select);
+			switch (fieldKind) {
+			case FIELD:
+				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", select);
+			case BIT_FIELD:
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", select);
+			}
 		}
+		logger.error("Unexpected");
+		throw new UnexpectedException("Unexpected");
 	}
 
 	@Override
@@ -174,24 +202,3 @@ class FieldSelect extends Field {
 		}
 	}
 }
-class BitFieldSelect extends FieldSelect {
-	public final int startPos;
-	public final int stopPos;
-	
-	public BitFieldSelect(String name, int offset, int startPos, int stopPos, Select select) {
-		super(name, offset, FieldKind.BIT_FIELD, select);
-		
-		this.startPos = startPos;
-		this.stopPos  = stopPos;
-	}
-	
-	@Override
-	public String toString() {
-		if (hasValue()) {
-			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), select);
-		} else {
-			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", select);
-		}
-	}
-}
-

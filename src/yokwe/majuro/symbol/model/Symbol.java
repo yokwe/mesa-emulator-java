@@ -94,7 +94,7 @@ public class Symbol {
 		}
 	}
 	
-	private static String getTypeName(SimpleTypeContext context) {
+	private static String getTypeName(PredefinedTypeContext context) {
 		if (context instanceof TypeBooleanContext)         return Type.BOOL_VALUE.name;
 		if (context instanceof TypeCardinalContext)        return Type.CARDINAL_VALUE.name;
 		if (context instanceof TypeLongCardinalContext)    return Type.LONG_CARDINAL_VALUE.name;
@@ -110,18 +110,16 @@ public class Symbol {
 		throw new UnexpectedException("Unexpected clazz");
 	}
 	
-	private static Type getType(String name, ArrayTypeTypeContext context) {
-		// ARRAY rangeType  OF arrayTypeElement # TypeArrayType
-		RangeTypeContext        rangeType        = context.rangeType();
+	private static Type getType(String name, TypeArrayTypeContext context) {
+		// ARRAY indexName=ID OF arrayTypeElement # TypeArrayType
 		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
 		
-		String indexName = rangeType.name.getText();
-		
-		SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
-		ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
+		String indexName = context.indexName.getText();
+		PredefinedTypeContext predefinedType = arrayTypeElement.predefinedType();
+		ReferenceTypeContext  referenceType  = arrayTypeElement.referenceType();
 
-		if (simpleType != null) {
-			return new TypeArrayFull(name, getTypeName(simpleType), indexName);
+		if (predefinedType != null) {
+			return new TypeArrayFull(name, getTypeName(predefinedType), indexName);
 		} else if (referenceType != null) {
 			return new TypeArrayFull(name, referenceType.name.getText(), indexName);
 		} else {
@@ -130,24 +128,23 @@ public class Symbol {
 			throw new UnexpectedException("Unexpected arrayTypeElement");
 		}	
 	}
-	private static Type getType(String name, ArrayTypeRangeContext context) {
-		// ARRAY rangeTypeRange OF arrayTypeElement # TypeArrayRange
-		RangeTypeRangeContext   rangeTypeRange   = context.rangeTypeRange();
+	private static Type getType(String name, TypeArrayRangeContext context) {
+		// ARRAY (indexName=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')') OF arrayTypeElement # TypeArrayRange
 		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
 		
-		String  indexName         = rangeTypeRange.name == null ? Type.INTEGER : rangeTypeRange.name.getText();
-		String  startIndex        = rangeTypeRange.startIndex.getText();
-		String  stopIndex         = rangeTypeRange.stopIndex.getText();
-		String  closeChar         = rangeTypeRange.closeChar.getText();
+		String  indexName         = context.indexName == null ? Type.INTEGER : context.indexName.getText();
+		String  startIndex        = context.startIndex.getText();
+		String  stopIndex         = context.stopIndex.getText();
+		String  closeChar         = context.closeChar.getText();
 		boolean rangeMaxInclusive = closeChar.equals("]");
 		
-		if (arrayTypeElement.simpleType() != null) {
-			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
+		if (arrayTypeElement.predefinedType() != null) {
+			PredefinedTypeContext    predefinedType    = arrayTypeElement.predefinedType();
 			
 			if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
-				return new TypeArrayOpen(name, getTypeName(simpleType), indexName, startIndex);
+				return new TypeArrayOpen(name, getTypeName(predefinedType), indexName, startIndex);
 			} else {
-				return new TypeArraySubrange(name, getTypeName(simpleType), indexName, startIndex, stopIndex, rangeMaxInclusive);
+				return new TypeArraySubrange(name, getTypeName(predefinedType), indexName, startIndex, stopIndex, rangeMaxInclusive);
 			}
 		} else if (arrayTypeElement.referenceType() != null) {
 			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
@@ -166,8 +163,8 @@ public class Symbol {
 	private static Type getType(String name, EnumTypeContext context) {
 		List<Element> elementList = new ArrayList<>();
 		for(EumElementContext e: context.enumElementList().elements) {
-			String elementName  = e.numberedName().name.getText();
-			long   elementValue = Type.getNumericValue(e.numberedName().value.getText());
+			String elementName  = e.name.getText();
+			long   elementValue = Type.getNumericValue(e.value.getText());
 			// Sanity check
 			if (Type.CARDINAL_MAX < elementValue) {
 				logger.error("Unexpeced value");
@@ -181,14 +178,78 @@ public class Symbol {
 		return new TypeEnum(name, elementList);
 	}
 	private static Type getType(String name, SubrangeTypeContext context) {
-		RangeTypeRangeContext rangeTypeRange = context.rangeTypeRange();
-		
-		String baseName   = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
-		String startIndex = rangeTypeRange.startIndex.getText();
-		String stopIndex  = rangeTypeRange.stopIndex.getText();
-		String closeChar  = rangeTypeRange.closeChar.getText();
+		String baseName   = context.baseName == null ? Type.CARDINAL : context.baseName.getText();
+		String startIndex = context.startIndex.getText();
+		String stopIndex  = context.stopIndex.getText();
+		String closeChar  = context.closeChar.getText();
 		
 		return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
+	}
+	private static Select getSelect(String name, SelectContext context) {
+		// FIXME
+		List<SelectCaseContext> elements;
+		if (context instanceof TypeSelectOverlaidAnyContext) {
+			TypeSelectOverlaidAnyContext selectOverlaidAny = (TypeSelectOverlaidAnyContext)context;
+			
+			elements = selectOverlaidAny.selectCaseList().elements;
+		} else if (context instanceof TypeSelectOverlaidTypeContext) {
+			TypeSelectOverlaidTypeContext selectOveraidType = (TypeSelectOverlaidTypeContext)context;
+			
+			elements = selectOveraidType.selectCaseList().elements;
+		} else if (context instanceof TypeSelectTypeContext) {
+			TypeSelectTypeContext selectType = (TypeSelectTypeContext)context;
+			
+			elements = selectType.selectCaseList().elements;
+		} else if (context instanceof TypeSelectAnonContext) {
+			TypeSelectAnonContext selectAnon = (TypeSelectAnonContext)context;
+			
+			elements = selectAnon.selectCaseList().elements;
+		} else {
+			logger.error("Unexpected context");
+			logger.error("  context {}", context);
+			throw new UnexpectedException("Unexpected context");
+		}
+
+		// FIXME
+		List<SelectCase> selectCaseList = new ArrayList<>();
+		for(SelectCaseContext selectCase: elements) {
+			SelectCaseSelectorContext selectCaseSelector = selectCase.selectCaseSelector();
+			
+			String selectorName;
+			int    selectorValue;
+			
+			if (selectCaseSelector instanceof TypeSelectCaseSelectorContext) {
+				TypeSelectCaseSelectorContext typeSelectCaseSelector = (TypeSelectCaseSelectorContext)selectCaseSelector;
+				selectorName = typeSelectCaseSelector.selectorName.getText();
+				selectorValue = -1;
+			} else if (selectCaseSelector instanceof TypeSelectCaseSelectorValueContext) {
+				TypeSelectCaseSelectorValueContext typeSelectCaseSelectorValue = (TypeSelectCaseSelectorValueContext)selectCaseSelector;
+				selectorName = typeSelectCaseSelectorValue.selectorName.getText();
+				selectorValue = Type.getNumericValue(typeSelectCaseSelectorValue.selectorValue.getText()).intValue();
+			} else {
+				logger.error("Unexpected selectCaseSelector");
+				logger.error("  selectCaseSelector {}", selectCaseSelector);
+				throw new UnexpectedException("Unexpected selectCaseSelector");
+			}
+			
+			List<CaseField> caseFieldList = new ArrayList<>();
+			RecordFieldListContext recordFieldList = selectCase.recordFieldList();
+			if (recordFieldList == null) {
+				// FIXME
+			} else {
+				List<RecordFieldContext> a = recordFieldList.elements;
+				for(RecordFieldContext e: recordFieldList.elements) {
+					// FIXME
+				}
+			}
+			if (selectorValue == -1) {
+				selectCaseList.add(new SelectCase(selectorName, caseFieldList));
+			} else {
+				selectCaseList.add(new SelectCase(selectorName, selectorValue, caseFieldList));
+			}
+		}
+		
+		return new Select(selectCaseList);
 	}
 	private static Type getType(String name, RecordTypeContext context) {
 		RecordFieldListContext recordFieldList = context.recordFieldList();
@@ -208,22 +269,22 @@ public class Symbol {
 			// process field name
 			{
 				FieldNameContext fieldNameContext = recordField.fieldName();
-				if (fieldNameContext.numberedName() != null) {
-					NumberedNameContext numberedName = fieldNameContext.numberedName();
-					fieldKind = FieldKind.FIELD;
+				if (fieldNameContext instanceof TypeFieldNameContext) {
+					TypeFieldNameContext typeFieldName = (TypeFieldNameContext)fieldNameContext;
 					
-					fieldName = numberedName.name.getText();
-					offset    = Type.getNumericValue(numberedName.value.getText()).intValue();
+					fieldKind = FieldKind.FIELD;
+					fieldName = typeFieldName.name.getText();
+					offset    = Type.getNumericValue(typeFieldName.offset.getText()).intValue();
 					startPos  = -1;
 					stopPos   = -1;
-				} else if (fieldNameContext.bitfieldName() != null) {
-					BitfieldNameContext bitfieldName = fieldNameContext.bitfieldName();
-					fieldKind = FieldKind.BIT_FIELD;
+				} else if (fieldNameContext instanceof TypeFieldNameBitContext) {
+					TypeFieldNameBitContext typeFieldNameBit = (TypeFieldNameBitContext)fieldNameContext;
 					
-					fieldName = bitfieldName.name.getText();
-					offset    = Type.getNumericValue(bitfieldName.offset.getText()).intValue();
-					startPos  = Type.getNumericValue(bitfieldName.startPos.getText()).intValue();
-					stopPos   = Type.getNumericValue(bitfieldName.stopPos.getText()).intValue();
+					fieldKind = FieldKind.BIT_FIELD;
+					fieldName = typeFieldNameBit.name.getText();
+					offset    = Type.getNumericValue(typeFieldNameBit.offset.getText()).intValue();
+					startPos  = Type.getNumericValue(typeFieldNameBit.startPos.getText()).intValue();
+					stopPos   = Type.getNumericValue(typeFieldNameBit.stopPos.getText()).intValue();
 				} else {
 					logger.error("Unexpected fieldNameContext");
 					logger.error("  context {}", context.getText());
@@ -236,13 +297,13 @@ public class Symbol {
 				FieldTypeContext fieldType = recordField.fieldType();
 				if (fieldType.arrayType() != null) {
 					// FIXME
-				} else if (fieldType.simpleType() != null) {
+				} else if (fieldType.predefinedType() != null) {
 					switch(fieldKind) {
 					case FIELD:
-						fieldList.add(new FieldType(name, fieldName, offset, getTypeName(fieldType.simpleType())));
+						fieldList.add(new FieldType(name, fieldName, offset, getTypeName(fieldType.predefinedType())));
 						break;
 					case BIT_FIELD:
-						fieldList.add(new BitFieldType(name, fieldName, offset, startPos, stopPos, getTypeName(fieldType.simpleType())));
+						fieldList.add(new FieldType(name, fieldName, offset, startPos, stopPos, getTypeName(fieldType.predefinedType())));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -256,7 +317,7 @@ public class Symbol {
 						fieldList.add(new FieldType(name, fieldName, offset, referenceType.name.getText()));
 						break;
 					case BIT_FIELD:
-						fieldList.add(new BitFieldType(name, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
+						fieldList.add(new FieldType(name, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -266,31 +327,14 @@ public class Symbol {
 				} else if (fieldType.select() != null) {
 					SelectContext select = fieldType.select();
 					
-					// FIXME
-					List<SelectCase> selectCaseList = new ArrayList<>();
-					for(SelectCaseContext selectCase: select.selectCaseList().selectCase()) {
-						if (selectCase instanceof TypeSelectCaseListContext) {
-							TypeSelectCaseListContext typeSelectCase = (TypeSelectCaseListContext)selectCase;
-							// FIXME
-							continue;
-						}
-						if (selectCase instanceof TypeSelectCaseEmptyContext) {
-							// FIXME
-							continue;
-						}
-						logger.error("Unexpected selectCase");
-						logger.error("  selectCase {}", selectCase);
-						throw new UnexpectedException("Unexpected selectCase");
-					}
-					
-					Select selectObject = new Select(selectCaseList);
+					Select selectObject = getSelect(name, fieldType.select());
 					
 					switch(fieldKind) {
 					case FIELD:
-						fieldList.add(new FieldSelect(fieldName, offset, selectObject));
+						fieldList.add(new FieldSelect(name, fieldName, offset, selectObject));
 						break;
 					case BIT_FIELD:
-						fieldList.add(new BitFieldSelect(fieldName, offset, startPos, stopPos, selectObject));
+						fieldList.add(new FieldSelect(name, fieldName, offset, startPos, stopPos, selectObject));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -306,7 +350,7 @@ public class Symbol {
 		}
 		return new TypeRecord(name, fieldList);
 	}
-	private static Type getType(String name, SimpleTypeContext context) {
+	private static Type getType(String name, PredefinedTypeContext context) {
 		if (context instanceof TypeBooleanContext) {
 			return new TypeReference(name, Type.BOOL);
 		}
@@ -345,16 +389,12 @@ public class Symbol {
 	private static Type getType(String name, TypeTypeContext context) {
 		if (context.arrayType() != null) {
 			ArrayTypeContext arrayType = context.arrayType();
-			if (arrayType.arrayTypeType() != null) {
-				return getType(name, arrayType.arrayTypeType());
+			if (arrayType instanceof TypeArrayTypeContext) {
+				return getType(name, (TypeArrayTypeContext)arrayType);
 			}
-			if (arrayType.arrayTypeRange() != null) {
-				return getType(name, arrayType.arrayTypeRange());
+			if (arrayType instanceof TypeArrayRangeContext) {
+				return getType(name, (TypeArrayRangeContext)arrayType);
 			}
-			logger.error("Unexpected arrayType");
-			logger.error("  name     {}", name);
-			logger.error("  typeType {}", arrayType.getText());
-			throw new UnexpectedException("Unexpected arrayType");
 		}
 		if (context.enumType() != null) {
 			return getType(name, context.enumType());
@@ -365,8 +405,8 @@ public class Symbol {
 		if (context.recordType() != null) {
 			return getType(name, context.recordType());
 		}
-		if (context.simpleType() != null) {
-			return getType(name, context.simpleType());
+		if (context.predefinedType() != null) {
+			return getType(name, context.predefinedType());
 		}
 		if (context.referenceType() != null) {
 			return getType(name, context.referenceType());

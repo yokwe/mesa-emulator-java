@@ -85,28 +85,31 @@ public class Select {
 	
 	public static class SelectCase {
 		public final String selector;
+		public final int    value;
 		
 		public List<CaseField> caseFieldList;
 		
 		private boolean needsFix;
 		private int     size;
 
-		public SelectCase(String selector, List<CaseField> caseFieldList) {
+		public SelectCase(String selector, int value, List<CaseField> caseFieldList) {
 			this.selector      = selector;
+			this.value         = value;
 			this.caseFieldList = caseFieldList;
 			this.needsFix      = true;
 			this.size          = Type.UNKNOWN_SIZE;
 		}
-		public SelectCase(String selector) {
-			this.selector      = selector;
-			this.caseFieldList = new ArrayList<>();
-			this.needsFix      = true;
-			this.size          = Type.UNKNOWN_SIZE;
+		public SelectCase(String selector, List<CaseField> caseFieldList) {
+			this(selector, -1, caseFieldList);
 		}
 		
 		@Override
 		public String toString() {
-			return String.format("{%s %s}", selector, caseFieldList);
+			if (value == -1) {
+				return String.format("{%s %s}", selector, caseFieldList);
+			} else {
+				return String.format("{%s(%d) %s}", selector, value, caseFieldList);
+			}
 		}
 		
 		public void addField(Field newValue) {
