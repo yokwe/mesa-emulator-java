@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 
-public class Select {
+public abstract class Select {
 	private static final Logger logger = LoggerFactory.getLogger(Select.class);
 
 	public static class SelectCase {
@@ -102,20 +102,23 @@ public class Select {
 		}
 	}
 	
-	// FIXME handle only "SELECT OVERLAID *"
-
-	// SELECT OVERLAID              * FROM
-	// SELECT OVERLAID ControlLinkTag FROM
-	// SELECT type (0:0..15):       * FROM
-	// SELECT tag (0:0..1):   LinkTag FROM
+	public enum SelectKind {
+		OVERLAID_ANON, // SELECT OVERLAID              * FROM
+		OVERLAID_TYPE, // SELECT OVERLAID ControlLinkTag FROM
+		TAG_ANON,      // SELECT type (0:0..15):       * FROM
+		TAG_TYPE,      // SELECT tag (0:0..1):   LinkTag FROM
+	}
 	
+	public final SelectKind       selectKind;
 	public final List<SelectCase> selectCaseList;
 	
 	private boolean needsFix;
 	private int     size;
 	
-	public Select(List<SelectCase> selectCaseList) {
+	public Select(SelectKind selectKind, List<SelectCase> selectCaseList) {
+		this.selectKind     = selectKind;
 		this.selectCaseList = selectCaseList;
+		
 		this.needsFix       = true;
 		this.size           = Type.UNKNOWN_SIZE;
 	}
@@ -145,20 +148,165 @@ public class Select {
 	}
 
 	public void fix() {
-		if (needsFix) {
+		if (needsFix()) {
 			boolean foundProblem = false;
-			int recordSize = 0;
+			int size = 0;
 			for(SelectCase selectCase: selectCaseList) {
 				selectCase.fix();
-				if (selectCase.needsFix) {
+				if (selectCase.needsFix()) {
 					foundProblem = true;
 				} else {
-					recordSize += selectCase.size;
+					size += selectCase.getSize();
 				}
 			}
 			if (!foundProblem) {
-				setSize(recordSize);
+				setSize(size);
 			}
+		}
+	}
+}
+
+class SelectOvelaidAnon extends Select {
+	public SelectOvelaidAnon(String prefix, List<SelectCase> selectCaseList) {
+		super(SelectKind.OVERLAID_ANON, selectCaseList);
+		
+		fix();
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("{%s %s}", selectKind, selectCaseList);
+	}
+}
+class SelectOvelaidType extends Select {
+	public final TypeReference tagType;
+	
+	public SelectOvelaidType(String prefix, String tagTypeName, List<SelectCase> selectCaseList) {
+		super(SelectKind.OVERLAID_TYPE, selectCaseList);
+		
+		this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#selector", tagTypeName);
+		
+		fix();
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("{%s %s}", selectKind, tagType.baseName, selectCaseList);
+	}
+	
+	@Override
+	public void fix() {
+		if (needsFix()) {
+			boolean foundProblem = false;
+			
+			tagType.fix();
+			if (tagType.needsFix()) {
+				foundProblem = true;
+			}
+			
+			int size = 0;
+			for(SelectCase selectCase: selectCaseList) {
+				selectCase.fix();
+				if (selectCase.needsFix()) {
+					foundProblem = true;
+				} else {
+					size += selectCase.getSize();
+				}
+			}
+			if (!foundProblem) {
+				setSize(size);
+			}
+		}
+	}
+}
+
+class SelectTagAnon extends Select {
+	public final String tagName;
+	public final int    offset;
+	public final int    startPos;
+	public final int    stopPos;
+	
+	public SelectTagAnon(String prefix, String tagName, int offset, int startPos, int stopPos, List<SelectCase> selectCaseList) {
+		super(SelectKind.TAG_ANON, selectCaseList);
+		
+		this.tagName  = tagName;
+		this.offset   = offset;
+		this.startPos = startPos;
+		this.stopPos  = stopPos;
+		
+		fix();
+	}
+	
+	public SelectTagAnon(String prefix, String tagName, int offset, List<SelectCase> selectCaseList) {
+		this(prefix, tagName, offset, -1, -1, selectCaseList);
+	}
+
+	@Override
+	public String toString() {
+		if (startPos == -1) {
+			return String.format("{%s %s (%d) %s}", selectKind, tagName, offset, selectCaseList);
+		} else {
+			return String.format("{%s %s (%d:%d..%d) %s}", selectKind, tagName, offset, startPos, stopPos, selectCaseList);
+		}
+	}
+}
+
+class SelectTagType extends Select {
+	public final String tagName;
+	public final int    offset;
+	public final int    startPos;
+	public final int    stopPos;
+	
+	public final TypeReference tagType;
+
+	public SelectTagType(String prefix, String tagName, int offset, int startPos, int stopPos, String tagTypeName, List<SelectCase> selectCaseList) {
+		super(SelectKind.TAG_TYPE, selectCaseList);
+		
+		this.tagName  = tagName;
+		this.offset   = offset;
+		this.startPos = startPos;
+		this.stopPos  = stopPos;
+		
+		this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#selector", tagTypeName);
+
+		fix();
+	}
+	
+	public SelectTagType(String prefix, String selectorName, int offset, String selectorTypeName, List<SelectCase> selectCaseList) {
+		this(prefix, selectorName, offset, -1, -1, selectorTypeName, selectCaseList);
+	}
+
+	@Override
+	public void fix() {
+		if (needsFix()) {
+			boolean foundProblem = false;
+			
+			tagType.fix();
+			if (tagType.needsFix()) {
+				foundProblem = true;
+			}
+			
+			int size = 0;
+			for(SelectCase selectCase: selectCaseList) {
+				selectCase.fix();
+				if (selectCase.needsFix()) {
+					foundProblem = true;
+				} else {
+					size += selectCase.getSize();
+				}
+			}
+			if (!foundProblem) {
+				setSize(size);
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		if (startPos == -1) {
+			return String.format("{%s %s (%d) %s %s}", selectKind, tagName, offset, tagType.baseName, selectCaseList);
+		} else {
+			return String.format("{%s %s (%d:%d..%d) %s %s}", selectKind, tagName, offset, startPos, stopPos, tagType.baseName, selectCaseList);
 		}
 	}
 }
