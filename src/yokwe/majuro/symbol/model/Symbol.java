@@ -41,7 +41,45 @@ import org.slf4j.LoggerFactory;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
-import yokwe.majuro.symbol.antlr.SymbolParser.*;
+import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeElementContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.DeclConstContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.DeclTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.EnumTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.EumElementContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.FieldNameContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.FieldTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.PredefinedTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.RecordFieldContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.RecordFieldListContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.RecordTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ReferenceTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SelectCaseContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SelectCaseSelectorContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SelectContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SubrangeTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeArrayRangeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeArrayTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeBooleanContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeCardinalContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeFieldNameBitContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeFieldNameContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeIntegerContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongCardinalContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongIntegerContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongPointerContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongUnspecifiedContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectCaseSelectorContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectCaseSelectorValueContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectOverlaidAnonContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectOverlaidTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectTagAnonContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectTagTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
 import yokwe.majuro.symbol.model.Field.FieldKind;
 import yokwe.majuro.symbol.model.Select.SelectCase;
 import yokwe.majuro.symbol.model.TypeEnum.Element;
@@ -196,22 +234,14 @@ public class Symbol {
 	}
 	private static Select getSelect(String prefix, SelectContext context) {
 		List<SelectCaseContext> elements;
-		if (context instanceof TypeSelectOverlaidAnyContext) {
-			TypeSelectOverlaidAnyContext selectOverlaidAny = (TypeSelectOverlaidAnyContext)context;
-			
-			elements = selectOverlaidAny.selectCaseList().elements;
+		if (context instanceof TypeSelectOverlaidAnonContext) {
+			elements = ((TypeSelectOverlaidAnonContext)context).selectCaseList().elements;
 		} else if (context instanceof TypeSelectOverlaidTypeContext) {
-			TypeSelectOverlaidTypeContext selectOveraidType = (TypeSelectOverlaidTypeContext)context;
-			
-			elements = selectOveraidType.selectCaseList().elements;
-		} else if (context instanceof TypeSelectTypeContext) {
-			TypeSelectTypeContext selectType = (TypeSelectTypeContext)context;
-			
-			elements = selectType.selectCaseList().elements;
-		} else if (context instanceof TypeSelectAnonContext) {
-			TypeSelectAnonContext selectAnon = (TypeSelectAnonContext)context;
-			
-			elements = selectAnon.selectCaseList().elements;
+			elements = ((TypeSelectOverlaidTypeContext)context).selectCaseList().elements;
+		} else if (context instanceof TypeSelectTagAnonContext) {
+			elements = ((TypeSelectTagAnonContext)context).selectCaseList().elements;
+		} else if (context instanceof TypeSelectTagTypeContext) {
+			elements = ((TypeSelectTagTypeContext)context).selectCaseList().elements;
 		} else {
 			logger.error("Unexpected context");
 			logger.error("  context {}", context);
@@ -234,9 +264,7 @@ public class Symbol {
 				selectorName = typeSelectCaseSelectorValue.selectorName.getText();
 				selectorValue = Type.getNumericValue(typeSelectCaseSelectorValue.selectorValue.getText()).intValue();
 			} else {
-				logger.error("Unexpected selectCaseSelector");
-				logger.error("  selectCaseSelector {}", selectCaseSelector);
-				throw new UnexpectedException("Unexpected selectCaseSelector");
+				throw new UnexpectedException("Unexpected");
 			}
 			
 			List<Field> caseFieldList;
@@ -254,7 +282,58 @@ public class Symbol {
 			}
 		}
 		
-		return new Select(selectCaseList);
+		if (context instanceof TypeSelectOverlaidAnonContext) {
+			return new SelectOvelaidAnon(prefix, selectCaseList);
+		}
+		if (context instanceof TypeSelectOverlaidTypeContext) {
+			TypeSelectOverlaidTypeContext selectOveraidType = (TypeSelectOverlaidTypeContext)context;
+			
+			String tagTypeName  = selectOveraidType.tagTypeName.getText();
+			return new SelectOvelaidType(prefix, tagTypeName, selectCaseList);
+		}
+		if (context instanceof TypeSelectTagAnonContext) {
+			TypeSelectTagAnonContext selectTagAnon = (TypeSelectTagAnonContext)context;
+			
+			FieldNameContext fieldName = selectTagAnon.tagName;
+			if (fieldName instanceof TypeFieldNameContext) {
+				TypeFieldNameContext typeFieldName = (TypeFieldNameContext)fieldName;
+				
+				String tagName  = typeFieldName.name.getText();
+				int    offset   = Type.getNumericValue(typeFieldName.offset.getText()).intValue();
+				return new SelectTagAnon(prefix, tagName, offset, selectCaseList);
+			} else if (fieldName instanceof TypeFieldNameBitContext) {
+				TypeFieldNameBitContext typeFieldNameBit = (TypeFieldNameBitContext)fieldName;
+				
+				String tagName  = typeFieldNameBit.name.getText();
+				int    offset   = Type.getNumericValue(typeFieldNameBit.offset.getText()).intValue();
+				int    startPos = Type.getNumericValue(typeFieldNameBit.startPos.getText()).intValue();
+				int    stopPos  = Type.getNumericValue(typeFieldNameBit.stopPos.getText()).intValue();
+				return new SelectTagAnon(prefix, tagName, offset, startPos, stopPos, selectCaseList);
+			}
+		}
+		if (context instanceof TypeSelectTagTypeContext) {
+			TypeSelectTagTypeContext selectTagType = (TypeSelectTagTypeContext)context;
+			
+			String tagTypeName = selectTagType.tagTypeName.getText();
+			
+			FieldNameContext fieldName = selectTagType.tagName;
+			if (fieldName instanceof TypeFieldNameContext) {
+				TypeFieldNameContext typeFieldName = (TypeFieldNameContext)fieldName;
+				
+				String tagName = typeFieldName.name.getText();
+				int    offset = Type.getNumericValue(typeFieldName.offset.getText()).intValue();
+				return new SelectTagType(prefix, tagName, offset, tagTypeName, selectCaseList);
+			} else if (fieldName instanceof TypeFieldNameBitContext) {
+				TypeFieldNameBitContext typeFieldNameBit = (TypeFieldNameBitContext)fieldName;
+				
+				String tagName  = typeFieldNameBit.name.getText();
+				int    offset   = Type.getNumericValue(typeFieldNameBit.offset.getText()).intValue();
+				int    startPos = Type.getNumericValue(typeFieldNameBit.startPos.getText()).intValue();
+				int    stopPos  = Type.getNumericValue(typeFieldNameBit.stopPos.getText()).intValue();
+				return new SelectTagType(prefix, tagName, offset, startPos, stopPos, tagTypeName, selectCaseList);
+			}
+		}
+		throw new UnexpectedException("Unexpected");
 	}
 	private static Type getType(String name, RecordTypeContext context) {
 		RecordFieldListContext recordFieldList = context.recordFieldList();
