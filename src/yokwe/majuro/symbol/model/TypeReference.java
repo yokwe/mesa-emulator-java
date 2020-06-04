@@ -42,9 +42,9 @@ public class TypeReference extends Type {
 	@Override
 	public String toString() {
 		if (hasValue()) {
-			return String.format("{%s %d %s %s %s}", name, getSize(), kind, baseName, needsFix());
+			return String.format("{%s %s %s %s}", name, kind, getSize(), baseType.name);
 		} else {
-			return String.format("{%s %s %s %s %s}", name, "*UNKNOWN*", kind, baseName, needsFix());
+			return String.format("{%s %s %s %s}", name, kind, "*UNKNOWN*", baseName);
 		}
 	}
 	

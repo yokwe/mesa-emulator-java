@@ -39,24 +39,47 @@ public class Select {
 	public static class CaseField {
 		public final Field field;
 		
-		public boolean needsFix;
-		public int     size;
+		private boolean needsFix;
+		private int     size;
 
 		public CaseField(Field field) {
 			this.field = field;
 			
 			this.needsFix = true;
-			this.size     = 0;
+			this.size     = Type.UNKNOWN_SIZE;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("%", field);
 		}
 		
 		public void fix() {
 			if (needsFix) {
 				field.fix();
-				if (field.hasValue()) {
-					this.size = field.getSize();
-					this.needsFix = false;
+				if (hasValue()) {
+					setSize(field.getSize());
 				}
 			}
+		}
+		
+		protected boolean needsFix() {
+			return needsFix;
+		}
+		protected boolean hasValue() {
+			return !needsFix;
+		}
+		public int getSize() {
+			if (needsFix) {
+				logger.error("Unexpected needsFix");
+				logger.error("  needsFix {}", needsFix);
+				throw new UnexpectedException("Unexpected needsFix");
+			}
+			return size;
+		}
+		protected void setSize(int newValue) {
+			size     = newValue;
+			needsFix = false;
 		}
 	}
 	
@@ -65,8 +88,8 @@ public class Select {
 		
 		public List<CaseField> caseFieldList;
 		
-		public boolean needsFix;
-		public int     size;
+		private boolean needsFix;
+		private int     size;
 
 		public SelectCase(String selector, List<CaseField> caseFieldList) {
 			this.selector      = selector;
@@ -81,14 +104,19 @@ public class Select {
 			this.size          = Type.UNKNOWN_SIZE;
 		}
 		
+		@Override
+		public String toString() {
+			return String.format("{%s %s}", selector, caseFieldList);
+		}
+		
 		public void addField(Field newValue) {
 			caseFieldList.add(new CaseField(newValue));
 		}
 		
 		public void fix() {
 			if (needsFix) {
-				boolean foundProblem = false;
-				int selectCaseSize = 0;
+				boolean foundProblem   = false;
+				int     selectCaseSize = 0;
 				for(CaseField caseFeld: caseFieldList) {
 					if (caseFeld.needsFix) caseFeld.fix();
 					if (caseFeld.needsFix) {
@@ -98,10 +126,28 @@ public class Select {
 					}
 				}
 				if (!foundProblem) {
-					this.size     = selectCaseSize;
-					this.needsFix = false;
+					setSize(selectCaseSize);
 				}
 			}
+		}
+		
+		protected boolean needsFix() {
+			return needsFix;
+		}
+		protected boolean hasValue() {
+			return !needsFix;
+		}
+		public int getSize() {
+			if (needsFix) {
+				logger.error("Unexpected needsFix");
+				logger.error("  needsFix {}", needsFix);
+				throw new UnexpectedException("Unexpected needsFix");
+			}
+			return size;
+		}
+		protected void setSize(int newValue) {
+			size     = newValue;
+			needsFix = false;
 		}
 	}
 	
@@ -123,6 +169,11 @@ public class Select {
 		this.size           = Type.UNKNOWN_SIZE;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("{%s %s}", "OVERLAID*", selectCaseList);
+	}
+	
 	protected boolean needsFix() {
 		return needsFix;
 	}
@@ -142,13 +193,12 @@ public class Select {
 		needsFix = false;
 	}
 
-
 	public void fix() {
 		if (needsFix) {
 			boolean foundProblem = false;
 			int recordSize = 0;
 			for(SelectCase selectCase: selectCaseList) {
-				if (selectCase.needsFix) selectCase.fix();
+				selectCase.fix();
 				if (selectCase.needsFix) {
 					foundProblem = true;
 				} else {
@@ -156,15 +206,8 @@ public class Select {
 				}
 			}
 			if (!foundProblem) {
-				this.size     = recordSize;
-				this.needsFix = false;
+				setSize(recordSize);
 			}
 		}
-	}
-
-	@Override
-	public String toString() {
-		// FIXME
-		return "FIXME  SELECT";
 	}
 }

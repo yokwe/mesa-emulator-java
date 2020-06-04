@@ -87,9 +87,14 @@ public abstract class TypeArray extends Type {
 	@Override
 	public String toString() {
 		if (hasValue()) {
-			return String.format("{%s %s %d %s %s %s %s %s}", name, kind, getSize(), arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+//			return String.format("{%s %s %s %s %s %s %s %s %s}", name, kind, getSize(), arrayKind, arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+			if (rangeMaxInclusive) {
+				return String.format("{%s %s %s %s %s %s (%d)[%d..%d]}", name, kind, getSize(), arrayKind, elementType.baseName, indexType.baseName, length, rangeMin, rangeMax);
+			} else {
+				return String.format("{%s %s %s %s %s %s (%d)[%d..%d)}", name, kind, getSize(), arrayKind, elementType.baseName, indexType.baseName, length, rangeMin, rangeMax + 1, length);
+			}
 		} else {
-			return String.format("{%s %s %s %s %s %s %s %s}", name, kind, "*UNKNOWN*", arrayKind, elementType.baseName, indexType.name, rangeMinConst, rangeMaxConst);
+			return String.format("{%s %s %s %s %s %s}", name, kind, "*UNKNOWN*", arrayKind, elementType.baseName, indexType.name);
 		}
 	}
 
@@ -204,4 +209,3 @@ class TypeArraySubrange extends TypeArray {
 		super(name, Type.UNKNOWN_SIZE, ArrayKind.SUBRANGE, elementName, indexName, rangeMin, rangeMax, rangeMaxInclusive);
 	}
 }
-

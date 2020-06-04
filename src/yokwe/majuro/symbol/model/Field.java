@@ -37,7 +37,7 @@ abstract class Field {
 		TYPE, SELECT
 	}
 	public enum FieldKind {
-		FEILD, BIT_FIELD
+		FIELD, BIT_FIELD
 	}
 	
 	public final String    name;
@@ -77,7 +77,6 @@ abstract class Field {
 		size     = newValue;
 		needsFix = false;
 	}
-
 	
 	@Override
 	public String toString() {
@@ -91,18 +90,29 @@ abstract class Field {
 class FieldType extends Field {
 	public final TypeReference type;
 	
-	protected FieldType(String name, int offset, FieldKind fieldKind, String typeName) {
+	protected FieldType(String prefix, String name, int offset, FieldKind fieldKind, String typeName) {
 		super(name, offset, TargetKind.TYPE, fieldKind);
 		
-		this.type = new TypeReference(name + "#fieldType", typeName);
+		this.type = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
+		
+		fix();
 	}
-	public FieldType(String name, int offset, String typeName) {
-		this(name, offset, FieldKind.FEILD, typeName);
+	public FieldType(String prefix, String name, int offset, String typeName) {
+		this(prefix, name, offset, FieldKind.FIELD, typeName);
+	}
+
+	@Override
+	public String toString() {
+		if (hasValue()) {
+			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), type.baseName);
+		} else {
+			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
+		}
 	}
 
 	@Override
 	public void fix() {
-		if (type.needsFix()) {
+		if (needsFix()) {
 			type.fix();
 			if (type.hasValue()) {
 				setSize(type.getSize());
@@ -114,11 +124,20 @@ class BitFieldType extends FieldType {
 	public final int startPos;
 	public final int stopPos;
 	
-	public BitFieldType(String name, int offset, int startPos, int stopPos, String typeName) {
-		super(name, offset, FieldKind.BIT_FIELD, typeName);
+	public BitFieldType(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
+		super(prefix, name, offset, FieldKind.BIT_FIELD, typeName);
 		
 		this.startPos = startPos;
 		this.stopPos  = stopPos;
+	}
+	
+	@Override
+	public String toString() {
+		if (hasValue()) {
+			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), type.baseName);
+		} else {
+			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
+		}
 	}
 }
 
@@ -133,7 +152,16 @@ class FieldSelect extends Field {
 		this.select = select;
 	}
 	public FieldSelect(String name, int offset, Select select) {
-		this(name, offset, FieldKind.FEILD, select);
+		this(name, offset, FieldKind.FIELD, select);
+	}
+
+	@Override
+	public String toString() {
+		if (hasValue()) {
+			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), select);
+		} else {
+			return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", select);
+		}
 	}
 
 	@Override
@@ -155,6 +183,15 @@ class BitFieldSelect extends FieldSelect {
 		
 		this.startPos = startPos;
 		this.stopPos  = stopPos;
+	}
+	
+	@Override
+	public String toString() {
+		if (hasValue()) {
+			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), select);
+		} else {
+			return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", select);
+		}
 	}
 }
 

@@ -44,6 +44,8 @@ import yokwe.majuro.symbol.antlr.SymbolParser;
 import yokwe.majuro.symbol.antlr.SymbolParser.*;
 import yokwe.majuro.symbol.model.Field.FieldKind;
 import yokwe.majuro.symbol.model.Field.TargetKind;
+import yokwe.majuro.symbol.model.Select.CaseField;
+import yokwe.majuro.symbol.model.Select.SelectCase;
 import yokwe.majuro.symbol.model.TypeEnum.Element;
 
 public class Symbol {
@@ -113,16 +115,6 @@ public class Symbol {
 		RangeTypeContext        rangeType        = context.rangeType();
 		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
 		
-		if (rangeType == null) {
-			logger.error("Unexpected rangeType is null");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected rangeType is null");
-		}
-		if (arrayTypeElement == null) {
-			logger.error("Unexpected arrayTypeElement is null");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected arrayTypeElement is null");
-		}
 		String indexName = rangeType.name.getText();
 		
 		SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
@@ -143,34 +135,23 @@ public class Symbol {
 		RangeTypeRangeContext   rangeTypeRange   = context.rangeTypeRange();
 		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
 		
-		if (rangeTypeRange == null) {
-			logger.error("Unexpected rangeTypeRange is null");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected rangeTypeRange is null");
-		}
-		if (arrayTypeElement == null) {
-			logger.error("Unexpected arrayTypeElement is null");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected arrayTypeElement is null");
-		}
-		
-		String indexName  = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
-		String startIndex = rangeTypeRange.startIndex.getText();
-		String stopIndex  = rangeTypeRange.stopIndex.getText();
-		String closeChar  = rangeTypeRange.closeChar.getText();
-
-		SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
-		ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
-
+		String  indexName         = rangeTypeRange.name == null ? Type.INTEGER : rangeTypeRange.name.getText();
+		String  startIndex        = rangeTypeRange.startIndex.getText();
+		String  stopIndex         = rangeTypeRange.stopIndex.getText();
+		String  closeChar         = rangeTypeRange.closeChar.getText();
 		boolean rangeMaxInclusive = closeChar.equals("]");
 		
-		if (simpleType != null) {
+		if (arrayTypeElement.simpleType() != null) {
+			SimpleTypeContext    simpleType    = arrayTypeElement.simpleType();
+			
 			if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
 				return new TypeArrayOpen(name, getTypeName(simpleType), indexName, startIndex);
 			} else {
 				return new TypeArraySubrange(name, getTypeName(simpleType), indexName, startIndex, stopIndex, rangeMaxInclusive);
 			}
-		} else if (referenceType != null) {
+		} else if (arrayTypeElement.referenceType() != null) {
+			ReferenceTypeContext referenceType = arrayTypeElement.referenceType();
+			
 			if (startIndex.equals(stopIndex) && !rangeMaxInclusive) {
 				return new TypeArrayOpen(name, referenceType.name.getText(), indexName, startIndex);
 			} else {
@@ -183,16 +164,11 @@ public class Symbol {
 		}
 	}
 	private static Type getType(String name, EnumTypeContext context) {
-		EnumElementListContext enumElementList = context.enumElementList();
-		if (enumElementList == null) {
-			logger.error("Unexpected enumElementList");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected enumElementList");
-		}
 		List<Element> elementList = new ArrayList<>();
-		for(EumElementContext e: enumElementList.elements) {
+		for(EumElementContext e: context.enumElementList().elements) {
 			String elementName  = e.numberedName().name.getText();
 			long   elementValue = Type.getNumericValue(e.numberedName().value.getText());
+			// Sanity check
 			if (Type.CARDINAL_MAX < elementValue) {
 				logger.error("Unexpeced value");
 				logger.error("  elementValue {}", elementValue);
@@ -206,11 +182,7 @@ public class Symbol {
 	}
 	private static Type getType(String name, SubrangeTypeContext context) {
 		RangeTypeRangeContext rangeTypeRange = context.rangeTypeRange();
-		if (rangeTypeRange == null) {
-			logger.error("Unexpected rangeTypeRangeContext");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected rangeTypeRangeContext");
-		}
+		
 		String baseName   = rangeTypeRange.name == null ? Type.CARDINAL : rangeTypeRange.name.getText();
 		String startIndex = rangeTypeRange.startIndex.getText();
 		String stopIndex  = rangeTypeRange.stopIndex.getText();
@@ -220,11 +192,6 @@ public class Symbol {
 	}
 	private static Type getType(String name, RecordTypeContext context) {
 		RecordFieldListContext recordFieldList = context.recordFieldList();
-		if (recordFieldList == null) {
-			logger.error("Unexpected recordFieldList");
-			logger.error("  context {}", context.getText());
-			throw new UnexpectedException("Unexpected recordFieldList");
-		}
 		
 		// build field list
 		List<Field> fieldList = new ArrayList<>();
@@ -238,11 +205,12 @@ public class Symbol {
 			int    stopPos;
 			Field  field;
 			
+			// process field name
 			{
 				FieldNameContext fieldNameContext = recordField.fieldName();
 				if (fieldNameContext.numberedName() != null) {
 					NumberedNameContext numberedName = fieldNameContext.numberedName();
-					fieldKind = FieldKind.FEILD;
+					fieldKind = FieldKind.FIELD;
 					
 					fieldName = numberedName.name.getText();
 					offset    = Type.getNumericValue(numberedName.value.getText()).intValue();
@@ -261,18 +229,74 @@ public class Symbol {
 					logger.error("  context {}", context.getText());
 					throw new UnexpectedException("Unexpected fieldNameContext");
 				}
-			};
+			}
 			
+			// process field type
 			{
 				FieldTypeContext fieldType = recordField.fieldType();
 				if (fieldType.arrayType() != null) {
 					// FIXME
 				} else if (fieldType.simpleType() != null) {
-					// FIXME
+					switch(fieldKind) {
+					case FIELD:
+						fieldList.add(new FieldType(name, fieldName, offset, getTypeName(fieldType.simpleType())));
+						break;
+					case BIT_FIELD:
+						fieldList.add(new BitFieldType(name, fieldName, offset, startPos, stopPos, getTypeName(fieldType.simpleType())));
+						break;
+					default:
+						logger.error("Unexpected fieldKind");
+						logger.error("  fieldKind {}", fieldKind);
+						throw new UnexpectedException("Unexpected fieldKind");
+					}
 				} else if (fieldType.referenceType() != null) {
-					// FIXME
+					ReferenceTypeContext referenceType = fieldType.referenceType();
+					switch(fieldKind) {
+					case FIELD:
+						fieldList.add(new FieldType(name, fieldName, offset, referenceType.name.getText()));
+						break;
+					case BIT_FIELD:
+						fieldList.add(new BitFieldType(name, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
+						break;
+					default:
+						logger.error("Unexpected fieldKind");
+						logger.error("  fieldKind {}", fieldKind);
+						throw new UnexpectedException("Unexpected fieldKind");
+					}
 				} else if (fieldType.select() != null) {
+					SelectContext select = fieldType.select();
+					
 					// FIXME
+					List<SelectCase> selectCaseList = new ArrayList<>();
+					for(SelectCaseContext selectCase: select.selectCaseList().selectCase()) {
+						if (selectCase instanceof TypeSelectCaseListContext) {
+							TypeSelectCaseListContext typeSelectCase = (TypeSelectCaseListContext)selectCase;
+							// FIXME
+							continue;
+						}
+						if (selectCase instanceof TypeSelectCaseEmptyContext) {
+							// FIXME
+							continue;
+						}
+						logger.error("Unexpected selectCase");
+						logger.error("  selectCase {}", selectCase);
+						throw new UnexpectedException("Unexpected selectCase");
+					}
+					
+					Select selectObject = new Select(selectCaseList);
+					
+					switch(fieldKind) {
+					case FIELD:
+						fieldList.add(new FieldSelect(fieldName, offset, selectObject));
+						break;
+					case BIT_FIELD:
+						fieldList.add(new BitFieldSelect(fieldName, offset, startPos, stopPos, selectObject));
+						break;
+					default:
+						logger.error("Unexpected fieldKind");
+						logger.error("  fieldKind {}", fieldKind);
+						throw new UnexpectedException("Unexpected fieldKind");
+					}
 				} else {
 					logger.error("Unexpected fieldType");
 					logger.error("  context {}", context.getText());
@@ -318,7 +342,6 @@ public class Symbol {
 	private static Type getType(String name, ReferenceTypeContext context) {
 		return new TypeReference(name, context.name.getText());
 	}
-	
 	private static Type getType(String name, TypeTypeContext context) {
 		if (context.arrayType() != null) {
 			ArrayTypeContext arrayType = context.arrayType();
@@ -353,15 +376,13 @@ public class Symbol {
 		logger.error("  context {}", context.getText());
 		throw new UnexpectedException("Unexpected typeType");
 	}
-
 	private static Type getType(DeclContext context) {
 		if (context.declConst() != null) return null;
 		if (context.declType() != null) {
 			DeclTypeContext declType = context.declType();
 			
-			String name = declType.name.getText();
+			String          name     = declType.name.getText();
 			TypeTypeContext typeType = declType.typeType();
-			
 			logger.info("TYPE   {} == {}", name, typeType.getText());
 			
 			Type type = getType(name, typeType);
@@ -393,13 +414,14 @@ public class Symbol {
 
 	void build(SymbolContext tree) {
 		for(DeclContext e: tree.body().declList().elements) {
-			Constant v = getConstant(e);
-			if (v != null) this.constMap.put(v.name, v);
-		}
-		for(DeclContext e: tree.body().declList().elements) {
+			Constant c = getConstant(e);
+			if (c != null) this.constMap.put(c.name, c);
+			
 			Type v = getType(e);
 			if (v != null) this.typeMap.put(v.name, v);
 		}
+		Constant.fixAll();
+		Type.fixAll();
 	}
 	
 	public static void main(String[] args) {
@@ -408,10 +430,8 @@ public class Symbol {
 		Symbol symbol = Symbol.getInstance(PATH_RULE_FILE);
 		logger.info("symbol {}", symbol);
 		
-		Type.fixAll();
 		Type.stats();
 		
-		Constant.fixAll();
 		Constant.stats();
 		
 		logger.info("STOP");

@@ -111,8 +111,8 @@ public class TypeEnum extends Type {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %d %d %d %s}", name, kind, getSize(), valueMin, valueMax, elementList);
-//		return String.format("{%s %s %d %s}", name, kind, size, elementList);
+		return String.format("{%s %s %d (%d)%s}", name, kind, getSize(), length, elementList);
+//		return String.format("{%s %s %d %d %d %d %s}", name, kind, getSize(), valueMin, valueMax, length, elementList);
 	}
 	
 	@Override

@@ -137,9 +137,17 @@ public abstract class TypeSubrange extends Type {
 	public String toString() {
 //		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType, valueMin, valueMax, valueMaxInclusive);
 		if (hasValue()) {
-			return String.format("{%s %d %s %s %s %s %s}", name, getSize(), kind, baseType.baseName, valueMin, valueMax, valueMaxInclusive);
+			if (valueMaxInclusive) {
+				return String.format("{%s %s %s %s (%d)[%d..%d]}", name, kind, getSize(), baseType.baseName, length, valueMin, valueMax);
+			} else {
+				return String.format("{%s %s %s %s (%d)[%d..%d)}", name, kind, getSize(), baseType.baseName, length, valueMin, valueMax + 1);
+			}
 		} else {
-			return String.format("{%s %s %s %s %s %s %s}", name, "*UNKNOWN*", kind, baseType.baseName, valueMin, valueMax, valueMaxInclusive);
+			if (valueMaxInclusive) {
+				return String.format("{%s %s %s %s [%s..%s]}", name, kind, "*UNKNOWN*", baseType.baseName, valueMinConst.stringValue, valueMaxConst.stringValue);
+			} else {
+				return String.format("{%s %s %s %s [%s..%s)}", name, kind, "*UNKNOWN*", baseType.baseName, valueMinConst.stringValue, valueMaxConst.stringValue);
+			}
 		}
 	}
 	

@@ -75,6 +75,15 @@ public abstract class Type {
 		this(name, kind, UNKNOWN_SIZE);
 	}
 	
+	@Override
+	public String toString() {
+		if (hasValue()) {
+			return String.format("{%s %s %d}", name, kind, getSize());
+		} else {
+			return String.format("{%s %s %s}", name, kind, "*UNKNOWN*");
+		}
+	}
+	
 	protected boolean needsFix() {
 		return needsFix;
 	}

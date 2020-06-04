@@ -81,7 +81,12 @@ public class Constant {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s %s %s %s %s}", name, typeName, stringValue, needsFix, numericValue);
+//		return String.format("{%s %s %s %s %s}", name, typeName, stringValue, needsFix, numericValue);
+		if (hasValue()) {
+			return String.format("{%s %s %d}", name, typeName, numericValue);
+		} else {
+			return String.format("{%s %s %s %s}", name, typeName, stringValue, "*UNKNOWN*");
+		}
 	}
 	
 	// special constructor for Type.XXX_VALUE

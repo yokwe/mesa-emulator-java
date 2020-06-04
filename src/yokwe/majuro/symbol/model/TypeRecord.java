@@ -59,10 +59,10 @@ public class TypeRecord extends Type {
 			int recordSize = 0;
 			for(Field field: fieldList) {
 				field.fix();
-				if (field.needsFix()) {
-					foundProblem = true;
-				} else {
+				if (field.hasValue()) {
 					recordSize += field.getSize();
+				} else {
+					foundProblem = true;
 				}
 			}
 			if (!foundProblem) {
