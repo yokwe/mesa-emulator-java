@@ -43,8 +43,6 @@ import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
 import yokwe.majuro.symbol.antlr.SymbolParser.*;
 import yokwe.majuro.symbol.model.Field.FieldKind;
-import yokwe.majuro.symbol.model.Field.TargetKind;
-import yokwe.majuro.symbol.model.Select.CaseField;
 import yokwe.majuro.symbol.model.Select.SelectCase;
 import yokwe.majuro.symbol.model.TypeEnum.Element;
 
@@ -185,8 +183,7 @@ public class Symbol {
 		
 		return new TypeSubrangeRange(name, baseName, startIndex, stopIndex, closeChar.equals("]"));
 	}
-	private static Select getSelect(String name, SelectContext context) {
-		// FIXME
+	private static Select getSelect(String prefix, SelectContext context) {
 		List<SelectCaseContext> elements;
 		if (context instanceof TypeSelectOverlaidAnyContext) {
 			TypeSelectOverlaidAnyContext selectOverlaidAny = (TypeSelectOverlaidAnyContext)context;
@@ -210,7 +207,6 @@ public class Symbol {
 			throw new UnexpectedException("Unexpected context");
 		}
 
-		// FIXME
 		List<SelectCase> selectCaseList = new ArrayList<>();
 		for(SelectCaseContext selectCase: elements) {
 			SelectCaseSelectorContext selectCaseSelector = selectCase.selectCaseSelector();
@@ -232,15 +228,13 @@ public class Symbol {
 				throw new UnexpectedException("Unexpected selectCaseSelector");
 			}
 			
-			List<CaseField> caseFieldList = new ArrayList<>();
+			List<Field> caseFieldList;
 			RecordFieldListContext recordFieldList = selectCase.recordFieldList();
 			if (recordFieldList == null) {
-				// FIXME
+				caseFieldList = new ArrayList<>();
 			} else {
-				List<RecordFieldContext> a = recordFieldList.elements;
-				for(RecordFieldContext e: recordFieldList.elements) {
-					// FIXME
-				}
+				String newPrefix = prefix + "#" + selectorName;
+				caseFieldList = getFieldList(newPrefix, recordFieldList);
 			}
 			if (selectorValue == -1) {
 				selectCaseList.add(new SelectCase(selectorName, caseFieldList));
@@ -255,16 +249,19 @@ public class Symbol {
 		RecordFieldListContext recordFieldList = context.recordFieldList();
 		
 		// build field list
-		List<Field> fieldList = new ArrayList<>();
-		for(RecordFieldContext recordField: recordFieldList.elements) {
+		List<Field> fieldList = getFieldList(name, recordFieldList);
+		return new TypeRecord(name, fieldList);
+	}
+	private static List<Field> getFieldList(String prefix, RecordFieldListContext context) {		
+		// build field list
+		List<Field> ret = new ArrayList<>();
+		for(RecordFieldContext recordField: context.elements) {
 			FieldKind  fieldKind;
-			TargetKind targetKind;
 			
 			String fieldName;
 			int    offset;
 			int    startPos;
 			int    stopPos;
-			Field  field;
 			
 			// process field name
 			{
@@ -300,10 +297,10 @@ public class Symbol {
 				} else if (fieldType.predefinedType() != null) {
 					switch(fieldKind) {
 					case FIELD:
-						fieldList.add(new FieldType(name, fieldName, offset, getTypeName(fieldType.predefinedType())));
+						ret.add(new FieldType(prefix, fieldName, offset, getTypeName(fieldType.predefinedType())));
 						break;
 					case BIT_FIELD:
-						fieldList.add(new FieldType(name, fieldName, offset, startPos, stopPos, getTypeName(fieldType.predefinedType())));
+						ret.add(new FieldType(prefix, fieldName, offset, startPos, stopPos, getTypeName(fieldType.predefinedType())));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -314,10 +311,10 @@ public class Symbol {
 					ReferenceTypeContext referenceType = fieldType.referenceType();
 					switch(fieldKind) {
 					case FIELD:
-						fieldList.add(new FieldType(name, fieldName, offset, referenceType.name.getText()));
+						ret.add(new FieldType(prefix, fieldName, offset, referenceType.name.getText()));
 						break;
 					case BIT_FIELD:
-						fieldList.add(new FieldType(name, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
+						ret.add(new FieldType(prefix, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -325,16 +322,13 @@ public class Symbol {
 						throw new UnexpectedException("Unexpected fieldKind");
 					}
 				} else if (fieldType.select() != null) {
-					SelectContext select = fieldType.select();
-					
-					Select selectObject = getSelect(name, fieldType.select());
-					
+					Select selectObject = getSelect(prefix, fieldType.select());
 					switch(fieldKind) {
 					case FIELD:
-						fieldList.add(new FieldSelect(name, fieldName, offset, selectObject));
+						ret.add(new FieldSelect(prefix, fieldName, offset, selectObject));
 						break;
 					case BIT_FIELD:
-						fieldList.add(new FieldSelect(name, fieldName, offset, startPos, stopPos, selectObject));
+						ret.add(new FieldSelect(prefix, fieldName, offset, startPos, stopPos, selectObject));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -348,7 +342,7 @@ public class Symbol {
 				}
 			}
 		}
-		return new TypeRecord(name, fieldList);
+		return ret;
 	}
 	private static Type getType(String name, PredefinedTypeContext context) {
 		if (context instanceof TypeBooleanContext) {
