@@ -50,8 +50,8 @@ public class TypeEnum extends Type {
 	}
 	
 	public  final List<Element> elementList;
-	private final int           valueMin;
-	private final int           valueMax;
+	public  final int           valueMin;
+	public  final int           valueMax;
 	private final int           length;
 	
 	public TypeEnum(String name, List<Element> elementList) {

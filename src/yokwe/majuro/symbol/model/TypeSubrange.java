@@ -41,9 +41,9 @@ public abstract class TypeSubrange extends Type {
 	public final Constant      valueMaxConst;
 	public final boolean       valueMaxInclusive;
 	
-	protected long valueMin;
-	protected long valueMax;
-	protected int  length;
+	public long valueMin;
+	public long valueMax;
+	public int  length;
 	
 	public TypeSubrange(String name, int size, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		super(name, Kind.SUBRANGE);
@@ -66,7 +66,9 @@ public abstract class TypeSubrange extends Type {
 		
 		this.valueMin = valueMin;
 		this.valueMax = valueMax + (valueMaxInclusive ? 0 : -1);
-		this.length   = -1;
+		
+		long length = valueMax - valueMin + 1;
+		this.length = (length <= Integer.MAX_VALUE) ? (int)length : -1;
 	}
 	public TypeSubrange(String name, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		this(name, Type.UNKNOWN_SIZE, baseName, valueMin, valueMax, valueMaxInclusive);
@@ -208,33 +210,6 @@ public abstract class TypeSubrange extends Type {
 				setSize(baseType.getSize());
 			}
 		}
-	}
-}
-
-class TypeSubrangeFull extends TypeSubrange {
-	private static final Logger logger = LoggerFactory.getLogger(TypeSubrangeFull.class);
-	public TypeSubrangeFull(String name, String baseName) {
-		super(name, baseName, "0", "0", false);
-	}
-	
-	@Override
-	protected void fix() {
-		{
-			baseType.fix();
-			
-			if (baseType.hasValue()) {
-				if (!baseType.baseType.isSubrange()) {
-					logger.error("Unexpected baseType");
-					logger.error("  baseType {}", baseType);
-					throw new UnexpectedException("Unexpected baseType");
-				}
-				// Update valueMin/Max with subrange valueMin/Max
-				TypeSubrange typeSubrange = (TypeSubrange)baseType.baseType;
-				this.valueMinConst.setNumericValue(typeSubrange.getValueMin());
-				this.valueMinConst.setNumericValue(typeSubrange.getValueMax());
-			}
-		}
-		super.fix();
 	}
 }
 

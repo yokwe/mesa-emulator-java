@@ -119,8 +119,10 @@ public class Symbol {
 			SymbolContext tree = parser.symbol();
 			
 			Symbol symbol = new Symbol(tree);
-			logger.info("name {}", symbol.name);
 			symbol.build(tree);
+			
+			Constant.fixAll();
+			Type.fixAll();
 			
 			return symbol;
 		} catch (IOException e) {
@@ -179,11 +181,15 @@ public class Symbol {
 		// ARRAY (indexName=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')') OF arrayTypeElement # TypeArrayRange
 		ArrayTypeElementContext arrayTypeElement = context.arrayTypeElement();
 		
-		String  indexName         = context.indexName == null ? Type.INTEGER : context.indexName.getText();
+		String  indexName         = context.indexName == null ? null : context.indexName.getText();
 		String  startIndex        = context.startIndex.getText();
 		String  stopIndex         = context.stopIndex.getText();
 		String  closeChar         = context.closeChar.getText();
 		boolean rangeMaxInclusive = closeChar.equals("]");
+		
+		if (indexName == null) {
+			indexName = (0 <= Integer.parseInt(startIndex)) ? Type.CARDINAL : Type.INTEGER;
+		}
 		
 		if (arrayTypeElement.predefinedType() != null) {
 			PredefinedTypeContext    predefinedType    = arrayTypeElement.predefinedType();

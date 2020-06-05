@@ -84,10 +84,20 @@ public abstract class Type {
 		}
 	}
 	
-	protected boolean needsFix() {
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Type) {
+			Type that = (Type)o;
+			return this.name.equals(that.name);
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean needsFix() {
 		return needsFix;
 	}
-	protected boolean hasValue() {
+	public boolean hasValue() {
 		return !needsFix;
 	}
 	public int getSize() {
@@ -206,11 +216,11 @@ public abstract class Type {
 	public static final long LONG_CARDINAL_MIN = 0;
 	public static final long LONG_CARDINAL_MAX = (1L << 32) - 1;
 
-	public static final long INTEGER_MIN = Integer.MIN_VALUE;
-	public static final long INTEGER_MAX = Integer.MAX_VALUE;
+	public static final long INTEGER_MIN = Short.MIN_VALUE;
+	public static final long INTEGER_MAX = Short.MAX_VALUE;
 
-	public static final long LONG_INTEGER_MIN = Long.MIN_VALUE;
-	public static final long LONG_INTEGER_MAX = Long.MAX_VALUE;
+	public static final long LONG_INTEGER_MIN = Integer.MIN_VALUE;
+	public static final long LONG_INTEGER_MAX = Integer.MAX_VALUE;
 
 	public static final String BOOL             = "BOOL";
 	public static final String CARDINAL         = "CARDINAL";
@@ -244,6 +254,29 @@ public abstract class Type {
 		POINTER_VALUE          = new TypeSubrangeRange(POINTER,          1, POINTER,          CARDINAL_MIN,      CARDINAL_MAX,      true);
 		LONG_POINTER_VALUE     = new TypeSubrangeRange(LONG_POINTER,     2, LONG_POINTER,     LONG_CARDINAL_MIN, LONG_CARDINAL_MAX, true);
 	}
+	
+	private static Map<String, Type> predefinedTypeMap = new TreeMap<>();
+	static {
+		predefinedTypeMap.put(BOOL_VALUE.name,             BOOL_VALUE);
+		predefinedTypeMap.put(CARDINAL_VALUE.name,         CARDINAL_VALUE);
+		predefinedTypeMap.put(LONG_CARDINAL_VALUE.name,    LONG_CARDINAL_VALUE);
+		predefinedTypeMap.put(INTEGER_VALUE.name,          INTEGER_VALUE);
+		predefinedTypeMap.put(LONG_INTEGER_VALUE.name,     LONG_INTEGER_VALUE);
+		predefinedTypeMap.put(UNSPECIFIED_VALUE.name,      UNSPECIFIED_VALUE);
+		predefinedTypeMap.put(LONG_UNSPECIFIED_VALUE.name, LONG_UNSPECIFIED_VALUE);
+		predefinedTypeMap.put(POINTER_VALUE.name,          POINTER_VALUE);
+		predefinedTypeMap.put(LONG_POINTER_VALUE.name,     LONG_POINTER_VALUE);
+	}
+	public static boolean isPredefined(String name) {
+		return predefinedTypeMap.containsKey(name);
+	}
+	public static boolean isPredefined(Type type) {
+		return isPredefined(type.name);
+	}
+	public boolean isPredefined() {
+		return isPredefined(name);
+	}
+
 	
 	public static Long getNumericValue(String value) {
 		if (value.matches("^-?[0-9]+$")) {

@@ -60,10 +60,10 @@ public class Constant {
 		register(this);
 	}
 	
-	protected boolean needsFix() {
+	public boolean needsFix() {
 		return needsFix;
 	}
-	protected boolean hasValue() {
+	public boolean hasValue() {
 		return !needsFix;
 	}	
 	public long getNumericValue() {

@@ -46,9 +46,9 @@ public abstract class TypeArray extends Type {
 	public final Constant      rangeMaxConst;
 	public final boolean       rangeMaxInclusive;
 	
-	protected long rangeMin;
-	protected long rangeMax;
-	protected int  length;
+	public  long rangeMin;
+	public  long rangeMax;
+	public  int  length;
 
 	protected TypeArray(String name, int size, ArrayKind arrayKind, String elementName, String indexName, String rangeMin, String rangeMax, boolean rangeMaxInclusive) {
 		super(name, Kind.ARRAY);
@@ -106,9 +106,42 @@ public abstract class TypeArray extends Type {
 			rangeMinConst.fix();
 			rangeMaxConst.fix();
 			
-			if (indexType.hasValue() && elementType.hasValue() && rangeMinConst.hasValue() && rangeMaxConst.hasValue()) {				
-				long rangeMin = rangeMinConst.getNumericValue();
-				long rangeMax = rangeMaxConst.getNumericValue() + (rangeMaxInclusive ? 0 : -1);
+			if (indexType.hasValue() && elementType.hasValue() && rangeMinConst.hasValue() && rangeMaxConst.hasValue()) {
+				long rangeMin;
+				long rangeMax;
+				
+				switch(arrayKind) {
+				case OPEN:
+				case SUBRANGE:
+					rangeMin = rangeMinConst.getNumericValue();
+					rangeMax = rangeMaxConst.getNumericValue() + (rangeMaxInclusive ? 0 : -1);
+					break;
+				case FULL:
+					switch(indexType.baseType.kind) {
+					case ENUM:
+					{
+						TypeEnum baseType = (TypeEnum)indexType.baseType;
+						rangeMin = baseType.getValueMin();
+						rangeMax = baseType.getValueMax();
+					}
+						break;
+					case SUBRANGE:
+					{
+						TypeSubrange baseType = (TypeSubrange)indexType.baseType;
+						rangeMin = baseType.getValueMin();
+						rangeMax = baseType.getValueMax();
+					}
+						break;
+					default:
+						logger.error("Unexpected indexType");
+						logger.error("  indexType {}", indexType);
+						throw new UnexpectedException("Unexpected indexType");
+					}
+					break;
+				default:
+					throw new UnexpectedException();
+				}
+								
 				long length   = rangeMax - rangeMin + 1;
 				long size     = elementType.getSize() * length;
 				
@@ -169,39 +202,8 @@ class TypeArrayOpen extends TypeArray {
 	}
 }
 class TypeArrayFull extends TypeArray {
-	private static final Logger logger = LoggerFactory.getLogger(TypeArrayFull.class);
-
 	TypeArrayFull(String name, String elementName, String indexName) {
 		super(name, Type.UNKNOWN_SIZE, ArrayKind.FULL, elementName, indexName, "0", "0", true);
-	}
-	@Override
-	public void fix() {
-		{
-			indexType.fix();
-			if (indexType.hasValue()) {
-				switch(indexType.baseType.kind) {
-				case ENUM:
-				{
-					TypeEnum baseType = (TypeEnum)indexType.baseType;
-					this.rangeMin = baseType.getValueMin();
-					this.rangeMax = baseType.getValueMax();
-				}
-					break;
-				case SUBRANGE:
-				{
-					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					this.rangeMin = baseType.getValueMin();
-					this.rangeMax = baseType.getValueMax();
-				}
-					break;
-				default:
-					logger.error("Unexpected indexType");
-					logger.error("  indexType {}", indexType);
-					throw new UnexpectedException("Unexpected indexType");
-				}
-			}
-		}
-		super.fix();
 	}
 }
 class TypeArraySubrange extends TypeArray {
