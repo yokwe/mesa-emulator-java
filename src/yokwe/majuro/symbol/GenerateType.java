@@ -167,7 +167,7 @@ public class GenerateType {
 				out.println();
 				
 				out.println("public static int get(int base) {");
-				out.println("int ret = Memory.radDbl(base);");
+				out.println("int ret = Memory.readDbl(base);");
 				out.println("checkValue(ret);");
 				out.println("return ret;");
 				out.println("}");
@@ -322,6 +322,7 @@ public class GenerateType {
 			out.println("import org.slf4j.LoggerFactory;");
 			out.println();
 			out.println("import yokwe.majuro.UnexpectedException;");
+			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println();
 			
 			out.println("//");
@@ -348,12 +349,15 @@ public class GenerateType {
 			out.println("public static final int LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 			out.println();
 			
+			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeName);
+			out.println();
+
 			out.println("public static void checkValue(int value) {");
 			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-			out.println("if (INDEX_MIN <= index && index <= INDEX_MAX) return;");
+			out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
 			out.println("logger.error(\"value is out of range\");");
 			out.println("logger.error(\"  value {}\", value);");
-			out.println("throw new UnexpectedException(\"index is out of range\");");
+			out.println("throw new UnexpectedException(\"value is out of range\");");
 			out.println("}");
 			out.println("}");
 			out.println();
@@ -362,7 +366,6 @@ public class GenerateType {
 			out.println("for(%1$s e: %1$s.values()) {", typeName);
 			out.println("if (e.value == value) return e;");
 			out.println("}");
-			out.println("Logger logger = LoggerFactory.getLogger(XferType.class);");
 			out.println("logger.error(\"Unexpected value = {}\", value);");
 			out.println("throw new UnexpectedException();");
 			out.println("}");
