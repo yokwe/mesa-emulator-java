@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Symbol;
 import yokwe.majuro.symbol.model.Type;
@@ -108,10 +109,15 @@ public class GenerateType {
 			out.println();
 			out.println("import yokwe.majuro.UnexpectedException;");
 			out.println("import yokwe.majuro.mesa.Debug;");
+			out.println("import yokwe.majuro.mesa.Memory;");
+
 			out.println();
 			
 			out.println("//");
 			out.println("// %s", typeSubrange.toMesaString());
+			if (typeSubrange.baseType.isReference() && !typeSubrange.baseType.baseType.isPredefined()) {
+				out.println("// %s: TYPE = %s;", typeSubrange.baseType.baseName, typeSubrange.baseType.baseType.toMesaType());
+			}
 			out.println("//");
 			out.println();
 			
@@ -127,26 +133,63 @@ public class GenerateType {
 				out.println("public static final int VALUE_MAX = %d;", typeSubrange.getValueMax());
 				out.println("public static final int LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 				out.println();
-				out.println("public static void checkRange(int value) {");
+				
+				out.println("public static int get(int base) {");
+				out.println("int ret = Memory.fetch(base);");
+				out.println("checkValue(ret);");
+				out.println("return ret;");
+				out.println("}");
+				out.println("public static void set(int base, int newValue) {");
+				out.println("checkValue(newValue);");
+				out.println("Memory.store(base, newValue);");
+				out.println("}");
+				out.println();
+
+				out.println("public static void checkValue(int value) {");
 				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
 				out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
 				out.println("logger.error(\"value is out of range\");");
 				out.println("logger.error(\"  value {}\", value);");
-				out.println("throw new UnexpectedException(\"Out of range\");");
+				out.println("throw new UnexpectedException(\"value is out of range\");");
 				out.println("}");
 				out.println("}");
+				out.println();
+				
 				break;
 			case 2:
 				out.println("public static final long VALUE_MIN = %dL;", typeSubrange.getValueMin());
 				out.println("public static final long VALUE_MAX = %dL;", typeSubrange.getValueMax());
 				out.println("public static final long LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 				out.println();
-				out.println("public static void checkRange(long value) {");
+				
+				out.println("public static int get(int base) {");
+				out.println("int ret = Memory.radDbl(base);");
+				out.println("checkValue(ret);");
+				out.println("return ret;");
+				out.println("}");
+				out.println("public static void set(int base, int newValue) {");
+				out.println("checkValue(newValue);");
+				out.println("Memory.writeDbl(base, newValue);");
+				out.println("}");
+				out.println();
+
+				out.println("public static void checkValue(int value) {");
 				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
 				out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
 				out.println("logger.error(\"value is out of range\");");
 				out.println("logger.error(\"  value {}\", value);");
-				out.println("throw new UnexpectedException(\"Out of range\");");
+				out.println("throw new UnexpectedException(\"value is out of range\");");
+				out.println("}");
+				out.println("}");
+				out.println();
+				
+
+				out.println("public static void checkValue(long value) {");
+				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
+				out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
+				out.println("logger.error(\"value is out of range\");");
+				out.println("logger.error(\"  value {}\", value);");
+				out.println("throw new UnexpectedException(\"value is out of range\");");
 				out.println("}");
 				out.println("}");
 				break;
@@ -177,6 +220,14 @@ public class GenerateType {
 			
 			out.println("//");
 			out.println("// %s", typeArray.toMesaString());
+			if (typeArray.indexType.isReference()) {
+				out.println("// %s: TYPE = %s;", typeArray.indexType.baseName, typeArray.indexType.baseType.toMesaType());
+			}
+			if (typeArray.elementType.isReference()) {
+				out.println("// %s: TYPE = %s;", typeArray.elementType.baseName, typeArray.elementType.baseType.toMesaType());
+			}
+			
+			
 			out.println("//");
 			out.println();
 			
@@ -215,19 +266,32 @@ public class GenerateType {
 			out.println("checkIndex(index);");
 			out.println("return base + (index * ELEMENT_SIZE);");
 			out.println("}");
-
-			out.println("public static int get(int base, int index) {");
-			out.println("checkIndex(index);");
-			out.println("return Memory.fetch(getAddress(base, index));");
-			out.println("}");
-
-			out.println("public static void set(int base, int index, int newValue) {");
-			out.println("checkIndex(index);");
-			out.println("checkValue(newValue);");
-			out.println("Memory.store(getAddress(base, index), newValue);");
-			out.println("}");
-
 			
+			switch (typeArray.elementType.baseType.kind) {
+			case SUBRANGE:
+			case ENUM:
+				out.println("public static int get(int base, int index) {");
+				out.println("return Memory.fetch(getAddress(base, index));");
+				out.println("}");
+
+				out.println("public static void set(int base, int index, int newValue) {");
+				out.println("checkValue(newValue);");
+				out.println("Memory.store(getAddress(base, index), newValue);");
+				out.println("}");
+				
+				out.println("public static void checkValue(int value) {");
+				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
+				out.println("%s.checkRange(value);", typeArray.elementType.baseType.name);
+				out.println("}");
+				out.println("}");
+				break;
+			case RECORD:
+				// FIXME expand record field
+				break;
+			default:
+				throw new UnexpectedException();
+			}
+
 			out.println("public static void checkIndex(int index) {");
 			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
 			out.println("if (INDEX_MIN <= index && index <= INDEX_MAX) return;");
@@ -237,26 +301,6 @@ public class GenerateType {
 			out.println("}");
 			out.println("}");
 
-			out.println("public static void checkValue(int value) {");
-			if (typeArray.elementType.isSubrange()) {
-				out.println("%s.checkRange(value);", typeArray.elementType.baseName);
-			} else {
-				out.println("// array element is not subrange");
-//				switch(typeArray.elementType.getSize()) {
-//				case 1:
-//					out.println("UNSPECIFIED.checkRange(value);");
-//					break;
-//				case 2:
-//					out.println("LONG_UNSPECIFIED.checkRange(value);");
-//					break;
-//				default:
-//					logger.error("element {}", typeArray.elementType.baseType);
-//					logger.error("        {}", typeArray.elementType.getSize());
-//					throw new UnexpectedException();
-//				}
-			}
-			out.println("}");
-						
 			out.println("}");
 		} catch (FileNotFoundException e) {
 			String exceptionName = e.getClass().getSimpleName();
@@ -299,6 +343,17 @@ public class GenerateType {
 			out.println("public static final int VALUE_MAX = %d;", typeEnum.valueMax);
 			out.println("public static final int LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 			out.println();
+			
+			out.println("public static void checkValue(int value) {");
+			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
+			out.println("if (INDEX_MIN <= index && index <= INDEX_MAX) return;");
+			out.println("logger.error(\"value is out of range\");");
+			out.println("logger.error(\"  value {}\", value);");
+			out.println("throw new UnexpectedException(\"index is out of range\");");
+			out.println("}");
+			out.println("}");
+			out.println();
+
 			out.println("public static %s getInstance(int value) {", typeEnum.name);
 			out.println("for(%1$s e: %1$s.values()) {", typeEnum.name);
 			out.println("if (e.value == value) return e;");
