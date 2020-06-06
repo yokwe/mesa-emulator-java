@@ -395,10 +395,10 @@ public class Symbol {
 					
 					switch(fieldKind) {
 					case FIELD:
-						ret.add(new FieldType(prefix, fieldName, offset, arrayName));
+						ret.add(new Field(prefix, fieldName, offset, arrayName));
 						break;
 					case BIT_FIELD:
-						ret.add(new FieldType(prefix, fieldName, offset, startPos, stopPos, arrayName));
+						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, arrayName));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -408,10 +408,10 @@ public class Symbol {
 				} else if (fieldType.predefinedType() != null) {
 					switch(fieldKind) {
 					case FIELD:
-						ret.add(new FieldType(prefix, fieldName, offset, getTypeName(fieldType.predefinedType())));
+						ret.add(new Field(prefix, fieldName, offset, getTypeName(fieldType.predefinedType())));
 						break;
 					case BIT_FIELD:
-						ret.add(new FieldType(prefix, fieldName, offset, startPos, stopPos, getTypeName(fieldType.predefinedType())));
+						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, getTypeName(fieldType.predefinedType())));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -422,10 +422,10 @@ public class Symbol {
 					ReferenceTypeContext referenceType = fieldType.referenceType();
 					switch(fieldKind) {
 					case FIELD:
-						ret.add(new FieldType(prefix, fieldName, offset, referenceType.name.getText()));
+						ret.add(new Field(prefix, fieldName, offset, referenceType.name.getText()));
 						break;
 					case BIT_FIELD:
-						ret.add(new FieldType(prefix, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
+						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
@@ -436,10 +436,10 @@ public class Symbol {
 					Select selectObject = getSelect(prefix, fieldType.select());
 					switch(fieldKind) {
 					case FIELD:
-						ret.add(new FieldSelect(prefix, fieldName, offset, selectObject));
+						ret.add(new Field(prefix, fieldName, offset, selectObject));
 						break;
 					case BIT_FIELD:
-						ret.add(new FieldSelect(prefix, fieldName, offset, startPos, stopPos, selectObject));
+						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, selectObject));
 						break;
 					default:
 						logger.error("Unexpected fieldKind");
