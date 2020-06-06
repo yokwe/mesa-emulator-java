@@ -8,10 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Type.CARD16;
+import yokwe.majuro.mesa.type.ExtraGlobalWord;
+import yokwe.majuro.mesa.type.LONG_POINTER;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
-import yokwe.majuro.symbol.model.FieldType;
-import yokwe.majuro.symbol.model.FieldSelect;
+import yokwe.majuro.symbol.model.Select;
 import yokwe.majuro.symbol.model.Symbol;
 import yokwe.majuro.symbol.model.Type;
 import yokwe.majuro.symbol.model.TypeArray;
@@ -363,8 +366,12 @@ public class GenerateType {
 			out.println();
 
 			out.println("public static %s getInstance(int value) {", typeName);
-			out.println("for(%1$s e: %1$s.values()) {", typeName);
-			out.println("if (e.value == value) return e;");
+			out.println("switch (value) {", typeName);
+
+			for(Element element: typeEnum.elementList) {
+				out.println("case %d: return %s.%s;", element.value, typeName, StringUtil.toJavaConstName(element.name));
+			}
+			
 			out.println("}");
 			out.println("logger.error(\"Unexpected value = {}\", value);");
 			out.println("throw new UnexpectedException();");
@@ -401,111 +408,164 @@ public class GenerateType {
 			
 			out.println("//");
 			out.println("// %s", typeRecord.toMesaString());
-			
-			for(Field field: typeRecord.fieldList) {
-				switch (field.targetKind) {
-				case TYPE:
-				{
-					FieldType fieldType = (FieldType)field;
-					
-					switch(field.fieldKind) {
-					case FIELD:
-						out.println("//   %s(%d): %s", fieldType.fieldName, fieldType.offset, fieldType.type.toMesaType());
-						break;
-					case BIT_FIELD:
-						out.println("//   %s(%d:%d..%d): %s", fieldType.fieldName, fieldType.offset, fieldType.startPos, fieldType.stopPos, fieldType.type.toMesaType());
-						break;
-					default:
-						throw new UnexpectedException();
-					}
-				}
-					break;
-				case SELECT:
-				{
-					FieldSelect fieldSelect = (FieldSelect)field;
-					
-					switch(field.fieldKind) {
-					case FIELD:
-						out.println("//   %s(%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.select.toMesaType());
-						break;
-					case BIT_FIELD:
-						out.println("//   %s(%d:%d..%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.startPos, fieldSelect.stopPos, fieldSelect.select.toMesaType());
-						break;
-					default:
-						throw new UnexpectedException();
-					}
-				}
-					break;
-				default:
-					throw new UnexpectedException();
-				}
-				
-			}
-
 			out.println("//");
 			out.println();
 			
 			out.println("public final class %s {", typeRecord.name);
 			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeRecord.name);
 			out.println();
-			
-			out.println("public static final int SIZE      = %d;", typeRecord.getSize());
+			out.println("public static final int SIZE = %d;", typeRecord.getSize());
 			out.println();
 			
 			for(Field field: typeRecord.fieldList) {
-				switch (field.targetKind) {
-				case TYPE:
+				String  fieldName = field.name;
+				Type    type      = field.type;
+				Select  select    = field.select;
+				int     size      = field.getSize();
+				boolean bitField  = false;;
+				int     shift     = 0;
+				String  mask      = null;
 				{
-					FieldType fieldType = (FieldType)field;
-					out.println("public static final class %s {", fieldType.name);
-					
-					int offset;
-					int startPos;
-					int stopPos;
-					int size;
+					if (field.isBitfield()) {
+						BitInfo bitInfo = new BitInfo(field.getSize(), field.startPos, field.stopPos);
+						bitField = true;
+						shift    = bitInfo.shift;
+						mask     = bitInfo.mask;
+					}
+				}
+				
+				if (type != null) {
+					Type  baseType = field.type.isReference() ? ((TypeReference)field.type).baseType : field.type;
 					switch(field.fieldKind) {
 					case FIELD:
-						out.println("//   %s(%d): %s", fieldType.fieldName, fieldType.offset, fieldType.type.toMesaType());
-						out.println("public static final int SIZE      = %d;", fieldType.getSize());
-						out.println("public static final int OFFSET    = %d;", fieldType.offset);
+						out.println("//   %s(%d): %s", field.name, field.offset, type.toMesaType());
 						break;
 					case BIT_FIELD:
-						out.println("//   %s(%d:%d..%d): %s", fieldType.fieldName, fieldType.offset, fieldType.startPos, fieldType.stopPos, fieldType.type.toMesaType());
-						out.println("public static final int SIZE      = %d;", fieldType.getSize());
-						out.println("public static final int OFFSET    = %d;", fieldType.offset);
-						out.println("public static final int START_POS = %d;", fieldType.startPos);
-						out.println("public static final int STOP_POS  = %d;", fieldType.stopPos);
+						out.println("//   %s(%d:%d..%d): %s", field.name, field.offset, field.startPos, field.stopPos, type.toMesaType());
 						break;
 					default:
 						throw new UnexpectedException();
+					}
+
+					out.println("public static final class %s {", field.name);
+
+					out.println("public static final int SIZE   =  %2d;", field.getSize());
+					out.println("public static final int OFFSET =  %2d;", field.offset);
+					if (bitField) {
+						out.println("public static final int SHIFT  =  %2d;", shift);
+						out.println("public static final int MASK   =  %s;", mask);
+					}
+					out.println();
+					
+					out.println("public static int getAddress(int base) {");
+					out.println("return base + OFFSET;");
+					out.println("}");
+					out.println();
+
+					if (bitField) {
+						out.println("public static int getBit(int value) {");
+						out.println("return (value & MASK) >>> SHIFT;");
+						out.println("}");
+						out.println("public static int setBit(int value, int newValue) {");
+						out.println("return ((newValue << SHIFT) & MASK) | (value & ~MASK);");
+						out.println("}");
+						out.println();
+						
+						switch (baseType.kind) {
+						case BOOL:
+							out.println("public static boolean get(int base) {");
+							out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
+							out.println("}");
+							out.println("public static void set(int base, boolean newValue) {");
+							out.println("Memory.modify(getAddress(base), %s.%s::setBit, (newValue ? 1 : 0));", className, fieldName);
+							out.println("}");
+							break;
+						case SUBRANGE:
+							out.println("public static int get(int base) {");
+							out.println("return getBit(Memory.fetch(getAddress(base)));");
+							out.println("}");
+							out.println("public static void set(int base, int newValue) {");
+							out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
+							out.println("}");
+							break;
+						case ENUM:
+							out.println("public static %s get(int base) {", baseType.name);
+							out.println("return %s.getInstance(getBit(Memory.fetch(getAddress(base))));", baseType.name);
+							out.println("}");
+							out.println("public static void set(int base, %s newValue) {", baseType.name);
+							out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue.value);", className, fieldName);
+							out.println("}");
+							break;
+						case ARRAY:
+							// FIXME
+							out.println("// FIXME ARRAY");
+							break;
+						case RECORD:
+							// FIXME
+							out.println("// FIXME RECORD");
+							break;
+						default:
+							logger.error("type {}", type);
+							throw new UnexpectedException();
+						}
+
+					} else {
+						switch (baseType.kind) {
+						case BOOL:
+							out.println("public static boolean get(int base) {");
+							out.println("return Memory.fetch(getAddress(base)) != 0;");
+							out.println("}");
+							out.println("public static void set(int base, boolean newValue) {");
+							out.println("Memory.store(getAddress(base), newValue ? 1 : 0);");
+							out.println("}");
+							break;
+						case SUBRANGE:
+							out.println("public static int get(int base) {");
+							out.println("return Memory.fetch(getAddress(base));");
+							out.println("}");
+							out.println("public static void set(int base, int newValue) {");
+							out.println("Memory.store(getAddress(base), newValue);");
+							out.println("}");
+							break;
+						case ENUM:
+							out.println("public static %s get(int base) {", baseType.name);
+							out.println("return %s.getInstance(Memory.fetch(getAddress(base)));", baseType.name);
+							out.println("}");
+							out.println("public static void set(int base, %s newValue) {", baseType.name);
+							out.println("Memory.store(getAddress(base), newValue.value);");
+							out.println("}");
+							break;
+						case ARRAY:
+							// FIXME
+							out.println("// FIXME ARRAY");
+							break;
+						case RECORD:
+							// FIXME
+							out.println("// FIXME RECORD");
+							break;
+						default:
+							logger.error("type {}", type);
+							throw new UnexpectedException();
+						}
 					}
 					
 					out.println("}");
 				}
-					break;
-				case SELECT:
-				{
-					FieldSelect fieldSelect = (FieldSelect)field;
-					
+				if (select != null) {
 					switch(field.fieldKind) {
 					case FIELD:
-						out.println("//   %s(%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.select.toMesaType());
+						out.println("//   %s(%d): %s", field.name, field.offset, select.toMesaType());
 						break;
 					case BIT_FIELD:
-						out.println("//   %s(%d:%d..%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.startPos, fieldSelect.stopPos, fieldSelect.select.toMesaType());
+						out.println("//   %s(%d:%d..%d): %s", field.name, field.offset, field.startPos, field.stopPos, select.toMesaType());
 						break;
 					default:
 						throw new UnexpectedException();
 					}
-				}
-					break;
-				default:
-					throw new UnexpectedException();
-				}
-				
-			}
 
-			
+					
+				}
+			}			
 			out.println("}");
 		} catch (FileNotFoundException e) {
 			String exceptionName = e.getClass().getSimpleName();
