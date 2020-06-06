@@ -221,7 +221,7 @@ BEGIN
                 interrupt (16:0..511): InterruptVector,
                 fault     (48:0..255): FaultVector],
             blocks(1) => [
-                block (0): ARRAY PsbIndex[0..0) OF ProcessStateBlock],
+                block (0): ARRAY PsbIndex OF ProcessStateBlock],
             ENDCASE];
 
 --    ProcessDataArea: TYPE = RECORD [
