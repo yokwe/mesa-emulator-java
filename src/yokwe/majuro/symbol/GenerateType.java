@@ -111,7 +111,7 @@ public class GenerateType {
 			out.println();
 			
 			out.println("//");
-			out.println("// %s", typeSubrange.toMesaType());
+			out.println("// %s", typeSubrange.toMesaString());
 			out.println("//");
 			out.println();
 			
@@ -176,7 +176,7 @@ public class GenerateType {
 			out.println();
 			
 			out.println("//");
-			out.println("// %s", typeArray.toMesaType());
+			out.println("// %s", typeArray.toMesaString());
 			out.println("//");
 			out.println();
 			
@@ -277,7 +277,7 @@ public class GenerateType {
 			out.println();
 			
 			out.println("//");
-			out.println("// %s", typeEnum.toMesaType());
+			out.println("// %s", typeEnum.toMesaString());
 			out.println("//");
 			out.println();
 
@@ -331,7 +331,7 @@ public class GenerateType {
 			if (e.isReference()) continue;
 			if (e.name.contains("#")) continue;
 			
-			logger.info("    {}", e.toMesaType());
+			logger.info("==  {}", e.toMesaString());
 			switch(e.kind) {
 			case BOOL:
 				break;
