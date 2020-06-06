@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 
-abstract class Field {
+public abstract class Field implements Comparable<Field> {
 	protected static final Logger logger = LoggerFactory.getLogger(Field.class);
 
 	public enum TargetKind {
@@ -92,153 +92,20 @@ abstract class Field {
 		size     = newValue;
 		needsFix = false;
 	}
-	
+		
 	@Override
 	public String toString() {
 		logger.error("Unexpected");
 		throw new UnexpectedException("Unexpected");
 	}
-	
+
+	@Override
+	public int compareTo(Field that) {
+		int ret = this.offset - that.offset;
+		if (ret == 0) ret = this.startPos - that.startPos;
+		return ret;
+	}
 	
 	public abstract String toMesaType();
 	public abstract void fix();
-}
-
-class FieldType extends Field {
-	public final String        fieldName;
-	public final TypeReference type;
-	
-	public FieldType(String prefix, String name, int offset, String typeName) {
-		super(name, offset, TargetKind.TYPE);
-		
-		this.fieldName = name;
-		this.type = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
-		
-		fix();
-	}
-	public FieldType(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
-		super(name, offset, startPos, stopPos, TargetKind.TYPE);
-		
-		this.fieldName = name;
-		this.type      = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
-		
-		fix();
-	}
-
-	@Override
-	public String toString() {
-		if (hasValue()) {
-			switch (fieldKind) {
-			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", fieldName, offset, targetKind, fieldKind, getSize(), type.baseName);
-			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", fieldName, offset, startPos, stopPos, targetKind, fieldKind, getSize(), type);
-			}
-		} else {
-			switch (fieldKind) {
-			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", fieldName, offset, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
-			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", fieldName, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", type);
-			}
-		}
-		logger.error("Unexpected");
-		throw new UnexpectedException("Unexpected");
-	}
-
-	@Override
-	public String toMesaType() {
-		String fieldType;
-		if (type.baseName.contains("#")) {
-			// Expand type definition
-			fieldType = type.baseType.toMesaType();
-		} else {
-			fieldType = type.baseType.name;
-		}
-		
-		switch (fieldKind) {
-		case FIELD:
-			return String.format("%s(%d): %s", fieldName, offset, fieldType);
-		case BIT_FIELD:
-			return String.format("%s(%d:%d..%d): %s", fieldName, offset, startPos, stopPos, fieldType);
-		default:
-			throw new UnexpectedException();
-		}
-	}
-	
-	@Override
-	public void fix() {
-		if (needsFix()) {
-			type.fix();
-			if (type.hasValue()) {
-				setSize(type.getSize());
-			}
-		}
-	}
-}
-
-
-class FieldSelect extends Field {
-	public final String fieldName;
-	public final Select select;
-	
-	public FieldSelect(String prefix, String name, int offset, Select select) {
-		super(name, offset, TargetKind.SELECT);
-		
-		this.fieldName = name;
-		this.select    = select;
-		
-		fix();
-	}
-	public FieldSelect(String prefix, String name, int offset, int startPos, int stopPos, Select select) {
-		super(name, offset, startPos, stopPos, TargetKind.SELECT);
-		
-		this.fieldName = name;
-		this.select    = select;
-		
-		fix();
-	}
-
-	@Override
-	public String toString() {
-		if (hasValue()) {
-			switch (fieldKind) {
-			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), select);
-			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), select);
-			}
-		} else {
-			switch (fieldKind) {
-			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", fieldName, offset, targetKind, fieldKind, "*UNKNOWN*", select);
-			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", fieldName, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", select);
-			}
-		}
-		logger.error("Unexpected");
-		throw new UnexpectedException("Unexpected");
-	}
-
-	@Override
-	public String toMesaType() {
-		switch (fieldKind) {
-		case FIELD:
-			return String.format("%s(%d) %s", fieldName, offset, select.toMesaType());
-		case BIT_FIELD:
-			return String.format("%s(%d:%d..%d) %s", fieldName, offset, startPos, stopPos, select.toMesaType());
-		default:
-			throw new UnexpectedException();
-		}
-	}
-
-	@Override
-	public void fix() {
-		if (select.needsFix()) {
-			select.fix();
-			if (select.hasValue()) {
-				setSize(select.getSize());
-			}
-		}
-	}
 }
