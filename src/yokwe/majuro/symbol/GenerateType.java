@@ -2,13 +2,16 @@ package yokwe.majuro.symbol;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.symbol.model.Constant;
+import yokwe.majuro.symbol.model.Field;
+import yokwe.majuro.symbol.model.FieldType;
+import yokwe.majuro.symbol.model.FieldSelect;
 import yokwe.majuro.symbol.model.Symbol;
 import yokwe.majuro.symbol.model.Type;
 import yokwe.majuro.symbol.model.TypeArray;
@@ -99,7 +102,8 @@ public class GenerateType {
 	}
 	
 	private static void genType(TypeSubrange typeSubrange) {
-		String path = String.format("%s/%s.java", PATH_DIR, typeSubrange.name);
+		String typeName = typeSubrange.name;
+		String path = String.format("%s/%s.java", PATH_DIR, typeName);
 		logger.info("path {}",path);
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
@@ -121,8 +125,8 @@ public class GenerateType {
 			out.println("//");
 			out.println();
 			
-			out.println("public final class %s {", typeSubrange.name);
-			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeSubrange.name);
+			out.println("public final class %s {", typeName);
+			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeName);
 			out.println();
 			out.println("public static final int SIZE      = %d;", typeSubrange.getSize());
 			out.println();
@@ -205,7 +209,8 @@ public class GenerateType {
 		}
 	}
 	private static void genType(TypeArray typeArray) {
-		String path = String.format("%s/%s.java", PATH_DIR, typeArray.name);
+		String typeName = typeArray.name;
+		String path = String.format("%s/%s.java", PATH_DIR, typeName);
 		logger.info("path {}",path);
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
@@ -226,13 +231,11 @@ public class GenerateType {
 			if (typeArray.elementType.isReference()) {
 				out.println("// %s: TYPE = %s;", typeArray.elementType.baseName, typeArray.elementType.baseType.toMesaType());
 			}
-			
-			
 			out.println("//");
 			out.println();
 			
-			out.println("public final class %s {", typeArray.name);
-			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeArray.name);
+			out.println("public final class %s {", typeName);
+			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeName);
 			out.println();
 			
 			switch(typeArray.arrayKind) {
@@ -281,7 +284,7 @@ public class GenerateType {
 				
 				out.println("public static void checkValue(int value) {");
 				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-				out.println("%s.checkRange(value);", typeArray.elementType.baseType.name);
+				out.println("%s.checkValue(value);", typeArray.elementType.baseType.name);
 				out.println("}");
 				out.println("}");
 				break;
@@ -309,7 +312,8 @@ public class GenerateType {
 		}
 	}
 	private static void genType(TypeEnum typeEnum) {
-		String path = String.format("%s/%s.java", PATH_DIR, typeEnum.name);
+		String typeName = typeEnum.name;
+		String path = String.format("%s/%s.java", PATH_DIR, typeName);
 		logger.info("path {}",path);
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
@@ -325,7 +329,7 @@ public class GenerateType {
 			out.println("//");
 			out.println();
 
-			out.println("public enum %s {", typeEnum.name);
+			out.println("public enum %s {", typeName);
 			
 			int elementSize = typeEnum.elementList.size();
 			for(int i = 0; i < elementSize; i++) {
@@ -354,8 +358,8 @@ public class GenerateType {
 			out.println("}");
 			out.println();
 
-			out.println("public static %s getInstance(int value) {", typeEnum.name);
-			out.println("for(%1$s e: %1$s.values()) {", typeEnum.name);
+			out.println("public static %s getInstance(int value) {", typeName);
+			out.println("for(%1$s e: %1$s.values()) {", typeName);
 			out.println("if (e.value == value) return e;");
 			out.println("}");
 			out.println("Logger logger = LoggerFactory.getLogger(XferType.class);");
@@ -366,7 +370,7 @@ public class GenerateType {
 			out.println("public final int value;");
 			out.println();
 
-			out.println("private %s(int value) {", typeEnum.name);
+			out.println("private %s(int value) {", typeName);
 			out.println("this.value = value;");
 			out.println("}");
 
@@ -378,7 +382,133 @@ public class GenerateType {
 		}
 	}
 	private static void genType(TypeRecord typeRecord) {
-		// FIXME
+		String className = typeRecord.name;
+		String path = String.format("%s/%s.java", PATH_DIR, className);
+		logger.info("path {}",path);
+		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
+			out.println("package yokwe.majuro.mesa.type;");
+			out.println();
+			out.println("import org.slf4j.Logger;");
+			out.println("import org.slf4j.LoggerFactory;");
+			out.println();
+			out.println("import yokwe.majuro.UnexpectedException;");
+			out.println("import yokwe.majuro.mesa.Debug;");
+			out.println("import yokwe.majuro.mesa.Memory;");
+			out.println();
+			
+			out.println("//");
+			out.println("// %s", typeRecord.toMesaString());
+			
+			for(Field field: typeRecord.fieldList) {
+				switch (field.targetKind) {
+				case TYPE:
+				{
+					FieldType fieldType = (FieldType)field;
+					
+					switch(field.fieldKind) {
+					case FIELD:
+						out.println("//   %s(%d): %s", fieldType.fieldName, fieldType.offset, fieldType.type.toMesaType());
+						break;
+					case BIT_FIELD:
+						out.println("//   %s(%d:%d..%d): %s", fieldType.fieldName, fieldType.offset, fieldType.startPos, fieldType.stopPos, fieldType.type.toMesaType());
+						break;
+					default:
+						throw new UnexpectedException();
+					}
+				}
+					break;
+				case SELECT:
+				{
+					FieldSelect fieldSelect = (FieldSelect)field;
+					
+					switch(field.fieldKind) {
+					case FIELD:
+						out.println("//   %s(%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.select.toMesaType());
+						break;
+					case BIT_FIELD:
+						out.println("//   %s(%d:%d..%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.startPos, fieldSelect.stopPos, fieldSelect.select.toMesaType());
+						break;
+					default:
+						throw new UnexpectedException();
+					}
+				}
+					break;
+				default:
+					throw new UnexpectedException();
+				}
+				
+			}
+
+			out.println("//");
+			out.println();
+			
+			out.println("public final class %s {", typeRecord.name);
+			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeRecord.name);
+			out.println();
+			
+			out.println("public static final int SIZE      = %d;", typeRecord.getSize());
+			out.println();
+			
+			for(Field field: typeRecord.fieldList) {
+				switch (field.targetKind) {
+				case TYPE:
+				{
+					FieldType fieldType = (FieldType)field;
+					out.println("public static final class %s {", fieldType.name);
+					
+					int offset;
+					int startPos;
+					int stopPos;
+					int size;
+					switch(field.fieldKind) {
+					case FIELD:
+						out.println("//   %s(%d): %s", fieldType.fieldName, fieldType.offset, fieldType.type.toMesaType());
+						out.println("public static final int SIZE      = %d;", fieldType.getSize());
+						out.println("public static final int OFFSET    = %d;", fieldType.offset);
+						break;
+					case BIT_FIELD:
+						out.println("//   %s(%d:%d..%d): %s", fieldType.fieldName, fieldType.offset, fieldType.startPos, fieldType.stopPos, fieldType.type.toMesaType());
+						out.println("public static final int SIZE      = %d;", fieldType.getSize());
+						out.println("public static final int OFFSET    = %d;", fieldType.offset);
+						out.println("public static final int START_POS = %d;", fieldType.startPos);
+						out.println("public static final int STOP_POS  = %d;", fieldType.stopPos);
+						break;
+					default:
+						throw new UnexpectedException();
+					}
+					
+					out.println("}");
+				}
+					break;
+				case SELECT:
+				{
+					FieldSelect fieldSelect = (FieldSelect)field;
+					
+					switch(field.fieldKind) {
+					case FIELD:
+						out.println("//   %s(%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.select.toMesaType());
+						break;
+					case BIT_FIELD:
+						out.println("//   %s(%d:%d..%d): %s", fieldSelect.fieldName, fieldSelect.offset, fieldSelect.startPos, fieldSelect.stopPos, fieldSelect.select.toMesaType());
+						break;
+					default:
+						throw new UnexpectedException();
+					}
+				}
+					break;
+				default:
+					throw new UnexpectedException();
+				}
+				
+			}
+
+			
+			out.println("}");
+		} catch (FileNotFoundException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
 	}
 
 	private static void genType()	{
