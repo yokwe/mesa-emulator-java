@@ -7,10 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.genType.ElementInfo;
-import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.type.UNSPECIFIED;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Symbol;
 import yokwe.majuro.symbol.model.Type;
@@ -114,21 +110,10 @@ public class GenerateType {
 			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println();
 			
-			if (typeSubrange.isPredefined()) {
-				out.println("//");
-				out.println("// %s", typeSubrange.name);
-				out.println("//");
-			} else {
-				out.println("//");
-				out.println("// %s: TYPE = %s [%s..%s%s;",
-						typeSubrange.name,
-						typeSubrange.baseType.baseName,
-						typeSubrange.valueMinConst.stringValue,
-						typeSubrange.valueMaxConst.stringValue,
-						typeSubrange.valueMaxInclusive ? "]" : ")");
-				out.println("//");
-			}
-			out.println();			
+			out.println("//");
+			out.println("// %s", typeSubrange.toMesaType());
+			out.println("//");
+			out.println();
 			
 			out.println("public final class %s {", typeSubrange.name);
 			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeSubrange.name);
@@ -138,8 +123,8 @@ public class GenerateType {
 			
 			switch(typeSubrange.getSize()) {
 			case 1:
-				out.println("public static final int VALUE_MIN = %d;", typeSubrange.valueMin);
-				out.println("public static final int VALUE_MAX = %d;", typeSubrange.valueMax);
+				out.println("public static final int VALUE_MIN = %d;", typeSubrange.getValueMin());
+				out.println("public static final int VALUE_MAX = %d;", typeSubrange.getValueMax());
 				out.println("public static final int LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 				out.println();
 				out.println("public static void checkRange(int value) {");
@@ -152,8 +137,8 @@ public class GenerateType {
 				out.println("}");
 				break;
 			case 2:
-				out.println("public static final long VALUE_MIN = %dL;", typeSubrange.valueMin);
-				out.println("public static final long VALUE_MAX = %dL;", typeSubrange.valueMax);
+				out.println("public static final long VALUE_MIN = %dL;", typeSubrange.getValueMin());
+				out.println("public static final long VALUE_MAX = %dL;", typeSubrange.getValueMax());
 				out.println("public static final long LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 				out.println();
 				out.println("public static void checkRange(long value) {");
@@ -190,27 +175,9 @@ public class GenerateType {
 			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println();
 			
-			switch(typeArray.arrayKind) {
-			case OPEN:
-			case SUBRANGE:
-				out.println("//");
-				out.println("// %s: TYPE = ARRAY %s [%s..%s%s OF %s;",
-						typeArray.name,
-						typeArray.indexType.baseName,
-						typeArray.rangeMinConst.stringValue,
-						typeArray.rangeMaxConst.stringValue,
-						typeArray.rangeMaxInclusive ? "]" : ")",
-						typeArray.elementType.baseName);
-				out.println("//");
-				break;
-			case FULL:
-				out.println("//");
-				out.println("// %s: TYPE = ARRAY %s OF %s;", typeArray.name, typeArray.indexType.baseName, typeArray.elementType.baseName);
-				out.println("//");
-				break;
-			default:
-				throw new UnexpectedException();
-			}
+			out.println("//");
+			out.println("// %s", typeArray.toMesaType());
+			out.println("//");
 			out.println();
 			
 			out.println("public final class %s {", typeArray.name);
@@ -275,18 +242,18 @@ public class GenerateType {
 				out.println("%s.checkRange(value);", typeArray.elementType.baseName);
 			} else {
 				out.println("// array element is not subrange");
-				switch(typeArray.elementType.getSize()) {
-				case 1:
-					out.println("UNSPECIFIED.checkRange(value);");
-					break;
-				case 2:
-					out.println("LONG_UNSPECIFIED.checkRange(value);");
-					break;
-				default:
-					logger.error("element {}", typeArray.elementType.baseType);
-					logger.error("        {}", typeArray.elementType.getSize());
-					throw new UnexpectedException();
-				}
+//				switch(typeArray.elementType.getSize()) {
+//				case 1:
+//					out.println("UNSPECIFIED.checkRange(value);");
+//					break;
+//				case 2:
+//					out.println("LONG_UNSPECIFIED.checkRange(value);");
+//					break;
+//				default:
+//					logger.error("element {}", typeArray.elementType.baseType);
+//					logger.error("        {}", typeArray.elementType.getSize());
+//					throw new UnexpectedException();
+//				}
 			}
 			out.println("}");
 						
@@ -308,6 +275,12 @@ public class GenerateType {
 			out.println();
 			out.println("import yokwe.majuro.UnexpectedException;");
 			out.println();
+			
+			out.println("//");
+			out.println("// %s", typeEnum.toMesaType());
+			out.println("//");
+			out.println();
+
 			out.println("public enum %s {", typeEnum.name);
 			
 			int elementSize = typeEnum.elementList.size();
@@ -358,6 +331,7 @@ public class GenerateType {
 			if (e.isReference()) continue;
 			if (e.name.contains("#")) continue;
 			
+			logger.info("    {}", e.toMesaType());
 			switch(e.kind) {
 			case BOOL:
 				break;
