@@ -100,10 +100,6 @@ public abstract class TypeArray extends Type {
 
 	@Override
 	public String toMesaType() {
-		return String.format("%s: TYPE = %s;", name, toMesaTypeType());
-	}
-	
-	public String toMesaTypeType() {
 		switch(arrayKind) {
 		case OPEN:
 		case SUBRANGE:

@@ -57,7 +57,7 @@ public class TypeRecord extends Type {
 	public String toMesaType() {
 		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
 		
-		return String.format("%s: TYPE = RECORD[%s];", name, String.join(", ", list));
+		return String.format("RECORD[%s]", String.join(", ", list));
 	}
 	
 	@Override

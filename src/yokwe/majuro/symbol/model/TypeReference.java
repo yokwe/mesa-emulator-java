@@ -51,9 +51,9 @@ public class TypeReference extends Type {
 	@Override
 	public String toMesaType() {
 		if (hasValue()) {
-			return String.format("%s: TYPE = %s;", name, baseType.name);
+			return String.format("%s", baseType.name);
 		} else {
-			return String.format("%s: TYPE = %s;", name, baseName);
+			return String.format("%s", baseName);
 		}
 	}
 	

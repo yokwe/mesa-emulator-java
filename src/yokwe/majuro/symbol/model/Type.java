@@ -116,6 +116,9 @@ public abstract class Type {
 	
 	protected abstract void fix();
 	
+	public String toMesaString() {
+		return String.format("%s: TYPE = %s;", name, toMesaType());
+	}
 	public abstract String toMesaType();
 	
 	public static Map<String, Type> map = new TreeMap<>();

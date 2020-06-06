@@ -150,20 +150,8 @@ class FieldType extends Field {
 	public String toMesaType() {
 		String fieldType;
 		if (type.baseName.contains("#")) {
-			switch(type.baseType.kind) {
-			case ARRAY:
-				fieldType = ((TypeArray)type.baseType).toMesaTypeType();
-				break;
-			default:
-				throw new UnexpectedException();
-			}
-		} else {
-			fieldType = type.baseType.name;
-		}
-		
-		if (type.baseType.kind == Type.Kind.ARRAY && type.baseName.contains("#")) {
-			TypeArray typeArray = (TypeArray)type.baseType;
-			fieldType = typeArray.toMesaTypeType();
+			// Expand type definition
+			fieldType = type.baseType.toMesaType();
 		} else {
 			fieldType = type.baseType.name;
 		}

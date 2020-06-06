@@ -124,7 +124,7 @@ public class TypeEnum extends Type {
 	public String toMesaType() {
 		List<String> list = elementList.stream().map(o -> o.toMesaString()).collect(Collectors.toList());
 		
-		return String.format("%s: TYPE = {%s};", name, String.join(", ", list));
+		return String.format("{%s}", String.join(", ", list));
 	}
 	@Override
 	protected void fix() {
