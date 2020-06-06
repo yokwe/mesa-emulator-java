@@ -25,7 +25,10 @@
  *******************************************************************************/
 package yokwe.majuro.symbol.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,13 @@ public class TypeRecord extends Type {
 		} else {
 			return String.format("{%s %s %s %s}", name, kind, "*UNKNOWN*", fieldList);
 		}
+	}
+	
+	@Override
+	public String toMesaType() {
+		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+		
+		return String.format("%s: TYPE = RECORD[%s];", name, String.join(", ", list));
 	}
 	
 	@Override

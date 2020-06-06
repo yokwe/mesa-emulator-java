@@ -41,9 +41,9 @@ public abstract class TypeSubrange extends Type {
 	public final Constant      valueMaxConst;
 	public final boolean       valueMaxInclusive;
 	
-	public long valueMin;
-	public long valueMax;
-	public int  length;
+	private long valueMin;
+	private long valueMax;
+	private int  length;
 	
 	public TypeSubrange(String name, int size, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		super(name, Kind.SUBRANGE);
@@ -152,7 +152,20 @@ public abstract class TypeSubrange extends Type {
 			}
 		}
 	}
-	
+	@Override
+	public String toMesaType() {
+		if (isPredefined()) {
+			return name;
+		} else {
+			return String.format("%s: TYPE = %s [%s..%s%c;",
+					name,
+					baseType.baseName,
+					valueMinConst.stringValue,
+					valueMaxConst.stringValue,
+					valueMaxInclusive ? ']' : ')');
+		}
+	}
+
 	private static Set<String> predefinedNameSet = new TreeSet<>();
 	static {
 		predefinedNameSet.add(Type.CARDINAL);

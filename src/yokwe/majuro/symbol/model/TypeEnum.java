@@ -25,7 +25,9 @@
  *******************************************************************************/
 package yokwe.majuro.symbol.model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,10 @@ public class TypeEnum extends Type {
 		@Override
 		public String toString() {
 			return String.format("{%s %d}", name, value);
+		}
+		
+		public String toMesaString() {
+			return String.format("%s(%d)", name, value);
 		}
 	}
 	
@@ -115,6 +121,12 @@ public class TypeEnum extends Type {
 //		return String.format("{%s %s %d %d %d %d %s}", name, kind, getSize(), valueMin, valueMax, length, elementList);
 	}
 	
+	@Override
+	public String toMesaType() {
+		List<String> list = elementList.stream().map(o -> o.toMesaString()).collect(Collectors.toList());
+		
+		return String.format("%s: TYPE = {%s};", name, String.join(", ", list));
+	}
 	@Override
 	protected void fix() {
 	}

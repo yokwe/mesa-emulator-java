@@ -99,6 +99,28 @@ public abstract class TypeArray extends Type {
 	}
 
 	@Override
+	public String toMesaType() {
+		return String.format("%s: TYPE = %s;", name, toMesaTypeType());
+	}
+	
+	public String toMesaTypeType() {
+		switch(arrayKind) {
+		case OPEN:
+		case SUBRANGE:
+			return String.format("ARRAY %s [%s..%s%c OF %s",
+					indexType.baseName,
+					rangeMinConst.stringValue,
+					rangeMaxConst.stringValue,
+					rangeMaxInclusive ? ']' : ')',
+					elementType.baseName);
+		case FULL:
+			return String.format("ARRAY %s OF %s;", indexType.baseName, elementType.baseName);
+		default:
+			throw new UnexpectedException();
+		}
+	}
+	
+	@Override
 	protected void fix() {
 		if (needsFix()) {
 			elementType.fix();

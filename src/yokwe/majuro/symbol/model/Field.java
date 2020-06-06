@@ -99,15 +99,19 @@ abstract class Field {
 		throw new UnexpectedException("Unexpected");
 	}
 	
+	
+	public abstract String toMesaType();
 	public abstract void fix();
 }
 
 class FieldType extends Field {
+	public final String        fieldName;
 	public final TypeReference type;
 	
 	public FieldType(String prefix, String name, int offset, String typeName) {
 		super(name, offset, TargetKind.TYPE);
 		
+		this.fieldName = name;
 		this.type = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
 		
 		fix();
@@ -115,7 +119,8 @@ class FieldType extends Field {
 	public FieldType(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
 		super(name, offset, startPos, stopPos, TargetKind.TYPE);
 		
-		this.type = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
+		this.fieldName = name;
+		this.type      = new TypeReference(prefix + "#" + name + "#fieldType", typeName);
 		
 		fix();
 	}
@@ -125,22 +130,54 @@ class FieldType extends Field {
 		if (hasValue()) {
 			switch (fieldKind) {
 			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, getSize(), type.baseName);
+				return String.format("{%s(%d) %s %s %s %s}", fieldName, offset, targetKind, fieldKind, getSize(), type.baseName);
 			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, getSize(), type);
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", fieldName, offset, startPos, stopPos, targetKind, fieldKind, getSize(), type);
 			}
 		} else {
 			switch (fieldKind) {
 			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
+				return String.format("{%s(%d) %s %s %s %s}", fieldName, offset, targetKind, fieldKind, "*UNKNOWN*", type.baseName);
 			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", type);
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", fieldName, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", type);
 			}
 		}
 		logger.error("Unexpected");
 		throw new UnexpectedException("Unexpected");
 	}
 
+	@Override
+	public String toMesaType() {
+		String fieldType;
+		if (type.baseName.contains("#")) {
+			switch(type.baseType.kind) {
+			case ARRAY:
+				fieldType = ((TypeArray)type.baseType).toMesaTypeType();
+				break;
+			default:
+				throw new UnexpectedException();
+			}
+		} else {
+			fieldType = type.baseType.name;
+		}
+		
+		if (type.baseType.kind == Type.Kind.ARRAY && type.baseName.contains("#")) {
+			TypeArray typeArray = (TypeArray)type.baseType;
+			fieldType = typeArray.toMesaTypeType();
+		} else {
+			fieldType = type.baseType.name;
+		}
+		
+		switch (fieldKind) {
+		case FIELD:
+			return String.format("%s(%d): %s", fieldName, offset, fieldType);
+		case BIT_FIELD:
+			return String.format("%s(%d:%d..%d): %s", fieldName, offset, startPos, stopPos, fieldType);
+		default:
+			throw new UnexpectedException();
+		}
+	}
+	
 	@Override
 	public void fix() {
 		if (needsFix()) {
@@ -154,19 +191,22 @@ class FieldType extends Field {
 
 
 class FieldSelect extends Field {
+	public final String fieldName;
 	public final Select select;
 	
 	public FieldSelect(String prefix, String name, int offset, Select select) {
 		super(name, offset, TargetKind.SELECT);
 		
-		this.select = select;
+		this.fieldName = name;
+		this.select    = select;
 		
 		fix();
 	}
 	public FieldSelect(String prefix, String name, int offset, int startPos, int stopPos, Select select) {
 		super(name, offset, startPos, stopPos, TargetKind.SELECT);
 		
-		this.select = select;
+		this.fieldName = name;
+		this.select    = select;
 		
 		fix();
 	}
@@ -183,13 +223,25 @@ class FieldSelect extends Field {
 		} else {
 			switch (fieldKind) {
 			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, targetKind, fieldKind, "*UNKNOWN*", select);
+				return String.format("{%s(%d) %s %s %s %s}", fieldName, offset, targetKind, fieldKind, "*UNKNOWN*", select);
 			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", select);
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", fieldName, offset, startPos, stopPos, targetKind, fieldKind, "*UNKNOWN*", select);
 			}
 		}
 		logger.error("Unexpected");
 		throw new UnexpectedException("Unexpected");
+	}
+
+	@Override
+	public String toMesaType() {
+		switch (fieldKind) {
+		case FIELD:
+			return String.format("%s(%d) %s", fieldName, offset, select.toMesaType());
+		case BIT_FIELD:
+			return String.format("%s(%d:%d..%d) %s", fieldName, offset, startPos, stopPos, select.toMesaType());
+		default:
+			throw new UnexpectedException();
+		}
 	}
 
 	@Override

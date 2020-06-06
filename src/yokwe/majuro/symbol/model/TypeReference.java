@@ -49,6 +49,15 @@ public class TypeReference extends Type {
 	}
 	
 	@Override
+	public String toMesaType() {
+		if (hasValue()) {
+			return String.format("%s: TYPE = %s;", name, baseType.name);
+		} else {
+			return String.format("%s: TYPE = %s;", name, baseName);
+		}
+	}
+	
+	@Override
 	protected void fix() {
 		if (needsFix()) {
 			if (map.containsKey(baseName)) {

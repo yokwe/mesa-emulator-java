@@ -116,6 +116,8 @@ public abstract class Type {
 	
 	protected abstract void fix();
 	
+	public abstract String toMesaType();
+	
 	public static Map<String, Type> map = new TreeMap<>();
 	
 	protected static void register(Type type) {

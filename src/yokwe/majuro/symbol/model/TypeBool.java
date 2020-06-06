@@ -32,4 +32,8 @@ public class TypeBool extends Type {
 	@Override
 	protected void fix() {
 	}
+	@Override
+	public String toMesaType() {
+		return "BOOL";
+	}
 }

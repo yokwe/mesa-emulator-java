@@ -26,6 +26,7 @@
 package yokwe.majuro.symbol.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,13 @@ public abstract class Select {
 			} else {
 				return String.format("{%s(%d) %s}", selector, value, fieldList);
 			}
+		}
+		
+		// header(0) => [ ... ]
+		public String toMesaType() {
+			List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+			
+			return String.format("%s(%d) => [%s]", selector, value, String.join(", ", list));
 		}
 		
 		public void fix() {
@@ -123,10 +131,7 @@ public abstract class Select {
 		this.size           = Type.UNKNOWN_SIZE;
 	}
 	
-	@Override
-	public String toString() {
-		return String.format("{%s %s}", "OVERLAID*", selectCaseList);
-	}
+	public abstract String toMesaType();
 	
 	protected boolean needsFix() {
 		return needsFix;
@@ -166,6 +171,7 @@ public abstract class Select {
 	}
 }
 
+// SELECT OVERLAID * FROM
 class SelectOvelaidAnon extends Select {
 	public SelectOvelaidAnon(String prefix, List<SelectCase> selectCaseList) {
 		super(SelectKind.OVERLAID_ANON, selectCaseList);
@@ -177,7 +183,17 @@ class SelectOvelaidAnon extends Select {
 	public String toString() {
 		return String.format("{%s %s}", selectKind, selectCaseList);
 	}
+	
+	@Override
+	public String toMesaType() {
+		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+
+		return String.format("SELECT OVERLAID * FROM %s ENDCASE", String.join(", ", list));
+	}
+
 }
+
+// SELECT OVERLAID ControlLinkTag FROM
 class SelectOvelaidType extends Select {
 	public final TypeReference tagType;
 	
@@ -192,6 +208,13 @@ class SelectOvelaidType extends Select {
 	@Override
 	public String toString() {
 		return String.format("{%s %s}", selectKind, tagType.baseName, selectCaseList);
+	}
+	
+	@Override
+	public String toMesaType() {
+		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+
+		return String.format("SELECT OVERLAID %s FROM %s ENDCASE", tagType.baseType.name, String.join(", ", list));
 	}
 	
 	@Override
@@ -220,6 +243,7 @@ class SelectOvelaidType extends Select {
 	}
 }
 
+// SELECT type (0:0..15): * FROM
 class SelectTagAnon extends Select {
 	public final String tagName;
 	public final int    offset;
@@ -249,8 +273,20 @@ class SelectTagAnon extends Select {
 			return String.format("{%s %s (%d:%d..%d) %s}", selectKind, tagName, offset, startPos, stopPos, selectCaseList);
 		}
 	}
+	
+	@Override
+	public String toMesaType() {
+		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+
+		if (startPos == -1) {
+			return String.format("SELECT %s(%d): * FROM %s ENDCASE", tagName, offset, String.join(", ", list));
+		} else {
+			return String.format("SELECT %s(%d:%d..%d): * FROM %s ENDCASE", tagName, offset, startPos, stopPos, String.join(", ", list));
+		}
+	}
 }
 
+// SELECT tag (0:0..1): LinkTag FROM
 class SelectTagType extends Select {
 	public final String tagName;
 	public final int    offset;
@@ -307,6 +343,18 @@ class SelectTagType extends Select {
 			return String.format("{%s %s (%d) %s %s}", selectKind, tagName, offset, tagType.baseName, selectCaseList);
 		} else {
 			return String.format("{%s %s (%d:%d..%d) %s %s}", selectKind, tagName, offset, startPos, stopPos, tagType.baseName, selectCaseList);
+		}
+	}
+	
+	@Override
+	public String toMesaType() {
+		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+
+		// SELECT tag (0:0..1): LinkTag FROM
+		if (startPos == -1) {
+			return String.format("SELECT %s(%d): %s FROM %s ENDCASE", tagName, offset, tagType.baseName, String.join(", ", list));
+		} else {
+			return String.format("SELECT %s(%d:%d..%d): %s FROM %s ENDCASE", tagName, offset, startPos, tagType.baseName, stopPos, String.join(", ", list));
 		}
 	}
 }
