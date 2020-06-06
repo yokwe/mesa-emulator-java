@@ -157,7 +157,7 @@ public abstract class TypeSubrange extends Type {
 		if (isPredefined()) {
 			return name;
 		} else {
-			return String.format("%s [%s..%s%c;",
+			return String.format("%s [%s..%s%c",
 					baseType.baseName,
 					valueMinConst.stringValue,
 					valueMaxConst.stringValue,
