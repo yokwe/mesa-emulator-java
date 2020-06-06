@@ -68,7 +68,7 @@ public class TypeRecord extends Type {
 			for(Field field: fieldList) {
 				field.fix();
 				if (field.hasValue()) {
-					recordSize += field.getSize();
+					recordSize = Math.max(recordSize, field.offset + field.getSize());
 				} else {
 					foundProblem = true;
 				}

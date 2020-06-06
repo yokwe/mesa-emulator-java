@@ -79,7 +79,7 @@ public abstract class Select {
 				for(Field field: fieldList) {
 					field.fix();
 					if (field.hasValue()) {
-						selectCaseSize += field.getSize();
+						selectCaseSize = Math.max(selectCaseSize, field.offset + field.getSize());
 					} else {
 						foundProblem = true;
 					}
@@ -161,7 +161,7 @@ public abstract class Select {
 				if (selectCase.needsFix()) {
 					foundProblem = true;
 				} else {
-					size += selectCase.getSize();
+					size = Math.max(size, selectCase.getSize());
 				}
 			}
 			if (!foundProblem) {
