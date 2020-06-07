@@ -129,11 +129,11 @@ public abstract class TypeArray extends Type {
 				long rangeMax;
 				
 				switch(arrayKind) {
-				case OPEN:
 				case SUBRANGE:
 					rangeMin = rangeMinConst.getNumericValue();
 					rangeMax = rangeMaxConst.getNumericValue() + (rangeMaxInclusive ? 0 : -1);
 					break;
+				case OPEN:
 				case FULL:
 					switch(indexType.baseType.kind) {
 					case ENUM:
@@ -162,9 +162,10 @@ public abstract class TypeArray extends Type {
 								
 				long length   = rangeMax - rangeMin + 1;
 				long size     = elementType.getSize() * length;
+				if (arrayKind == TypeArray.ArrayKind.OPEN) size = 0;
 				
 				// sanity check
-				if (Type.CARDINAL_MAX < length) {
+				if ((Type.CARDINAL_MAX + 1) < length) {
 					logger.error("Unexpected length");
 					logger.error("  rangeMin {}", rangeMin);
 					logger.error("  rangeMax {}", rangeMax);
