@@ -286,10 +286,6 @@ public class GenerateType {
 			
 			out.println("public static final int SIZE      = %d;", typeEnum.getSize());
 			out.println();
-			out.println("public static final int VALUE_MIN = %d;", typeEnum.valueMin);
-			out.println("public static final int VALUE_MAX = %d;", typeEnum.valueMax);
-			out.println("public static final int LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
-			out.println();
 
 			out.println("// enum value");
 			for(Element element: typeEnum.elementList) {
@@ -310,7 +306,7 @@ public class GenerateType {
 
 			out.println("public static int checkValue(int value) {");
 			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-			out.println("if (value < VALUE_MIN || VALUE_MAX < value) {");
+			out.println("if (value < %d || %d < value) {", typeEnum.valueMin, typeEnum.valueMax);
 			out.println("logger.error(\"value is out of range\");");
 			out.println("logger.error(\"  value {}\", value);");
 			out.println("throw new UnexpectedException(\"value is out of range\");");
@@ -387,19 +383,18 @@ public class GenerateType {
 
 					out.println("public static final class %s {", field.name);
 
-					out.println("public static final int SIZE   =  %2d;", field.getSize());
 					out.println("public static final int OFFSET =  %2d;", field.offset);
+					out.println("public static final int SIZE   =  %2d;", field.getSize());
 					if (bitField) {
-						out.println("public static final int SHIFT  =  %2d;", shift);
-						out.println("public static final int BITS   =  %s;", bits);
 						out.println("public static final int MASK   =  %s;", mask);
+						out.println("public static final int SHIFT  =  %2d;", shift);
+						out.println("public static final int BITS   =  MASK >>> SHIFT;");
 					}
 					out.println();
 					
 					out.println("public static int getAddress(int base) {");
 					out.println("return base + OFFSET;");
 					out.println("}");
-					out.println();
 
 					if (bitField) {
 						out.println("public static int getBit(int value) {");
@@ -409,20 +404,20 @@ public class GenerateType {
 						out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
 						out.println("}");
 						
-						out.println("public static int checkValue(int value) {");
-						out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-						out.println("if (value < 0 || BITS < value) {");
-						out.println("logger.error(\"value is out of range\");");
-						out.println("logger.error(\"  value {}\", value);");
-						out.println("throw new UnexpectedException(\"value is out of range\");");
-						out.println("}");
-						out.println("}");
-						out.println("return value;");
-						out.println("}");
-						out.println();
 						
 						switch (baseType.kind) {
 						case BOOL:
+							out.println("public static int checkValue(int value) {");
+							out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
+							out.println("if (value < 0 || BITS < value) {");
+							out.println("logger.error(\"value is out of range\");");
+							out.println("logger.error(\"  value {}\", value);");
+							out.println("throw new UnexpectedException(\"value is out of range\");");
+							out.println("}");
+							out.println("}");
+							out.println("return value;");
+							out.println("}");
+							
 							out.println("public static boolean get(int base) {");
 							out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
 							out.println("}");
@@ -432,6 +427,10 @@ public class GenerateType {
 							break;
 						case SUBRANGE:
 						case ENUM:
+							out.println("public static int checkValue(int value) {");
+							out.println("return %s.checkValue(value);", baseType.name);
+							out.println("}");
+
 							out.println("public static int get(int base) {");
 							out.println("return getBit(Memory.fetch(getAddress(base)));");
 							out.println("}");
@@ -475,7 +474,6 @@ public class GenerateType {
 							throw new UnexpectedException();
 						}
 					}
-					
 					out.println("}");
 				}
 				if (select != null) {
