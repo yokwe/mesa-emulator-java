@@ -152,13 +152,15 @@ public class GenerateType {
 				out.println("}");
 				out.println();
 
-				out.println("public static void checkValue(int value) {");
+				out.println("public static int checkValue(int value) {");
 				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-				out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
+				out.println("if (value < VALUE_MIN || VALUE_MAX < value) {");
 				out.println("logger.error(\"value is out of range\");");
 				out.println("logger.error(\"  value {}\", value);");
 				out.println("throw new UnexpectedException(\"value is out of range\");");
 				out.println("}");
+				out.println("}");
+				out.println("return value;");
 				out.println("}");
 				out.println();
 				
@@ -180,24 +182,28 @@ public class GenerateType {
 				out.println("}");
 				out.println();
 
-				out.println("public static void checkValue(int value) {");
+				out.println("public static int checkValue(int value) {");
 				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-				out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
+				out.println("if (value < VALUE_MIN || VALUE_MAX < value) {");
 				out.println("logger.error(\"value is out of range\");");
 				out.println("logger.error(\"  value {}\", value);");
 				out.println("throw new UnexpectedException(\"value is out of range\");");
 				out.println("}");
+				out.println("}");
+				out.println("return value;");
 				out.println("}");
 				out.println();
 				
 
-				out.println("public static void checkValue(long value) {");
+				out.println("public static long checkValue(long value) {");
 				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-				out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
+				out.println("if (value < VALUE_MIN || VALUE_MAX < value) {");
 				out.println("logger.error(\"value is out of range\");");
 				out.println("logger.error(\"  value {}\", value);");
 				out.println("throw new UnexpectedException(\"value is out of range\");");
 				out.println("}");
+				out.println("}");
+				out.println("return value;");
 				out.println("}");
 				break;
 			default:
@@ -298,13 +304,15 @@ public class GenerateType {
 				throw new UnexpectedException();
 			}
 
-			out.println("public static void checkIndex(int index) {");
+			out.println("public static int checkIndex(int index) {");
 			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-			out.println("if (INDEX_MIN <= index && index <= INDEX_MAX) return;");
+			out.println("if (index < INDEX_MIN || INDEX_MAX < index) {");
 			out.println("logger.error(\"index is out of range\");");
 			out.println("logger.error(\"  index {}\", index);");
 			out.println("throw new UnexpectedException(\"index is out of range\");");
 			out.println("}");
+			out.println("}");
+			out.println("return index;");
 			out.println("}");
 
 			out.println("}");
@@ -333,16 +341,8 @@ public class GenerateType {
 			out.println("//");
 			out.println();
 
-			out.println("public enum %s {", typeName);
-			
-			int elementSize = typeEnum.elementList.size();
-			for(int i = 0; i < elementSize; i++) {
-				Element element = typeEnum.elementList.get(i);
-				String sep = (i == (elementSize - 1)) ? ";" : ",";
-				
-				out.println("%-16s (%d)%s", StringUtil.toJavaConstName(element.name), element.value, sep);
-				
-			}
+			out.println("public class %s {", typeName);
+			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeName);
 			out.println();
 			
 			out.println("public static final int SIZE      = %d;", typeEnum.getSize());
@@ -351,38 +351,37 @@ public class GenerateType {
 			out.println("public static final int VALUE_MAX = %d;", typeEnum.valueMax);
 			out.println("public static final int LENGTH    = VALUE_MAX - VALUE_MIN + 1;");
 			out.println();
-			
-			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeName);
-			out.println();
 
-			out.println("public static void checkValue(int value) {");
+			
+			out.println("// enum value");
+			for(Element element: typeEnum.elementList) {
+				out.println("public static final int %-16s = %d;", StringUtil.toJavaConstName(element.name), element.value);
+			}
+			out.println();
+			
+			out.println("public static String toString(int value) {");
+			out.println("switch(value) {");
+			for(Element element: typeEnum.elementList) {
+				out.println("case %d: return \"%s\";", element.value, StringUtil.toJavaConstName(element.name));
+			}
+			out.println("}");
+			out.println("logger.error(\"value is out of range\");");
+			out.println("logger.error(\"  value {}\", value);");
+			out.println("throw new UnexpectedException(\"value is out of range\");");
+			out.println("}");
+			
+
+			out.println("public static int checkValue(int value) {");
 			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-			out.println("if (VALUE_MIN <= value && value <= VALUE_MAX) return;");
+			out.println("if (value < VALUE_MIN || VALUE_MAX < value) {");
 			out.println("logger.error(\"value is out of range\");");
 			out.println("logger.error(\"  value {}\", value);");
 			out.println("throw new UnexpectedException(\"value is out of range\");");
 			out.println("}");
 			out.println("}");
-			out.println();
-
-			out.println("public static %s getInstance(int value) {", typeName);
-			out.println("switch (value) {", typeName);
-
-			for(Element element: typeEnum.elementList) {
-				out.println("case %d: return %s.%s;", element.value, typeName, StringUtil.toJavaConstName(element.name));
-			}
-			
-			out.println("}");
-			out.println("logger.error(\"Unexpected value = {}\", value);");
-			out.println("throw new UnexpectedException();");
+			out.println("return value;");
 			out.println("}");
 			out.println();
-			out.println("public final int value;");
-			out.println();
-
-			out.println("private %s(int value) {", typeName);
-			out.println("this.value = value;");
-			out.println("}");
 
 			out.println("}");
 		} catch (FileNotFoundException e) {
@@ -481,19 +480,12 @@ public class GenerateType {
 							out.println("}");
 							break;
 						case SUBRANGE:
+						case ENUM:
 							out.println("public static int get(int base) {");
-							out.println("return getBit(Memory.fetch(getAddress(base)));");
+							out.println("return %s.checkValue(getBit(Memory.fetch(getAddress(base))));", baseType.name);
 							out.println("}");
 							out.println("public static void set(int base, int newValue) {");
-							out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
-							out.println("}");
-							break;
-						case ENUM:
-							out.println("public static %s get(int base) {", baseType.name);
-							out.println("return %s.getInstance(getBit(Memory.fetch(getAddress(base))));", baseType.name);
-							out.println("}");
-							out.println("public static void set(int base, %s newValue) {", baseType.name);
-							out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue.value);", className, fieldName);
+							out.println("Memory.modify(getAddress(base), %s.%s::setBit, %s.checkValue(newValue));", className, fieldName, baseType.name);
 							out.println("}");
 							break;
 						case ARRAY:
@@ -520,19 +512,12 @@ public class GenerateType {
 							out.println("}");
 							break;
 						case SUBRANGE:
+						case ENUM:
 							out.println("public static int get(int base) {");
-							out.println("return Memory.fetch(getAddress(base));");
+							out.println("return %s.checkValue(Memory.fetch(getAddress(base)));", baseType.name);
 							out.println("}");
 							out.println("public static void set(int base, int newValue) {");
-							out.println("Memory.store(getAddress(base), newValue);");
-							out.println("}");
-							break;
-						case ENUM:
-							out.println("public static %s get(int base) {", baseType.name);
-							out.println("return %s.getInstance(Memory.fetch(getAddress(base)));", baseType.name);
-							out.println("}");
-							out.println("public static void set(int base, %s newValue) {", baseType.name);
-							out.println("Memory.store(getAddress(base), newValue.value);");
+							out.println("Memory.store(getAddress(base), %s.checkValue(newValue));", baseType.name);
 							out.println("}");
 							break;
 						case ARRAY:
