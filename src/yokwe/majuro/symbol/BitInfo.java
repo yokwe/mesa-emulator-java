@@ -37,6 +37,7 @@ public class BitInfo {
 	
 	final int    shift;
 	final String mask;
+	final String bits;
 	
 	public BitInfo(int size, int startBit, int stopBit) {
 		this.startBit = startBit;
@@ -48,10 +49,12 @@ public class BitInfo {
 		case 1:
 			this.shift = 15 - stopBit;
 			this.mask  = String.format("%16s", Long.toBinaryString((bits << shift))).replace(" ", "0").replaceAll("(.{4})(.{4})(.{4})(.{4})", "0b$1_$2_$3_$4");
+			this.bits  = String.format("%16s", Long.toBinaryString(bits)).replace(" ", "0").replaceAll("(.{4})(.{4})(.{4})(.{4})", "0b$1_$2_$3_$4");
 			break;
 		case 2:
 			this.shift = 31 - stopBit;
 			this.mask  = String.format("%32s", Long.toBinaryString(bits << shift)).replace(" ", "0").replaceAll("(.{4})(.{4})(.{4})(.{4})(.{4})(.{4})(.{4})(.{4})", "0b$1_$2_$3_$4_$5_$6_$7_$8");
+			this.bits  = String.format("%32s", Long.toBinaryString(bits)).replace(" ", "0").replaceAll("(.{4})(.{4})(.{4})(.{4})(.{4})(.{4})(.{4})(.{4})", "0b$1_$2_$3_$4_$5_$6_$7_$8");
 			break;
 		default:
 			logger.error("size {}", size);
