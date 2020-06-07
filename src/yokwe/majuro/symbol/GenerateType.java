@@ -388,7 +388,10 @@ public class GenerateType {
 					if (bitField) {
 						out.println("public static final int MASK   =  %s;", mask);
 						out.println("public static final int SHIFT  =  %2d;", shift);
-						out.println("public static final int BITS   =  MASK >>> SHIFT;");
+						if (baseType.kind == Type.Kind.BOOL) {
+							// BOOL needs BITS field
+							out.println("public static final int BITS   =  MASK >>> SHIFT;");
+						}
 					}
 					out.println();
 					
