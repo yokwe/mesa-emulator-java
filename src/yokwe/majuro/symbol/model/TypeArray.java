@@ -110,7 +110,7 @@ public abstract class TypeArray extends Type {
 					rangeMaxInclusive ? ']' : ')',
 					elementType.baseName);
 		case FULL:
-			return String.format("ARRAY %s OF %s;", indexType.baseName, elementType.baseName);
+			return String.format("ARRAY %s OF %s", indexType.baseName, elementType.baseName);
 		default:
 			throw new UnexpectedException();
 		}
