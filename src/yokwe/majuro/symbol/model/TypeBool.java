@@ -27,13 +27,13 @@ package yokwe.majuro.symbol.model;
 
 public class TypeBool extends Type {
 	TypeBool() {
-		super("BOOL", Kind.BOOL, 1);
+		super(Type.BOOL, Kind.BOOL, 1);
 	}
 	@Override
 	protected void fix() {
 	}
 	@Override
 	public String toMesaType() {
-		return "BOOL";
+		return Type.BOOL;
 	}
 }
