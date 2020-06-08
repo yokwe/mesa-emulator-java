@@ -33,29 +33,18 @@ import yokwe.majuro.UnexpectedException;
 public class Field implements Comparable<Field> {
 	protected static final Logger logger = LoggerFactory.getLogger(Field.class);
 
-	public final String  name;
-	public final int     offset;
-	public       int     startPos;
-	public       int     stopPos;
-	
+	public final FieldName     fieldName;
 	public final TypeReference type;
 	public final Select        select;
-	
-	public final boolean  bitFormat;
 	
 	private boolean needsFix;
 	private int     size;
 	private boolean bitField;
 	
-	private Field(String prefix, String name, int offset, int startPos, int stopPos, String typeName, Select select, boolean bitFormat) {
-		this.name      = name;
-		this.offset    = offset;
-		this.startPos  = startPos;
-		this.stopPos   = stopPos;
-		
+	private Field(String prefix, String name, int offset, int startPos, int stopPos, String typeName, Select select) {
+		this.fieldName = new FieldName(name, offset, startPos, stopPos);
 		this.type      = (typeName != null) ? new TypeReference(prefix + "#" + name + "#type", typeName) : null;
 		this.select    = select;
-		this.bitFormat = bitFormat;
 		
 		this.needsFix  = true;
 		this.size      = Type.UNKNOWN_SIZE;
@@ -63,17 +52,31 @@ public class Field implements Comparable<Field> {
 		
 		fix();
 	}
+	private Field(String prefix, String name, int offset, String typeName, Select select) {
+		this.fieldName = new FieldName(name, offset);
+		this.type      = (typeName != null) ? new TypeReference(prefix + "#" + name + "#type", typeName) : null;
+		this.select    = select;
+		
+		this.needsFix  = true;
+		this.size      = Type.UNKNOWN_SIZE;
+		this.bitField  = false;
+		
+		fix();
+	}
+
+	// type
 	public Field(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
-		this(prefix, name, offset, startPos, stopPos, typeName, null, true);
+		this(prefix, name, offset, startPos, stopPos, typeName, null);
 	}
 	public Field(String prefix, String name, int offset, String typeName) {
-		this(prefix, name, offset, -1, -1, typeName, null, false);
+		this(prefix, name, offset, typeName, null);
 	}
+	// select
 	public Field(String prefix, String name, int offset, int startPos, int stopPos, Select select) {
-		this(prefix, name, offset, startPos, stopPos, null, select, true);
+		this(prefix, name, offset, startPos, stopPos, null, select);
 	}
 	public Field(String prefix, String name, int offset, Select select) {
-		this(prefix, name, offset, -1, -1, null, select, false);
+		this(prefix, name, offset, -1, -1, null, select);
 	}
 	
 	protected boolean needsFix() {
@@ -105,25 +108,15 @@ public class Field implements Comparable<Field> {
 		
 	@Override
 	public int compareTo(Field that) {
-		int ret = this.offset - that.offset;
-		if (ret == 0) ret = this.startPos - that.startPos;
-		return ret;
+		return this.fieldName.compareTo(that.fieldName);
 	}
 	
 	@Override
 	public String toString() {
 		if (hasValue()) {
-			if (bitFormat) {
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, getSize(), type, select);
-			} else {
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, getSize(), type, select);
-			}
+			return String.format("{%s %s %s %s %s}", fieldName, "*UNKNOWN*", type, select);
 		} else {
-			if (bitFormat) {
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, "*UNKNOQWN*", type, select);
-			} else {
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, "*UNKNOQWN*", type, select);
-			}
+			return String.format("{%s %s %s %s %s}", fieldName, getSize(), type, select);
 		}
 	}
 
@@ -141,11 +134,7 @@ public class Field implements Comparable<Field> {
 			fieldType = select.toMesaType();
 		}
 		
-		if (bitFormat) {
-			return String.format("%s(%d:%d..%d): %s", name, offset, startPos, stopPos, fieldType);
-		} else {
-			return String.format("%s(%d): %s", name, offset, fieldType);
-		}
+		return String.format("%s: %s", fieldName, fieldType);
 	}
 	
 	public void fix() {
@@ -161,12 +150,11 @@ public class Field implements Comparable<Field> {
 					case BOOL:
 					case SUBRANGE:
 					case ENUM:
-						if (!bitFormat) {
-							startPos = 0;
-							stopPos  = (size * 16) - 1;
+						if (fieldName.bitField) {
+							bitField = fieldName.startPos != 0 || fieldName.stopPos != (size * 16) - 1;
+						} else {
+							bitField = false;
 						}
-						
-						bitField = startPos != 0 || stopPos != (size * 16) - 1;
 						break;
 					default:
 						bitField = false;

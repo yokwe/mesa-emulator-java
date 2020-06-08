@@ -183,7 +183,7 @@ public class GenerateType {
 		String recordName = typeRecord.name;
 		
 		for(Field field: typeRecord.fieldList) {
-			String  fieldName = field.name;
+			String  fieldName = field.fieldName.name;
 			Type    type      = field.type;
 			Select  select    = field.select;
 			
@@ -427,7 +427,7 @@ public class GenerateType {
 		String recordName = typeRecord.name;
 		
 		for(Field field: typeRecord.fieldList) {
-			String  fieldName = field.name;
+			String  fieldName = field.fieldName.name;
 			Type    type      = field.type;
 			Select  select    = field.select;
 			
@@ -495,7 +495,7 @@ public class GenerateType {
 			out.println();
 			
 			for(Field field: typeRecord.fieldList) {
-				String  fieldName = field.name;
+				String  fieldName = field.fieldName.name;
 				Type    type      = field.type;
 				Select  select    = field.select;
 				boolean bitField  = field.isBitfield();
@@ -503,7 +503,7 @@ public class GenerateType {
 				String  mask      = null;
 				{
 					if (bitField) {
-						BitInfo bitInfo = new BitInfo(field.getSize(), field.startPos, field.stopPos);
+						BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
 						shift    = bitInfo.shift;
 						mask     = bitInfo.mask;
 					}
@@ -514,8 +514,8 @@ public class GenerateType {
 				if (type != null) {
 					Type  baseType = type.isReference() ? ((TypeReference)type).baseType : type;
 
-					out.println("public static final class %s {", field.name);
-					out.println("public static final int OFFSET =  %2d;", field.offset);
+					out.println("public static final class %s {", field.fieldName.name);
+					out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
 					out.println("public static final int SIZE   =  %2d;", field.getSize());
 					if (bitField) {
 						out.println("public static final int MASK   =  %s;", mask);

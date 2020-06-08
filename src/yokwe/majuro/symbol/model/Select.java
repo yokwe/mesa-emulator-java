@@ -79,7 +79,7 @@ public abstract class Select {
 				for(Field field: fieldList) {
 					field.fix();
 					if (field.hasValue()) {
-						selectCaseSize = Math.max(selectCaseSize, field.offset + field.getSize());
+						selectCaseSize = Math.max(selectCaseSize, field.fieldName.offset + field.getSize());
 					} else {
 						foundProblem = true;
 					}
