@@ -241,9 +241,7 @@ public class GenerateType {
 			out.println();
 			out.println("import yokwe.majuro.UnexpectedException;");
 			out.println("import yokwe.majuro.mesa.Debug;");
-			if (typeArray.elementType.baseType.isEnum() || typeArray.elementType.isSubrange()) {
-				out.println("import yokwe.majuro.mesa.Memory;");
-			}
+			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println();
 			
 			out.println("//");
