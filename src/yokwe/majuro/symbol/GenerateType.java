@@ -123,9 +123,6 @@ public class GenerateType {
 				out.println("// %s: TYPE = [%d..%d);", typeSubrange.name, typeSubrange.getValueMin(), typeSubrange.getValueMax() + 1);
 			} else {
 				out.println("// %s", typeSubrange.toMesaString());
-				if (!typeSubrange.baseType.baseType.isPredefined()) {
-					out.println("//   %s: TYPE = %s;", typeSubrange.baseType.baseName, typeSubrange.baseType.baseType.toMesaType());
-				}
 			}
 			out.println("//");
 			out.println();
@@ -244,7 +241,9 @@ public class GenerateType {
 			out.println();
 			out.println("import yokwe.majuro.UnexpectedException;");
 			out.println("import yokwe.majuro.mesa.Debug;");
-			out.println("import yokwe.majuro.mesa.Memory;");
+			if (typeArray.elementType.baseType.isEnum() || typeArray.elementType.isSubrange()) {
+				out.println("import yokwe.majuro.mesa.Memory;");
+			}
 			out.println();
 			
 			out.println("//");
