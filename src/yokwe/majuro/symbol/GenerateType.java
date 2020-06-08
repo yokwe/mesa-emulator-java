@@ -2,16 +2,13 @@ package yokwe.majuro.symbol;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.type.ExtraGlobalWord;
-import yokwe.majuro.mesa.type.LONG_POINTER;
+import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.type.BytePair;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
 import yokwe.majuro.symbol.model.Select;
@@ -24,6 +21,7 @@ import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.util.AutoIndentPrintWriter;
+import yokwe.util.FileUtil;
 import yokwe.util.StringUtil;
 
 public class GenerateType {
@@ -126,7 +124,7 @@ public class GenerateType {
 			} else {
 				out.println("// %s", typeSubrange.toMesaString());
 				if (!typeSubrange.baseType.baseType.isPredefined()) {
-					out.println("// %s: TYPE = %s;", typeSubrange.baseType.baseName, typeSubrange.baseType.baseType.toMesaType());
+					out.println("//   %s: TYPE = %s;", typeSubrange.baseType.baseName, typeSubrange.baseType.baseType.toMesaType());
 				}
 			}
 			out.println("//");
@@ -184,7 +182,6 @@ public class GenerateType {
 
 	private static void genNestedArrayRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
 		out.println("// Expand %s", typeRecord.toMesaString());
-		out.println("// prefix %s", prefix);
 		
 		String recordName = typeRecord.name;
 		
@@ -253,10 +250,10 @@ public class GenerateType {
 			out.println("//");
 			out.println("// %s", typeArray.toMesaString());
 			if (!typeArray.indexType.baseType.isPredefined()) {
-				out.println("// %s: TYPE = %s;", typeArray.indexType.baseName, typeArray.indexType.baseType.toMesaType());
+				out.println("//   %s: TYPE = %s;", typeArray.indexType.baseName, typeArray.indexType.baseType.toMesaType());
 			}
 			if (!typeArray.elementType.baseType.isPredefined()) {
-				out.println("// %s: TYPE = %s;", typeArray.elementType.baseName, typeArray.elementType.baseType.toMesaType());
+				out.println("//   %s: TYPE = %s;", typeArray.elementType.baseName, typeArray.elementType.baseType.toMesaType());
 			}
 			out.println("//");
 			out.println();
@@ -427,7 +424,6 @@ public class GenerateType {
 	
 	private static void genNestedRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
 		out.println("// Expand %s", typeRecord.toMesaString());
-		out.println("// prefix %s", prefix);
 		
 		String recordName = typeRecord.name;
 		
@@ -584,12 +580,26 @@ public class GenerateType {
 								out.println("}");
 							}
 
-							out.println("public static int get(int base) {");
-							out.println("return getBit(Memory.fetch(getAddress(base)));");
-							out.println("}");
-							out.println("public static void set(int base, int newValue) {");
-							out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
-							out.println("}");
+							switch(baseType.getSize()) {
+							case 1:
+								out.println("public static int get(int base) {");
+								out.println("return getBit(Memory.fetch(getAddress(base)));");
+								out.println("}");
+								out.println("public static void set(int base, int newValue) {");
+								out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
+								out.println("}");
+								break;
+							case 2:
+								out.println("public static int get(int base) {");
+								out.println("return getBit(Memory.readDbl(getAddress(base)));");
+								out.println("}");
+								out.println("public static void set(int base, int newValue) {");
+								out.println("Memory.modifyDbl(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
+								out.println("}");
+								break;
+							default:
+								throw new UnexpectedException();
+							}
 							break;
 						default:
 							logger.error("type {}", type);
@@ -608,16 +618,14 @@ public class GenerateType {
 						case SUBRANGE:
 						case ENUM:
 							out.println("public static int get(int base) {");
-							out.println("return %s.checkValue(Memory.fetch(getAddress(base)));", baseType.name);
+							out.println("return %s.get(getAddress(base));", baseType.name);
 							out.println("}");
 							out.println("public static void set(int base, int newValue) {");
-							out.println("Memory.store(getAddress(base), %s.checkValue(newValue));", baseType.name);
+							out.println("%s.set(getAddress(base), newValue);", baseType.name);
 							out.println("}");
 							break;
 						case ARRAY:
-						{
 							genNestedArray(out, String.format("%s.%s", className, fieldName), (TypeArray)baseType);
-						}
 							break;
 						case RECORD:
 							genNestedRecord(out, String.format("%s.%s", className, fieldName), (TypeRecord)baseType);
