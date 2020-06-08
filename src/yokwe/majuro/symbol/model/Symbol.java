@@ -288,13 +288,13 @@ public class Symbol {
 		}
 		
 		if (context instanceof TypeSelectOverlaidAnonContext) {
-			return new SelectOvelaidAnon(prefix, selectCaseList);
+			return new Select(prefix, selectCaseList);
 		}
 		if (context instanceof TypeSelectOverlaidTypeContext) {
 			TypeSelectOverlaidTypeContext selectOveraidType = (TypeSelectOverlaidTypeContext)context;
 			
 			String tagTypeName  = selectOveraidType.tagTypeName.getText();
-			return new SelectOvelaidType(prefix, tagTypeName, selectCaseList);
+			return new Select(prefix, tagTypeName, selectCaseList);
 		}
 		if (context instanceof TypeSelectTagAnonContext) {
 			TypeSelectTagAnonContext selectTagAnon = (TypeSelectTagAnonContext)context;
@@ -305,7 +305,7 @@ public class Symbol {
 				
 				String tagName  = typeFieldName.name.getText();
 				int    offset   = Type.getNumericValue(typeFieldName.offset.getText()).intValue();
-				return new SelectTagAnon(prefix, tagName, offset, selectCaseList);
+				return new Select(prefix, tagName, offset, selectCaseList);
 			} else if (fieldName instanceof TypeFieldNameBitContext) {
 				TypeFieldNameBitContext typeFieldNameBit = (TypeFieldNameBitContext)fieldName;
 				
@@ -313,7 +313,7 @@ public class Symbol {
 				int    offset   = Type.getNumericValue(typeFieldNameBit.offset.getText()).intValue();
 				int    startPos = Type.getNumericValue(typeFieldNameBit.startPos.getText()).intValue();
 				int    stopPos  = Type.getNumericValue(typeFieldNameBit.stopPos.getText()).intValue();
-				return new SelectTagAnon(prefix, tagName, offset, startPos, stopPos, selectCaseList);
+				return new Select(prefix, tagName, offset, startPos, stopPos, selectCaseList);
 			}
 		}
 		if (context instanceof TypeSelectTagTypeContext) {
@@ -327,7 +327,7 @@ public class Symbol {
 				
 				String tagName = typeFieldName.name.getText();
 				int    offset = Type.getNumericValue(typeFieldName.offset.getText()).intValue();
-				return new SelectTagType(prefix, tagName, offset, tagTypeName, selectCaseList);
+				return new Select(prefix, tagName, offset, tagTypeName, selectCaseList);
 			} else if (fieldName instanceof TypeFieldNameBitContext) {
 				TypeFieldNameBitContext typeFieldNameBit = (TypeFieldNameBitContext)fieldName;
 				
@@ -335,7 +335,7 @@ public class Symbol {
 				int    offset   = Type.getNumericValue(typeFieldNameBit.offset.getText()).intValue();
 				int    startPos = Type.getNumericValue(typeFieldNameBit.startPos.getText()).intValue();
 				int    stopPos  = Type.getNumericValue(typeFieldNameBit.stopPos.getText()).intValue();
-				return new SelectTagType(prefix, tagName, offset, startPos, stopPos, tagTypeName, selectCaseList);
+				return new Select(prefix, tagName, offset, startPos, stopPos, tagTypeName, selectCaseList);
 			}
 		}
 		throw new UnexpectedException("Unexpected");

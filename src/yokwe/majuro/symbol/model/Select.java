@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 
-public abstract class Select {
+public class Select {
 	private static final Logger logger = LoggerFactory.getLogger(Select.class);
 
 	public static class SelectCase {
@@ -118,20 +118,82 @@ public abstract class Select {
 	}
 	
 	public final SelectKind       selectKind;
+	public final FieldName        tagName;
+	public final TypeReference    tagType;
 	public final List<SelectCase> selectCaseList;
 	
 	private boolean needsFix;
 	private int     size;
 	
-	public Select(SelectKind selectKind, List<SelectCase> selectCaseList) {
+	private Select(String prefix, SelectKind selectKind, FieldName tagName, String tagTypeName, List<SelectCase> selectCaseList) {
 		this.selectKind     = selectKind;
+		this.tagName        = tagName;
+		this.tagType        = (tagTypeName == null) ? null : new TypeReference(prefix + "#" + tagTypeName + "#selector", tagTypeName);
 		this.selectCaseList = selectCaseList;
 		
 		this.needsFix       = true;
 		this.size           = Type.UNKNOWN_SIZE;
+		
+		fix();
+	}
+	private Select(String prefix, SelectKind selectKind, String name, int offset, int startPos, int stopPos, String tagTypeName, List<SelectCase> selectCaseList) {
+		this(prefix, selectKind, new FieldName(name, offset, startPos, stopPos), tagTypeName, selectCaseList);
+	}
+	private Select(String prefix, SelectKind selectKind, String name, int offset, String tagTypeName, List<SelectCase> selectCaseList) {
+		this(prefix, selectKind, new FieldName(name, offset), tagTypeName, selectCaseList);
 	}
 	
-	public abstract String toMesaType();
+	public Select(String prefix, List<SelectCase> selectCaseList) {
+		this(prefix, SelectKind.OVERLAID_ANON, null, null, selectCaseList);
+	}
+	public Select(String prefix, String tagTypeName, List<SelectCase> selectCaseList) {
+		this(prefix, SelectKind.OVERLAID_TYPE, null, tagTypeName, selectCaseList);
+	}
+	public Select(String prefix, String name, int offset, int startPos, int stopPos, List<SelectCase> selectCaseList) {
+		this(prefix, SelectKind.TAG_ANON, name, offset, startPos, stopPos, null, selectCaseList);
+	}
+	public Select(String prefix, String name, int offset, List<SelectCase> selectCaseList) {
+		this(prefix, SelectKind.TAG_ANON, name, offset, null, selectCaseList);
+	}
+	public Select(String prefix, String name, int offset, int startPos, int stopPos, String tagTypeName, List<SelectCase> selectCaseList) {
+		this(prefix, SelectKind.TAG_TYPE, name, offset, startPos, stopPos, tagTypeName, selectCaseList);
+	}
+	public Select(String prefix, String name, int offset, String tagTypeName, List<SelectCase> selectCaseList) {
+		this(prefix, SelectKind.TAG_TYPE, name, offset, tagTypeName, selectCaseList);
+	}
+	
+	@Override
+	public String toString() {
+		switch(selectKind) {
+		case OVERLAID_ANON:
+			return String.format("{%s %s}", selectKind, selectCaseList);
+		case OVERLAID_TYPE:
+			return String.format("{%s %s %s}", selectKind, tagType.baseName, selectCaseList);
+		case TAG_ANON:
+			return String.format("{%s %s %s}", selectKind, tagName, selectCaseList);
+		case TAG_TYPE:
+			return String.format("{%s %s %s %s}", selectKind, tagName, tagType.baseName, selectCaseList);
+		default:
+			throw new UnexpectedException();
+		}
+	}
+
+	public String toMesaType() {
+		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+
+		switch(selectKind) {
+		case OVERLAID_ANON:
+			return String.format("SELECT OVERLAID * FROM %s ENDCASE", String.join(", ", list));
+		case OVERLAID_TYPE:
+			return String.format("SELECT OVERLAID %s FROM %s ENDCASE", tagType.baseName, String.join(", ", list));
+		case TAG_ANON:
+			return String.format("SELECT %s: * FROM %s ENDCASE", tagName, String.join(", ", list));
+		case TAG_TYPE:
+			return String.format("SELECT %s: %s FROM %s ENDCASE", tagName, tagType.baseName, String.join(", ", list));
+		default:
+			throw new UnexpectedException();
+		}
+	}
 	
 	protected boolean needsFix() {
 		return needsFix;
@@ -155,7 +217,20 @@ public abstract class Select {
 	public void fix() {
 		if (needsFix()) {
 			boolean foundProblem = false;
-			int size = 0;
+			
+			int size;
+			if (tagType == null) {
+				size = 0;
+			} else {
+				tagType.fix();
+				if (tagType.hasValue()) {
+					size = tagType.getSize();
+				} else {
+					foundProblem = true;
+					size = 0;
+				}
+			}
+			
 			for(SelectCase selectCase: selectCaseList) {
 				selectCase.fix();
 				if (selectCase.needsFix()) {
@@ -167,194 +242,6 @@ public abstract class Select {
 			if (!foundProblem) {
 				setSize(size);
 			}
-		}
-	}
-}
-
-// SELECT OVERLAID * FROM
-class SelectOvelaidAnon extends Select {
-	public SelectOvelaidAnon(String prefix, List<SelectCase> selectCaseList) {
-		super(SelectKind.OVERLAID_ANON, selectCaseList);
-		
-		fix();
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("{%s %s}", selectKind, selectCaseList);
-	}
-	
-	@Override
-	public String toMesaType() {
-		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
-
-		return String.format("SELECT OVERLAID * FROM %s ENDCASE", String.join(", ", list));
-	}
-
-}
-
-// SELECT OVERLAID ControlLinkTag FROM
-class SelectOvelaidType extends Select {
-	public final TypeReference tagType;
-	
-	public SelectOvelaidType(String prefix, String tagTypeName, List<SelectCase> selectCaseList) {
-		super(SelectKind.OVERLAID_TYPE, selectCaseList);
-		
-		this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#selector", tagTypeName);
-		
-		fix();
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("{%s %s}", selectKind, tagType.baseName, selectCaseList);
-	}
-	
-	@Override
-	public String toMesaType() {
-		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
-
-		return String.format("SELECT OVERLAID %s FROM %s ENDCASE", tagType.baseType.name, String.join(", ", list));
-	}
-	
-	@Override
-	public void fix() {
-		if (needsFix()) {
-			boolean foundProblem = false;
-			
-			tagType.fix();
-			if (tagType.needsFix()) {
-				foundProblem = true;
-			}
-			
-			int size = 0;
-			for(SelectCase selectCase: selectCaseList) {
-				selectCase.fix();
-				if (selectCase.needsFix()) {
-					foundProblem = true;
-				} else {
-					size += selectCase.getSize();
-				}
-			}
-			if (!foundProblem) {
-				setSize(size);
-			}
-		}
-	}
-}
-
-// SELECT type (0:0..15): * FROM
-class SelectTagAnon extends Select {
-	public final String tagName;
-	public final int    offset;
-	public final int    startPos;
-	public final int    stopPos;
-	
-	public SelectTagAnon(String prefix, String tagName, int offset, int startPos, int stopPos, List<SelectCase> selectCaseList) {
-		super(SelectKind.TAG_ANON, selectCaseList);
-		
-		this.tagName  = tagName;
-		this.offset   = offset;
-		this.startPos = startPos;
-		this.stopPos  = stopPos;
-		
-		fix();
-	}
-	
-	public SelectTagAnon(String prefix, String tagName, int offset, List<SelectCase> selectCaseList) {
-		this(prefix, tagName, offset, -1, -1, selectCaseList);
-	}
-
-	@Override
-	public String toString() {
-		if (startPos == -1) {
-			return String.format("{%s %s (%d) %s}", selectKind, tagName, offset, selectCaseList);
-		} else {
-			return String.format("{%s %s (%d:%d..%d) %s}", selectKind, tagName, offset, startPos, stopPos, selectCaseList);
-		}
-	}
-	
-	@Override
-	public String toMesaType() {
-		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
-
-		if (startPos == -1) {
-			return String.format("SELECT %s(%d): * FROM %s ENDCASE", tagName, offset, String.join(", ", list));
-		} else {
-			return String.format("SELECT %s(%d:%d..%d): * FROM %s ENDCASE", tagName, offset, startPos, stopPos, String.join(", ", list));
-		}
-	}
-}
-
-// SELECT tag (0:0..1): LinkTag FROM
-class SelectTagType extends Select {
-	public final String tagName;
-	public final int    offset;
-	public final int    startPos;
-	public final int    stopPos;
-	
-	public final TypeReference tagType;
-
-	public SelectTagType(String prefix, String tagName, int offset, int startPos, int stopPos, String tagTypeName, List<SelectCase> selectCaseList) {
-		super(SelectKind.TAG_TYPE, selectCaseList);
-		
-		this.tagName  = tagName;
-		this.offset   = offset;
-		this.startPos = startPos;
-		this.stopPos  = stopPos;
-		
-		this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#selector", tagTypeName);
-
-		fix();
-	}
-	
-	public SelectTagType(String prefix, String selectorName, int offset, String selectorTypeName, List<SelectCase> selectCaseList) {
-		this(prefix, selectorName, offset, -1, -1, selectorTypeName, selectCaseList);
-	}
-
-	@Override
-	public void fix() {
-		if (needsFix()) {
-			boolean foundProblem = false;
-			
-			tagType.fix();
-			if (tagType.needsFix()) {
-				foundProblem = true;
-			}
-			
-			int size = 0;
-			for(SelectCase selectCase: selectCaseList) {
-				selectCase.fix();
-				if (selectCase.needsFix()) {
-					foundProblem = true;
-				} else {
-					size += selectCase.getSize();
-				}
-			}
-			if (!foundProblem) {
-				setSize(size);
-			}
-		}
-	}
-
-	@Override
-	public String toString() {
-		if (startPos == -1) {
-			return String.format("{%s %s (%d) %s %s}", selectKind, tagName, offset, tagType.baseName, selectCaseList);
-		} else {
-			return String.format("{%s %s (%d:%d..%d) %s %s}", selectKind, tagName, offset, startPos, stopPos, tagType.baseName, selectCaseList);
-		}
-	}
-	
-	@Override
-	public String toMesaType() {
-		List<String> list = selectCaseList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
-
-		// SELECT tag (0:0..1): LinkTag FROM
-		if (startPos == -1) {
-			return String.format("SELECT %s(%d): %s FROM %s ENDCASE", tagName, offset, tagType.baseName, String.join(", ", list));
-		} else {
-			return String.format("SELECT %s(%d:%d..%d): %s FROM %s ENDCASE", tagName, offset, startPos, tagType.baseName, stopPos, String.join(", ", list));
 		}
 	}
 }
