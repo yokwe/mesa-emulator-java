@@ -214,6 +214,9 @@ public abstract class Type {
 	public boolean isSubrange() {
 		return kind == Kind.SUBRANGE;
 	}
+	public boolean isEnum() {
+		return kind == Kind.ENUM;
+	}
 	
 	public static final long CARDINAL_MIN = 0;
 	public static final long CARDINAL_MAX = (1L << 16) - 1;
@@ -281,6 +284,7 @@ public abstract class Type {
 	public boolean isPredefined() {
 		return isPredefined(name);
 	}
+	
 
 	
 	public static Long getNumericValue(String value) {
