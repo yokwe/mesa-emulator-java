@@ -33,10 +33,6 @@ import yokwe.majuro.UnexpectedException;
 public class Field implements Comparable<Field> {
 	protected static final Logger logger = LoggerFactory.getLogger(Field.class);
 
-	public enum FieldKind {
-		FIELD, BIT_FIELD
-	}
-	
 	public final String  name;
 	public final int     offset;
 	public       int     startPos;
@@ -45,39 +41,39 @@ public class Field implements Comparable<Field> {
 	public final TypeReference type;
 	public final Select        select;
 	
-	public final FieldKind  fieldKind;
+	public final boolean  bitFormat;
 	
 	private boolean needsFix;
 	private int     size;
 	private boolean bitField;
 	
-	private Field(String prefix, String name, int offset, int startPos, int stopPos, String typeName, Select select, FieldKind fieldKind) {
-		this.name       = name;
-		this.offset     = offset;
-		this.startPos   = startPos;
-		this.stopPos    = stopPos;
+	private Field(String prefix, String name, int offset, int startPos, int stopPos, String typeName, Select select, boolean bitFormat) {
+		this.name      = name;
+		this.offset    = offset;
+		this.startPos  = startPos;
+		this.stopPos   = stopPos;
 		
-		this.type       = (typeName != null) ? new TypeReference(prefix + "#" + name + "#typeype", typeName) : null;
-		this.select     = select;
-		this.fieldKind  = fieldKind;
+		this.type      = (typeName != null) ? new TypeReference(prefix + "#" + name + "#type", typeName) : null;
+		this.select    = select;
+		this.bitFormat = bitFormat;
 		
-		this.needsFix   = true;
-		this.size       = Type.UNKNOWN_SIZE;
-		this.bitField   = false;
+		this.needsFix  = true;
+		this.size      = Type.UNKNOWN_SIZE;
+		this.bitField  = false;
 		
 		fix();
 	}
 	public Field(String prefix, String name, int offset, int startPos, int stopPos, String typeName) {
-		this(prefix, name, offset, startPos, stopPos, typeName, null, FieldKind.BIT_FIELD);
+		this(prefix, name, offset, startPos, stopPos, typeName, null, true);
 	}
 	public Field(String prefix, String name, int offset, String typeName) {
-		this(prefix, name, offset, -1, -1, typeName, null, FieldKind.FIELD);
+		this(prefix, name, offset, -1, -1, typeName, null, false);
 	}
 	public Field(String prefix, String name, int offset, int startPos, int stopPos, Select select) {
-		this(prefix, name, offset, startPos, stopPos, null, select, FieldKind.BIT_FIELD);
+		this(prefix, name, offset, startPos, stopPos, null, select, true);
 	}
 	public Field(String prefix, String name, int offset, Select select) {
-		this(prefix, name, offset, -1, -1, null, select, FieldKind.FIELD);
+		this(prefix, name, offset, -1, -1, null, select, false);
 	}
 	
 	protected boolean needsFix() {
@@ -117,22 +113,18 @@ public class Field implements Comparable<Field> {
 	@Override
 	public String toString() {
 		if (hasValue()) {
-			switch (fieldKind) {
-			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, fieldKind, getSize(), type, select);
-			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, fieldKind, getSize(), type, select);
+			if (bitFormat) {
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, getSize(), type, select);
+			} else {
+				return String.format("{%s(%d) %s %s %s %s}", name, offset, getSize(), type, select);
 			}
 		} else {
-			switch (fieldKind) {
-			case FIELD:
-				return String.format("{%s(%d) %s %s %s %s}", name, offset, fieldKind, getSize(), type, select);
-			case BIT_FIELD:
-				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, fieldKind, getSize(), type, select);
+			if (bitFormat) {
+				return String.format("{%s(%d:%d..%d) %s %s %s %s}", name, offset, startPos, stopPos, "*UNKNOQWN*", type, select);
+			} else {
+				return String.format("{%s(%d) %s %s %s %s}", name, offset, "*UNKNOQWN*", type, select);
 			}
 		}
-		logger.error("Unexpected");
-		throw new UnexpectedException("Unexpected");
 	}
 
 	public String toMesaType() {
@@ -149,13 +141,10 @@ public class Field implements Comparable<Field> {
 			fieldType = select.toMesaType();
 		}
 		
-		switch (fieldKind) {
-		case FIELD:
-			return String.format("%s(%d): %s", name, offset, fieldType);
-		case BIT_FIELD:
+		if (bitFormat) {
 			return String.format("%s(%d:%d..%d): %s", name, offset, startPos, stopPos, fieldType);
-		default:
-			throw new UnexpectedException();
+		} else {
+			return String.format("%s(%d): %s", name, offset, fieldType);
 		}
 	}
 	
@@ -164,19 +153,20 @@ public class Field implements Comparable<Field> {
 			if (type != null) {
 				type.fix();
 				if (type.hasValue()) {
-					setSize(type.getSize());
-					
-					if (this.fieldKind == Field.FieldKind.FIELD) {
-						this.startPos = 0;
-						this.stopPos  = (getSize() * 16) - 1;
-					}
+					int size = type.getSize();
+					setSize(size);
 					
 					Type baseType = type.isReference() ? ((TypeReference)type).baseType : type;
 					switch(baseType.kind) {
 					case BOOL:
 					case SUBRANGE:
 					case ENUM:
-						bitField = startPos != 0 || stopPos != (getSize() * 16) - 1;
+						if (!bitFormat) {
+							startPos = 0;
+							stopPos  = (size * 16) - 1;
+						}
+						
+						bitField = startPos != 0 || stopPos != (size * 16) - 1;
 						break;
 					default:
 						bitField = false;

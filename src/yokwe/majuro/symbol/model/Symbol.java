@@ -80,7 +80,6 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectTagAnonContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeSelectTagTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
-import yokwe.majuro.symbol.model.Field.FieldKind;
 import yokwe.majuro.symbol.model.Select.SelectCase;
 import yokwe.majuro.symbol.model.TypeEnum.Element;
 
@@ -352,7 +351,7 @@ public class Symbol {
 		// build field list
 		List<Field> ret = new ArrayList<>();
 		for(RecordFieldContext recordField: context.elements) {
-			FieldKind  fieldKind;
+			boolean  bitField;
 			
 			String fieldName;
 			int    offset;
@@ -365,7 +364,7 @@ public class Symbol {
 				if (fieldNameContext instanceof TypeFieldNameContext) {
 					TypeFieldNameContext typeFieldName = (TypeFieldNameContext)fieldNameContext;
 					
-					fieldKind = FieldKind.FIELD;
+					bitField  = false;
 					fieldName = typeFieldName.name.getText();
 					offset    = Type.getNumericValue(typeFieldName.offset.getText()).intValue();
 					startPos  = -1;
@@ -373,7 +372,7 @@ public class Symbol {
 				} else if (fieldNameContext instanceof TypeFieldNameBitContext) {
 					TypeFieldNameBitContext typeFieldNameBit = (TypeFieldNameBitContext)fieldNameContext;
 					
-					fieldKind = FieldKind.BIT_FIELD;
+					bitField  = true;
 					fieldName = typeFieldNameBit.name.getText();
 					offset    = Type.getNumericValue(typeFieldNameBit.offset.getText()).intValue();
 					startPos  = Type.getNumericValue(typeFieldNameBit.startPos.getText()).intValue();
@@ -393,58 +392,32 @@ public class Symbol {
 					String arrayName = prefix + "#" + fieldName;
 					getType(arrayName, arrayType);
 					
-					switch(fieldKind) {
-					case FIELD:
-						ret.add(new Field(prefix, fieldName, offset, arrayName));
-						break;
-					case BIT_FIELD:
+					if (bitField) {
 						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, arrayName));
-						break;
-					default:
-						logger.error("Unexpected fieldKind");
-						logger.error("  fieldKind {}", fieldKind);
-						throw new UnexpectedException("Unexpected fieldKind");
+					} else {
+						ret.add(new Field(prefix, fieldName, offset, arrayName));
 					}
 				} else if (fieldType.predefinedType() != null) {
-					switch(fieldKind) {
-					case FIELD:
-						ret.add(new Field(prefix, fieldName, offset, getTypeName(fieldType.predefinedType())));
-						break;
-					case BIT_FIELD:
+					if (bitField) {
 						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, getTypeName(fieldType.predefinedType())));
-						break;
-					default:
-						logger.error("Unexpected fieldKind");
-						logger.error("  fieldKind {}", fieldKind);
-						throw new UnexpectedException("Unexpected fieldKind");
+					} else {
+						ret.add(new Field(prefix, fieldName, offset, getTypeName(fieldType.predefinedType())));
 					}
 				} else if (fieldType.referenceType() != null) {
 					ReferenceTypeContext referenceType = fieldType.referenceType();
-					switch(fieldKind) {
-					case FIELD:
-						ret.add(new Field(prefix, fieldName, offset, referenceType.name.getText()));
-						break;
-					case BIT_FIELD:
+					
+					if (bitField) {
 						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, referenceType.name.getText()));
-						break;
-					default:
-						logger.error("Unexpected fieldKind");
-						logger.error("  fieldKind {}", fieldKind);
-						throw new UnexpectedException("Unexpected fieldKind");
+					} else {
+						ret.add(new Field(prefix, fieldName, offset, referenceType.name.getText()));
 					}
 				} else if (fieldType.select() != null) {
 					Select selectObject = getSelect(prefix, fieldType.select());
-					switch(fieldKind) {
-					case FIELD:
-						ret.add(new Field(prefix, fieldName, offset, selectObject));
-						break;
-					case BIT_FIELD:
+					
+					if (bitField) {
 						ret.add(new Field(prefix, fieldName, offset, startPos, stopPos, selectObject));
-						break;
-					default:
-						logger.error("Unexpected fieldKind");
-						logger.error("  fieldKind {}", fieldKind);
-						throw new UnexpectedException("Unexpected fieldKind");
+					} else {
+						ret.add(new Field(prefix, fieldName, offset, selectObject));
 					}
 				} else {
 					logger.error("Unexpected fieldType");
