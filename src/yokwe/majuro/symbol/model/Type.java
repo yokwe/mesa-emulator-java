@@ -217,6 +217,13 @@ public abstract class Type {
 	public boolean isEnum() {
 		return kind == Kind.ENUM;
 	}
+	public Type getBaseType() {
+		if (isReference()) {
+			return ((TypeReference)this).baseType;
+		} else {
+			return this;
+		}
+	}
 	
 	public static final long CARDINAL_MIN = 0;
 	public static final long CARDINAL_MAX = (1L << 16) - 1;
