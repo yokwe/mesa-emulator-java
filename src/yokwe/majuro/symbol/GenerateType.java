@@ -12,6 +12,7 @@ import yokwe.majuro.mesa.type.BytePair;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
 import yokwe.majuro.symbol.model.Select;
+import yokwe.majuro.symbol.model.Select.SelectCase;
 import yokwe.majuro.symbol.model.Symbol;
 import yokwe.majuro.symbol.model.Type;
 import yokwe.majuro.symbol.model.TypeArray;
@@ -466,6 +467,179 @@ public class GenerateType {
 			out.println("}");
 		}
 	}
+	private static void genFieldType(AutoIndentPrintWriter out, String prefix, Field field) {
+		String  fieldName = field.fieldName.name;
+		boolean bitField  = field.isBitfield();
+		Type    type      = field.type.getBaseType();
+
+		out.println("public static final class %s {", fieldName);
+		out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
+		out.println("public static final int SIZE   =  %2d;", field.getSize());
+		out.println();
+		
+		out.println("public static int getAddress(int base) {");
+		out.println("return base + OFFSET;");
+		out.println("}");
+
+		if (bitField) {
+			BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
+
+			out.println("public static final int MASK   =  %s;", bitInfo.mask);
+			out.println("public static final int SHIFT  =  %2d;", bitInfo.shift);
+			if (type.isPredefined()) {
+				// predefined type needs BITS field
+				out.println("public static final int BITS   =  MASK >>> SHIFT;");
+			}
+
+			out.println("public static int getBit(int value) {");
+			out.println("return (checkValue(value) & MASK) >>> SHIFT;");
+			out.println("}");
+			out.println("public static int setBit(int value, int newValue) {");
+			out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
+			out.println("}");
+			
+			switch (type.kind) {
+			case BOOL:
+				out.println("public static int checkValue(int value) {");
+				out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
+				out.println("if (value < 0 || BITS < value) {");
+				out.println("logger.error(\"value is out of range\");");
+				out.println("logger.error(\"  value {}\", value);");
+				out.println("throw new UnexpectedException(\"value is out of range\");");
+				out.println("}");
+				out.println("}");
+				out.println("return value;");
+				out.println("}");
+				
+				out.println("public static boolean get(int base) {");
+				out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
+				out.println("}");
+				out.println("public static void set(int base, boolean newValue) {");
+				out.println("Memory.modify(getAddress(base), %s.%s::setBit, (newValue ? 1 : 0));", prefix, fieldName);
+				out.println("}");
+				break;
+			case SUBRANGE:
+			case ENUM:
+				if (type.isPredefined()) {
+					out.println("public static int checkValue(int value) {");
+					out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
+					out.println("if (value < 0 || BITS < value) {");
+					out.println("logger.error(\"value is out of range\");");
+					out.println("logger.error(\"  value {}\", value);");
+					out.println("throw new UnexpectedException(\"value is out of range\");");
+					out.println("}");
+					out.println("}");
+					out.println("return value;");
+					out.println("}");
+				} else {
+					out.println("public static int checkValue(int value) {");
+					out.println("return %s.checkValue(value);", type.name);
+					out.println("}");
+				}
+
+				switch(type.getSize()) {
+				case 1:
+					out.println("public static int get(int base) {");
+					out.println("return getBit(Memory.fetch(getAddress(base)));");
+					out.println("}");
+					out.println("public static void set(int base, int newValue) {");
+					out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", prefix, fieldName);
+					out.println("}");
+					break;
+				case 2:
+					out.println("public static int get(int base) {");
+					out.println("return getBit(Memory.readDbl(getAddress(base)));");
+					out.println("}");
+					out.println("public static void set(int base, int newValue) {");
+					out.println("Memory.modifyDbl(getAddress(base), %s.%s::setBit, newValue);", prefix, fieldName);
+					out.println("}");
+					break;
+				default:
+					throw new UnexpectedException();
+				}
+				break;
+			default:
+				logger.error("type {}", type);
+				throw new UnexpectedException();
+			}
+		} else {
+			switch (type.kind) {
+			case BOOL:
+				out.println("public static boolean get(int base) {");
+				out.println("return Memory.fetch(getAddress(base)) != 0;");
+				out.println("}");
+				out.println("public static void set(int base, boolean newValue) {");
+				out.println("Memory.store(getAddress(base), newValue ? 1 : 0);");
+				out.println("}");
+				break;
+			case SUBRANGE:
+			case ENUM:
+				out.println("public static int get(int base) {");
+				out.println("return %s.get(getAddress(base));", type.name);
+				out.println("}");
+				out.println("public static void set(int base, int newValue) {");
+				out.println("%s.set(getAddress(base), newValue);", type.name);
+				out.println("}");
+				break;
+			case ARRAY:
+				genNestedArray(out, String.format("%s.%s", prefix, fieldName), (TypeArray)type);
+				break;
+			case RECORD:
+				genNestedRecord(out, String.format("%s.%s", prefix, fieldName), (TypeRecord)type);
+				break;
+			default:
+				logger.error("type {}", type);
+				throw new UnexpectedException();
+			}
+		}
+		out.println("}");
+	}
+
+	private static void genFieldSelect(AutoIndentPrintWriter out, String prefix, Field field) {
+		String  fieldName = field.fieldName.name;
+		boolean bitField  = field.isBitfield();
+		Select  select    = field.select;
+
+		// FIXME SELECT
+		out.println("public static final class %s {", fieldName);
+		out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
+		out.println("public static final int SIZE   =  %2d;", field.getSize());
+		out.println();
+		
+		out.println("public static int getAddress(int base) {");
+		out.println("return base + OFFSET;");
+		out.println("}");
+		out.println();
+
+		out.println("// %s", select.toMesaType());
+		// FIXME SELECT tag name and tag type
+	
+		for(SelectCase selectCase: select.selectCaseList) {
+			out.println("// %s", selectCase.toMesaType());
+			out.println("public static final class %s {", selectCase.selector);
+			out.println("public static final int VALUE  =  %2d;", selectCase.value);
+			out.println("public static final int SIZE   =  %2d;", selectCase.getSize());
+			
+			// FIXME SELECT CASE
+			
+			for(var nestedField: selectCase.fieldList) {
+				out.println();
+				out.println("// %s", nestedField.toMesaType());
+				out.println("public static final class %s {", nestedField.fieldName.name);
+				out.println("public static final int OFFSET =  %2d;", nestedField.fieldName.offset);
+				out.println("public static final int SIZE   =  %2d;", nestedField.getSize());
+				
+				// FIXME SELECT CASE FIELD
+
+				out.println("}");
+			}
+			
+			out.println("}");
+		}
+		
+		out.println("}");
+	}
+
 	private static void genType(TypeRecord typeRecord) {
 		String className = typeRecord.name;
 		String path = String.format("%s/%s.java", PATH_DIR, className);
@@ -496,149 +670,11 @@ public class GenerateType {
 				String  fieldName = field.fieldName.name;
 				Type    type      = field.type;
 				Select  select    = field.select;
-				boolean bitField  = field.isBitfield();
-				int     shift     = 0;
-				String  mask      = null;
-				{
-					if (bitField) {
-						BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
-						shift    = bitInfo.shift;
-						mask     = bitInfo.mask;
-					}
-				}
 				
 				out.println("// %s", field.toMesaType());
 				
-				if (type != null) {
-					Type  baseType = type.isReference() ? ((TypeReference)type).baseType : type;
-
-					out.println("public static final class %s {", field.fieldName.name);
-					out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
-					out.println("public static final int SIZE   =  %2d;", field.getSize());
-					if (bitField) {
-						out.println("public static final int MASK   =  %s;", mask);
-						out.println("public static final int SHIFT  =  %2d;", shift);
-						if (baseType.isPredefined()) {
-							// predefined type needs BITS field
-							out.println("public static final int BITS   =  MASK >>> SHIFT;");
-						}
-					}
-					out.println();
-					
-					out.println("public static int getAddress(int base) {");
-					out.println("return base + OFFSET;");
-					out.println("}");
-
-					if (bitField) {
-						out.println("public static int getBit(int value) {");
-						out.println("return (checkValue(value) & MASK) >>> SHIFT;");
-						out.println("}");
-						out.println("public static int setBit(int value, int newValue) {");
-						out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
-						out.println("}");
-						
-						
-						switch (baseType.kind) {
-						case BOOL:
-							out.println("public static int checkValue(int value) {");
-							out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-							out.println("if (value < 0 || BITS < value) {");
-							out.println("logger.error(\"value is out of range\");");
-							out.println("logger.error(\"  value {}\", value);");
-							out.println("throw new UnexpectedException(\"value is out of range\");");
-							out.println("}");
-							out.println("}");
-							out.println("return value;");
-							out.println("}");
-							
-							out.println("public static boolean get(int base) {");
-							out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
-							out.println("}");
-							out.println("public static void set(int base, boolean newValue) {");
-							out.println("Memory.modify(getAddress(base), %s.%s::setBit, (newValue ? 1 : 0));", className, fieldName);
-							out.println("}");
-							break;
-						case SUBRANGE:
-						case ENUM:
-							if (baseType.isPredefined()) {
-								out.println("public static int checkValue(int value) {");
-								out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-								out.println("if (value < 0 || BITS < value) {");
-								out.println("logger.error(\"value is out of range\");");
-								out.println("logger.error(\"  value {}\", value);");
-								out.println("throw new UnexpectedException(\"value is out of range\");");
-								out.println("}");
-								out.println("}");
-								out.println("return value;");
-								out.println("}");
-							} else {
-								out.println("public static int checkValue(int value) {");
-								out.println("return %s.checkValue(value);", baseType.name);
-								out.println("}");
-							}
-
-							switch(baseType.getSize()) {
-							case 1:
-								out.println("public static int get(int base) {");
-								out.println("return getBit(Memory.fetch(getAddress(base)));");
-								out.println("}");
-								out.println("public static void set(int base, int newValue) {");
-								out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
-								out.println("}");
-								break;
-							case 2:
-								out.println("public static int get(int base) {");
-								out.println("return getBit(Memory.readDbl(getAddress(base)));");
-								out.println("}");
-								out.println("public static void set(int base, int newValue) {");
-								out.println("Memory.modifyDbl(getAddress(base), %s.%s::setBit, newValue);", className, fieldName);
-								out.println("}");
-								break;
-							default:
-								throw new UnexpectedException();
-							}
-							break;
-						default:
-							logger.error("type {}", type);
-							throw new UnexpectedException();
-						}
-					} else {
-						switch (baseType.kind) {
-						case BOOL:
-							out.println("public static boolean get(int base) {");
-							out.println("return Memory.fetch(getAddress(base)) != 0;");
-							out.println("}");
-							out.println("public static void set(int base, boolean newValue) {");
-							out.println("Memory.store(getAddress(base), newValue ? 1 : 0);");
-							out.println("}");
-							break;
-						case SUBRANGE:
-						case ENUM:
-							out.println("public static int get(int base) {");
-							out.println("return %s.get(getAddress(base));", baseType.name);
-							out.println("}");
-							out.println("public static void set(int base, int newValue) {");
-							out.println("%s.set(getAddress(base), newValue);", baseType.name);
-							out.println("}");
-							break;
-						case ARRAY:
-							genNestedArray(out, String.format("%s.%s", className, fieldName), (TypeArray)baseType);
-							break;
-						case RECORD:
-							genNestedRecord(out, String.format("%s.%s", className, fieldName), (TypeRecord)baseType);
-							break;
-						default:
-							logger.error("type {}", type);
-							throw new UnexpectedException();
-						}
-					}
-					out.println("}");
-				}
-				if (select != null) {
-					// FIXME
-					logger.warn("### SKIP RECORD SELECT");
-					out.println("// FIXME RECORD SELECT");
-				}
+				if (type   != null) genFieldType  (out, className, field);
+				if (select != null) genFieldSelect(out, className, field);
 			}
 			
 			out.println("}");
