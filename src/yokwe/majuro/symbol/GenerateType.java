@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.type.BytePair;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
 import yokwe.majuro.symbol.model.Select;
@@ -22,7 +20,6 @@ import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.util.AutoIndentPrintWriter;
-import yokwe.util.FileUtil;
 import yokwe.util.StringUtil;
 
 public class GenerateType {
@@ -178,7 +175,7 @@ public class GenerateType {
 		}
 	}
 
-	private static void genTypeArrayRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
+	private static void genRecordInArray(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
 		out.println("// Expand %s", typeRecord.toMesaString());
 		
 		String recordName = typeRecord.name;
@@ -212,7 +209,7 @@ public class GenerateType {
 					out.println("}");
 					break;
 				case RECORD:
-					genTypeArrayRecord(out, String.format("%s.%s", recordName, fieldName), (TypeRecord)baseType);
+					genRecordInArray(out, String.format("%s.%s", recordName, fieldName), (TypeRecord)baseType);
 					break;
 				default:
 					logger.error("field {}", baseType.toMesaType());
@@ -261,7 +258,6 @@ public class GenerateType {
 			out.println();
 			out.println("public static final int SIZE         = %d;", typeArray.getSize());
 			
-
 			out.println("public static final int ELEMENT_SIZE = %d;", typeArray.elementType.getSize());
 			out.println("public static final int INDEX_LEN    = %d;", typeArray.length);
 			out.println();
@@ -298,7 +294,7 @@ public class GenerateType {
 				out.println("}");
 				break;
 			case RECORD:
-				genTypeArrayRecord(out, className, (TypeRecord)typeArray.elementType.baseType);
+				genRecordInArray(out, className, (TypeRecord)typeArray.elementType.baseType);
 				break;
 			default:
 				throw new UnexpectedException();
@@ -382,7 +378,8 @@ public class GenerateType {
 		}
 	}
 	
-	private static void genTypeArray(AutoIndentPrintWriter out, String prefix, TypeArray typeArray) {
+	private static void genArrayInRecord(AutoIndentPrintWriter out, String prefix, TypeArray typeArray) {
+		out.println("// FIXME genArrayInRecord");
 		out.println("public static final int ELEMENT_SIZE = %d;", typeArray.elementType.getSize());
 		out.println("public static final int INDEX_LEN    = %d;", typeArray.length);
 		out.println();
@@ -416,8 +413,7 @@ public class GenerateType {
 			out.println("}");
 			break;
 		case RECORD:
-			out.println("// YYYY FIX get(int base, int index)");
-			genTypeRecord(out, prefix, (TypeRecord)elementType);
+			genRecordInArray(out, prefix, (TypeRecord)elementType);
 			break;
 		default:
 			logger.error("elementType {}", elementType.toMesaString());
@@ -425,7 +421,7 @@ public class GenerateType {
 		}
 	}
 	
-	private static void genTypeRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
+	private static void genRecordInRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
 		out.println("// Expand %s", typeRecord.toMesaString());		
 		for(Field field: typeRecord.fieldList) {
 			genField(out, prefix, field);
@@ -467,10 +463,10 @@ public class GenerateType {
 			out.println("}");
 			break;
 		case ARRAY:
-			genTypeArray(out, String.format("%s.%s", prefix, fieldName), (TypeArray)type);
+			genArrayInRecord(out, String.format("%s.%s", prefix, fieldName), (TypeArray)type);
 			break;
 		case RECORD:
-			genTypeRecord(out, String.format("%s.%s", prefix, fieldName), (TypeRecord)type);
+			genRecordInRecord(out, String.format("%s.%s", prefix, fieldName), (TypeRecord)type);
 			break;
 		default:
 			logger.error("type {}", type);
@@ -483,8 +479,6 @@ public class GenerateType {
 		boolean bitField  = field.isBitfield();
 		if (!bitField) throw new UnexpectedException();
 
-		out.println("// genFieldTypeBit prefix %s", prefix); // FIXME
-		
 		out.println("public static final class %s {", fieldName);
 		out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
 		out.println("public static final int SIZE   =  %2d;", field.getSize());
