@@ -83,6 +83,23 @@ public abstract class TypeArray extends Type {
 		}
 		return rangeMax;
 	}
+	public boolean indexHasSubrange() {
+		if (needsFix()) {
+			logger.error("Unexpected needsFix");
+			logger.error("  needsFix {}", needsFix());
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+		Type index = indexType.getBaseType();
+		if (index.isEnum()) {
+			TypeEnum typeEnum = (TypeEnum)index;
+			return rangeMin != typeEnum.getValueMin() || rangeMax != typeEnum.getValueMax();
+		} else if (index.isSubrange()) {
+			TypeSubrange typeSubrange = (TypeSubrange)index;
+			return rangeMin != typeSubrange.getValueMin() || rangeMax != typeSubrange.getValueMax();
+		} else {
+			throw new UnexpectedException("Unexpected needsFix");
+		}
+	}
 	
 	@Override
 	public String toString() {
@@ -173,7 +190,7 @@ public abstract class TypeArray extends Type {
 					logger.error("  size     {}", size);
 					throw new UnexpectedException("Unexpected size");
 				}
-				if (Type.CARDINAL_MAX < size) {
+				if ((Type.CARDINAL_MAX + 1) < size) {
 					logger.error("Unexpected size");
 					logger.error("  rangeMin {}", rangeMin);
 					logger.error("  rangeMax {}", rangeMax);
