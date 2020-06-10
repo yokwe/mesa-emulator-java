@@ -63,7 +63,7 @@ BEGIN
     GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
     -- GFTHandle: TYPE = GlobalFrameTable RELATIVE POINTER TO GFTItem;
     GFTHandle: TYPE = POINTER;
-    GFTIndex: TYPE = [0..16348);
+    GFTIndex: TYPE = [0..16384);
     GFTItem: TYPE = RECORD[
         globalFrame(0: 0..15): GlobalFrameHandle,
 --      codebase   (2: 0..15): LONG POINTER TO CodeSegment];
