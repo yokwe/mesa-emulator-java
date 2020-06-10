@@ -155,7 +155,7 @@ public abstract class TypeSubrange extends Type {
 	@Override
 	public String toMesaType() {
 		if (isPredefined()) {
-			return name;
+			return String.format("%s [%d..%d)", baseType.baseName, valueMin, valueMax + 1);
 		} else {
 			return String.format("%s [%s..%s%c",
 					baseType.baseName,
