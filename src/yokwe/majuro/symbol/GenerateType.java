@@ -418,9 +418,12 @@ public class GenerateType {
 		out.println();
 		
 		// FIXME
-		// 		out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		out.println("public static int getAddress(int base) {");
-		out.println("return base + OFFSET;");
+		if (prefix.contains(".")) {
+			out.println("return %s.getAddress(base) + OFFSET;", prefix);
+		} else {
+			out.println("return base + OFFSET;", prefix);
+		}
 		out.println("}");
 
 		Type type = field.type.getBaseType();
@@ -565,6 +568,14 @@ public class GenerateType {
 		out.println("public static final int SIZE   =  %2d;", field.getSize());
 		out.println();
 		
+		out.println("public static int getAddress(int base) {");
+		if (prefix.contains(".")) {
+			out.println("return %s.getAddress(base) + OFFSET;", prefix);
+		} else {
+			out.println("return base + OFFSET;", prefix);
+		}
+		out.println("}");
+
 		out.println("// %s", select.toMesaType());
 		// FIXME SELECT tag name and tag type
 	
@@ -574,8 +585,10 @@ public class GenerateType {
 			out.println("public static final int TAG    =  %2d;", selectCase.value);
 			out.println("public static final int SIZE   =  %2d;", selectCase.getSize());
 			
-			// FIXME SELECT CASE
-			
+			out.println("public static int getAddress(int base) {");
+			out.println("return %s.getAddress(base) + OFFSET;", String.format("%s.%s", prefix, fieldName));
+			out.println("}");
+
 			for(var nestedField: selectCase.fieldList) {
 				out.println();
 				out.println("// %s", nestedField.toMesaType());
