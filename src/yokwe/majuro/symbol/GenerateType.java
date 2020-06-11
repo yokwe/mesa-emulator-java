@@ -417,6 +417,8 @@ public class GenerateType {
 		out.println("public static final int SIZE   =  %2d;", field.getSize());
 		out.println();
 		
+		// FIXME
+		// 		out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		out.println("public static int getAddress(int base) {");
 		out.println("return base + OFFSET;");
 		out.println("}");
@@ -464,7 +466,11 @@ public class GenerateType {
 		out.println();
 		
 		out.println("public static int getAddress(int base) {");
-		out.println("return %s.getAddress(base) + OFFSET;", prefix);
+		if (prefix.contains(".")) {
+			out.println("return %s.getAddress(base) + OFFSET;", prefix);
+		} else {
+			out.println("return base + OFFSET;", prefix);
+		}
 		out.println("}");
 
 		Type type = field.type.getBaseType();		
