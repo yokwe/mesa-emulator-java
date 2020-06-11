@@ -22,6 +22,9 @@ import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.util.AutoIndentPrintWriter;
 import yokwe.util.StringUtil;
 
+
+//FIXME use fully qualified name for getAddress() and checkValue()
+
 public class GenerateType {
 	private static final Logger logger = LoggerFactory.getLogger(GenerateType.class);
 	
@@ -272,7 +275,7 @@ public class GenerateType {
 
 		out.println("private static final int ELEMENT_SIZE = %d;", elementType.getSize());
 		out.println("public static int getAddress(int base, int index) {");
-		out.println("return getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);");
+		out.println("return %s.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);", prefix);
 		out.println("}");
 		out.println();
 		
@@ -461,7 +464,7 @@ public class GenerateType {
 		out.println();
 		
 		out.println("public static int getAddress(int base) {");
-		out.println("return base + OFFSET;");
+		out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		out.println("}");
 
 		Type type = field.type.getBaseType();		
