@@ -43,7 +43,6 @@ public abstract class TypeSubrange extends Type {
 	
 	private long valueMin;
 	private long valueMax;
-	private int  length;
 	
 	public TypeSubrange(String name, int size, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		super(name, Kind.SUBRANGE);
@@ -60,15 +59,12 @@ public abstract class TypeSubrange extends Type {
 		super(name, Kind.SUBRANGE, size);
 		
 		this.baseType          = new TypeReference(name + "#base", baseName);
-		this.valueMinConst     = new Constant(name + "#valueMin", Type.LONG_CARDINAL, valueMin);
-		this.valueMaxConst     = new Constant(name + "#valueMax", Type.LONG_CARDINAL, valueMax);
+		this.valueMinConst     = null;
+		this.valueMaxConst     = null;
 		this.valueMaxInclusive = valueMaxInclusive;
 		
 		this.valueMin = valueMin;
 		this.valueMax = valueMax + (valueMaxInclusive ? 0 : -1);
-		
-		long length = valueMax - valueMin + 1;
-		this.length = (length <= Integer.MAX_VALUE) ? (int)length : -1;
 	}
 	public TypeSubrange(String name, String baseName, String valueMin, String valueMax, boolean valueMaxInclusive) {
 		this(name, Type.UNKNOWN_SIZE, baseName, valueMin, valueMax, valueMaxInclusive);
@@ -90,48 +86,36 @@ public abstract class TypeSubrange extends Type {
 		}
 		return valueMax;
 	}
-	public long getLength() {
-		if (needsFix()) {
-			logger.error("Unexpected needsFix");
-			logger.error("  needsFix {}", needsFix());
-			throw new UnexpectedException("Unexpected needsFix");
-		}
-		return length;
-	}
 	
 	public void checkValue(long valueMax, long valueMin) {
-		if (hasValue()) {
-			if (valueMin < getValueMin()) {
-				logger.error("Unexpected rangeMin");
-				logger.error("  rangeMin {}", valueMin);
-				logger.error("  valueMin {}", getValueMin());
-				throw new UnexpectedException("Unexpected rangeMin");
-			}
-			if (getValueMax() < valueMax) {
-				logger.error("Unexpected rangeMax");
-				logger.error("  rangeMax {}", valueMax);
-				logger.error("  valueMax {}", getValueMax());
-				throw new UnexpectedException("Unexpected rangeMax");
-			}
+		if (valueMin < getValueMin()) {
+			logger.error("Unexpected rangeMin");
+			logger.error("  rangeMin {}", valueMin);
+			logger.error("  valueMin {}", getValueMin());
+			throw new UnexpectedException("Unexpected rangeMin");
+		}
+		if (getValueMax() < valueMax) {
+			logger.error("Unexpected rangeMax");
+			logger.error("  rangeMax {}", valueMax);
+			logger.error("  valueMax {}", getValueMax());
+			throw new UnexpectedException("Unexpected rangeMax");
 		}
 	}
 
 	public void checkValue(long value) {
-		if (hasValue()) {
-			if (value < getValueMin()) {
-				logger.error("Unexpected value");
-				logger.error("  value    {}", value);
-				logger.error("  valueMin {}", getValueMin());
-				logger.error("  this     {}", this);
-				throw new UnexpectedException("Unexpected rangeMin");
-			}
-			if (getValueMax() < value) {
-				logger.error("Unexpected value");
-				logger.error("  value    {}", value);
-				logger.error("  valueMax {}", getValueMax());
-				logger.error("  this     {}", this);
-				throw new UnexpectedException("Unexpected rangeMax");
-			}
+		if (value < getValueMin()) {
+			logger.error("Unexpected value");
+			logger.error("  value    {}", value);
+			logger.error("  valueMin {}", getValueMin());
+			logger.error("  this     {}", this);
+			throw new UnexpectedException("Unexpected rangeMin");
+		}
+		if (getValueMax() < value) {
+			logger.error("Unexpected value");
+			logger.error("  value    {}", value);
+			logger.error("  valueMax {}", getValueMax());
+			logger.error("  this     {}", this);
+			throw new UnexpectedException("Unexpected rangeMax");
 		}
 	}
 
@@ -140,9 +124,9 @@ public abstract class TypeSubrange extends Type {
 //		return String.format("{%s %d %s %s %s %s %s}", name, size, kind, baseType, valueMin, valueMax, valueMaxInclusive);
 		if (hasValue()) {
 			if (valueMaxInclusive) {
-				return String.format("{%s %s %s %s (%d)[%d..%d]}", name, kind, getSize(), baseType.baseName, length, valueMin, valueMax);
+				return String.format("{%s %s %s %s [%d..%d]}", name, kind, getSize(), baseType.baseName, valueMin, valueMax);
 			} else {
-				return String.format("{%s %s %s %s (%d)[%d..%d)}", name, kind, getSize(), baseType.baseName, length, valueMin, valueMax + 1);
+				return String.format("{%s %s %s %s [%d..%d)}", name, kind, getSize(), baseType.baseName, valueMin, valueMax + 1);
 			}
 		} else {
 			if (valueMaxInclusive) {
@@ -217,7 +201,6 @@ public abstract class TypeSubrange extends Type {
 				
 				this.valueMin = valueMin;
 				this.valueMax = valueMax;
-				this.length   = (int)length;
 				
 				setSize(baseType.getSize());
 			}
