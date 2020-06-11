@@ -292,8 +292,6 @@ public abstract class Type {
 		return isPredefined(name);
 	}
 	
-
-	
 	public static Long getNumericValue(String value) {
 		if (value.matches("^-?[0-9]+$")) {
 			// decimal
@@ -309,5 +307,35 @@ public abstract class Type {
 		}
 
 		return null;
+	}
+	 
+	public static String toJavaString(long value) {
+		if (value == Short.MIN_VALUE) {
+			return "Short.MIN_VALUE";
+		} else if (value == Short.MAX_VALUE) {
+			return "Short.MAX_VALUE";
+		} else if (value == Integer.MIN_VALUE) {
+			return "Integer.MIN_VALUE";
+		} else if (value == Integer.MAX_VALUE) {
+			return "Integer.MAX_VALUE";
+		} else if (value == (1 << 8)) {
+			return "(1 << 8)";
+		} else if (value == (1 << 8) - 1) {
+			return "(1 << 8) - 1";
+		} else if (value == (1 << 16)) {
+			return "(1 << 16)";
+		} else if (value == (1 << 16) - 1) {
+			return "(1 << 16) - 1";
+		} else if (value == (1L << 32)) {
+			return "(1L << 32)";
+		} else if (value == (1L << 32) - 1) {
+			return "(1L << 32) - 1";
+		} else {
+			if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
+				return Long.toString(value);
+			} else {
+				return Long.toString(value) + "L";
+			}
+		}
 	}
 }
