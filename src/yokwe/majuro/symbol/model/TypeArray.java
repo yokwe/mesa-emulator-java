@@ -208,12 +208,7 @@ public abstract class TypeArray extends Type {
 				case SUBRANGE:
 				{
 					TypeSubrange baseType = (TypeSubrange)indexType.baseType;
-					
-					if (arrayKind == ArrayKind.OPEN) {
-						// don't check for open array
-					} else {
-						baseType.checkValue(rangeMin, rangeMax);
-					}
+					baseType.checkValue(rangeMin, rangeMax);
 				}
 					break;
 				default:
