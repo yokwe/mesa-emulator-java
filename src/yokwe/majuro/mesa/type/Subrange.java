@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
 
-public class Subrange {
+public final class Subrange {
     private static final Logger logger = LoggerFactory.getLogger(Subrange.class);
 
     public final long    min;
@@ -46,7 +46,7 @@ public class Subrange {
 		this.signed = min < 0;
 	}
 	
-	public void checkValue(int value) {
+	public void check(int value) {
         if (Debug.ENABLE_TYPE_RANGE_CHECK) {
         	long longValue = signed ? (long)value : Integer.toUnsignedLong(value);
         	if (min <= longValue && longValue <= max) return;
