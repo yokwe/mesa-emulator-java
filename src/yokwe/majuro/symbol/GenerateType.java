@@ -131,7 +131,7 @@ public class GenerateType {
 			
 			out.println("private static final long MIN  = %s;", Type.toJavaString(valueMin));
 			out.println("private static final long MAX  = %s;", Type.toJavaString(valueMax));
-			out.println("public  static final Subrange SUBRANGE = new Subrange(MIN, MAX);");
+			out.println("private static final Subrange SUBRANGE = new Subrange(MIN, MAX);");
 			out.println();
 			
 			out.println("public static int checkValue(int value) {");
@@ -235,9 +235,9 @@ public class GenerateType {
 			} else {
 				out.println("private static final int INDEX_MIN    = %d;", typeArray.rangeMin);
 				out.println("private static final int INDEX_MAX    = %d;", typeArray.rangeMax);
-				out.println("public  static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);");
+				out.println("private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);");
 
-				out.println("public static int checkIndex(int index) {");
+				out.println("private static int checkIndex(int index) {");
 				out.println("INDEX_SUBRANGE.check(index);");
 				out.println("return index;");
 				out.println("}");
@@ -249,11 +249,11 @@ public class GenerateType {
 		case ENUM:
 		case SUBRANGE:
 			out.println("public static int get(int base, int index) {");
-			out.println("return %s.get(getAddress(base, index));", elementType.name);
+			out.println("return %s.get(getAddress(base, checkIndex(index)));", elementType.name);
 			out.println("}");
 
 			out.println("public static void set(int base, int index, int newValue) {");
-			out.println("%s.set(getAddress(base, index), newValue);", elementType.name);
+			out.println("%s.set(getAddress(base, checkIndex(index)), newValue);", elementType.name);
 			out.println("}");
 			break;
 		case RECORD:
@@ -480,37 +480,28 @@ public class GenerateType {
 
 		BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
 
-		out.println("public static final int MASK   =  %s;", bitInfo.mask);
-		out.println("public static final int SHIFT  =  %2d;", bitInfo.shift);
-		out.println("public static final int BITS   =  MASK >>> SHIFT;");
+		out.println("private static final int MASK   =  %s;", bitInfo.mask);
+		out.println("private static final int SHIFT  =  %2d;", bitInfo.shift);
 		out.println();
 
-		out.println("public static int getBit(int value) {");
+		out.println("private static int getBit(int value) {");
 		out.println("return (checkValue(value) & MASK) >>> SHIFT;");
 		out.println("}");
-		out.println("public static int setBit(int value, int newValue) {");
+		out.println("private static int setBit(int value, int newValue) {");
 		out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
 		out.println("}");
+		out.println();
 		
-		if (type.isPredefined()) {
-			out.println("public static int checkValue(int value) {");
-			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-			out.println("if (value < 0 || BITS < value) {");
-			out.println("logger.error(\"value is out of range\");");
-			out.println("logger.error(\"  value {}\", value);");
-			out.println("throw new UnexpectedException(\"value is out of range\");");
-			out.println("}");
-			out.println("}");
-			out.println("return value;");
-			out.println("}");
-		} else {
-			out.println("public static int checkValue(int value) {");
-			out.println("return %s.checkValue(value);", type.name);
-			out.println("}");
-		}
-		
+		out.println("private static final int MAX = MASK >>> SHIFT;");
+		out.println("private static final Subrange SUBRANGE = new Subrange(0, MAX);");
+		out.println();
+
 		switch (type.kind) {
 		case BOOL:
+			out.println("public static int checkValue(int value) {");
+			out.println("SUBRANGE.check(value);");
+			out.println("return value;");
+			out.println("}");
 			out.println("public static boolean get(int base) {");
 			out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
 			out.println("}");
@@ -520,6 +511,11 @@ public class GenerateType {
 			break;
 		case SUBRANGE:
 		case ENUM:
+			out.println("public static int checkValue(int value) {");
+			out.println("SUBRANGE.check(value);");
+			out.println("return %s.checkValue(value);", type.name);
+			out.println("}");
+			
 			switch(type.getSize()) {
 			case 1:
 				out.println("public static int get(int base) {");
@@ -558,7 +554,6 @@ public class GenerateType {
 
 	private static void genFieldSelect(AutoIndentPrintWriter out, String prefix, Field field) {
 		String  fieldName = field.fieldName.name;
-		boolean bitField  = field.isBitfield();
 		Select  select    = field.select;
 
 		// FIXME SELECT
@@ -614,11 +609,6 @@ public class GenerateType {
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
 			out.println();
-			out.println("import org.slf4j.Logger;");
-			out.println("import org.slf4j.LoggerFactory;");
-			out.println();
-			out.println("import yokwe.majuro.UnexpectedException;");
-			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println();
 			
@@ -628,8 +618,6 @@ public class GenerateType {
 			out.println();
 			
 			out.println("public final class %s {", typeRecord.name);
-			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", typeRecord.name);
-			out.println();
 			out.println("public static final int SIZE   = %d;", typeRecord.getSize());
 			out.println();
 			
