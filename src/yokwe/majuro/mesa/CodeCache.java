@@ -26,9 +26,6 @@
 package yokwe.majuro.mesa;
 
 import yokwe.majuro.mesa.Type.BytePair;
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.Type.CARD8;
-import yokwe.majuro.mesa.Type.LONG_POINTER;
 
 public final class CodeCache {
 	private static final int PAGE_SIZE_IN_BYTE = Memory.PAGE_SIZE * 2;
@@ -47,15 +44,15 @@ public final class CodeCache {
 	private static int     startPC;
 	private static int     endPC;
 
-	public static void setCB(@LONG_POINTER int newValue) {
+	public static void setCB(/* LONG_POINTER */ int newValue) {
 		cb = newValue;
 		invalidate();
 	}
-	public static @LONG_POINTER int getCB() {
+	public static /* LONG_POINTER */ int getCB() {
 		return cb;
 	}
 	
-	public static void setPC(@CARD16 int newValue) {
+	public static void setPC(/* CARD16 */ int newValue) {
 		// size of pc is 16 bit
 		pc     = newValue & 0xFFFF;
 		wordPC = pc / 2;
@@ -63,11 +60,11 @@ public final class CodeCache {
 		
 		lastWordPC = -1;
 	}
-	public static @CARD16 int getPC() {
+	public static /* CARD16 */ int getPC() {
 		return pc;
 	}
 	
-	public static @CARD8 int getCodeByte() {		
+	public static /* CARD8 */ int getCodeByte() {		
 		if (Perf.ENABLE) Perf.codeCacheCodeByte++;
 		if (lastWordPC != wordPC) {
 			// unit of pc is byte
@@ -91,7 +88,7 @@ public final class CodeCache {
 		
 		return ret;
 	}
-	public static @CARD16 int getCodeWord() {
+	public static /* CARD16 */ int getCodeWord() {
 		int left  = getCodeByte();
 		int right = getCodeByte();
 		

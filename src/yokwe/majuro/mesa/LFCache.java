@@ -26,8 +26,6 @@
 package yokwe.majuro.mesa;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.Type.POINTER;
 
 public final class LFCache {
 	private static int     lf;
@@ -35,16 +33,16 @@ public final class LFCache {
 	private static int     pageEnd;
 	private static short[] page;
 	
-	public static void setLF(@POINTER int newValue) {
+	public static void setLF(/* POINTER */ int newValue) {
 		lf      = newValue & 0xFFFF;
 		offset  = lf % Memory.PAGE_SIZE;
 		pageEnd = Memory.PAGE_SIZE - offset - 1;
 		page    = Memory.storePage(Memory.lengthenPointer(lf));
 	}
-	public static @POINTER int getLF() {
+	public static /* POINTER */ int getLF() {
 		return lf;
 	}
-	public static @CARD16 int fetch(int index) {
+	public static /* CARD16 */ int fetch(int index) {
 		// NOTE index can be negative value to access LocalOverhead
 		int pageIndex = offset + index;
 		if (0 <= pageIndex) {
@@ -59,7 +57,7 @@ public final class LFCache {
 			throw new UnexpectedException("");
 		}
 	}
-	public static void store(@CARD16 int index, int newValue) {
+	public static void store(/* CARD16 */ int index, int newValue) {
 		// NOTE index can be negative value to access LocalOverhead
 		int pageIndex = offset + index;
 		if (0 <= pageIndex) {

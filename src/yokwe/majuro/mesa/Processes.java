@@ -38,17 +38,17 @@ import yokwe.majuro.mesa.type.StateVector;
 
 public final class Processes {
 	// 10.3.1 Queuing Procedures
-	public static void requeue(@LONG_POINTER int src, @LONG_POINTER int dst, @PSB_INDEX int psb) {
+	public static void requeue(/* LONG_POINTER */ int src, /* LONG_POINTER */ int dst, /* PSB_INDEX */ int psb) {
 		// FIXME
 		if (psb == 0) Processor.error();
 		dequeue(src, psb);
 		enqueue(dst, psb);
 	}
 	
-	public static void dequeue(@LONG_POINTER int src, @PSB_INDEX int psb) {
+	public static void dequeue(/* LONG_POINTER */ int src, /* PSB_INDEX */ int psb) {
 		// FIXME
 	}
-	public static void enqueue(@LONG_POINTER int src, @PSB_INDEX int psb) {
+	public static void enqueue(/* LONG_POINTER */ int src, /* PSB_INDEX */ int psb) {
 		// FIXME
 	}
 	
@@ -61,32 +61,32 @@ public final class Processes {
 	}
 	
 	// 10.4.4.2 Interrupt Processing
-	public static void notifyWakeup(@LONG_POINTER int c) {
+	public static void notifyWakeup(/* LONG_POINTER */ int c) {
 		// FIXME
 	}
 	// 10.4.3 Faults
-	public static void faultOne(@FAULT_INDEX int fi, @CARD16 int parameter) {
+	public static void faultOne(/* FAULT_INDEX */ int fi, /* CARD16 */ int parameter) {
 		//psb: PsbIndex = Fault[fi];
-		@PSB_INDEX int psb = fault(fi);
+		/* PSB_INDEX */ int psb = fault(fi);
 		// state: POINTER TO StateVector = Fetch[@PDA.block[psb].context]^;
-		@POINTER int state = Memory.fetch(ProcessDataArea.block.conext.getAddress(Memory.PDA,  psb));
+		/* POINTER */ int state = ProcessDataArea.vp.blocks.block.context.get(Memory.PDA,  psb);
 		// StorePda[@state.data[o]]^ = parameter;
 		Memory.storePDA(StateVector.data.getAddress(state, 0), parameter);
 		Processor.abort();
 	}
-	public static void faultTwo(@FAULT_INDEX int fi, @CARD32 int parameter) {
+	public static void faultTwo(/* FAULT_INDEX */ int fi, /* CARD32 */ int parameter) {
 		//psb: PsbIndex = Fault[fi];
-		@PSB_INDEX int psb = fault(fi);
+		/* PSB_INDEX */ int psb = fault(fi);
 		// state: POINTER TO StateVector = Fetch[@PDA.block[psb].context]^;
-		@POINTER int state = Memory.fetch(ProcessDataArea.block.conext.getAddress(Memory.PDA,  psb));
+		/* POINTER */ int state = ProcessDataArea.vp.blocks.block.context.get(Memory.PDA,  psb);
 		// StorePda[@state.data[0]]^ = LowHalf[parameter];
 		Memory.storePDA(StateVector.data.getAddress(state, 0), LongNumber.lowHalf(parameter));
 		// StorePda[@state.data[1]]^ = LowHalf[parameter];
 		Memory.storePDA(StateVector.data.getAddress(state, 1), LongNumber.highHalf(parameter));
 		Processor.abort();
 	}
-	public static @PSB_INDEX int fault(@FAULT_INDEX int fi) {
-		@PSB_INDEX int faulted = Processor.PSB;
+	public static /* PSB_INDEX */ int fault(/* FAULT_INDEX */ int fi) {
+		/* PSB_INDEX */ int faulted = Processor.PSB;
 		
 		// Requeue[src: @PDA.ready, dst: @PDA.fault[fi].queue, psb: faulted];
 		int src = ProcessDataArea.ready.getAddress(Memory.PDA);
@@ -100,15 +100,15 @@ public final class Processes {
 	}
 	
 	//Framefault: PROCEDURE [hi: FStndex] = {FaultOne[qFrameFault, fsi]);
-	public static void frameFault(@CARD8 int fsi) {
+	public static void frameFault(/* CARD8 */ int fsi) {
 		faultOne(Constant.qFrameFault, fsi);
 	}
 	//PageFault: PROCEDURE [ptr: LONG POINTER] = {FaultTwo[qPageFault, ptr]};
-	public static void pageFault(@LONG_POINTER int ptr) {
+	public static void pageFault(/* LONG_POINTER */ int ptr) {
 		faultTwo(Constant.qPageFault, ptr);
 	}
 	//WriteProtectFault: PROCEDURE [ptr: LONG POINTER] = {FaultTwo[qWriteProtectFault, ptr]};
-	public static void writeProtectFault(@LONG_POINTER int ptr) {
+	public static void writeProtectFault(/* LONG_POINTER */ int ptr) {
 		faultTwo(Constant.qWriteProtectFault, ptr);
 	}
 }

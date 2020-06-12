@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa;
 
-import yokwe.majuro.mesa.Type.LONG_POINTER;
-
 public final class MapFlags {
 	//MapFlags: TYPE = MACHINE DEPENDENT RECORD (
 	//  reserved (0:0..12) : UNSPEClFIED[0..17777B],
@@ -59,7 +57,7 @@ public final class MapFlags {
 		return (flag & PROTECT) != 0;
 	}
 
-	public void checkFetch(@LONG_POINTER int va) {
+	public void checkFetch(/* LONG_POINTER */ int va) {
 		// check vacant
 		if (isVacant()) {
 			Processes.pageFault(va);
@@ -70,7 +68,7 @@ public final class MapFlags {
 		flag = (~REFERENCED & flag) | REFERENCED;
 	}
 	
-	public void checkStore(@LONG_POINTER int va) {
+	public void checkStore(/* LONG_POINTER */ int va) {
 		// check vacant
 		if (isVacant()) {
 			Processes.pageFault(va);

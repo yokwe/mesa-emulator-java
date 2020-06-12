@@ -36,7 +36,6 @@ import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.ControlTransfers;
 import yokwe.majuro.mesa.Perf;
 import yokwe.majuro.mesa.Processor;
-import yokwe.majuro.mesa.Type.CARD8;
 import yokwe.majuro.mesa.opcode.Opcode.Register;
 import yokwe.majuro.mesa.opcode.Opcode.Type;
 import yokwe.util.ClassUtil;
@@ -58,12 +57,12 @@ public class Interpreter {
 		dispatchMop(CodeCache.getCodeByte());
 	}
 	
-	public static void dispatchMop(@CARD8 int opcode) {
+	public static void dispatchMop(/* CARD8 */ int opcode) {
 		if (Perf.ENABLE) Perf.dispatch++;
 		tableMop[opcode].run();
 		if (EnableStats) countMop[opcode]++;
 	}
-	public static void dispatchEsc(@CARD8 int opcode) {
+	public static void dispatchEsc(/* CARD8 */ int opcode) {
 		tableEsc[opcode].run();
 		if (EnableStats) countEsc[opcode]++;
 	}

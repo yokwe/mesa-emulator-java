@@ -30,27 +30,19 @@ import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Type.BytePair;
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.Type.CARD32;
-import yokwe.majuro.mesa.Type.CARD8;
-import yokwe.majuro.mesa.Type.FIELD_SPEC;
-import yokwe.majuro.mesa.Type.LONG_POINTER;
 import yokwe.majuro.mesa.Type.LongNumber;
-import yokwe.majuro.mesa.Type.PAGE_NUMBER;
-import yokwe.majuro.mesa.Type.PDA_POINTER;
-import yokwe.majuro.mesa.Type.POINTER;
 
 public final class Memory {
 	private static final Logger logger = LoggerFactory.getLogger(Memory.class);
 	
 	// special memory location
-	public static final @PAGE_NUMBER  int IO_REGION_PAGE = 0x80;
+	public static final /* PAGE_NUMBER */  int IO_REGION_PAGE = 0x80;
 	
-	public static final @LONG_POINTER int GFT = Constant.mGFT;
-	public static final @POINTER      int AV  = Constant.mAV;  // POINTER TO AllocationVector
-	public static final @POINTER      int SD  = Constant.mSD;
-	public static final @POINTER      int ETT = Constant.mETT;
-	public static final @LONG_POINTER int PDA = Constant.mPDA;
+	public static final /* LONG_POINTER */ int GFT = Constant.mGFT;
+	public static final /* POINTER */      int AV  = Constant.mAV;  // POINTER TO AllocationVector
+	public static final /* POINTER */      int SD  = Constant.mSD;
+	public static final /* POINTER */      int ETT = Constant.mETT;
+	public static final /* LONG_POINTER */ int PDA = Constant.mPDA;
 	
 	
 	// SD: POINTER TO SystemData = LOOPHOLE[mSD];
@@ -162,7 +154,7 @@ public final class Memory {
 		}
 	}
 	
-	public static void invalidate(@PAGE_NUMBER int vp) {
+	public static void invalidate(/* PAGE_NUMBER */ int vp) {
 		Cache p = cache[hash(vp)];
 		// if cache entry contains vp data, initialize cache entry.
 		if (p.vp == vp) p.init();
@@ -171,22 +163,22 @@ public final class Memory {
 	//
 	// raw level access to memory for unit test
 	//
-	public static short[] rawPage(@LONG_POINTER int va) {
+	public static short[] rawPage(/* LONG_POINTER */ int va) {
 		return rmPages[mapFlags[va >>> PAGE_SIZE_BITS].rmPage];
 	}
-	public static @CARD16 int rawRead(@LONG_POINTER int va) {
+	public static /* CARD16 */ int rawRead(/* LONG_POINTER */ int va) {
 		return (rawPage(va)[va & PAGE_OFFSET_MASK]) & 0xFFFF;
 	}
-	public static void rawWrite(@LONG_POINTER int va, @CARD16 int newValue) {
+	public static void rawWrite(/* LONG_POINTER */ int va, /* CARD16 */ int newValue) {
 		rawPage(va)[va & PAGE_OFFSET_MASK] = (short)newValue;
 	}
-	public static @CARD32 int rawReadDbl(@LONG_POINTER int va) {
+	public static /* CARD32 */ int rawReadDbl(/* LONG_POINTER */ int va) {
 		int t0 = rawRead(va + 0); // low  word - MESA use little endian
 		int t1 = rawRead(va + 1); // high word - MESA use little endian
 		
 		return LongNumber.make(t1, t0);
 	}
-	public static void rawWriteDbl(@LONG_POINTER int va, @CARD32 int newValue) {
+	public static void rawWriteDbl(/* LONG_POINTER */ int va, /* CARD32 */ int newValue) {
 		int t0 = LongNumber.lowHalf(newValue);
 		int t1 = LongNumber.highHalf(newValue);
 		
@@ -197,12 +189,12 @@ public final class Memory {
 	//
 	// map operation
 	//
-	MapFlags readMap(@PAGE_NUMBER int vp) {
+	MapFlags readMap(/* PAGE_NUMBER */ int vp) {
 		MapFlags mf = mapFlags[vp];
 		if (mf.isVacant()) mf.rmPage = 0;
 		return mf;
 	}
-	void writeMap(@PAGE_NUMBER int vp, MapFlags mf) {
+	void writeMap(/* PAGE_NUMBER */ int vp, MapFlags mf) {
 		if (Perf.ENABLE) Perf.writeMap++;
 		if (mf.isVacant()) mf.rmPage = 0;
 		mapFlags[vp] = mf;
@@ -212,7 +204,7 @@ public final class Memory {
 	
 
 	// page level memory access
-	public static short[] fetchPage(@LONG_POINTER int va) {
+	public static short[] fetchPage(/* LONG_POINTER */ int va) {
 		if (Perf.ENABLE) Perf.fetchPage++;
 		
 		int vp = va >>> PAGE_SIZE_BITS;
@@ -236,7 +228,7 @@ public final class Memory {
 		}
 		return p.page;
 	}
-	public static short[] storePage(@LONG_POINTER int va) {
+	public static short[] storePage(/* LONG_POINTER */ int va) {
 		if (Perf.ENABLE) Perf.storePage++;
 
 		int vp = va >>> PAGE_SIZE_BITS;
@@ -263,15 +255,15 @@ public final class Memory {
 	}
 
 	// low level memory access
-	public static @CARD16 int fetch(@LONG_POINTER int va) {
+	public static /* CARD16 */ int fetch(/* LONG_POINTER */ int va) {
 		if (Perf.ENABLE) Perf.fetch++;
 		return fetchPage(va)[va & PAGE_OFFSET_MASK] & 0xFFFF;
 	}
-	public static void store(@LONG_POINTER int va, @CARD16 int newValue) {
+	public static void store(/* LONG_POINTER */ int va, /* CARD16 */ int newValue) {
 		if (Perf.ENABLE) Perf.store++;
 		storePage(va)[va & PAGE_OFFSET_MASK] = (short)newValue;
 	}
-	public static @CARD32 int readDbl(@LONG_POINTER int va) {
+	public static /* CARD32 */ int readDbl(/* LONG_POINTER */ int va) {
 		if (Perf.ENABLE) Perf.readDbl++;
 		
 		short[] page = fetchPage(va);
@@ -284,7 +276,7 @@ public final class Memory {
 			return LongNumber.make(fetchPage(va + 1)[0], page[PAGE_END]);
 		}
 	}
-	public static void writeDbl(@LONG_POINTER int va, @CARD32 int newValue) {
+	public static void writeDbl(/* LONG_POINTER */ int va, /* CARD32 */ int newValue) {
 		if (Perf.ENABLE) Perf.writeDbl++;
 		
 		short[] page = storePage(va);
@@ -302,13 +294,13 @@ public final class Memory {
 	public interface ToIntBiIntFunction {
 		int apply(int value, int newValue);
 	}
-	public static void modify(@LONG_POINTER int va, ToIntBiIntFunction valueFunc, @CARD16 int newValue) {
+	public static void modify(/* LONG_POINTER */ int va, ToIntBiIntFunction valueFunc, /* CARD16 */ int newValue) {
 		if (Perf.ENABLE) Perf.modify++;
 		short[] page = storePage(va);
 		int vo = va & PAGE_OFFSET_MASK;
 		page[vo] = (short)valueFunc.apply(page[vo] & 0xFFFF, newValue & 0xFFFF);
 	}
-	public static void modifyDbl(@LONG_POINTER int va, ToIntBiIntFunction valueFunc, @CARD32 int newValue) {
+	public static void modifyDbl(/* LONG_POINTER */ int va, ToIntBiIntFunction valueFunc, /* CARD32 */ int newValue) {
 		if (Perf.ENABLE) Perf.modifyDbl++;
 		short[] page = storePage(va);
 		int     vo   = va & PAGE_OFFSET_MASK;
@@ -339,53 +331,53 @@ public final class Memory {
 	}
 	
 	// mds
-	private static @LONG_POINTER int mds;
-	public static @LONG_POINTER int getMDS() {
+	private static /* LONG_POINTER */ int mds;
+	public static /* LONG_POINTER */ int getMDS() {
 		return mds;
 	}
-	public static void setMDS(@LONG_POINTER int newValue) {
+	public static void setMDS(/* LONG_POINTER */ int newValue) {
 		mds = newValue;
 	}
 
-	public static @LONG_POINTER int lengthenPointer(@POINTER int pointer) {
+	public static /* LONG_POINTER */ int lengthenPointer(/* POINTER */ int pointer) {
 		return mds | (pointer & 0xFFFF);
 	}
-	public static @CARD16 int fetchMDS(@POINTER int pointer) {
+	public static /* CARD16 */ int fetchMDS(/* POINTER */ int pointer) {
 		if (Perf.ENABLE) Perf.fetchMDS++;
 		int va = lengthenPointer(pointer);
 		return fetchPage(va)[va & PAGE_OFFSET_MASK] & 0xFFFF;
 	}
-	public static void storeMDS(@POINTER int pointer, @CARD16 int newValue) {
+	public static void storeMDS(/* POINTER */ int pointer, /* CARD16 */ int newValue) {
 		if (Perf.ENABLE) Perf.storeMDS++;
 		int va = lengthenPointer(pointer);
 		fetchPage(va)[va & PAGE_OFFSET_MASK] = (short)newValue;
 	}
-	public static @CARD32 int readDblMDS(@POINTER int pointer) {
+	public static /* CARD32 */ int readDblMDS(/* POINTER */ int pointer) {
 		if (Perf.ENABLE) Perf.readDblMDS++;
 		return readDbl(lengthenPointer(pointer));
 	}
-	public static void writeDblMDS(@POINTER int pointer, @CARD32 int newValue) {
+	public static void writeDblMDS(/* POINTER */ int pointer, /* CARD32 */ int newValue) {
 		if (Perf.ENABLE) Perf.writeDblMDS++;
 		writeDbl(lengthenPointer(pointer), newValue);
 	}
-	public static void modifyMDS(@POINTER int pointer, ToIntBiIntFunction valueFunc, @CARD16 int newValue) {
+	public static void modifyMDS(/* POINTER */ int pointer, ToIntBiIntFunction valueFunc, /* CARD16 */ int newValue) {
 		if (Perf.ENABLE) Perf.modifyMDS++;
 		modify(lengthenPointer(pointer), valueFunc, newValue);
 	}
-	public static void modifyDblMDS(@POINTER int pointer, ToIntBiIntFunction valueFunc, @CARD32 int newValue) {
+	public static void modifyDblMDS(/* POINTER */ int pointer, ToIntBiIntFunction valueFunc, /* CARD32 */ int newValue) {
 		if (Perf.ENABLE) Perf.modifyDblMDS++;
 		modifyDbl(lengthenPointer(pointer), valueFunc, newValue);
 	}
 
 	// code
-	public static @CARD16 int readCode(@CARD16 int offset) {
+	public static /* CARD16 */ int readCode(/* CARD16 */ int offset) {
 		if (Perf.ENABLE) Perf.readCode++;
 		int va = CodeCache.getCB() + (offset & 0xFFFF);
 		return fetchPage(va)[va & PAGE_OFFSET_MASK] & 0xFFFF;
 	}
 	
 	// byte
-	public static @CARD8 int fetchByte(@LONG_POINTER int ptr, @CARD32 int offset) {
+	public static /* CARD8 */ int fetchByte(/* LONG_POINTER */ int ptr, /* CARD32 */ int offset) {
 		if (Perf.ENABLE) Perf.fetchByte++;
 		int word = fetch(ptr + (offset >>> 1));
 		if ((offset & 1) == 0) {
@@ -394,7 +386,7 @@ public final class Memory {
 			return BytePair.right(word);
 		}
 	}
-	public static @CARD16 int fetchWord(@LONG_POINTER int ptr, @CARD32 int offset) {
+	public static /* CARD16 */ int fetchWord(/* LONG_POINTER */ int ptr, /* CARD32 */ int offset) {
 		if (Perf.ENABLE) Perf.fetchWord++;
 		int     va   = ptr + (offset >>> 1);
 		int     vo   = va & PAGE_OFFSET_MASK;
@@ -410,7 +402,7 @@ public final class Memory {
 			}
 		}
 	}
-	public static void storeByte(@LONG_POINTER int ptr, @CARD32 int offset, @CARD8 int data) {
+	public static void storeByte(/* LONG_POINTER */ int ptr, /* CARD32 */ int offset, /* CARD8 */ int data) {
 		if (Perf.ENABLE) Perf.storeByte++;
 		int     va   = ptr + (offset >>> 1);
 		int     vo   = va & PAGE_OFFSET_MASK;
@@ -430,10 +422,10 @@ public final class Memory {
     //			0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f, 0x00ff,
     //			0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
 	//};
-	public static @CARD16 int fieldMask(int n) {
+	public static /* CARD16 */ int fieldMask(int n) {
 		return ((1 << (n + 1)) - 1) & 0xFFFF;
 	}
-	public static @CARD16 int readField(@CARD16 int source, @FIELD_SPEC int spec8) {
+	public static /* CARD16 */ int readField(/* CARD16 */ int source, /* FIELD_SPEC */ int spec8) {
 		if (Perf.ENABLE) Perf.readField++;
 		int pos   = (spec8 >> 4) & 0x0F;
 		int size  = spec8        & 0x0F;
@@ -442,7 +434,7 @@ public final class Memory {
 		return (source >>> shift) & fieldMask(size);
 	}
 	
-	public static @CARD16 int writeField(@CARD16 int dest, @CARD8 int spec8, @CARD16 int data) {
+	public static /* CARD16 */ int writeField(/* CARD16 */ int dest, /* CARD8 */ int spec8, /* CARD16 */ int data) {
 		if (Perf.ENABLE) Perf.writeField++;
 		int pos   = (spec8 >> 4) & 0x0F;
 		int size  = spec8        & 0x0F;
@@ -453,18 +445,18 @@ public final class Memory {
 	}
 	
 	// PDA
-	public static @LONG_POINTER int lengthenPDA(@PDA_POINTER int ptr) {
+	public static /* LONG_POINTER */ int lengthenPDA(/* PDA_POINTER */ int ptr) {
 		return PDA | (ptr & 0xFFFF);
 	}
-	public static @PDA_POINTER int offsetPDA(@LONG_POINTER int ptr) {
+	public static /* PDA_POINTER */ int offsetPDA(/* LONG_POINTER */ int ptr) {
 		if ((ptr & 0xFFFF0000) != PDA) throw new UnexpectedException();
 		return ptr & 0xFFFF;
 	}
-	public static @CARD16 int fetchPDA(@PDA_POINTER int ptr) {
+	public static /* CARD16 */ int fetchPDA(/* PDA_POINTER */ int ptr) {
 		if (Perf.ENABLE) Perf.fetchPDA++;
 		return fetch(lengthenPDA(ptr));
 	}
-	public static void storePDA(@PDA_POINTER int ptr, @CARD16 int newValue) {
+	public static void storePDA(/* PDA_POINTER */ int ptr, /* CARD16 */ int newValue) {
 		if (Perf.ENABLE) Perf.storePDA++;
 		store(lengthenPDA(ptr), newValue);
 	}
@@ -476,13 +468,12 @@ public final class Memory {
 	private static final int HASH_BIT = 14;
 	private static final int HASH_SIZE = 1 << HASH_BIT;
 	private static final int HASH_MASK = (1 << HASH_BIT) - 1;
-	private static int hash(@PAGE_NUMBER int vp_) {
+	private static int hash(/* PAGE_NUMBER */ int vp_) {
 		return ((vp_ >> HASH_BIT) ^ vp_) & HASH_MASK;
 		// NOTE above expression calculate better hash value than "vp_ & MASK"
 	}
 
 	private static class Cache {
-		@PAGE_NUMBER
 		int      vp;
 		MapFlags mf;
 		short[]  page;

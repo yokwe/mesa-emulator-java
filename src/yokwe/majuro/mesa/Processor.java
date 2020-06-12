@@ -26,41 +26,37 @@
 package yokwe.majuro.mesa;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.Type.CARD32;
-import yokwe.majuro.mesa.Type.CARD8;
-import yokwe.majuro.mesa.Type.LONG_POINTER;
 import yokwe.majuro.mesa.Type.LongNumber;
 
 public final class Processor {
 	public static final int StackDepth = Constant.cSS;
 	
 	// 3.3.2 Evaluation Stack
-	public static final @CARD16 int[] stack = new int[StackDepth];
-	public static       @CARD16 int   SP; // [0..StackDepth)
+	public static final /* CARD16 */ int[] stack = new int[StackDepth];
+	public static       /* CARD16 */ int   SP; // [0..StackDepth)
 	
 	// 3.3.2 Evaluation Stack
 	public static int stackCount() {
 		return SP;
 	}
-	public static void push(@CARD16 int data) {
+	public static void push(/* CARD16 */ int data) {
 		if (SP == StackDepth) ControlTransfers.stackError();
 		stack[SP++] = data;
 	}
-	public static @CARD16 int pop() {
+	public static /* CARD16 */ int pop() {
 		if (SP == 0) ControlTransfers.stackError();
 		return stack[--SP];
 	}
 	// Note that double-word quantities are placed on the stack so that
 	// the least significant word is at the lower-numbered stack index.
-	public static void pushLong(@CARD32 int data) {
+	public static void pushLong(/* CARD32 */ int data) {
 //		Long t = {data};
 //		Push(t.low);
 //		Push(t.high);
 		push(LongNumber.lowHalf(data));
 		push(LongNumber.highHalf(data));
 	}
-	public static @CARD32 int popLong() {
+	public static /* CARD32 */ int popLong() {
 //		Long t;
 //		t.high = Pop();
 //		t.low = Pop();
@@ -87,20 +83,20 @@ public final class Processor {
 	// Processor ID
 	public static final short[] PID = new short[4];
 	// Maintenance Panel
-	public static @CARD16 int MP;
+	public static /* CARD16 */ int MP;
 	// Xfer trap status - 9.5.5
-	public static @CARD16 int XTS;
+	public static /* CARD16 */ int XTS;
 	
 	// 3.3.1 Control Registers
 	// PsbIndex - 10.1.1
-	public static @CARD16       int PSB;
-	public static @LONG_POINTER int GF;  // LONG POINTER TO GlobalVarables
-	public static @CARD16       int GFI;
+	public static /* CARD16 */       int PSB;
+	public static /* LONG_POINTER */ int GF;  // LONG POINTER TO GlobalVarables
+	public static /* CARD16 */       int GFI;
 
 	// 4.5 Instruction Execution
-	public static @CARD8  int breakByte;
-	public static @CARD16 int savedPC;
-	public static @CARD16 int savedSP;
+	public static /* CARD8 */  int breakByte;
+	public static /* CARD16 */ int savedPC;
+	public static /* CARD16 */ int savedSP;
 	
 	
 	//

@@ -29,11 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.Type.CARD32;
-import yokwe.majuro.mesa.Type.CARD8;
-import yokwe.majuro.mesa.Type.LONG_POINTER;
-import yokwe.majuro.mesa.Type.POINTER;
 import yokwe.majuro.mesa.type.XferType;
 
 public final class ControlTransfers {
@@ -51,14 +46,14 @@ public final class ControlTransfers {
 //        frame(15): LocalFrameHandle,
 //        data(16): BLOCK];
 	
-	public static void SaveStack(@LONG_POINTER int state) {
+	public static void SaveStack(/* LONG_POINTER */ int state) {
 		// FIXME
 	}
-	public static void LoadStack(@LONG_POINTER int state) {
+	public static void LoadStack(/* LONG_POINTER */ int state) {
 		// FIXME
 	}
 
-	public static void XFER(@CARD32 int dst, @CARD16 int src, XferType type, boolean freeFlag) {
+	public static void XFER(/* CARD32 */ int dst, /* CARD16 */ int src, XferType type, boolean freeFlag) {
 		// FIXME
 	}
 
@@ -69,10 +64,10 @@ public final class ControlTransfers {
 	public static void breakTrap() {
 		// FIXME
 	}
-	public static void codeTrap(@POINTER int gfi) {
+	public static void codeTrap(/* POINTER */ int gfi) {
 		// FIXME
 	}
-	public static void controlTrap(@CARD16 int src) {
+	public static void controlTrap(/* CARD16 */ int src) {
 		// FIXME
 	}
 	public static void divCheckTrap() {
@@ -81,13 +76,13 @@ public final class ControlTransfers {
 	public static void divZeroTrap() {
 		// FIXME
 	}
-	public static void escOpcodeTrap(@CARD8 int opcode) {
+	public static void escOpcodeTrap(/* CARD8 */ int opcode) {
 		// FIXME
 	}
 	public static void interruptError() {
 		// FIXME
 	}
-	public static void opcodeTrap(@CARD8 int opcode) {
+	public static void opcodeTrap(/* CARD8 */ int opcode) {
 		// FIXME
 	}
 	public static void pointerTrap() {
@@ -103,7 +98,7 @@ public final class ControlTransfers {
 		logger.error("stackError");
 		throw new UnexpectedException();
 	}
-	public static void unboundTrap(@CARD32 int dst) {
+	public static void unboundTrap(/* CARD32 */ int dst) {
 		// FIXME
 	}
 	public static void hardwareError() {
