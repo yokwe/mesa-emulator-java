@@ -28,22 +28,37 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 
 //
-// Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+// BitAddress: TYPE = RECORD[word (0:0..31): LONG_POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
 //
 
-public final class Queue {
-    public static final int SIZE = 1;
+public final class BitAddress {
+    public static final int SIZE = 3;
 
-    // reserved1 (0:0..2): UNSPECIFIED
-    public static final class reserved1 {
-        public static final int SIZE = 1;
+    // word (0:0..31): LONG_POINTER
+    public static final class word {
+        public static final int SIZE = 2;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1110_0000_0000_0000;
-        private static final int SHIFT = 13;
+        public static int get(int base) {
+            return LONG_POINTER.get(getAddress(base));
+        }
+        public static void set(int base, int newValue) {
+            LONG_POINTER.set(getAddress(base), newValue);
+        }
+    }
+    // reserved (2:0..11): UNSPECIFIED
+    public static final class reserved {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 2;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b1111_1111_1111_0000;
+        private static final int SHIFT = 4;
 
         private static int getBit(int value) {
             return (checkValue(value) & MASK) >>> SHIFT;
@@ -63,50 +78,18 @@ public final class Queue {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Queue.reserved1::setBit, newValue);
+            Memory.modify(getAddress(base), BitAddress.reserved::setBit, newValue);
         }
     }
-    // tail (0:3..12): PsbIndex
-    public static final class tail {
+    // bit (2:12..15): CARDINAL
+    public static final class bit {
         public static final int SIZE = 1;
 
-        private static final int OFFSET = 0;
+        private static final int OFFSET = 2;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0001_1111_1111_1000;
-        private static final int SHIFT = 3;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return PsbIndex.checkValue(value);
-        }
-        public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
-        }
-        public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Queue.tail::setBit, newValue);
-        }
-    }
-    // reserved2 (0:13..15): UNSPECIFIED
-    public static final class reserved2 {
-        public static final int SIZE = 1;
-
-        private static final int OFFSET = 0;
-        public static int getAddress(int base) {
-            return base + OFFSET;
-        }
-        private static final int MASK  = 0b0000_0000_0000_0111;
+        private static final int MASK  = 0b0000_0000_0000_1111;
         private static final int SHIFT = 0;
 
         private static int getBit(int value) {
@@ -121,13 +104,13 @@ public final class Queue {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
+            return CARDINAL.checkValue(value);
         }
         public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Queue.reserved2::setBit, newValue);
+            Memory.modify(getAddress(base), BitAddress.bit::setBit, newValue);
         }
     }
 }

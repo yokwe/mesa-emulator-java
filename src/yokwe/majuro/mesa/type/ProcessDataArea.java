@@ -26,445 +26,586 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+
+//
+// ProcessDataArea: TYPE = RECORD[vp (0:0..1023): SELECT OVERLAID * FROM header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector], blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock] ENDCASE];
+//
 
 public final class ProcessDataArea {
     public static final int SIZE = 8192;
 
-    // offset    0  size    1  type Queue     name ready
-    // offset    1  size    1  type CARD16    name count
-    // offset    2  size    1  type           name unused
-    // offset    3  size    5  type           name available
-    // offset    8  size    8  type           name state
-    //   array  index CARD16            size    1  length   8  element CARD16
-    // offset   16  size   32  type           name interrupt
-    //   array  index InterruptLevle    size    2  length  16  element InterruptItem
-    // offset   48  size   16  type           name fault
-    //   array  index FaultIndex        size    2  length   8  element FaultQueue
-    // offset    0  size 8192  type           name block
-    //   array  index PsbIndex          size    8  length 1024  element ProcessStateBlock
+    // vp (0:0..1023): SELECT OVERLAID * FROM header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector], blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock] ENDCASE
+    public static final class vp {
+        public static final int SIZE = 8192;
 
-    public static final class ready {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        //   Queue  tail
-        public static final class tail {
-            public static final int OFFSET = ready.OFFSET +  0;
-
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+        // SELECT OVERLAID * FROM header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector], blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock] ENDCASE
+        // header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector]
+        public static final class header {
+            public static final int TAG  = 0;
+            public static final int SIZE = 64;
+            public static int getAddress(int base) {
+                return ProcessDataArea.vp.getAddress(base);
             }
-            public static @CARD16 int get(@LONG_POINTER int base) {
-                return Queue.tail.get(getAddress(base));
-            }
-            public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-                Queue.tail.set(getAddress(base), newValue);
-            }
-        }
-    }
-    public static final class count {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  1;
 
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
-        }
-        public static @CARD16 int get(@LONG_POINTER int base) {
-            return Memory.fetch(getAddress(base));
-        }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-            Memory.store(getAddress(base), newValue);
-        }
-    }
-    public static final class state {
-        public static final         int SIZE       =  8;
-        public static final         int OFFSET     =  8;
-        public static final         int ARRAY_SIZE =  1;
-        public static final         int ARRAY_LEN  =  8;
+            // ready (0:0..15): Queue
+            public static final class ready {
+                public static final int SIZE = 1;
 
-        public static int getAddress(@LONG_POINTER int base, int index) {
-            return base + OFFSET + (ARRAY_SIZE * index);
-        }
-        public static @CARD16 int get(@LONG_POINTER int base, int index) {
-            return Memory.fetch(getAddress(base, index));
-        }
-        public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-            Memory.store(getAddress(base, index), newValue);
-        }
-    }
-    public static final class interrupt {
-        public static final         int SIZE       = 32;
-        public static final         int OFFSET     = 16;
-        public static final         int ARRAY_SIZE =  2;
-        public static final         int ARRAY_LEN  = 16;
+                private static final int OFFSET = 0;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
+                }
+                // Expand Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+                //   reserved1 (0:0..2): UNSPECIFIED
+                public static final class reserved1 {
+                    public static final int SIZE = 1;
 
-        public static int getAddress(@LONG_POINTER int base, int index) {
-            return base + OFFSET + (ARRAY_SIZE * index);
-        }
-        // InterruptItem  condition  Condition
-        public static final class condition {
-            public static final int OFFSET = interrupt.OFFSET +  0;
+                    private static final int OFFSET = 0;
+                    public static int getAddress(int base) {
+                        return ProcessDataArea.vp.header.ready.getAddress(base) + OFFSET;
+                    }
+                    private static final int MASK  = 0b1110_0000_0000_0000;
+                    private static final int SHIFT = 13;
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            // Condition  tail  CARD16
-            public static final class tail {
-                public static final int OFFSET = interrupt.condition.OFFSET +  0;
+                    private static int getBit(int value) {
+                        return (checkValue(value) & MASK) >>> SHIFT;
+                    }
+                    private static int setBit(int value, int newValue) {
+                        return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+                    }
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return Condition.tail.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    Condition.tail.set(getAddress(base, index), newValue);
-                }
-            }
-            // Condition  abortable  boolean
-            public static final class abortable {
-                public static final int OFFSET = interrupt.condition.OFFSET +  0;
+                    private static final int MAX = MASK >>> SHIFT;
+                    private static final Subrange SUBRANGE = new Subrange(0, MAX);
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
+                    public static int checkValue(int value) {
+                        SUBRANGE.check(value);
+                        return UNSPECIFIED.checkValue(value);
+                    }
+                    public static int get(int base) {
+                        return getBit(Memory.fetch(getAddress(base)));
+                    }
+                    public static void set(int base, int newValue) {
+                        Memory.modify(getAddress(base), ProcessDataArea.vp.header.ready.reserved1::setBit, newValue);
+                    }
                 }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return Condition.abortable.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    Condition.abortable.set(getAddress(base, index), newValue);
-                }
-            }
-            // Condition  wakeup  boolean
-            public static final class wakeup {
-                public static final int OFFSET = interrupt.condition.OFFSET +  0;
+                //   tail (0:3..12): PsbIndex
+                public static final class tail {
+                    public static final int SIZE = 1;
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return Condition.wakeup.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    Condition.wakeup.set(getAddress(base, index), newValue);
-                }
-            }
-        }
-    }
-    public static final class fault {
-        public static final         int SIZE       = 16;
-        public static final         int OFFSET     = 48;
-        public static final         int ARRAY_SIZE =  2;
-        public static final         int ARRAY_LEN  =  8;
+                    private static final int OFFSET = 0;
+                    public static int getAddress(int base) {
+                        return ProcessDataArea.vp.header.ready.getAddress(base) + OFFSET;
+                    }
+                    private static final int MASK  = 0b0001_1111_1111_1000;
+                    private static final int SHIFT = 3;
 
-        public static int getAddress(@LONG_POINTER int base, int index) {
-            return base + OFFSET + (ARRAY_SIZE * index);
-        }
-        // FaultQueue  queue  Queue
-        public static final class queue {
-            public static final int OFFSET = fault.OFFSET +  0;
+                    private static int getBit(int value) {
+                        return (checkValue(value) & MASK) >>> SHIFT;
+                    }
+                    private static int setBit(int value, int newValue) {
+                        return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+                    }
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            // Queue  tail  CARD16
-            public static final class tail {
-                public static final int OFFSET = fault.queue.OFFSET +  0;
+                    private static final int MAX = MASK >>> SHIFT;
+                    private static final Subrange SUBRANGE = new Subrange(0, MAX);
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
+                    public static int checkValue(int value) {
+                        SUBRANGE.check(value);
+                        return PsbIndex.checkValue(value);
+                    }
+                    public static int get(int base) {
+                        return getBit(Memory.fetch(getAddress(base)));
+                    }
+                    public static void set(int base, int newValue) {
+                        Memory.modify(getAddress(base), ProcessDataArea.vp.header.ready.tail::setBit, newValue);
+                    }
                 }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return Queue.tail.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    Queue.tail.set(getAddress(base, index), newValue);
+                //   reserved2 (0:13..15): UNSPECIFIED
+                public static final class reserved2 {
+                    public static final int SIZE = 1;
+
+                    private static final int OFFSET = 0;
+                    public static int getAddress(int base) {
+                        return ProcessDataArea.vp.header.ready.getAddress(base) + OFFSET;
+                    }
+                    private static final int MASK  = 0b0000_0000_0000_0111;
+                    private static final int SHIFT = 0;
+
+                    private static int getBit(int value) {
+                        return (checkValue(value) & MASK) >>> SHIFT;
+                    }
+                    private static int setBit(int value, int newValue) {
+                        return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+                    }
+
+                    private static final int MAX = MASK >>> SHIFT;
+                    private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+                    public static int checkValue(int value) {
+                        SUBRANGE.check(value);
+                        return UNSPECIFIED.checkValue(value);
+                    }
+                    public static int get(int base) {
+                        return getBit(Memory.fetch(getAddress(base)));
+                    }
+                    public static void set(int base, int newValue) {
+                        Memory.modify(getAddress(base), ProcessDataArea.vp.header.ready.reserved2::setBit, newValue);
+                    }
                 }
             }
-        }
-        // FaultQueue  condition  Condition
-        public static final class condition {
-            public static final int OFFSET = fault.OFFSET +  1;
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            // Condition  tail  CARD16
-            public static final class tail {
-                public static final int OFFSET = fault.condition.OFFSET +  0;
+            // count (1:0..15): CARDINAL
+            public static final class count {
+                public static final int SIZE = 1;
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
+                private static final int OFFSET = 1;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
                 }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return Condition.tail.get(getAddress(base, index));
+                public static int get(int base) {
+                    return CARDINAL.get(getAddress(base));
                 }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    Condition.tail.set(getAddress(base, index), newValue);
+                public static void set(int base, int newValue) {
+                    CARDINAL.set(getAddress(base), newValue);
                 }
             }
-            // Condition  abortable  boolean
-            public static final class abortable {
-                public static final int OFFSET = fault.condition.OFFSET +  0;
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
+            // unused (2:0..15): UNSPECIFIED
+            public static final class unused {
+                public static final int SIZE = 1;
+
+                private static final int OFFSET = 2;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
                 }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return Condition.abortable.get(getAddress(base, index));
+                public static int get(int base) {
+                    return UNSPECIFIED.get(getAddress(base));
                 }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    Condition.abortable.set(getAddress(base, index), newValue);
+                public static void set(int base, int newValue) {
+                    UNSPECIFIED.set(getAddress(base), newValue);
                 }
             }
-            // Condition  wakeup  boolean
-            public static final class wakeup {
-                public static final int OFFSET = fault.condition.OFFSET +  0;
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
+            // available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED
+            public static final class available {
+                public static final int SIZE = 5;
+
+                private static final int OFFSET = 3;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
                 }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return Condition.wakeup.get(getAddress(base, index));
+                // ProcessDataArea#header#available: TYPE = ARRAY CARDINAL [0..4] OF UNSPECIFIED;
+                //   CARDINAL: TYPE = CARDINAL [0..65536)
+                //   UNSPECIFIED: TYPE = UNSPECIFIED [0..65536)
+                private static final int ELEMENT_SIZE = 1;
+                public static int getAddress(int base, int index) {
+                    return ProcessDataArea.vp.header.available.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
                 }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    Condition.wakeup.set(getAddress(base, index), newValue);
+
+                private static final int INDEX_MIN    = 0;
+                private static final int INDEX_MAX    = 4;
+                private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
+                private static int checkIndex(int index) {
+                    INDEX_SUBRANGE.check(index);
+                    return index;
+                }
+
+                public static int get(int base, int index) {
+                    return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+                }
+                public static void set(int base, int index, int newValue) {
+                    UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
                 }
             }
-        }
-    }
-    public static final class block {
-        public static final         int SIZE       = 8192;
-        public static final         int OFFSET     =  0;
-        public static final         int ARRAY_SIZE =  8;
-        public static final         int ARRAY_LEN  = 1024;
 
-        public static int getAddress(@LONG_POINTER int base, int index) {
-            return base + OFFSET + (ARRAY_SIZE * index);
-        }
-        // ProcessStateBlock  link  PsbLink
-        public static final class link {
-            public static final int OFFSET = block.OFFSET +  0;
-
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            // PsbLink  priority  CARD16
-            public static final class priority {
-                public static final int OFFSET = block.link.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return PsbLink.priority.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    PsbLink.priority.set(getAddress(base, index), newValue);
-                }
-            }
-            // PsbLink  next  CARD16
-            public static final class next {
-                public static final int OFFSET = block.link.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return PsbLink.next.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    PsbLink.next.set(getAddress(base, index), newValue);
-                }
-            }
-            // PsbLink  failed  boolean
-            public static final class failed {
-                public static final int OFFSET = block.link.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return PsbLink.failed.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    PsbLink.failed.set(getAddress(base, index), newValue);
-                }
-            }
-            // PsbLink  permanent  boolean
-            public static final class permanent {
-                public static final int OFFSET = block.link.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return PsbLink.permanent.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    PsbLink.permanent.set(getAddress(base, index), newValue);
-                }
-            }
-            // PsbLink  preempted  boolean
-            public static final class preempted {
-                public static final int OFFSET = block.link.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return PsbLink.preempted.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    PsbLink.preempted.set(getAddress(base, index), newValue);
-                }
-            }
-        }
-        // ProcessStateBlock  flags  PsbFlags
-        public static final class flags {
-            public static final int OFFSET = block.OFFSET +  1;
-
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            // PsbFlags  cleanup  CARD16
-            public static final class cleanup {
-                public static final int OFFSET = block.flags.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return PsbFlags.cleanup.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    PsbFlags.cleanup.set(getAddress(base, index), newValue);
-                }
-            }
-            // PsbFlags  waiting  boolean
-            public static final class waiting {
-                public static final int OFFSET = block.flags.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return PsbFlags.waiting.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    PsbFlags.waiting.set(getAddress(base, index), newValue);
-                }
-            }
-            // PsbFlags  abort  boolean
-            public static final class abort {
-                public static final int OFFSET = block.flags.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static boolean get(@LONG_POINTER int base, int index) {
-                    return PsbFlags.abort.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, boolean newValue) {
-                    PsbFlags.abort.set(getAddress(base, index), newValue);
-                }
-            }
-        }
-        // ProcessStateBlock  conext  Context
-        public static final class conext {
-            public static final int OFFSET = block.OFFSET +  2;
-
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            // Context  frame  CARD16
-            public static final class frame {
-                public static final int OFFSET = block.conext.OFFSET +  0;
-
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
-                }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return Context.frame.get(getAddress(base, index));
-                }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    Context.frame.set(getAddress(base, index), newValue);
-                }
-            }
-            // Context  state  CARD16
+            // state (8:0..127): StateAllocationTable
             public static final class state {
-                public static final int OFFSET = block.conext.OFFSET +  0;
+                public static final int SIZE = 8;
 
-                public static int getAddress(@LONG_POINTER int base, int index) {
-                    return base + OFFSET + (ARRAY_SIZE * index);
+                private static final int OFFSET = 8;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
                 }
-                public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                    return Context.state.get(getAddress(base, index));
+                // StateAllocationTable: TYPE = ARRAY Priority OF POINTER;
+                //   Priority: TYPE = CARDINAL [0..7]
+                //   POINTER: TYPE = POINTER [0..65536)
+                private static final int ELEMENT_SIZE = 1;
+                public static int getAddress(int base, int index) {
+                    return ProcessDataArea.vp.header.state.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
                 }
-                public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                    Context.state.set(getAddress(base, index), newValue);
+
+                private static int checkIndex(int index) {
+                    return Priority.checkValue(index);
+                }
+
+                public static int get(int base, int index) {
+                    return POINTER.get(getAddress(base, checkIndex(index)));
+                }
+                public static void set(int base, int index, int newValue) {
+                    POINTER.set(getAddress(base, checkIndex(index)), newValue);
+                }
+            }
+
+            // interrupt (16:0..511): InterruptVector
+            public static final class interrupt {
+                public static final int SIZE = 32;
+
+                private static final int OFFSET = 16;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
+                }
+                // InterruptVector: TYPE = ARRAY InterruptLevel OF InterruptItem;
+                //   InterruptLevel: TYPE = CARDINAL [0..16)
+                //   InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED]
+                private static final int ELEMENT_SIZE = 2;
+                public static int getAddress(int base, int index) {
+                    return ProcessDataArea.vp.header.interrupt.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
+                }
+
+                private static int checkIndex(int index) {
+                    return InterruptLevel.checkValue(index);
+                }
+
+                // Expand InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
+                //   condition (0:0..15): Condition
+                public static final class condition {
+                    // Expand Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+                    //   reserved (0:0..2): UNSPECIFIED
+                    public static final class reserved {
+                        public static int get(int base, int index) {
+                            return Condition.reserved.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Condition.reserved.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   tail (0:3..12): PsbIndex
+                    public static final class tail {
+                        public static int get(int base, int index) {
+                            return Condition.tail.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Condition.tail.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   available (0:13..13): UNSPECIFIED
+                    public static final class available {
+                        public static int get(int base, int index) {
+                            return Condition.available.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Condition.available.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   abortable (0:14..14): BOOL
+                    public static final class abortable {
+                        public static boolean get(int base, int index) {
+                            return Condition.abortable.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            Condition.abortable.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   wakeup (0:15..15): BOOL
+                    public static final class wakeup {
+                        public static boolean get(int base, int index) {
+                            return Condition.wakeup.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            Condition.wakeup.set(getAddress(base, index), newValue);
+                        }
+                    }
+                }
+                //   available (1:0..15): UNSPECIFIED
+                public static final class available {
+                    public static int get(int base, int index) {
+                        return InterruptItem.available.get(getAddress(base, index));
+                    }
+                    public static void set(int base, int index, int newValue) {
+                        InterruptItem.available.set(getAddress(base, index), newValue);
+                    }
+                }
+            }
+
+            // fault (48:0..255): FaultVector
+            public static final class fault {
+                public static final int SIZE = 16;
+
+                private static final int OFFSET = 48;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.header.getAddress(base) + OFFSET;
+                }
+                // FaultVector: TYPE = ARRAY FaultIndex OF FaultQueue;
+                //   FaultIndex: TYPE = CARDINAL [0..8)
+                //   FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition]
+                private static final int ELEMENT_SIZE = 2;
+                public static int getAddress(int base, int index) {
+                    return ProcessDataArea.vp.header.fault.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
+                }
+
+                private static int checkIndex(int index) {
+                    return FaultIndex.checkValue(index);
+                }
+
+                // Expand FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
+                //   queue (0:0..15): Queue
+                public static final class queue {
+                    // Expand Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+                    //   reserved1 (0:0..2): UNSPECIFIED
+                    public static final class reserved1 {
+                        public static int get(int base, int index) {
+                            return Queue.reserved1.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Queue.reserved1.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   tail (0:3..12): PsbIndex
+                    public static final class tail {
+                        public static int get(int base, int index) {
+                            return Queue.tail.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Queue.tail.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   reserved2 (0:13..15): UNSPECIFIED
+                    public static final class reserved2 {
+                        public static int get(int base, int index) {
+                            return Queue.reserved2.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Queue.reserved2.set(getAddress(base, index), newValue);
+                        }
+                    }
+                }
+                //   condition (1:0..15): Condition
+                public static final class condition {
+                    // Expand Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+                    //   reserved (0:0..2): UNSPECIFIED
+                    public static final class reserved {
+                        public static int get(int base, int index) {
+                            return Condition.reserved.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Condition.reserved.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   tail (0:3..12): PsbIndex
+                    public static final class tail {
+                        public static int get(int base, int index) {
+                            return Condition.tail.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Condition.tail.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   available (0:13..13): UNSPECIFIED
+                    public static final class available {
+                        public static int get(int base, int index) {
+                            return Condition.available.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            Condition.available.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   abortable (0:14..14): BOOL
+                    public static final class abortable {
+                        public static boolean get(int base, int index) {
+                            return Condition.abortable.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            Condition.abortable.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   wakeup (0:15..15): BOOL
+                    public static final class wakeup {
+                        public static boolean get(int base, int index) {
+                            return Condition.wakeup.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            Condition.wakeup.set(getAddress(base, index), newValue);
+                        }
+                    }
                 }
             }
         }
-        // ProcessStateBlock  timeout  CARD16
-        public static final class timeout {
-            public static final int OFFSET = block.OFFSET +  3;
+        // blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock]
+        public static final class blocks {
+            public static final int TAG  = 1;
+            public static final int SIZE = 8192;
+            public static int getAddress(int base) {
+                return ProcessDataArea.vp.getAddress(base);
+            }
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                return ProcessStateBlock.timeout.get(getAddress(base, index));
-            }
-            public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                ProcessStateBlock.timeout.set(getAddress(base, index), newValue);
-            }
-        }
-        // ProcessStateBlock  mds  CARD16
-        public static final class mds {
-            public static final int OFFSET = block.OFFSET +  4;
+            // block (0): ARRAY PsbIndex OF ProcessStateBlock
+            public static final class block {
+                public static final int SIZE = 8192;
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                return ProcessStateBlock.mds.get(getAddress(base, index));
-            }
-            public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                ProcessStateBlock.mds.set(getAddress(base, index), newValue);
-            }
-        }
-        // ProcessStateBlock  data  CARD16
-        public static final class data {
-            public static final int OFFSET = block.OFFSET +  5;
+                private static final int OFFSET = 0;
+                public static int getAddress(int base) {
+                    return ProcessDataArea.vp.blocks.getAddress(base) + OFFSET;
+                }
+                // ProcessDataArea#blocks#block: TYPE = ARRAY PsbIndex OF ProcessStateBlock;
+                //   PsbIndex: TYPE = CARDINAL [0..1024)
+                //   ProcessStateBlock: TYPE = RECORD[link (0:0..15): PsbLink, flags (1:0..15): PsbFlags, context (2:0..15): POINTER, timeout (3:0..15): CARDINAL, mds (4:0..15): CARDINAL, available (5:0..15): UNSPECIFIED, stickty (6:0..31): LONG_UNSPECIFIED]
+                private static final int ELEMENT_SIZE = 8;
+                public static int getAddress(int base, int index) {
+                    return ProcessDataArea.vp.blocks.block.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
+                }
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            public static @CARD16 int get(@LONG_POINTER int base, int index) {
-                return ProcessStateBlock.data.get(getAddress(base, index));
-            }
-            public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-                ProcessStateBlock.data.set(getAddress(base, index), newValue);
-            }
-        }
-        // ProcessStateBlock  sticky  CARD32
-        public static final class sticky {
-            public static final int OFFSET = block.OFFSET +  6;
+                private static int checkIndex(int index) {
+                    return PsbIndex.checkValue(index);
+                }
 
-            public static int getAddress(@LONG_POINTER int base, int index) {
-                return base + OFFSET + (ARRAY_SIZE * index);
-            }
-            public static @CARD32 int get(@LONG_POINTER int base, int index) {
-                return ProcessStateBlock.sticky.get(getAddress(base, index));
-            }
-            public static void set(@LONG_POINTER int base, int index, @CARD32 int newValue) {
-                ProcessStateBlock.sticky.set(getAddress(base, index), newValue);
+                // Expand ProcessStateBlock: TYPE = RECORD[link (0:0..15): PsbLink, flags (1:0..15): PsbFlags, context (2:0..15): POINTER, timeout (3:0..15): CARDINAL, mds (4:0..15): CARDINAL, available (5:0..15): UNSPECIFIED, stickty (6:0..31): LONG_UNSPECIFIED];
+                //   link (0:0..15): PsbLink
+                public static final class link {
+                    // Expand PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
+                    //   priority (0:0..2): Priority
+                    public static final class priority {
+                        public static int get(int base, int index) {
+                            return PsbLink.priority.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            PsbLink.priority.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   next (0:3..12): PsbIndex
+                    public static final class next {
+                        public static int get(int base, int index) {
+                            return PsbLink.next.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            PsbLink.next.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   failed (0:13..13): BOOL
+                    public static final class failed {
+                        public static boolean get(int base, int index) {
+                            return PsbLink.failed.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            PsbLink.failed.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   permanent (0:14..14): BOOL
+                    public static final class permanent {
+                        public static boolean get(int base, int index) {
+                            return PsbLink.permanent.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            PsbLink.permanent.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   preempted (0:15..15): BOOL
+                    public static final class preempted {
+                        public static boolean get(int base, int index) {
+                            return PsbLink.preempted.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            PsbLink.preempted.set(getAddress(base, index), newValue);
+                        }
+                    }
+                }
+                //   flags (1:0..15): PsbFlags
+                public static final class flags {
+                    // Expand PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOL, abort (0:15..15): BOOL];
+                    //   available (0:0..2): UNSPECIFIED
+                    public static final class available {
+                        public static int get(int base, int index) {
+                            return PsbFlags.available.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            PsbFlags.available.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   cleanup (0:3..12): PsbIndex
+                    public static final class cleanup {
+                        public static int get(int base, int index) {
+                            return PsbFlags.cleanup.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            PsbFlags.cleanup.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   reserved (0:13..13): UNSPECIFIED
+                    public static final class reserved {
+                        public static int get(int base, int index) {
+                            return PsbFlags.reserved.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, int newValue) {
+                            PsbFlags.reserved.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   waiting (0:14..14): BOOL
+                    public static final class waiting {
+                        public static boolean get(int base, int index) {
+                            return PsbFlags.waiting.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            PsbFlags.waiting.set(getAddress(base, index), newValue);
+                        }
+                    }
+                    //   abort (0:15..15): BOOL
+                    public static final class abort {
+                        public static boolean get(int base, int index) {
+                            return PsbFlags.abort.get(getAddress(base, index));
+                        }
+                        public static void set(int base, int index, boolean newValue) {
+                            PsbFlags.abort.set(getAddress(base, index), newValue);
+                        }
+                    }
+                }
+                //   context (2:0..15): POINTER
+                public static final class context {
+                    public static int get(int base, int index) {
+                        return ProcessStateBlock.context.get(getAddress(base, index));
+                    }
+                    public static void set(int base, int index, int newValue) {
+                        ProcessStateBlock.context.set(getAddress(base, index), newValue);
+                    }
+                }
+                //   timeout (3:0..15): CARDINAL
+                public static final class timeout {
+                    public static int get(int base, int index) {
+                        return ProcessStateBlock.timeout.get(getAddress(base, index));
+                    }
+                    public static void set(int base, int index, int newValue) {
+                        ProcessStateBlock.timeout.set(getAddress(base, index), newValue);
+                    }
+                }
+                //   mds (4:0..15): CARDINAL
+                public static final class mds {
+                    public static int get(int base, int index) {
+                        return ProcessStateBlock.mds.get(getAddress(base, index));
+                    }
+                    public static void set(int base, int index, int newValue) {
+                        ProcessStateBlock.mds.set(getAddress(base, index), newValue);
+                    }
+                }
+                //   available (5:0..15): UNSPECIFIED
+                public static final class available {
+                    public static int get(int base, int index) {
+                        return ProcessStateBlock.available.get(getAddress(base, index));
+                    }
+                    public static void set(int base, int index, int newValue) {
+                        ProcessStateBlock.available.set(getAddress(base, index), newValue);
+                    }
+                }
+                //   stickty (6:0..31): LONG_UNSPECIFIED
+                public static final class stickty {
+                    public static int get(int base, int index) {
+                        return ProcessStateBlock.stickty.get(getAddress(base, index));
+                    }
+                    public static void set(int base, int index, int newValue) {
+                        ProcessStateBlock.stickty.set(getAddress(base, index), newValue);
+                    }
+                }
             }
         }
     }

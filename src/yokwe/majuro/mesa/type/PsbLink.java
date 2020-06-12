@@ -26,134 +26,171 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+
+//
+// PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
+//
 
 public final class PsbLink {
     public static final int SIZE = 1;
 
-    // offset    0  size    1  type Priority  name priority
-    //   bit startBit  0  stopBit  2
-    // offset    0  size    1  type PsbIndex  name next
-    //   bit startBit  3  stopBit 12
-    // offset    0  size    1  type boolean   name failed
-    //   bit startBit 13  stopBit 13
-    // offset    0  size    1  type boolean   name permanent
-    //   bit startBit 14  stopBit 14
-    // offset    0  size    1  type boolean   name preempted
-    //   bit startBit 15  stopBit 15
-
+    // priority (0:0..2): Priority
     public static final class priority {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      = 13;
-        public static final @CARD16 int MASK       = 0b1110_0000_0000_0000;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD16 int get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b1110_0000_0000_0000;
+        private static final int SHIFT = 13;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return Priority.checkValue(value);
+        }
+        public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
+        public static void set(int base, int newValue) {
             Memory.modify(getAddress(base), PsbLink.priority::setBit, newValue);
         }
     }
+    // next (0:3..12): PsbIndex
     public static final class next {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  3;
-        public static final @CARD16 int MASK       = 0b0001_1111_1111_1000;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD16 int get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b0001_1111_1111_1000;
+        private static final int SHIFT = 3;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return PsbIndex.checkValue(value);
+        }
+        public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
+        public static void set(int base, int newValue) {
             Memory.modify(getAddress(base), PsbLink.next::setBit, newValue);
         }
     }
+    // failed (0:13..13): BOOL
     public static final class failed {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  2;
-        public static final @CARD16 int MASK       = 0b0000_0000_0000_0100;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static boolean get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b0000_0000_0000_0100;
+        private static final int SHIFT = 2;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return value;
+        }
+        public static boolean get(int base) {
             return getBit(Memory.fetch(getAddress(base))) != 0;
         }
-        public static void set(@LONG_POINTER int base, boolean newValue) {
+        public static void set(int base, boolean newValue) {
             Memory.modify(getAddress(base), PsbLink.failed::setBit, (newValue ? 1 : 0));
         }
     }
+    // permanent (0:14..14): BOOL
     public static final class permanent {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  1;
-        public static final @CARD16 int MASK       = 0b0000_0000_0000_0010;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static boolean get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b0000_0000_0000_0010;
+        private static final int SHIFT = 1;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return value;
+        }
+        public static boolean get(int base) {
             return getBit(Memory.fetch(getAddress(base))) != 0;
         }
-        public static void set(@LONG_POINTER int base, boolean newValue) {
+        public static void set(int base, boolean newValue) {
             Memory.modify(getAddress(base), PsbLink.permanent::setBit, (newValue ? 1 : 0));
         }
     }
+    // preempted (0:15..15): BOOL
     public static final class preempted {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  0;
-        public static final @CARD16 int MASK       = 0b0000_0000_0000_0001;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static boolean get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b0000_0000_0000_0001;
+        private static final int SHIFT = 0;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return value;
+        }
+        public static boolean get(int base) {
             return getBit(Memory.fetch(getAddress(base))) != 0;
         }
-        public static void set(@LONG_POINTER int base, boolean newValue) {
+        public static void set(int base, boolean newValue) {
             Memory.modify(getAddress(base), PsbLink.preempted::setBit, (newValue ? 1 : 0));
         }
     }

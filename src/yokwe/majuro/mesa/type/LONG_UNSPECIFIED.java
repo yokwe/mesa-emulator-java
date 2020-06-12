@@ -26,40 +26,27 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
 
-public final class Context {
-    public static final int SIZE = 1;
+//
+//  LONG_UNSPECIFIED: TYPE = LONG_UNSPECIFIED [0..4294967296);
+//
 
-    // offset    0  size    1  type CARD16    name frame
-    // offset    0  size    1  type CARD16    name state
+public final class LONG_UNSPECIFIED {
+    public  static final int  SIZE = 2;
 
-    public static final class frame {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
+    private static final long MIN  = 0;
+    private static final long MAX  = (1L << 32) - 1;
+    private static final Subrange SUBRANGE = new Subrange(MIN, MAX);
 
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
-        }
-        public static @CARD16 int get(@LONG_POINTER int base) {
-            return Memory.fetch(getAddress(base));
-        }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-            Memory.store(getAddress(base), newValue);
-        }
+    public static int checkValue(int value) {
+        SUBRANGE.check(value);
+        return value;
     }
-    public static final class state {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
 
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
-        }
-        public static @CARD16 int get(@LONG_POINTER int base) {
-            return Memory.fetch(getAddress(base));
-        }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-            Memory.store(getAddress(base), newValue);
-        }
+    public static int get(int base) {
+        return checkValue(Memory.readDbl(base));
+    }
+    public static void set(int base, int newValue) {
+        Memory.writeDbl(base, checkValue(newValue));
     }
 }

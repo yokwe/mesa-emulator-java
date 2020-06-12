@@ -26,85 +26,91 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+
+//
+// TaggedControlLink: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
+//
 
 public final class TaggedControlLink {
     public static final int SIZE = 2;
 
-    // offset    0  size    2  type CARD32    name data
-    //   bit startBit  0  stopBit 13
-    // offset    0  size    2  type CARD32    name tag
-    //   bit startBit 14  stopBit 15
-    // offset    0  size    2  type CARD32    name fill
-    //   bit startBit 16  stopBit 31
-
+    // data (0:0..13): UNSPECIFIED
     public static final class data {
-        public static final         int SIZE       =  2;
-        public static final         int OFFSET     =  0;
-        public static final @CARD32 int MASK       = 0b1111_1111_1111_1100_0000_0000_0000_0000;
-        public static final         int SHIFT      = 18;
+        public static final int SIZE = 1;
 
-        public static @CARD32 int getBit(@CARD32 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD32 int setBit(@CARD32 int value, @CARD32 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD32 int get(@LONG_POINTER int base) {
-            return getBit(Memory.readDbl(getAddress(base)));
+        private static final int MASK  = 0b1111_1111_1111_1100;
+        private static final int SHIFT = 2;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
         }
-        public static void set(@LONG_POINTER int base, @CARD32 int newValue) {
-            Memory.modifyDbl(getAddress(base), TaggedControlLink.data::setBit, newValue);
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return UNSPECIFIED.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), TaggedControlLink.data::setBit, newValue);
         }
     }
+    // tag (0:14..15): LinkType
     public static final class tag {
-        public static final         int SIZE       =  2;
-        public static final         int OFFSET     =  0;
-        public static final @CARD32 int MASK       = 0b0000_0000_0000_0011_0000_0000_0000_0000;
-        public static final         int SHIFT      = 16;
+        public static final int SIZE = 1;
 
-        public static @CARD32 int getBit(@CARD32 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD32 int setBit(@CARD32 int value, @CARD32 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD32 int get(@LONG_POINTER int base) {
-            return getBit(Memory.readDbl(getAddress(base)));
+        private static final int MASK  = 0b0000_0000_0000_0011;
+        private static final int SHIFT = 0;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
         }
-        public static void set(@LONG_POINTER int base, @CARD32 int newValue) {
-            Memory.modifyDbl(getAddress(base), TaggedControlLink.tag::setBit, newValue);
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return LinkType.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), TaggedControlLink.tag::setBit, newValue);
         }
     }
+    // fill (1:0..15): UNSPECIFIED
     public static final class fill {
-        public static final         int SIZE       =  2;
-        public static final         int OFFSET     =  0;
-        public static final @CARD32 int MASK       = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-        public static final         int SHIFT      = 0;
+        public static final int SIZE = 1;
 
-        public static @CARD32 int getBit(@CARD32 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD32 int setBit(@CARD32 int value, @CARD32 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 1;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD32 int get(@LONG_POINTER int base) {
-            return getBit(Memory.readDbl(getAddress(base)));
+        public static int get(int base) {
+            return UNSPECIFIED.get(getAddress(base));
         }
-        public static void set(@LONG_POINTER int base, @CARD32 int newValue) {
-            Memory.modifyDbl(getAddress(base), TaggedControlLink.fill::setBit, newValue);
+        public static void set(int base, int newValue) {
+            UNSPECIFIED.set(getAddress(base), newValue);
         }
     }
 }

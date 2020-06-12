@@ -25,83 +25,288 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Type.*;
+import yokwe.majuro.mesa.Memory;
+
+//
+// FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
+//
 
 public final class FaultQueue {
     public static final int SIZE = 2;
 
-    // offset    0  size    1  type Queue     name queue
-    // offset    1  size    1  type Condition  name condition
-
+    // queue (0:0..15): Queue
     public static final class queue {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
+        public static final int SIZE = 1;
 
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        //   Queue  tail
-        public static final class tail {
-            public static final int OFFSET = queue.OFFSET +  0;
+        // Expand Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+        //   reserved1 (0:0..2): UNSPECIFIED
+        public static final class reserved1 {
+            public static final int SIZE = 1;
 
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.queue.getAddress(base) + OFFSET;
             }
-            public static @CARD16 int get(@LONG_POINTER int base) {
-                return Queue.tail.get(getAddress(base));
+            private static final int MASK  = 0b1110_0000_0000_0000;
+            private static final int SHIFT = 13;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
             }
-            public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-                Queue.tail.set(getAddress(base), newValue);
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return UNSPECIFIED.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), FaultQueue.queue.reserved1::setBit, newValue);
+            }
+        }
+        //   tail (0:3..12): PsbIndex
+        public static final class tail {
+            public static final int SIZE = 1;
+
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.queue.getAddress(base) + OFFSET;
+            }
+            private static final int MASK  = 0b0001_1111_1111_1000;
+            private static final int SHIFT = 3;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
+            }
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return PsbIndex.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), FaultQueue.queue.tail::setBit, newValue);
+            }
+        }
+        //   reserved2 (0:13..15): UNSPECIFIED
+        public static final class reserved2 {
+            public static final int SIZE = 1;
+
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.queue.getAddress(base) + OFFSET;
+            }
+            private static final int MASK  = 0b0000_0000_0000_0111;
+            private static final int SHIFT = 0;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
+            }
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return UNSPECIFIED.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), FaultQueue.queue.reserved2::setBit, newValue);
             }
         }
     }
+    // condition (1:0..15): Condition
     public static final class condition {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  1;
+        public static final int SIZE = 1;
 
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 1;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        //   Condition  tail
+        // Expand Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+        //   reserved (0:0..2): UNSPECIFIED
+        public static final class reserved {
+            public static final int SIZE = 1;
+
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.condition.getAddress(base) + OFFSET;
+            }
+            private static final int MASK  = 0b1110_0000_0000_0000;
+            private static final int SHIFT = 13;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
+            }
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return UNSPECIFIED.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), FaultQueue.condition.reserved::setBit, newValue);
+            }
+        }
+        //   tail (0:3..12): PsbIndex
         public static final class tail {
-            public static final int OFFSET = condition.OFFSET +  0;
+            public static final int SIZE = 1;
 
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.condition.getAddress(base) + OFFSET;
             }
-            public static @CARD16 int get(@LONG_POINTER int base) {
-                return Condition.tail.get(getAddress(base));
+            private static final int MASK  = 0b0001_1111_1111_1000;
+            private static final int SHIFT = 3;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
             }
-            public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-                Condition.tail.set(getAddress(base), newValue);
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return PsbIndex.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), FaultQueue.condition.tail::setBit, newValue);
             }
         }
-        //   Condition  abortable
+        //   available (0:13..13): UNSPECIFIED
+        public static final class available {
+            public static final int SIZE = 1;
+
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.condition.getAddress(base) + OFFSET;
+            }
+            private static final int MASK  = 0b0000_0000_0000_0100;
+            private static final int SHIFT = 2;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
+            }
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return UNSPECIFIED.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), FaultQueue.condition.available::setBit, newValue);
+            }
+        }
+        //   abortable (0:14..14): BOOL
         public static final class abortable {
-            public static final int OFFSET = condition.OFFSET +  0;
+            public static final int SIZE = 1;
 
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.condition.getAddress(base) + OFFSET;
             }
-            public static boolean get(@LONG_POINTER int base) {
-                return Condition.abortable.get(getAddress(base));
+            private static final int MASK  = 0b0000_0000_0000_0010;
+            private static final int SHIFT = 1;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
             }
-            public static void set(@LONG_POINTER int base, boolean newValue) {
-                Condition.abortable.set(getAddress(base), newValue);
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return value;
+            }
+            public static boolean get(int base) {
+                return getBit(Memory.fetch(getAddress(base))) != 0;
+            }
+            public static void set(int base, boolean newValue) {
+                Memory.modify(getAddress(base), FaultQueue.condition.abortable::setBit, (newValue ? 1 : 0));
             }
         }
-        //   Condition  wakeup
+        //   wakeup (0:15..15): BOOL
         public static final class wakeup {
-            public static final int OFFSET = condition.OFFSET +  0;
+            public static final int SIZE = 1;
 
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return FaultQueue.condition.getAddress(base) + OFFSET;
             }
-            public static boolean get(@LONG_POINTER int base) {
-                return Condition.wakeup.get(getAddress(base));
+            private static final int MASK  = 0b0000_0000_0000_0001;
+            private static final int SHIFT = 0;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
             }
-            public static void set(@LONG_POINTER int base, boolean newValue) {
-                Condition.wakeup.set(getAddress(base), newValue);
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return value;
+            }
+            public static boolean get(int base) {
+                return getBit(Memory.fetch(getAddress(base))) != 0;
+            }
+            public static void set(int base, boolean newValue) {
+                Memory.modify(getAddress(base), FaultQueue.condition.wakeup::setBit, (newValue ? 1 : 0));
             }
         }
     }

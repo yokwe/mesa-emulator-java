@@ -25,118 +25,69 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+//
+// CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY CARDINAL [0..4) OF UNSPECIFIED, code (4): BLOCK];
+//
 
 public final class CodeSegment {
     public static final int SIZE = 4;
 
-    // offset    0  size    1  type CARD8     name globalFsi
-    //   bit startBit  0  stopBit  7
-    // offset    0  size    1  type CARD8     name nlinks
-    //   bit startBit  8  stopBit 15
-    // offset    1  size    1  type boolean   name stops
-    //   bit startBit  0  stopBit  0
-    // offset    1  size    1  type           name available
-    //   bit startBit  1  stopBit 15
-    // offset    2  size    1  type CARD16    name mainBody
-    // offset    3  size    1  type CARD16    name catchCode
+    // available (0:0..63): ARRAY CARDINAL [0..4) OF UNSPECIFIED
+    public static final class available {
+        public static final int SIZE = 4;
 
-    public static final class globalFsi {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  8;
-        public static final @CARD16 int MASK       = 0b1111_1111_0000_0000;
-
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD8 int get(@LONG_POINTER int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+        // CodeSegment#available: TYPE = ARRAY CARDINAL [0..4) OF UNSPECIFIED;
+        //   CARDINAL: TYPE = CARDINAL [0..65536)
+        //   UNSPECIFIED: TYPE = UNSPECIFIED [0..65536)
+        private static final int ELEMENT_SIZE = 1;
+        public static int getAddress(int base, int index) {
+            return CodeSegment.available.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
         }
-        public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
-            Memory.modify(getAddress(base), CodeSegment.globalFsi::setBit, newValue);
+
+        private static final int INDEX_MIN    = 0;
+        private static final int INDEX_MAX    = 3;
+        private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
+        private static int checkIndex(int index) {
+            INDEX_SUBRANGE.check(index);
+            return index;
+        }
+
+        public static int get(int base, int index) {
+            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+        }
+        public static void set(int base, int index, int newValue) {
+            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
         }
     }
-    public static final class nlinks {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  0;
-        public static final @CARD16 int MASK       = 0b0000_0000_1111_1111;
+    // code (4): BLOCK
+    public static final class code {
+        public static final int SIZE = 0;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 4;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD8 int get(@LONG_POINTER int base) {
-            return getBit(Memory.fetch(getAddress(base)));
-        }
-        public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
-            Memory.modify(getAddress(base), CodeSegment.nlinks::setBit, newValue);
-        }
-    }
-    public static final class stops {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  1;
-        public static final         int SHIFT      = 15;
-        public static final @CARD16 int MASK       = 0b1000_0000_0000_0000;
-
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
+        // BLOCK: TYPE = ARRAY CARDINAL [0..0) OF UNSPECIFIED;
+        //   CARDINAL: TYPE = CARDINAL [0..65536)
+        //   UNSPECIFIED: TYPE = UNSPECIFIED [0..65536)
+        private static final int ELEMENT_SIZE = 1;
+        public static int getAddress(int base, int index) {
+            return CodeSegment.code.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
         }
 
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
+        private static int checkIndex(int index) {
+            return CARDINAL.checkValue(index);
         }
-        public static boolean get(@LONG_POINTER int base) {
-            return getBit(Memory.fetch(getAddress(base))) != 0;
-        }
-        public static void set(@LONG_POINTER int base, boolean newValue) {
-            Memory.modify(getAddress(base), CodeSegment.stops::setBit, (newValue ? 1 : 0));
-        }
-    }
-    public static final class mainBody {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  2;
 
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
+        public static int get(int base, int index) {
+            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
         }
-        public static @CARD16 int get(@LONG_POINTER int base) {
-            return Memory.fetch(getAddress(base));
-        }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-            Memory.store(getAddress(base), newValue);
-        }
-    }
-    public static final class catchCode {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  3;
-
-        public static int getAddress(@LONG_POINTER int base) {
-            return base + OFFSET;
-        }
-        public static @CARD16 int get(@LONG_POINTER int base) {
-            return Memory.fetch(getAddress(base));
-        }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
-            Memory.store(getAddress(base), newValue);
+        public static void set(int base, int index, int newValue) {
+            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
         }
     }
 }

@@ -26,59 +26,75 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+
+//
+// LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
+//
 
 public final class LocalWord {
     public static final int SIZE = 1;
 
-    // offset    0  size    1  type CARD8     name available
-    //   bit startBit  0  stopBit  7
-    // offset    0  size    1  type CARD8     name fsi
-    //   bit startBit  8  stopBit 15
-
+    // available (0:0..7): BYTE
     public static final class available {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  8;
-        public static final @CARD16 int MASK       = 0b1111_1111_0000_0000;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD8 int get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b1111_1111_0000_0000;
+        private static final int SHIFT = 8;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return BYTE.checkValue(value);
+        }
+        public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
-        public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
+        public static void set(int base, int newValue) {
             Memory.modify(getAddress(base), LocalWord.available::setBit, newValue);
         }
     }
+    // fsi (0:8..15): FSIndex
     public static final class fsi {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  0;
-        public static final @CARD16 int MASK       = 0b0000_0000_1111_1111;
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD8 int get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b0000_0000_1111_1111;
+        private static final int SHIFT = 0;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return FSIndex.checkValue(value);
+        }
+        public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
-        public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
+        public static void set(int base, int newValue) {
             Memory.modify(getAddress(base), LocalWord.fsi::setBit, newValue);
         }
     }

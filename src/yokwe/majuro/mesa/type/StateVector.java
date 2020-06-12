@@ -26,98 +26,159 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+
+//
+// StateVector: TYPE = RECORD[stack (0:0..223): ARRAY CARDINAL [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): POINTER, data (16): BLOCK];
+//
 
 public final class StateVector {
-    public static final int SIZE = 18;
+    public static final int SIZE = 16;
 
-    // offset    0  size   14  type           name stack
-    //   array  index CARD8             size    1  length  14  element CARD16
-    // offset   14  size    1  type StateWord  name word
-    // offset   15  size    1  type POINTER   name frame
-    // offset   16  size    2  type           name data
-    //   array  index CARD8             size    1  length   2  element CARD16
-
+    // stack (0:0..223): ARRAY CARDINAL [0..StackDepth) OF UNSPECIFIED
     public static final class stack {
-        public static final         int SIZE       = 14;
-        public static final         int OFFSET     =  0;
-        public static final         int ARRAY_SIZE =  1;
-        public static final         int ARRAY_LEN  = 14;
+        public static final int SIZE = 14;
 
-        public static int getAddress(@LONG_POINTER int base, int index) {
-            return base + OFFSET + (ARRAY_SIZE * index);
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
         }
-        public static @CARD16 int get(@LONG_POINTER int base, int index) {
-            return Memory.fetch(getAddress(base, index));
+        // StateVector#stack: TYPE = ARRAY CARDINAL [0..StackDepth) OF UNSPECIFIED;
+        //   CARDINAL: TYPE = CARDINAL [0..65536)
+        //   UNSPECIFIED: TYPE = UNSPECIFIED [0..65536)
+        private static final int ELEMENT_SIZE = 1;
+        public static int getAddress(int base, int index) {
+            return StateVector.stack.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
         }
-        public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-            Memory.store(getAddress(base, index), newValue);
+
+        private static final int INDEX_MIN    = 0;
+        private static final int INDEX_MAX    = 13;
+        private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
+        private static int checkIndex(int index) {
+            INDEX_SUBRANGE.check(index);
+            return index;
+        }
+
+        public static int get(int base, int index) {
+            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+        }
+        public static void set(int base, int index, int newValue) {
+            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
         }
     }
+    // word (14:0..15): StateWord
     public static final class word {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     = 14;
+        public static final int SIZE = 1;
 
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 14;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        //   StateWord  breakByte
-        public static final class breakByte {
-            public static final int OFFSET = word.OFFSET +  0;
+        // Expand StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
+        //   instByte (0:0..7): BYTE
+        public static final class instByte {
+            public static final int SIZE = 1;
 
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return StateVector.word.getAddress(base) + OFFSET;
             }
-            public static @CARD8 int get(@LONG_POINTER int base) {
-                return StateWord.breakByte.get(getAddress(base));
+            private static final int MASK  = 0b1111_1111_0000_0000;
+            private static final int SHIFT = 8;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
             }
-            public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
-                StateWord.breakByte.set(getAddress(base), newValue);
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return BYTE.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), StateVector.word.instByte::setBit, newValue);
             }
         }
-        //   StateWord  stkptr
-        public static final class stkptr {
-            public static final int OFFSET = word.OFFSET +  0;
+        //   stkPtr (0:8..15): BYTE
+        public static final class stkPtr {
+            public static final int SIZE = 1;
 
-            public static int getAddress(@LONG_POINTER int base) {
-                return base + OFFSET;
+            private static final int OFFSET = 0;
+            public static int getAddress(int base) {
+                return StateVector.word.getAddress(base) + OFFSET;
             }
-            public static @CARD8 int get(@LONG_POINTER int base) {
-                return StateWord.stkptr.get(getAddress(base));
+            private static final int MASK  = 0b0000_0000_1111_1111;
+            private static final int SHIFT = 0;
+
+            private static int getBit(int value) {
+                return (checkValue(value) & MASK) >>> SHIFT;
             }
-            public static void set(@LONG_POINTER int base, @CARD8 int newValue) {
-                StateWord.stkptr.set(getAddress(base), newValue);
+            private static int setBit(int value, int newValue) {
+                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+            }
+
+            private static final int MAX = MASK >>> SHIFT;
+            private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+            public static int checkValue(int value) {
+                SUBRANGE.check(value);
+                return BYTE.checkValue(value);
+            }
+            public static int get(int base) {
+                return getBit(Memory.fetch(getAddress(base)));
+            }
+            public static void set(int base, int newValue) {
+                Memory.modify(getAddress(base), StateVector.word.stkPtr::setBit, newValue);
             }
         }
     }
+    // frame (15:0..15): POINTER
     public static final class frame {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     = 15;
+        public static final int SIZE = 1;
 
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 15;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @POINTER int get(@LONG_POINTER int base) {
-            return Memory.fetch(getAddress(base));
+        public static int get(int base) {
+            return POINTER.get(getAddress(base));
         }
-        public static void set(@LONG_POINTER int base, @POINTER int newValue) {
-            Memory.store(getAddress(base), newValue);
+        public static void set(int base, int newValue) {
+            POINTER.set(getAddress(base), newValue);
         }
     }
+    // data (16): BLOCK
     public static final class data {
-        public static final         int SIZE       =  2;
-        public static final         int OFFSET     = 16;
-        public static final         int ARRAY_SIZE =  1;
-        public static final         int ARRAY_LEN  =  2;
+        public static final int SIZE = 0;
 
-        public static int getAddress(@LONG_POINTER int base, int index) {
-            return base + OFFSET + (ARRAY_SIZE * index);
+        private static final int OFFSET = 16;
+        public static int getAddress(int base) {
+            return base + OFFSET;
         }
-        public static @CARD16 int get(@LONG_POINTER int base, int index) {
-            return Memory.fetch(getAddress(base, index));
+        // BLOCK: TYPE = ARRAY CARDINAL [0..0) OF UNSPECIFIED;
+        //   CARDINAL: TYPE = CARDINAL [0..65536)
+        //   UNSPECIFIED: TYPE = UNSPECIFIED [0..65536)
+        private static final int ELEMENT_SIZE = 1;
+        public static int getAddress(int base, int index) {
+            return StateVector.data.getAddress(base) + (checkIndex(index) * ELEMENT_SIZE);
         }
-        public static void set(@LONG_POINTER int base, int index, @CARD16 int newValue) {
-            Memory.store(getAddress(base, index), newValue);
+
+        private static int checkIndex(int index) {
+            return CARDINAL.checkValue(index);
+        }
+
+        public static int get(int base, int index) {
+            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+        }
+        public static void set(int base, int index, int newValue) {
+            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
         }
     }
 }

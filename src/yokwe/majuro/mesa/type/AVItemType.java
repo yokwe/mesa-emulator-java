@@ -33,33 +33,25 @@ import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
-// XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
+// AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
 //
 
-public class XferType {
-    private static final Logger logger = LoggerFactory.getLogger(XferType.class);
+public class AVItemType {
+    private static final Logger logger = LoggerFactory.getLogger(AVItemType.class);
 
     public static final int SIZE = 1;
 
     // enum value
-    public static final int RETURN           = 0;
-    public static final int CALL             = 1;
-    public static final int LOCAL_CALL       = 2;
-    public static final int PART             = 3;
-    public static final int XFER             = 4;
-    public static final int TRAP             = 5;
-    public static final int PROCESS_SWITCH   = 6;
-    public static final int UNUSED           = 7;
+    public static final int FRAME            = 0;
+    public static final int EMPTY            = 1;
+    public static final int INDIRECT         = 2;
+    public static final int UNUSED           = 3;
 
     public static String toString(int value) {
         switch(value) {
-        case RETURN          : return "RETURN";
-        case CALL            : return "CALL";
-        case LOCAL_CALL      : return "LOCAL_CALL";
-        case PART            : return "PART";
-        case XFER            : return "XFER";
-        case TRAP            : return "TRAP";
-        case PROCESS_SWITCH  : return "PROCESS_SWITCH";
+        case FRAME           : return "FRAME";
+        case EMPTY           : return "EMPTY";
+        case INDIRECT        : return "INDIRECT";
         case UNUSED          : return "UNUSED";
         default:
             logger.error("value is out of range");
@@ -76,13 +68,9 @@ public class XferType {
     public static int checkValue(int value) {
         if (Debug.ENABLE_TYPE_RANGE_CHECK) {
             switch(value) {
-            case RETURN:
-            case CALL:
-            case LOCAL_CALL:
-            case PART:
-            case XFER:
-            case TRAP:
-            case PROCESS_SWITCH:
+            case FRAME:
+            case EMPTY:
+            case INDIRECT:
             case UNUSED:
                 break;
             default:

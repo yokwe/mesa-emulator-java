@@ -28,22 +28,22 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 
 //
-// Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+// NibblePair: TYPE = RECORD[left (0:0..3): NIBBLE, right (0:4..7): NIBBLE];
 //
 
-public final class Queue {
+public final class NibblePair {
     public static final int SIZE = 1;
 
-    // reserved1 (0:0..2): UNSPECIFIED
-    public static final class reserved1 {
+    // left (0:0..3): NIBBLE
+    public static final class left {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1110_0000_0000_0000;
-        private static final int SHIFT = 13;
+        private static final int MASK  = 0b1111_0000_0000_0000;
+        private static final int SHIFT = 12;
 
         private static int getBit(int value) {
             return (checkValue(value) & MASK) >>> SHIFT;
@@ -57,25 +57,25 @@ public final class Queue {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
+            return NIBBLE.checkValue(value);
         }
         public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Queue.reserved1::setBit, newValue);
+            Memory.modify(getAddress(base), NibblePair.left::setBit, newValue);
         }
     }
-    // tail (0:3..12): PsbIndex
-    public static final class tail {
+    // right (0:4..7): NIBBLE
+    public static final class right {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0001_1111_1111_1000;
-        private static final int SHIFT = 3;
+        private static final int MASK  = 0b0000_1111_0000_0000;
+        private static final int SHIFT = 8;
 
         private static int getBit(int value) {
             return (checkValue(value) & MASK) >>> SHIFT;
@@ -89,45 +89,13 @@ public final class Queue {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return PsbIndex.checkValue(value);
+            return NIBBLE.checkValue(value);
         }
         public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Queue.tail::setBit, newValue);
-        }
-    }
-    // reserved2 (0:13..15): UNSPECIFIED
-    public static final class reserved2 {
-        public static final int SIZE = 1;
-
-        private static final int OFFSET = 0;
-        public static int getAddress(int base) {
-            return base + OFFSET;
-        }
-        private static final int MASK  = 0b0000_0000_0000_0111;
-        private static final int SHIFT = 0;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
-        }
-        public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
-        }
-        public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Queue.reserved2::setBit, newValue);
+            Memory.modify(getAddress(base), NibblePair.right::setBit, newValue);
         }
     }
 }

@@ -28,21 +28,85 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 
 //
-// Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+// BitBltFlags: TYPE = RECORD[direction (0:0..0): Direction, disjoint (0:1..1): BOOL, disjointItems (0:2..2): BOOL, gray (0:3..3): BOOL, srcFunc (0:4..4): SrcFunc, dstFunc (0:5..6): DstFunc, reserved (0:7..15): UNSPECIFIED];
 //
 
-public final class Condition {
+public final class BitBltFlags {
     public static final int SIZE = 1;
 
-    // reserved (0:0..2): UNSPECIFIED
-    public static final class reserved {
+    // direction (0:0..0): Direction
+    public static final class direction {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1110_0000_0000_0000;
+        private static final int MASK  = 0b1000_0000_0000_0000;
+        private static final int SHIFT = 15;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return Direction.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), BitBltFlags.direction::setBit, newValue);
+        }
+    }
+    // disjoint (0:1..1): BOOL
+    public static final class disjoint {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b0100_0000_0000_0000;
+        private static final int SHIFT = 14;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return value;
+        }
+        public static boolean get(int base) {
+            return getBit(Memory.fetch(getAddress(base))) != 0;
+        }
+        public static void set(int base, boolean newValue) {
+            Memory.modify(getAddress(base), BitBltFlags.disjoint::setBit, (newValue ? 1 : 0));
+        }
+    }
+    // disjointItems (0:2..2): BOOL
+    public static final class disjointItems {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b0010_0000_0000_0000;
         private static final int SHIFT = 13;
 
         private static int getBit(int value) {
@@ -57,89 +121,25 @@ public final class Condition {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
+            return value;
         }
-        public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+        public static boolean get(int base) {
+            return getBit(Memory.fetch(getAddress(base))) != 0;
         }
-        public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Condition.reserved::setBit, newValue);
+        public static void set(int base, boolean newValue) {
+            Memory.modify(getAddress(base), BitBltFlags.disjointItems::setBit, (newValue ? 1 : 0));
         }
     }
-    // tail (0:3..12): PsbIndex
-    public static final class tail {
+    // gray (0:3..3): BOOL
+    public static final class gray {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0001_1111_1111_1000;
-        private static final int SHIFT = 3;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return PsbIndex.checkValue(value);
-        }
-        public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
-        }
-        public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Condition.tail::setBit, newValue);
-        }
-    }
-    // available (0:13..13): UNSPECIFIED
-    public static final class available {
-        public static final int SIZE = 1;
-
-        private static final int OFFSET = 0;
-        public static int getAddress(int base) {
-            return base + OFFSET;
-        }
-        private static final int MASK  = 0b0000_0000_0000_0100;
-        private static final int SHIFT = 2;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
-        }
-        public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
-        }
-        public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), Condition.available::setBit, newValue);
-        }
-    }
-    // abortable (0:14..14): BOOL
-    public static final class abortable {
-        public static final int SIZE = 1;
-
-        private static final int OFFSET = 0;
-        public static int getAddress(int base) {
-            return base + OFFSET;
-        }
-        private static final int MASK  = 0b0000_0000_0000_0010;
-        private static final int SHIFT = 1;
+        private static final int MASK  = 0b0001_0000_0000_0000;
+        private static final int SHIFT = 12;
 
         private static int getBit(int value) {
             return (checkValue(value) & MASK) >>> SHIFT;
@@ -159,18 +159,82 @@ public final class Condition {
             return getBit(Memory.fetch(getAddress(base))) != 0;
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), Condition.abortable::setBit, (newValue ? 1 : 0));
+            Memory.modify(getAddress(base), BitBltFlags.gray::setBit, (newValue ? 1 : 0));
         }
     }
-    // wakeup (0:15..15): BOOL
-    public static final class wakeup {
+    // srcFunc (0:4..4): SrcFunc
+    public static final class srcFunc {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0000_0000_0001;
+        private static final int MASK  = 0b0000_1000_0000_0000;
+        private static final int SHIFT = 11;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return SrcFunc.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), BitBltFlags.srcFunc::setBit, newValue);
+        }
+    }
+    // dstFunc (0:5..6): DstFunc
+    public static final class dstFunc {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b0000_0110_0000_0000;
+        private static final int SHIFT = 9;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return DstFunc.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), BitBltFlags.dstFunc::setBit, newValue);
+        }
+    }
+    // reserved (0:7..15): UNSPECIFIED
+    public static final class reserved {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b0000_0001_1111_1111;
         private static final int SHIFT = 0;
 
         private static int getBit(int value) {
@@ -185,13 +249,13 @@ public final class Condition {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return value;
+            return UNSPECIFIED.checkValue(value);
         }
-        public static boolean get(int base) {
-            return getBit(Memory.fetch(getAddress(base))) != 0;
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
         }
-        public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), Condition.wakeup::setBit, (newValue ? 1 : 0));
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), BitBltFlags.reserved::setBit, newValue);
         }
     }
 }

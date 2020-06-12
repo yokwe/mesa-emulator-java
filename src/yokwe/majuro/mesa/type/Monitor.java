@@ -26,63 +26,139 @@
 package yokwe.majuro.mesa.type;
 
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Type.*;
+
+//
+// Monitor: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..14): UNSPECIFIED, locked (0:15..15): BOOL];
+//
 
 public final class Monitor {
     public static final int SIZE = 1;
 
-    // offset    0  size    1  type           name reserved
-    //   bit startBit  0  stopBit  2
-    // offset    0  size    1  type PsbIndex  name tail
-    //   bit startBit  3  stopBit 12
-    // offset    0  size    1  type           name available
-    //   bit startBit 13  stopBit 14
-    // offset    0  size    1  type boolean   name locked
-    //   bit startBit 15  stopBit 15
+    // reserved (0:0..2): UNSPECIFIED
+    public static final class reserved {
+        public static final int SIZE = 1;
 
-    public static final class tail {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  3;
-        public static final @CARD16 int MASK       = 0b0001_1111_1111_1000;
-
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static @CARD16 int get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b1110_0000_0000_0000;
+        private static final int SHIFT = 13;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return UNSPECIFIED.checkValue(value);
+        }
+        public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
-        public static void set(@LONG_POINTER int base, @CARD16 int newValue) {
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), Monitor.reserved::setBit, newValue);
+        }
+    }
+    // tail (0:3..12): PsbIndex
+    public static final class tail {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b0001_1111_1111_1000;
+        private static final int SHIFT = 3;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return PsbIndex.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
             Memory.modify(getAddress(base), Monitor.tail::setBit, newValue);
         }
     }
-    public static final class locked {
-        public static final         int SIZE       =  1;
-        public static final         int OFFSET     =  0;
-        public static final         int SHIFT      =  0;
-        public static final @CARD16 int MASK       = 0b0000_0000_0000_0001;
+    // available (0:13..14): UNSPECIFIED
+    public static final class available {
+        public static final int SIZE = 1;
 
-        public static @CARD16 int getBit(@CARD16 int value) {
-            return (value & MASK) >>> SHIFT;
-        }
-        public static @CARD16 int setBit(@CARD16 int value, @CARD16 int newValue) {
-            return ((newValue << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        public static int getAddress(@LONG_POINTER int base) {
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
             return base + OFFSET;
         }
-        public static boolean get(@LONG_POINTER int base) {
+        private static final int MASK  = 0b0000_0000_0000_0110;
+        private static final int SHIFT = 1;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return UNSPECIFIED.checkValue(value);
+        }
+        public static int get(int base) {
+            return getBit(Memory.fetch(getAddress(base)));
+        }
+        public static void set(int base, int newValue) {
+            Memory.modify(getAddress(base), Monitor.available::setBit, newValue);
+        }
+    }
+    // locked (0:15..15): BOOL
+    public static final class locked {
+        public static final int SIZE = 1;
+
+        private static final int OFFSET = 0;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        private static final int MASK  = 0b0000_0000_0000_0001;
+        private static final int SHIFT = 0;
+
+        private static int getBit(int value) {
+            return (checkValue(value) & MASK) >>> SHIFT;
+        }
+        private static int setBit(int value, int newValue) {
+            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
+        }
+
+        private static final int MAX = MASK >>> SHIFT;
+        private static final Subrange SUBRANGE = new Subrange(0, MAX);
+
+        public static int checkValue(int value) {
+            SUBRANGE.check(value);
+            return value;
+        }
+        public static boolean get(int base) {
             return getBit(Memory.fetch(getAddress(base))) != 0;
         }
-        public static void set(@LONG_POINTER int base, boolean newValue) {
+        public static void set(int base, boolean newValue) {
             Memory.modify(getAddress(base), Monitor.locked::setBit, (newValue ? 1 : 0));
         }
     }

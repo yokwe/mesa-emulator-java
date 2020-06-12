@@ -28,22 +28,22 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 
 //
-// StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
+// GFTItem: TYPE = RECORD[globalFrame (0:0..15): LONG_POINTER, codebase (2:0..31): LONG_POINTER];
 //
 
-public final class StateWord {
-    public static final int SIZE = 1;
+public final class GFTItem {
+    public static final int SIZE = 4;
 
-    // instByte (0:0..7): BYTE
-    public static final class instByte {
-        public static final int SIZE = 1;
+    // globalFrame (0:0..15): LONG_POINTER
+    public static final class globalFrame {
+        public static final int SIZE = 2;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1111_1111_0000_0000;
-        private static final int SHIFT = 8;
+        private static final int MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+        private static final int SHIFT = 16;
 
         private static int getBit(int value) {
             return (checkValue(value) & MASK) >>> SHIFT;
@@ -57,45 +57,28 @@ public final class StateWord {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return BYTE.checkValue(value);
+            return LONG_POINTER.checkValue(value);
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return getBit(Memory.readDbl(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), StateWord.instByte::setBit, newValue);
+            Memory.modifyDbl(getAddress(base), GFTItem.globalFrame::setBit, newValue);
         }
     }
-    // stkPtr (0:8..15): BYTE
-    public static final class stkPtr {
-        public static final int SIZE = 1;
+    // codebase (2:0..31): LONG_POINTER
+    public static final class codebase {
+        public static final int SIZE = 2;
 
-        private static final int OFFSET = 0;
+        private static final int OFFSET = 2;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0000_1111_1111;
-        private static final int SHIFT = 0;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return BYTE.checkValue(value);
-        }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return LONG_POINTER.get(getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), StateWord.stkPtr::setBit, newValue);
+            LONG_POINTER.set(getAddress(base), newValue);
         }
     }
 }

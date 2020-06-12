@@ -33,34 +33,26 @@ import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
-// XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
+// LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
 //
 
-public class XferType {
-    private static final Logger logger = LoggerFactory.getLogger(XferType.class);
+public class LinkType {
+    private static final Logger logger = LoggerFactory.getLogger(LinkType.class);
 
     public static final int SIZE = 1;
 
     // enum value
-    public static final int RETURN           = 0;
-    public static final int CALL             = 1;
-    public static final int LOCAL_CALL       = 2;
-    public static final int PART             = 3;
-    public static final int XFER             = 4;
-    public static final int TRAP             = 5;
-    public static final int PROCESS_SWITCH   = 6;
-    public static final int UNUSED           = 7;
+    public static final int FRAME            = 0;
+    public static final int OLD_PROCEDURE    = 1;
+    public static final int INDIRECT         = 2;
+    public static final int NEW_PROCEDURE    = 3;
 
     public static String toString(int value) {
         switch(value) {
-        case RETURN          : return "RETURN";
-        case CALL            : return "CALL";
-        case LOCAL_CALL      : return "LOCAL_CALL";
-        case PART            : return "PART";
-        case XFER            : return "XFER";
-        case TRAP            : return "TRAP";
-        case PROCESS_SWITCH  : return "PROCESS_SWITCH";
-        case UNUSED          : return "UNUSED";
+        case FRAME           : return "FRAME";
+        case OLD_PROCEDURE   : return "OLD_PROCEDURE";
+        case INDIRECT        : return "INDIRECT";
+        case NEW_PROCEDURE   : return "NEW_PROCEDURE";
         default:
             logger.error("value is out of range");
             logger.error("  value {}", value);
@@ -76,14 +68,10 @@ public class XferType {
     public static int checkValue(int value) {
         if (Debug.ENABLE_TYPE_RANGE_CHECK) {
             switch(value) {
-            case RETURN:
-            case CALL:
-            case LOCAL_CALL:
-            case PART:
-            case XFER:
-            case TRAP:
-            case PROCESS_SWITCH:
-            case UNUSED:
+            case FRAME:
+            case OLD_PROCEDURE:
+            case INDIRECT:
+            case NEW_PROCEDURE:
                 break;
             default:
                 logger.error("value is out of range");

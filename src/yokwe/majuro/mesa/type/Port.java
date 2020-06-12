@@ -25,77 +25,56 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
-// StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
+// Port: TYPE = RECORD[inport (0:0..15): POINTER, unused (1:0..15): UNSPECIFIED, outport (2:0..31): LONG_UNSPECIFIED];
 //
 
-public final class StateWord {
-    public static final int SIZE = 1;
+public final class Port {
+    public static final int SIZE = 4;
 
-    // instByte (0:0..7): BYTE
-    public static final class instByte {
+    // inport (0:0..15): POINTER
+    public static final class inport {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1111_1111_0000_0000;
-        private static final int SHIFT = 8;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return BYTE.checkValue(value);
-        }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return POINTER.get(getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), StateWord.instByte::setBit, newValue);
+            POINTER.set(getAddress(base), newValue);
         }
     }
-    // stkPtr (0:8..15): BYTE
-    public static final class stkPtr {
+    // unused (1:0..15): UNSPECIFIED
+    public static final class unused {
         public static final int SIZE = 1;
 
-        private static final int OFFSET = 0;
+        private static final int OFFSET = 1;
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0000_1111_1111;
-        private static final int SHIFT = 0;
-
-        private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
-        public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return BYTE.checkValue(value);
-        }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return UNSPECIFIED.get(getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), StateWord.stkPtr::setBit, newValue);
+            UNSPECIFIED.set(getAddress(base), newValue);
+        }
+    }
+    // outport (2:0..31): LONG_UNSPECIFIED
+    public static final class outport {
+        public static final int SIZE = 2;
+
+        private static final int OFFSET = 2;
+        public static int getAddress(int base) {
+            return base + OFFSET;
+        }
+        public static int get(int base) {
+            return LONG_UNSPECIFIED.get(getAddress(base));
+        }
+        public static void set(int base, int newValue) {
+            LONG_UNSPECIFIED.set(getAddress(base), newValue);
         }
     }
 }
