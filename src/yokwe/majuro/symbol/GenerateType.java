@@ -22,9 +22,6 @@ import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.util.AutoIndentPrintWriter;
 import yokwe.util.StringUtil;
 
-
-//FIXME use fully qualified name for getAddress() and checkValue()
-
 public class GenerateType {
 	private static final Logger logger = LoggerFactory.getLogger(GenerateType.class);
 	
@@ -229,7 +226,7 @@ public class GenerateType {
 			boolean useName = !typeArray.indexHasSubrange();
 			
 			if (useName) {
-				out.println("public static int checkIndex(int index) {");
+				out.println("private static int checkIndex(int index) {");
 				out.println("return %s.checkValue(index);", indexType.name);
 				out.println("}");
 			} else {
@@ -266,7 +263,6 @@ public class GenerateType {
 	}
 
 	private static void genArrayInRecord(AutoIndentPrintWriter out, String prefix, TypeArray typeArray) {
-		out.println("// FIXME genArrayInRecord");
 		out.println("// %s", typeArray.toMesaString());
 		out.println("//   %s: TYPE = %s", typeArray.indexType.baseName,   typeArray.indexType.toMesaType());
 		out.println("//   %s: TYPE = %s", typeArray.elementType.baseName, typeArray.elementType.toMesaType());
@@ -403,6 +399,7 @@ public class GenerateType {
 	private static void genRecordInRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
 		out.println("// Expand %s", typeRecord.toMesaString());		
 		for(Field field: typeRecord.fieldList) {
+			out.println("//   %s", field.toMesaType());
 			genField(out, prefix, field);
 		}
 	}
@@ -413,11 +410,10 @@ public class GenerateType {
 		if (bitField) throw new UnexpectedException();
 
 		out.println("public static final class %s {", fieldName);
-		out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
-		out.println("public static final int SIZE   =  %2d;", field.getSize());
+		out.println("public static final int SIZE = %d;", field.getSize());
 		out.println();
 		
-		// FIXME
+		out.println("private static final int OFFSET = %d;", field.fieldName.offset);
 		out.println("public static int getAddress(int base) {");
 		if (prefix.contains(".")) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
@@ -464,10 +460,10 @@ public class GenerateType {
 		if (!bitField) throw new UnexpectedException();
 
 		out.println("public static final class %s {", fieldName);
-		out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
-		out.println("public static final int SIZE   =  %2d;", field.getSize());
+		out.println("public static final int SIZE = %d;", field.getSize());
 		out.println();
 		
+		out.println("private static final int OFFSET = %d;", field.fieldName.offset);
 		out.println("public static int getAddress(int base) {");
 		if (prefix.contains(".")) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
@@ -480,8 +476,8 @@ public class GenerateType {
 
 		BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
 
-		out.println("private static final int MASK   =  %s;", bitInfo.mask);
-		out.println("private static final int SHIFT  =  %2d;", bitInfo.shift);
+		out.println("private static final int MASK  = %s;", bitInfo.mask);
+		out.println("private static final int SHIFT = %d;", bitInfo.shift);
 		out.println();
 
 		out.println("private static int getBit(int value) {");
@@ -556,13 +552,11 @@ public class GenerateType {
 		String  fieldName = field.fieldName.name;
 		Select  select    = field.select;
 
-		// FIXME SELECT
-		out.println("// FIXME genFieldSelect prefix %s", prefix);
 		out.println("public static final class %s {", fieldName);
-		out.println("public static final int OFFSET =  %2d;", field.fieldName.offset);
-		out.println("public static final int SIZE   =  %2d;", field.getSize());
+		out.println("public static final int SIZE = %d;", field.getSize());
 		out.println();
 		
+		out.println("private static final int OFFSET = %d;", field.fieldName.offset);
 		out.println("public static int getAddress(int base) {");
 		if (prefix.contains(".")) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
@@ -577,11 +571,11 @@ public class GenerateType {
 		for(SelectCase selectCase: select.selectCaseList) {
 			out.println("// %s", selectCase.toMesaType());
 			out.println("public static final class %s {", selectCase.selector);
-			out.println("public static final int TAG    =  %2d;", selectCase.value);
-			out.println("public static final int SIZE   =  %2d;", selectCase.getSize());
+			out.println("public static final int TAG  = %d;", selectCase.value);
+			out.println("public static final int SIZE = %d;", selectCase.getSize());
 			
 			out.println("public static int getAddress(int base) {");
-			out.println("return %s.getAddress(base) + OFFSET;", String.format("%s.%s", prefix, fieldName));
+			out.println("return %s.getAddress(base);", String.format("%s.%s", prefix, fieldName));
 			out.println("}");
 
 			for(var nestedField: selectCase.fieldList) {
@@ -618,7 +612,7 @@ public class GenerateType {
 			out.println();
 			
 			out.println("public final class %s {", typeRecord.name);
-			out.println("public static final int SIZE   = %d;", typeRecord.getSize());
+			out.println("public static final int SIZE = %d;", typeRecord.getSize());
 			out.println();
 			
 			for(Field field: typeRecord.fieldList) {
