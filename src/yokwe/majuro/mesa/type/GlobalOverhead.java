@@ -71,7 +71,7 @@ public final class GlobalOverhead {
             private static final int SHIFT = 2;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -103,7 +103,7 @@ public final class GlobalOverhead {
             private static final int SHIFT = 1;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -135,7 +135,7 @@ public final class GlobalOverhead {
             private static final int SHIFT = 0;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);

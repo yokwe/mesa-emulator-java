@@ -46,7 +46,7 @@ public final class GFTItem {
         private static final int SHIFT = 16;
 
         private static int getBit(int value) {
-            return (checkValue(value) & MASK) >>> SHIFT;
+            return checkValue((value & MASK) >>> SHIFT);
         }
         private static int setBit(int value, int newValue) {
             return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);

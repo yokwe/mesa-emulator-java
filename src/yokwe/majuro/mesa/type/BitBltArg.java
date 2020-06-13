@@ -71,7 +71,7 @@ public final class BitBltArg {
             private static final int SHIFT = 4;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -103,7 +103,7 @@ public final class BitBltArg {
             private static final int SHIFT = 0;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -176,7 +176,7 @@ public final class BitBltArg {
             private static final int SHIFT = 4;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -208,7 +208,7 @@ public final class BitBltArg {
             private static final int SHIFT = 0;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -296,7 +296,7 @@ public final class BitBltArg {
             private static final int SHIFT = 15;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -328,7 +328,7 @@ public final class BitBltArg {
             private static final int SHIFT = 14;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -360,7 +360,7 @@ public final class BitBltArg {
             private static final int SHIFT = 13;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -392,7 +392,7 @@ public final class BitBltArg {
             private static final int SHIFT = 12;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -424,7 +424,7 @@ public final class BitBltArg {
             private static final int SHIFT = 11;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -456,7 +456,7 @@ public final class BitBltArg {
             private static final int SHIFT = 9;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
@@ -488,7 +488,7 @@ public final class BitBltArg {
             private static final int SHIFT = 0;
 
             private static int getBit(int value) {
-                return (checkValue(value) & MASK) >>> SHIFT;
+                return checkValue((value & MASK) >>> SHIFT);
             }
             private static int setBit(int value, int newValue) {
                 return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
