@@ -62,7 +62,7 @@ public class TestCodeCache extends TestBase {
 	
 	@Test
 	public void testGetCodeByte() {
-		int cb = 0x400080;
+		int cb = 0x4_0080;
 		int pc = 0x20;
 		
 		int va = cb + (pc / 2);
@@ -85,7 +85,7 @@ public class TestCodeCache extends TestBase {
 
 	@Test
 	public void testGetCodeByte2() {
-		int cb = 0x400080;
+		int cb = 0x4_0080;
 		int pc = 0x9876;
 		
 		int va = cb + (pc / 2);
@@ -108,7 +108,7 @@ public class TestCodeCache extends TestBase {
 
 	@Test
 	public void testGetCodeByte3() {
-		int cb = 0x400080;
+		int cb = 0x4_0080;
 		int pc = 0x00FE;
 		
 		int va = cb + (pc / 2);
@@ -132,7 +132,7 @@ public class TestCodeCache extends TestBase {
 
 	@Test
 	public void testGetCodeWord() {
-		int cb = 0x400080;
+		int cb = 0x4_0080;
 		int pc = 0x9876;
 		
 		int va = cb + (pc / 2);
@@ -152,7 +152,7 @@ public class TestCodeCache extends TestBase {
 	}
 	@Test
 	public void testGetCodeWord2() {
-		int cb = 0x400080;
+		int cb = 0x4_0080;
 		int pc = 0x9876;
 		
 		int va = cb + (pc / 2);
@@ -173,7 +173,7 @@ public class TestCodeCache extends TestBase {
 	}
 	@Test
 	public void testGetCodeWord3() {
-		int cb = 0x400080;
+		int cb = 0x4_0080;
 		int pc = 0x00FE;
 		
 		int va = cb + (pc / 2);
@@ -192,6 +192,4 @@ public class TestCodeCache extends TestBase {
 		assertEquals(0x3456, CodeCache.getCodeWord());
 		assertEquals(0x78,   CodeCache.getCodeByte());
 	}
-
-
 }
