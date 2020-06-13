@@ -56,7 +56,12 @@ public final class Subrange {
             logger.error("  longValue {}", longValue);
             logger.error("  min       {}", min);
             logger.error("  max       {}", max);
-            throw new UnexpectedException("value is out of range");
+            
+            UnexpectedException exception = new UnexpectedException("value is out of range");
+            for(var e: exception.getStackTrace()) {
+            	logger.error("  {}", e);
+            }
+            throw exception;
         }
 	}
 }
