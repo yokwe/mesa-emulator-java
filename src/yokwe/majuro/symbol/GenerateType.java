@@ -533,7 +533,7 @@ public class GenerateType {
 		}
 		out.println("}");
 
-		Type type = field.type.getBaseType();		
+		Type type = field.type.getBaseType();
 
 		BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
 
@@ -542,7 +542,7 @@ public class GenerateType {
 		out.println();
 
 		out.println("private static int getBit(int value) {");
-		out.println("return (checkValue(value) & MASK) >>> SHIFT;");
+		out.println("return checkValue((value & MASK) >>> SHIFT);");
 		out.println("}");
 		out.println("private static int setBit(int value, int newValue) {");
 		out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
