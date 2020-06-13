@@ -47,6 +47,9 @@ public final class FaultVector {
     //   FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
     //     queue (0:0..15): Queue
     public static final class queue {
+        public static int getAddress(int base, int index) {
+            return FaultQueue.queue.getAddress(FaultVector.getAddress(base, index));
+        }
         // Expand Record in Array
         //   Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
         //     reserved1 (0:0..2): UNSPECIFIED
@@ -79,6 +82,9 @@ public final class FaultVector {
     }
     //     condition (1:0..15): Condition
     public static final class condition {
+        public static int getAddress(int base, int index) {
+            return FaultQueue.condition.getAddress(FaultVector.getAddress(base, index));
+        }
         // Expand Record in Array
         //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
         //     reserved (0:0..2): UNSPECIFIED

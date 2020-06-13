@@ -275,6 +275,9 @@ public final class ProcessDataArea {
                 //   InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
                 //     condition (0:0..15): Condition
                 public static final class condition {
+                    public static int getAddress(int base, int index) {
+                        return InterruptItem.condition.getAddress(ProcessDataArea.vp.header.interrupt.getAddress(base, index));
+                    }
                     // Expand Record in Array
                     //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
                     //     reserved (0:0..2): UNSPECIFIED
@@ -325,6 +328,9 @@ public final class ProcessDataArea {
                 }
                 //     available (1:0..15): UNSPECIFIED
                 public static final class available {
+                    public static int getAddress(int base, int index) {
+                        return InterruptItem.available.getAddress(ProcessDataArea.vp.header.interrupt.getAddress(base, index));
+                    }
                     public static int get(int base, int index) {
                         return InterruptItem.available.get(ProcessDataArea.vp.header.interrupt.getAddress(base, index));
                     }
@@ -358,6 +364,9 @@ public final class ProcessDataArea {
                 //   FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
                 //     queue (0:0..15): Queue
                 public static final class queue {
+                    public static int getAddress(int base, int index) {
+                        return FaultQueue.queue.getAddress(ProcessDataArea.vp.header.fault.getAddress(base, index));
+                    }
                     // Expand Record in Array
                     //   Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
                     //     reserved1 (0:0..2): UNSPECIFIED
@@ -390,6 +399,9 @@ public final class ProcessDataArea {
                 }
                 //     condition (1:0..15): Condition
                 public static final class condition {
+                    public static int getAddress(int base, int index) {
+                        return FaultQueue.condition.getAddress(ProcessDataArea.vp.header.fault.getAddress(base, index));
+                    }
                     // Expand Record in Array
                     //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
                     //     reserved (0:0..2): UNSPECIFIED
@@ -472,6 +484,9 @@ public final class ProcessDataArea {
                 //   ProcessStateBlock: TYPE = RECORD[link (0:0..15): PsbLink, flags (1:0..15): PsbFlags, context (2:0..15): POINTER, timeout (3:0..15): CARDINAL, mds (4:0..15): CARDINAL, available (5:0..15): UNSPECIFIED, stickty (6:0..31): LONG_UNSPECIFIED];
                 //     link (0:0..15): PsbLink
                 public static final class link {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.link.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     // Expand Record in Array
                     //   PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
                     //     priority (0:0..2): Priority
@@ -522,6 +537,9 @@ public final class ProcessDataArea {
                 }
                 //     flags (1:0..15): PsbFlags
                 public static final class flags {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.flags.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     // Expand Record in Array
                     //   PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOL, abort (0:15..15): BOOL];
                     //     available (0:0..2): UNSPECIFIED
@@ -572,6 +590,9 @@ public final class ProcessDataArea {
                 }
                 //     context (2:0..15): POINTER
                 public static final class context {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.context.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     public static int get(int base, int index) {
                         return ProcessStateBlock.context.get(ProcessDataArea.vp.blocks.block.getAddress(base, index));
                     }
@@ -581,6 +602,9 @@ public final class ProcessDataArea {
                 }
                 //     timeout (3:0..15): CARDINAL
                 public static final class timeout {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.timeout.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     public static int get(int base, int index) {
                         return ProcessStateBlock.timeout.get(ProcessDataArea.vp.blocks.block.getAddress(base, index));
                     }
@@ -590,6 +614,9 @@ public final class ProcessDataArea {
                 }
                 //     mds (4:0..15): CARDINAL
                 public static final class mds {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.mds.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     public static int get(int base, int index) {
                         return ProcessStateBlock.mds.get(ProcessDataArea.vp.blocks.block.getAddress(base, index));
                     }
@@ -599,6 +626,9 @@ public final class ProcessDataArea {
                 }
                 //     available (5:0..15): UNSPECIFIED
                 public static final class available {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.available.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     public static int get(int base, int index) {
                         return ProcessStateBlock.available.get(ProcessDataArea.vp.blocks.block.getAddress(base, index));
                     }
@@ -608,6 +638,9 @@ public final class ProcessDataArea {
                 }
                 //     stickty (6:0..31): LONG_UNSPECIFIED
                 public static final class stickty {
+                    public static int getAddress(int base, int index) {
+                        return ProcessStateBlock.stickty.getAddress(ProcessDataArea.vp.blocks.block.getAddress(base, index));
+                    }
                     public static int get(int base, int index) {
                         return ProcessStateBlock.stickty.get(ProcessDataArea.vp.blocks.block.getAddress(base, index));
                     }

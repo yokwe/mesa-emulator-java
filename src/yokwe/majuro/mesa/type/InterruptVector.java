@@ -47,6 +47,9 @@ public final class InterruptVector {
     //   InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
     //     condition (0:0..15): Condition
     public static final class condition {
+        public static int getAddress(int base, int index) {
+            return InterruptItem.condition.getAddress(InterruptVector.getAddress(base, index));
+        }
         // Expand Record in Array
         //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
         //     reserved (0:0..2): UNSPECIFIED
@@ -97,6 +100,9 @@ public final class InterruptVector {
     }
     //     available (1:0..15): UNSPECIFIED
     public static final class available {
+        public static int getAddress(int base, int index) {
+            return InterruptItem.available.getAddress(InterruptVector.getAddress(base, index));
+        }
         public static int get(int base, int index) {
             return InterruptItem.available.get(InterruptVector.getAddress(base, index));
         }

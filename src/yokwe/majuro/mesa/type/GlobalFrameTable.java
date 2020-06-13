@@ -56,6 +56,9 @@ public final class GlobalFrameTable {
     }
     //     codebase (2:0..31): LONG_POINTER
     public static final class codebase {
+        public static int getAddress(int base, int index) {
+            return GFTItem.codebase.getAddress(GlobalFrameTable.getAddress(base, index));
+        }
         public static int get(int base, int index) {
             return GFTItem.codebase.get(GlobalFrameTable.getAddress(base, index));
         }
