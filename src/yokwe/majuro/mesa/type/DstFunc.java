@@ -36,7 +36,7 @@ import yokwe.majuro.mesa.Memory;
 // DstFunc: TYPE = {null(0), and(1), or(2), xor(3)};
 //
 
-public class DstFunc {
+public final class DstFunc {
     private static final Logger logger = LoggerFactory.getLogger(DstFunc.class);
 
     public static final int SIZE = 1;

@@ -36,7 +36,7 @@ import yokwe.majuro.mesa.Memory;
 // SrcFunc: TYPE = {null(0), complement(1)};
 //
 
-public class SrcFunc {
+public final class SrcFunc {
     private static final Logger logger = LoggerFactory.getLogger(SrcFunc.class);
 
     public static final int SIZE = 1;

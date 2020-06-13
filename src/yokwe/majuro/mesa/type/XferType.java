@@ -36,7 +36,7 @@ import yokwe.majuro.mesa.Memory;
 // XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
 //
 
-public class XferType {
+public final class XferType {
     private static final Logger logger = LoggerFactory.getLogger(XferType.class);
 
     public static final int SIZE = 1;

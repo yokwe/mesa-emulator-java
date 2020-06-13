@@ -36,7 +36,7 @@ import yokwe.majuro.mesa.Memory;
 // LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
 //
 
-public class LinkType {
+public final class LinkType {
     private static final Logger logger = LoggerFactory.getLogger(LinkType.class);
 
     public static final int SIZE = 1;

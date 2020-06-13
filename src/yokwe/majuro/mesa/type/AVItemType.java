@@ -36,7 +36,7 @@ import yokwe.majuro.mesa.Memory;
 // AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
 //
 
-public class AVItemType {
+public final class AVItemType {
     private static final Logger logger = LoggerFactory.getLogger(AVItemType.class);
 
     public static final int SIZE = 1;

@@ -398,7 +398,7 @@ public class GenerateType {
 			out.println("//");
 			out.println();
 
-			out.println("public class %s {", className);
+			out.println("public final class %s {", className);
 			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", className);
 			out.println();
 			

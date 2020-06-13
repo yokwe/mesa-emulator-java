@@ -36,7 +36,7 @@ import yokwe.majuro.mesa.Memory;
 // Direction: TYPE = {forward(0), backward(1)};
 //
 
-public class Direction {
+public final class Direction {
     private static final Logger logger = LoggerFactory.getLogger(Direction.class);
 
     public static final int SIZE = 1;
