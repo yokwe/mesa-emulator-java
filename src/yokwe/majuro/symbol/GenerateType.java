@@ -2,6 +2,8 @@ package yokwe.majuro.symbol;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.StringJoiner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,61 @@ public class GenerateType {
 	private static final Logger logger = LoggerFactory.getLogger(GenerateType.class);
 	
 	static final String PATH_DIR = "src/yokwe/majuro/mesa/type";
+	
+	static class Prefix {
+		private LinkedList<String> list;
+		
+		public Prefix(Prefix prefix, String value) {
+			list = new LinkedList<>();
+			list.addAll(prefix.list);
+			list.addLast(value);
+		}
+		public Prefix(Prefix prefix, String value1, String value2) {
+			list = new LinkedList<>();
+			list.addAll(prefix.list);
+			list.addLast(value1);
+			list.addLast(value2);
+		}
+		public Prefix(String value) {
+			list = new LinkedList<>();
+			list.addLast(value);
+		}
+		public Prefix(String value1, String value2) {
+			list = new LinkedList<>();
+			list.addLast(value1);
+			list.addLast(value2);
+		}
+		
+		public int size() {
+			return list.size();
+		}
+		@Override
+		public String toString() {
+			return String.join(".", list);
+		}
+		public String toString(int level) {
+			if (0 <= level) {
+				logger.error("Unexpected level");
+				logger.error("  level {}", level);
+				throw new UnexpectedException("Unexpected level");
+			}
+			
+			int limit = list.size() + level;
+			if (limit < 0) {
+				logger.error("Unexpected level");
+				logger.error("  level {}", level);
+				logger.error("  list  {}", list.size());
+				throw new UnexpectedException("Unexpected level");
+			}
+			
+			StringJoiner stringJoiner = new StringJoiner(".");
+			for(int i = 0; i < limit; i++) {
+				stringJoiner.add(list.get(i));
+			}
+			
+			return stringJoiner.toString();
+		}
+	}
 
 	private static void sanityCheck(Symbol symbol) {
 		// check needsFix() of Type and Constant
@@ -166,8 +223,10 @@ public class GenerateType {
 		}
 	}
 
-	private static void genRecordInArray(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
-		out.println("// Expand %s", typeRecord.toMesaString());
+	private static void genRecordInArray(AutoIndentPrintWriter out, Prefix prefix, TypeRecord typeRecord) {
+		out.println("// Expand Record in Array");
+//		out.println("// prefix %s", prefix);
+		out.println("//   %s", typeRecord.toMesaString());
 		
 		String recordName = typeRecord.name;
 		
@@ -176,7 +235,7 @@ public class GenerateType {
 			Type    type      = field.type;
 			Select  select    = field.select;
 			
-			out.println("//   %s", field.toMesaType());
+			out.println("//     %s", field.toMesaType());
 			out.println("public static final class %s {", fieldName);
 			
 			if (type != null) {
@@ -184,23 +243,23 @@ public class GenerateType {
 				switch(baseType.kind) {
 				case BOOL:
 					out.println("public static boolean get(int base, int index) {");
-					out.println("return %s.%s.get(getAddress(base, index));", recordName, fieldName);
+					out.println("return %s.%s.get(%s.getAddress(base, index));", recordName, fieldName, prefix);
 					out.println("}");
 					out.println("public static void set(int base, int index, boolean newValue) {");
-					out.println("%s.%s.set(getAddress(base, index), newValue);", recordName, fieldName);
+					out.println("%s.%s.set(%s.getAddress(base, index), newValue);", recordName, fieldName, prefix);
 					out.println("}");
 					break;
 				case SUBRANGE:
 				case ENUM:
 					out.println("public static int get(int base, int index) {");
-					out.println("return %s.%s.get(getAddress(base, index));", recordName, fieldName);
+					out.println("return %s.%s.get(%s.getAddress(base, index));", recordName, fieldName, prefix);
 					out.println("}");
 					out.println("public static void set(int base, int index, int newValue) {");
-					out.println("%s.%s.set(getAddress(base, index), newValue);", recordName, fieldName);
+					out.println("%s.%s.set(%s.getAddress(base, index), newValue);", recordName, fieldName, prefix);
 					out.println("}");
 					break;
 				case RECORD:
-					genRecordInArray(out, String.format("%s.%s", recordName, fieldName), (TypeRecord)baseType);
+					genRecordInArray(out, prefix, (TypeRecord)baseType);
 					break;
 				default:
 					logger.error("field {}", baseType.toMesaType());
@@ -218,7 +277,7 @@ public class GenerateType {
 		}
 	}
 
-	private static void genArrayBody(AutoIndentPrintWriter out, String prefix, TypeArray typeArray) {
+	private static void genArrayBody(AutoIndentPrintWriter out, Prefix prefix, TypeArray typeArray) {
 		Type indexType   = typeArray.indexType.getBaseType();
 		Type elementType = typeArray.elementType.getBaseType();
 
@@ -246,11 +305,11 @@ public class GenerateType {
 		case ENUM:
 		case SUBRANGE:
 			out.println("public static int get(int base, int index) {");
-			out.println("return %s.get(getAddress(base, checkIndex(index)));", elementType.name);
+			out.println("return %s.get(%s.getAddress(base, checkIndex(index)));", elementType.name, prefix);
 			out.println("}");
 
 			out.println("public static void set(int base, int index, int newValue) {");
-			out.println("%s.set(getAddress(base, checkIndex(index)), newValue);", elementType.name);
+			out.println("%s.set(%s.getAddress(base, checkIndex(index)), newValue);", elementType.name, prefix);
 			out.println("}");
 			break;
 		case RECORD:
@@ -262,7 +321,7 @@ public class GenerateType {
 		}
 	}
 
-	private static void genArrayInRecord(AutoIndentPrintWriter out, String prefix, TypeArray typeArray) {
+	private static void genArrayInRecord(AutoIndentPrintWriter out, Prefix prefix, TypeArray typeArray) {
 		out.println("// %s", typeArray.toMesaString());
 		out.println("//   %s: TYPE = %s", typeArray.indexType.baseName,   typeArray.indexType.toMesaType());
 		out.println("//   %s: TYPE = %s", typeArray.elementType.baseName, typeArray.elementType.toMesaType());
@@ -306,7 +365,7 @@ public class GenerateType {
 			out.println("}");
 			out.println();
 			
-			genArrayBody(out, className, typeArray);
+			genArrayBody(out, new Prefix(className), typeArray);
 					
 			out.println("}");
 		} catch (FileNotFoundException e) {
@@ -396,15 +455,17 @@ public class GenerateType {
 		}
 	}
 	
-	private static void genRecordInRecord(AutoIndentPrintWriter out, String prefix, TypeRecord typeRecord) {
-		out.println("// Expand %s", typeRecord.toMesaString());		
+	private static void genRecordInRecord(AutoIndentPrintWriter out, Prefix prefix, TypeRecord typeRecord) {
+		out.println("// Expand Record in Record");
+//		out.println("// prefix %s", prefix);
+		out.println("//   %s", typeRecord.toMesaString());
 		for(Field field: typeRecord.fieldList) {
-			out.println("//   %s", field.toMesaType());
+			out.println("//     %s", field.toMesaType());
 			genField(out, prefix, field);
 		}
 	}
 	
-	private static void genFieldTypeNotBit(AutoIndentPrintWriter out, String prefix, Field field) {
+	private static void genFieldTypeNotBit(AutoIndentPrintWriter out, Prefix prefix, Field field) {
 		String  fieldName = field.fieldName.name;
 		boolean bitField  = field.isBitfield();
 		if (bitField) throw new UnexpectedException();
@@ -415,7 +476,7 @@ public class GenerateType {
 		
 		out.println("private static final int OFFSET = %d;", field.fieldName.offset);
 		out.println("public static int getAddress(int base) {");
-		if (prefix.contains(".")) {
+		if (2 <= prefix.size()) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		} else {
 			out.println("return base + OFFSET;", prefix);
@@ -443,10 +504,10 @@ public class GenerateType {
 			out.println("}");
 			break;
 		case ARRAY:
-			genArrayInRecord(out, String.format("%s.%s", prefix, fieldName), (TypeArray)type);
+			genArrayInRecord(out, new Prefix(prefix, fieldName), (TypeArray)type);
 			break;
 		case RECORD:
-			genRecordInRecord(out, String.format("%s.%s", prefix, fieldName), (TypeRecord)type);
+			genRecordInRecord(out, new Prefix(prefix, fieldName), (TypeRecord)type);
 			break;
 		default:
 			logger.error("type {}", type);
@@ -454,7 +515,7 @@ public class GenerateType {
 		}
 		out.println("}");
 	}
-	private static void genFieldTypeBit(AutoIndentPrintWriter out, String prefix, Field field) {
+	private static void genFieldTypeBit(AutoIndentPrintWriter out, Prefix prefix, Field field) {
 		String  fieldName = field.fieldName.name;
 		boolean bitField  = field.isBitfield();
 		if (!bitField) throw new UnexpectedException();
@@ -465,7 +526,7 @@ public class GenerateType {
 		
 		out.println("private static final int OFFSET = %d;", field.fieldName.offset);
 		out.println("public static int getAddress(int base) {");
-		if (prefix.contains(".")) {
+		if (2 <= prefix.size()) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		} else {
 			out.println("return base + OFFSET;", prefix);
@@ -540,7 +601,7 @@ public class GenerateType {
 	
 		out.println("}");
 	}
-	private static void genFieldType(AutoIndentPrintWriter out, String prefix, Field field) {
+	private static void genFieldType(AutoIndentPrintWriter out, Prefix prefix, Field field) {
 		if (field.isBitfield()) {
 			genFieldTypeBit(out, prefix, field);
 		} else {
@@ -548,7 +609,7 @@ public class GenerateType {
 		}
 	}
 
-	private static void genFieldSelect(AutoIndentPrintWriter out, String prefix, Field field) {
+	private static void genFieldSelect(AutoIndentPrintWriter out, Prefix prefix, Field field) {
 		String  fieldName = field.fieldName.name;
 		Select  select    = field.select;
 
@@ -558,7 +619,7 @@ public class GenerateType {
 		
 		out.println("private static final int OFFSET = %d;", field.fieldName.offset);
 		out.println("public static int getAddress(int base) {");
-		if (prefix.contains(".")) {
+		if (2 <= prefix.size()) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		} else {
 			out.println("return base + OFFSET;", prefix);
@@ -581,7 +642,7 @@ public class GenerateType {
 			for(var nestedField: selectCase.fieldList) {
 				out.println();
 				out.println("// %s", nestedField.toMesaType());
-				genField(out, String.format("%s.%s.%s", prefix, fieldName, selectCase.selector), nestedField);
+				genField(out, new Prefix(prefix, fieldName, selectCase.selector), nestedField);
 			}
 			
 			out.println("}");
@@ -590,7 +651,7 @@ public class GenerateType {
 		out.println("}");
 	}
 	
-	private static void genField(AutoIndentPrintWriter out, String prefix, Field field) {
+	private static void genField(AutoIndentPrintWriter out, Prefix prefix, Field field) {
 		if (field.type   != null) genFieldType  (out, prefix, field);
 		if (field.select != null) genFieldSelect(out, prefix, field);
 	}
@@ -622,8 +683,8 @@ public class GenerateType {
 				
 				out.println("// %s", field.toMesaType());
 				
-				if (type   != null) genFieldType  (out, className, field);
-				if (select != null) genFieldSelect(out, className, field);
+				if (type   != null) genFieldType  (out, new Prefix(className), field);
+				if (select != null) genFieldSelect(out, new Prefix(className), field);
 			}
 			
 			out.println("}");
