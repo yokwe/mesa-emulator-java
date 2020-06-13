@@ -44,9 +44,9 @@ public final class EscTrapTable {
     }
 
     public static int get(int base, int index) {
-        return LONG_UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+        return LONG_UNSPECIFIED.get(EscTrapTable.getAddress(base, checkIndex(index)));
     }
     public static void set(int base, int index, int newValue) {
-        LONG_UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+        LONG_UNSPECIFIED.set(EscTrapTable.getAddress(base, checkIndex(index)), newValue);
     }
 }

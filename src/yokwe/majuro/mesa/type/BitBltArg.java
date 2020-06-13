@@ -42,8 +42,9 @@ public final class BitBltArg {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand BitAddress: TYPE = RECORD[word (0:0..31): LONG_POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
-        //   word (0:0..31): LONG_POINTER
+        // Expand Record in Record
+        //   BitAddress: TYPE = RECORD[word (0:0..31): LONG_POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
+        //     word (0:0..31): LONG_POINTER
         public static final class word {
             public static final int SIZE = 2;
 
@@ -58,7 +59,7 @@ public final class BitBltArg {
                 LONG_POINTER.set(getAddress(base), newValue);
             }
         }
-        //   reserved (2:0..11): UNSPECIFIED
+        //     reserved (2:0..11): UNSPECIFIED
         public static final class reserved {
             public static final int SIZE = 1;
 
@@ -90,7 +91,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.dst.reserved::setBit, newValue);
             }
         }
-        //   bit (2:12..15): CARDINAL
+        //     bit (2:12..15): CARDINAL
         public static final class bit {
             public static final int SIZE = 1;
 
@@ -146,8 +147,9 @@ public final class BitBltArg {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand BitAddress: TYPE = RECORD[word (0:0..31): LONG_POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
-        //   word (0:0..31): LONG_POINTER
+        // Expand Record in Record
+        //   BitAddress: TYPE = RECORD[word (0:0..31): LONG_POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
+        //     word (0:0..31): LONG_POINTER
         public static final class word {
             public static final int SIZE = 2;
 
@@ -162,7 +164,7 @@ public final class BitBltArg {
                 LONG_POINTER.set(getAddress(base), newValue);
             }
         }
-        //   reserved (2:0..11): UNSPECIFIED
+        //     reserved (2:0..11): UNSPECIFIED
         public static final class reserved {
             public static final int SIZE = 1;
 
@@ -194,7 +196,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.src.reserved::setBit, newValue);
             }
         }
-        //   bit (2:12..15): CARDINAL
+        //     bit (2:12..15): CARDINAL
         public static final class bit {
             public static final int SIZE = 1;
 
@@ -280,8 +282,9 @@ public final class BitBltArg {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand BitBltFlags: TYPE = RECORD[direction (0:0..0): Direction, disjoint (0:1..1): BOOL, disjointItems (0:2..2): BOOL, gray (0:3..3): BOOL, srcFunc (0:4..4): SrcFunc, dstFunc (0:5..6): DstFunc, reserved (0:7..15): UNSPECIFIED];
-        //   direction (0:0..0): Direction
+        // Expand Record in Record
+        //   BitBltFlags: TYPE = RECORD[direction (0:0..0): Direction, disjoint (0:1..1): BOOL, disjointItems (0:2..2): BOOL, gray (0:3..3): BOOL, srcFunc (0:4..4): SrcFunc, dstFunc (0:5..6): DstFunc, reserved (0:7..15): UNSPECIFIED];
+        //     direction (0:0..0): Direction
         public static final class direction {
             public static final int SIZE = 1;
 
@@ -313,7 +316,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.flags.direction::setBit, newValue);
             }
         }
-        //   disjoint (0:1..1): BOOL
+        //     disjoint (0:1..1): BOOL
         public static final class disjoint {
             public static final int SIZE = 1;
 
@@ -345,7 +348,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.flags.disjoint::setBit, (newValue ? 1 : 0));
             }
         }
-        //   disjointItems (0:2..2): BOOL
+        //     disjointItems (0:2..2): BOOL
         public static final class disjointItems {
             public static final int SIZE = 1;
 
@@ -377,7 +380,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.flags.disjointItems::setBit, (newValue ? 1 : 0));
             }
         }
-        //   gray (0:3..3): BOOL
+        //     gray (0:3..3): BOOL
         public static final class gray {
             public static final int SIZE = 1;
 
@@ -409,7 +412,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.flags.gray::setBit, (newValue ? 1 : 0));
             }
         }
-        //   srcFunc (0:4..4): SrcFunc
+        //     srcFunc (0:4..4): SrcFunc
         public static final class srcFunc {
             public static final int SIZE = 1;
 
@@ -441,7 +444,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.flags.srcFunc::setBit, newValue);
             }
         }
-        //   dstFunc (0:5..6): DstFunc
+        //     dstFunc (0:5..6): DstFunc
         public static final class dstFunc {
             public static final int SIZE = 1;
 
@@ -473,7 +476,7 @@ public final class BitBltArg {
                 Memory.modify(getAddress(base), BitBltArg.flags.dstFunc::setBit, newValue);
             }
         }
-        //   reserved (0:7..15): UNSPECIFIED
+        //     reserved (0:7..15): UNSPECIFIED
         public static final class reserved {
             public static final int SIZE = 1;
 

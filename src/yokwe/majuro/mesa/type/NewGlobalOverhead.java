@@ -57,8 +57,9 @@ public final class NewGlobalOverhead {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand GlobalWord: TYPE = RECORD[available (0:0..13): CARDINAL, trapxfers (0:14..14): BOOL, codelinks (0:15..15): BOOL];
-        //   available (0:0..13): CARDINAL
+        // Expand Record in Record
+        //   GlobalWord: TYPE = RECORD[available (0:0..13): CARDINAL, trapxfers (0:14..14): BOOL, codelinks (0:15..15): BOOL];
+        //     available (0:0..13): CARDINAL
         public static final class available {
             public static final int SIZE = 1;
 
@@ -90,7 +91,7 @@ public final class NewGlobalOverhead {
                 Memory.modify(getAddress(base), NewGlobalOverhead.word.available::setBit, newValue);
             }
         }
-        //   trapxfers (0:14..14): BOOL
+        //     trapxfers (0:14..14): BOOL
         public static final class trapxfers {
             public static final int SIZE = 1;
 
@@ -122,7 +123,7 @@ public final class NewGlobalOverhead {
                 Memory.modify(getAddress(base), NewGlobalOverhead.word.trapxfers::setBit, (newValue ? 1 : 0));
             }
         }
-        //   codelinks (0:15..15): BOOL
+        //     codelinks (0:15..15): BOOL
         public static final class codelinks {
             public static final int SIZE = 1;
 
@@ -176,10 +177,10 @@ public final class NewGlobalOverhead {
         }
 
         public static int get(int base, int index) {
-            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+            return UNSPECIFIED.get(NewGlobalOverhead.global.getAddress(base, checkIndex(index)));
         }
         public static void set(int base, int index, int newValue) {
-            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+            UNSPECIFIED.set(NewGlobalOverhead.global.getAddress(base, checkIndex(index)), newValue);
         }
     }
 }

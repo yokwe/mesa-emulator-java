@@ -42,8 +42,9 @@ public final class ProcessStateBlock {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
-        //   priority (0:0..2): Priority
+        // Expand Record in Record
+        //   PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
+        //     priority (0:0..2): Priority
         public static final class priority {
             public static final int SIZE = 1;
 
@@ -75,7 +76,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.link.priority::setBit, newValue);
             }
         }
-        //   next (0:3..12): PsbIndex
+        //     next (0:3..12): PsbIndex
         public static final class next {
             public static final int SIZE = 1;
 
@@ -107,7 +108,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.link.next::setBit, newValue);
             }
         }
-        //   failed (0:13..13): BOOL
+        //     failed (0:13..13): BOOL
         public static final class failed {
             public static final int SIZE = 1;
 
@@ -139,7 +140,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.link.failed::setBit, (newValue ? 1 : 0));
             }
         }
-        //   permanent (0:14..14): BOOL
+        //     permanent (0:14..14): BOOL
         public static final class permanent {
             public static final int SIZE = 1;
 
@@ -171,7 +172,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.link.permanent::setBit, (newValue ? 1 : 0));
             }
         }
-        //   preempted (0:15..15): BOOL
+        //     preempted (0:15..15): BOOL
         public static final class preempted {
             public static final int SIZE = 1;
 
@@ -212,8 +213,9 @@ public final class ProcessStateBlock {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOL, abort (0:15..15): BOOL];
-        //   available (0:0..2): UNSPECIFIED
+        // Expand Record in Record
+        //   PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOL, abort (0:15..15): BOOL];
+        //     available (0:0..2): UNSPECIFIED
         public static final class available {
             public static final int SIZE = 1;
 
@@ -245,7 +247,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.flags.available::setBit, newValue);
             }
         }
-        //   cleanup (0:3..12): PsbIndex
+        //     cleanup (0:3..12): PsbIndex
         public static final class cleanup {
             public static final int SIZE = 1;
 
@@ -277,7 +279,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.flags.cleanup::setBit, newValue);
             }
         }
-        //   reserved (0:13..13): UNSPECIFIED
+        //     reserved (0:13..13): UNSPECIFIED
         public static final class reserved {
             public static final int SIZE = 1;
 
@@ -309,7 +311,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.flags.reserved::setBit, newValue);
             }
         }
-        //   waiting (0:14..14): BOOL
+        //     waiting (0:14..14): BOOL
         public static final class waiting {
             public static final int SIZE = 1;
 
@@ -341,7 +343,7 @@ public final class ProcessStateBlock {
                 Memory.modify(getAddress(base), ProcessStateBlock.flags.waiting::setBit, (newValue ? 1 : 0));
             }
         }
-        //   abort (0:15..15): BOOL
+        //     abort (0:15..15): BOOL
         public static final class abort {
             public static final int SIZE = 1;
 

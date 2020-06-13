@@ -44,9 +44,9 @@ public final class BLOCK {
     }
 
     public static int get(int base, int index) {
-        return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+        return UNSPECIFIED.get(BLOCK.getAddress(base, checkIndex(index)));
     }
     public static void set(int base, int index, int newValue) {
-        UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+        UNSPECIFIED.set(BLOCK.getAddress(base, checkIndex(index)), newValue);
     }
 }

@@ -42,8 +42,9 @@ public final class LocalOverhead {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
-        //   available (0:0..7): BYTE
+        // Expand Record in Record
+        //   LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
+        //     available (0:0..7): BYTE
         public static final class available {
             public static final int SIZE = 1;
 
@@ -75,7 +76,7 @@ public final class LocalOverhead {
                 Memory.modify(getAddress(base), LocalOverhead.word.available::setBit, newValue);
             }
         }
-        //   fsi (0:8..15): FSIndex
+        //     fsi (0:8..15): FSIndex
         public static final class fsi {
             public static final int SIZE = 1;
 
@@ -174,10 +175,10 @@ public final class LocalOverhead {
         }
 
         public static int get(int base, int index) {
-            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+            return UNSPECIFIED.get(LocalOverhead.local.getAddress(base, checkIndex(index)));
         }
         public static void set(int base, int index, int newValue) {
-            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+            UNSPECIFIED.set(LocalOverhead.local.getAddress(base, checkIndex(index)), newValue);
         }
     }
 }

@@ -43,84 +43,87 @@ public final class FaultVector {
         return FaultIndex.checkValue(index);
     }
 
-    // Expand FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
-    //   queue (0:0..15): Queue
+    // Expand Record in Array
+    //   FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
+    //     queue (0:0..15): Queue
     public static final class queue {
-        // Expand Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
-        //   reserved1 (0:0..2): UNSPECIFIED
+        // Expand Record in Array
+        //   Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+        //     reserved1 (0:0..2): UNSPECIFIED
         public static final class reserved1 {
             public static int get(int base, int index) {
-                return Queue.reserved1.get(getAddress(base, index));
+                return Queue.reserved1.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Queue.reserved1.set(getAddress(base, index), newValue);
+                Queue.reserved1.set(FaultVector.getAddress(base, index), newValue);
             }
         }
-        //   tail (0:3..12): PsbIndex
+        //     tail (0:3..12): PsbIndex
         public static final class tail {
             public static int get(int base, int index) {
-                return Queue.tail.get(getAddress(base, index));
+                return Queue.tail.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Queue.tail.set(getAddress(base, index), newValue);
+                Queue.tail.set(FaultVector.getAddress(base, index), newValue);
             }
         }
-        //   reserved2 (0:13..15): UNSPECIFIED
+        //     reserved2 (0:13..15): UNSPECIFIED
         public static final class reserved2 {
             public static int get(int base, int index) {
-                return Queue.reserved2.get(getAddress(base, index));
+                return Queue.reserved2.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Queue.reserved2.set(getAddress(base, index), newValue);
+                Queue.reserved2.set(FaultVector.getAddress(base, index), newValue);
             }
         }
     }
-    //   condition (1:0..15): Condition
+    //     condition (1:0..15): Condition
     public static final class condition {
-        // Expand Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
-        //   reserved (0:0..2): UNSPECIFIED
+        // Expand Record in Array
+        //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+        //     reserved (0:0..2): UNSPECIFIED
         public static final class reserved {
             public static int get(int base, int index) {
-                return Condition.reserved.get(getAddress(base, index));
+                return Condition.reserved.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Condition.reserved.set(getAddress(base, index), newValue);
+                Condition.reserved.set(FaultVector.getAddress(base, index), newValue);
             }
         }
-        //   tail (0:3..12): PsbIndex
+        //     tail (0:3..12): PsbIndex
         public static final class tail {
             public static int get(int base, int index) {
-                return Condition.tail.get(getAddress(base, index));
+                return Condition.tail.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Condition.tail.set(getAddress(base, index), newValue);
+                Condition.tail.set(FaultVector.getAddress(base, index), newValue);
             }
         }
-        //   available (0:13..13): UNSPECIFIED
+        //     available (0:13..13): UNSPECIFIED
         public static final class available {
             public static int get(int base, int index) {
-                return Condition.available.get(getAddress(base, index));
+                return Condition.available.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Condition.available.set(getAddress(base, index), newValue);
+                Condition.available.set(FaultVector.getAddress(base, index), newValue);
             }
         }
-        //   abortable (0:14..14): BOOL
+        //     abortable (0:14..14): BOOL
         public static final class abortable {
             public static boolean get(int base, int index) {
-                return Condition.abortable.get(getAddress(base, index));
+                return Condition.abortable.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, boolean newValue) {
-                Condition.abortable.set(getAddress(base, index), newValue);
+                Condition.abortable.set(FaultVector.getAddress(base, index), newValue);
             }
         }
-        //   wakeup (0:15..15): BOOL
+        //     wakeup (0:15..15): BOOL
         public static final class wakeup {
             public static boolean get(int base, int index) {
-                return Condition.wakeup.get(getAddress(base, index));
+                return Condition.wakeup.get(FaultVector.getAddress(base, index));
             }
             public static void set(int base, int index, boolean newValue) {
-                Condition.wakeup.set(getAddress(base, index), newValue);
+                Condition.wakeup.set(FaultVector.getAddress(base, index), newValue);
             }
         }
     }

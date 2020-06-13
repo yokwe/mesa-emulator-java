@@ -44,9 +44,9 @@ public final class SystemData {
     }
 
     public static int get(int base, int index) {
-        return LONG_UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+        return LONG_UNSPECIFIED.get(SystemData.getAddress(base, checkIndex(index)));
     }
     public static void set(int base, int index, int newValue) {
-        LONG_UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+        LONG_UNSPECIFIED.set(SystemData.getAddress(base, checkIndex(index)), newValue);
     }
 }

@@ -59,10 +59,10 @@ public final class StateVector {
         }
 
         public static int get(int base, int index) {
-            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+            return UNSPECIFIED.get(StateVector.stack.getAddress(base, checkIndex(index)));
         }
         public static void set(int base, int index, int newValue) {
-            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+            UNSPECIFIED.set(StateVector.stack.getAddress(base, checkIndex(index)), newValue);
         }
     }
     // word (14:0..15): StateWord
@@ -73,8 +73,9 @@ public final class StateVector {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
-        //   instByte (0:0..7): BYTE
+        // Expand Record in Record
+        //   StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
+        //     instByte (0:0..7): BYTE
         public static final class instByte {
             public static final int SIZE = 1;
 
@@ -106,7 +107,7 @@ public final class StateVector {
                 Memory.modify(getAddress(base), StateVector.word.instByte::setBit, newValue);
             }
         }
-        //   stkPtr (0:8..15): BYTE
+        //     stkPtr (0:8..15): BYTE
         public static final class stkPtr {
             public static final int SIZE = 1;
 
@@ -175,10 +176,10 @@ public final class StateVector {
         }
 
         public static int get(int base, int index) {
-            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+            return UNSPECIFIED.get(StateVector.data.getAddress(base, checkIndex(index)));
         }
         public static void set(int base, int index, int newValue) {
-            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+            UNSPECIFIED.set(StateVector.data.getAddress(base, checkIndex(index)), newValue);
         }
     }
 }

@@ -74,8 +74,9 @@ public final class FieldDesc {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand FieldSpec: TYPE = RECORD[pos (0:0..3): NIBBLE, size (0:4..7): NIBBLE];
-        //   pos (0:0..3): NIBBLE
+        // Expand Record in Record
+        //   FieldSpec: TYPE = RECORD[pos (0:0..3): NIBBLE, size (0:4..7): NIBBLE];
+        //     pos (0:0..3): NIBBLE
         public static final class pos {
             public static final int SIZE = 1;
 
@@ -107,7 +108,7 @@ public final class FieldDesc {
                 Memory.modify(getAddress(base), FieldDesc.field.pos::setBit, newValue);
             }
         }
-        //   size (0:4..7): NIBBLE
+        //     size (0:4..7): NIBBLE
         public static final class size {
             public static final int SIZE = 1;
 

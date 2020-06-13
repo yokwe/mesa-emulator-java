@@ -57,10 +57,10 @@ public final class CodeSegment {
         }
 
         public static int get(int base, int index) {
-            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+            return UNSPECIFIED.get(CodeSegment.available.getAddress(base, checkIndex(index)));
         }
         public static void set(int base, int index, int newValue) {
-            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+            UNSPECIFIED.set(CodeSegment.available.getAddress(base, checkIndex(index)), newValue);
         }
     }
     // code (4): BLOCK
@@ -84,10 +84,10 @@ public final class CodeSegment {
         }
 
         public static int get(int base, int index) {
-            return UNSPECIFIED.get(getAddress(base, checkIndex(index)));
+            return UNSPECIFIED.get(CodeSegment.code.getAddress(base, checkIndex(index)));
         }
         public static void set(int base, int index, int newValue) {
-            UNSPECIFIED.set(getAddress(base, checkIndex(index)), newValue);
+            UNSPECIFIED.set(CodeSegment.code.getAddress(base, checkIndex(index)), newValue);
         }
     }
 }

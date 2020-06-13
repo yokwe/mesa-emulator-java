@@ -44,9 +44,9 @@ public final class StateAllocationTable {
     }
 
     public static int get(int base, int index) {
-        return POINTER.get(getAddress(base, checkIndex(index)));
+        return POINTER.get(StateAllocationTable.getAddress(base, checkIndex(index)));
     }
     public static void set(int base, int index, int newValue) {
-        POINTER.set(getAddress(base, checkIndex(index)), newValue);
+        POINTER.set(StateAllocationTable.getAddress(base, checkIndex(index)), newValue);
     }
 }

@@ -43,23 +43,24 @@ public final class GlobalFrameTable {
         return GFTIndex.checkValue(index);
     }
 
-    // Expand GFTItem: TYPE = RECORD[globalFrame (0:0..15): LONG_POINTER, codebase (2:0..31): LONG_POINTER];
-    //   globalFrame (0:0..15): LONG_POINTER
+    // Expand Record in Array
+    //   GFTItem: TYPE = RECORD[globalFrame (0:0..15): LONG_POINTER, codebase (2:0..31): LONG_POINTER];
+    //     globalFrame (0:0..15): LONG_POINTER
     public static final class globalFrame {
         public static int get(int base, int index) {
-            return GFTItem.globalFrame.get(getAddress(base, index));
+            return GFTItem.globalFrame.get(GlobalFrameTable.getAddress(base, index));
         }
         public static void set(int base, int index, int newValue) {
-            GFTItem.globalFrame.set(getAddress(base, index), newValue);
+            GFTItem.globalFrame.set(GlobalFrameTable.getAddress(base, index), newValue);
         }
     }
-    //   codebase (2:0..31): LONG_POINTER
+    //     codebase (2:0..31): LONG_POINTER
     public static final class codebase {
         public static int get(int base, int index) {
-            return GFTItem.codebase.get(getAddress(base, index));
+            return GFTItem.codebase.get(GlobalFrameTable.getAddress(base, index));
         }
         public static void set(int base, int index, int newValue) {
-            GFTItem.codebase.set(getAddress(base, index), newValue);
+            GFTItem.codebase.set(GlobalFrameTable.getAddress(base, index), newValue);
         }
     }
 }

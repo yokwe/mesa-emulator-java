@@ -43,63 +43,65 @@ public final class InterruptVector {
         return InterruptLevel.checkValue(index);
     }
 
-    // Expand InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
-    //   condition (0:0..15): Condition
+    // Expand Record in Array
+    //   InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
+    //     condition (0:0..15): Condition
     public static final class condition {
-        // Expand Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
-        //   reserved (0:0..2): UNSPECIFIED
+        // Expand Record in Array
+        //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+        //     reserved (0:0..2): UNSPECIFIED
         public static final class reserved {
             public static int get(int base, int index) {
-                return Condition.reserved.get(getAddress(base, index));
+                return Condition.reserved.get(InterruptVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Condition.reserved.set(getAddress(base, index), newValue);
+                Condition.reserved.set(InterruptVector.getAddress(base, index), newValue);
             }
         }
-        //   tail (0:3..12): PsbIndex
+        //     tail (0:3..12): PsbIndex
         public static final class tail {
             public static int get(int base, int index) {
-                return Condition.tail.get(getAddress(base, index));
+                return Condition.tail.get(InterruptVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Condition.tail.set(getAddress(base, index), newValue);
+                Condition.tail.set(InterruptVector.getAddress(base, index), newValue);
             }
         }
-        //   available (0:13..13): UNSPECIFIED
+        //     available (0:13..13): UNSPECIFIED
         public static final class available {
             public static int get(int base, int index) {
-                return Condition.available.get(getAddress(base, index));
+                return Condition.available.get(InterruptVector.getAddress(base, index));
             }
             public static void set(int base, int index, int newValue) {
-                Condition.available.set(getAddress(base, index), newValue);
+                Condition.available.set(InterruptVector.getAddress(base, index), newValue);
             }
         }
-        //   abortable (0:14..14): BOOL
+        //     abortable (0:14..14): BOOL
         public static final class abortable {
             public static boolean get(int base, int index) {
-                return Condition.abortable.get(getAddress(base, index));
+                return Condition.abortable.get(InterruptVector.getAddress(base, index));
             }
             public static void set(int base, int index, boolean newValue) {
-                Condition.abortable.set(getAddress(base, index), newValue);
+                Condition.abortable.set(InterruptVector.getAddress(base, index), newValue);
             }
         }
-        //   wakeup (0:15..15): BOOL
+        //     wakeup (0:15..15): BOOL
         public static final class wakeup {
             public static boolean get(int base, int index) {
-                return Condition.wakeup.get(getAddress(base, index));
+                return Condition.wakeup.get(InterruptVector.getAddress(base, index));
             }
             public static void set(int base, int index, boolean newValue) {
-                Condition.wakeup.set(getAddress(base, index), newValue);
+                Condition.wakeup.set(InterruptVector.getAddress(base, index), newValue);
             }
         }
     }
-    //   available (1:0..15): UNSPECIFIED
+    //     available (1:0..15): UNSPECIFIED
     public static final class available {
         public static int get(int base, int index) {
-            return InterruptItem.available.get(getAddress(base, index));
+            return InterruptItem.available.get(InterruptVector.getAddress(base, index));
         }
         public static void set(int base, int index, int newValue) {
-            InterruptItem.available.set(getAddress(base, index), newValue);
+            InterruptItem.available.set(InterruptVector.getAddress(base, index), newValue);
         }
     }
 }

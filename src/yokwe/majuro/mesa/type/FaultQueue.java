@@ -42,8 +42,9 @@ public final class FaultQueue {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
-        //   reserved1 (0:0..2): UNSPECIFIED
+        // Expand Record in Record
+        //   Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
+        //     reserved1 (0:0..2): UNSPECIFIED
         public static final class reserved1 {
             public static final int SIZE = 1;
 
@@ -75,7 +76,7 @@ public final class FaultQueue {
                 Memory.modify(getAddress(base), FaultQueue.queue.reserved1::setBit, newValue);
             }
         }
-        //   tail (0:3..12): PsbIndex
+        //     tail (0:3..12): PsbIndex
         public static final class tail {
             public static final int SIZE = 1;
 
@@ -107,7 +108,7 @@ public final class FaultQueue {
                 Memory.modify(getAddress(base), FaultQueue.queue.tail::setBit, newValue);
             }
         }
-        //   reserved2 (0:13..15): UNSPECIFIED
+        //     reserved2 (0:13..15): UNSPECIFIED
         public static final class reserved2 {
             public static final int SIZE = 1;
 
@@ -148,8 +149,9 @@ public final class FaultQueue {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        // Expand Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
-        //   reserved (0:0..2): UNSPECIFIED
+        // Expand Record in Record
+        //   Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOL, wakeup (0:15..15): BOOL];
+        //     reserved (0:0..2): UNSPECIFIED
         public static final class reserved {
             public static final int SIZE = 1;
 
@@ -181,7 +183,7 @@ public final class FaultQueue {
                 Memory.modify(getAddress(base), FaultQueue.condition.reserved::setBit, newValue);
             }
         }
-        //   tail (0:3..12): PsbIndex
+        //     tail (0:3..12): PsbIndex
         public static final class tail {
             public static final int SIZE = 1;
 
@@ -213,7 +215,7 @@ public final class FaultQueue {
                 Memory.modify(getAddress(base), FaultQueue.condition.tail::setBit, newValue);
             }
         }
-        //   available (0:13..13): UNSPECIFIED
+        //     available (0:13..13): UNSPECIFIED
         public static final class available {
             public static final int SIZE = 1;
 
@@ -245,7 +247,7 @@ public final class FaultQueue {
                 Memory.modify(getAddress(base), FaultQueue.condition.available::setBit, newValue);
             }
         }
-        //   abortable (0:14..14): BOOL
+        //     abortable (0:14..14): BOOL
         public static final class abortable {
             public static final int SIZE = 1;
 
@@ -277,7 +279,7 @@ public final class FaultQueue {
                 Memory.modify(getAddress(base), FaultQueue.condition.abortable::setBit, (newValue ? 1 : 0));
             }
         }
-        //   wakeup (0:15..15): BOOL
+        //     wakeup (0:15..15): BOOL
         public static final class wakeup {
             public static final int SIZE = 1;
 
