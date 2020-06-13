@@ -85,13 +85,18 @@ public class TestType extends TestBase {
 		//  globallink(2) : GFTHandle,
 		//  pc(3):          CARDINAL,
 		//  local(4):       LocaiVariables];
+		
+		// LocalWord: TYPE = RECORD [
+		//   available (0:0.. 7): BYTE,
+		//   fsi       (0:8..15): FSIndex];
 
 		assertEquals(4, LocalOverhead.SIZE);
 
 		{
 			fillPageZero(va);
 			
-			assertNotEquals(0x1234, LocalOverhead.word.get(va));
+			assertNotEquals(0x12,   LocalOverhead.word.available.get(va));
+			assertNotEquals(0x34,   LocalOverhead.word.fsi.get(va));
 			assertNotEquals(0x2345, LocalOverhead.returnlink.get(va));
 			assertNotEquals(0x3456, LocalOverhead.globallink.get(va));
 			assertNotEquals(0x4567, LocalOverhead.pc.get(va));
@@ -101,7 +106,8 @@ public class TestType extends TestBase {
 			Memory.rawWrite(va + 2, 0x3456);
 			Memory.rawWrite(va + 3, 0x4567);
 			
-			assertEquals(0x1234, LocalOverhead.word.get(va));
+			assertEquals(0x12, LocalOverhead.word.available.get(va));
+			assertEquals(0x34, LocalOverhead.word.fsi.get(va));
 			assertEquals(0x2345, LocalOverhead.returnlink.get(va));
 			assertEquals(0x3456, LocalOverhead.globallink.get(va));
 			assertEquals(0x4567, LocalOverhead.pc.get(va));
@@ -112,21 +118,22 @@ public class TestType extends TestBase {
 	public void testTaggedControlLink() {
 		int va = 0x10000;
 		
-		//TaggedControl link: TYPE =  MACHINE DEPENDENT RECORD [
-		//  data (0:  0..13): [0 .. 377778];
-		//  tag  (0: 14..15): [0 .. 3],
-		//  fill (1) :  UNSPECIFIED);
+		// TaggedControlLink: TYPE = RECORD[
+		//   data (0: 0..13): UNSPECIFIED,
+		//   tag  (0:14..15): LinkType,
+		//   fill (1: 0..15): UNSPECIFIED];
 
 		assertEquals(2, TaggedControlLink.SIZE);
 
 		{
 			fillPageZero(va);
 			
-			assertNotEquals(0x1234, TaggedControlLink.data.get(va));
-			assertNotEquals(0x0001, TaggedControlLink.tag.get(va));
-			assertNotEquals(0x3456, TaggedControlLink.fill.get(va));
-
-			Memory.rawWriteDbl(va, 0x456789AB);
+			assertNotEquals(0x4567 >> 2, TaggedControlLink.data.get(va));
+			assertNotEquals(0x0003, TaggedControlLink.tag.get(va));
+			assertNotEquals(0x89AB, TaggedControlLink.fill.get(va));
+			
+			Memory.rawWrite(va + 0, 0x4567);
+			Memory.rawWrite(va + 1, 0x89AB);
 			
 			assertEquals(0x4567 >> 2, TaggedControlLink.data.get(va));
 			assertEquals(0x0003, TaggedControlLink.tag.get(va));
@@ -162,7 +169,7 @@ public class TestType extends TestBase {
 		{
 			fillPageZero(va);
 
-			GlobalWord.gfi.set(va, 0xFFFF);			
+			GlobalWord.gfi.set(va, 0x3FFF);			
 			
 			assertEquals(0xFFFC, Memory.rawRead(va));
 		}
