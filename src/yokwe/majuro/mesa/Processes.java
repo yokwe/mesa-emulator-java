@@ -25,14 +25,7 @@
  *******************************************************************************/
 package yokwe.majuro.mesa;
 
-import yokwe.majuro.mesa.Type.CARD16;
-import yokwe.majuro.mesa.Type.CARD32;
-import yokwe.majuro.mesa.Type.CARD8;
-import yokwe.majuro.mesa.Type.FAULT_INDEX;
-import yokwe.majuro.mesa.Type.LONG_POINTER;
 import yokwe.majuro.mesa.Type.LongNumber;
-import yokwe.majuro.mesa.Type.POINTER;
-import yokwe.majuro.mesa.Type.PSB_INDEX;
 import yokwe.majuro.mesa.type.ProcessDataArea;
 import yokwe.majuro.mesa.type.StateVector;
 
@@ -89,10 +82,10 @@ public final class Processes {
 		/* PSB_INDEX */ int faulted = Processor.PSB;
 		
 		// Requeue[src: @PDA.ready, dst: @PDA.fault[fi].queue, psb: faulted];
-		int src = ProcessDataArea.ready.getAddress(Memory.PDA);
-		int dst = ProcessDataArea.fault.getAddress(Memory.PDA, fi);
+		int src = ProcessDataArea.vp.header.ready.getAddress(Memory.PDA);
+		int dst = ProcessDataArea.vp.header.fault.getAddress(Memory.PDA, fi);
 		requeue(src, dst, faulted);
-		notifyWakeup(ProcessDataArea.fault.condition.getAddress(Memory.PDA, fi));
+//		notifyWakeup(ProcessDataArea.vp.header.fault.condition.getAddress(Memory.PDA, fi)); // FIXME
 		CodeCache.setPC(Processor.savedPC);
 		Processor.SP = Processor.savedSP;
 		reschedule(true);
