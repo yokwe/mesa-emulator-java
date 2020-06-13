@@ -39,7 +39,7 @@ public class TestMemory extends TestBase {
 	//
 	@Test
 	public void testFetch() {
-		int longPointer = 0x123456;
+		int longPointer = 0x1_0000;
 		int value       = 65432;
 		
 		fillPageZero(longPointer);
@@ -56,7 +56,7 @@ public class TestMemory extends TestBase {
 	
 	@Test
 	public void testStore() {
-		int longPointer = 0x123456;
+		int longPointer = 0x1_0000;
 		int value       = 65432;
 		
 		fillPageZero(longPointer);
@@ -222,7 +222,7 @@ public class TestMemory extends TestBase {
 
 	@Test
 	public void testFetchByte() {
-		int longPointer = 0x123456;
+		int longPointer = 0x1_0000;
 		int value       = 0xFF;
 		int offset      = 10;
 		
@@ -240,7 +240,7 @@ public class TestMemory extends TestBase {
 
 	@Test
 	public void testFetchByte2() {
-		int longPointer = 0x123456;
+		int longPointer = 0x1_0000;
 		int value       = 0xFF;
 		int offset      = 11;
 		
@@ -317,7 +317,7 @@ public class TestMemory extends TestBase {
 
 	@Test
 	public void testStoreByte() {
-		int longPointer = 0x123456;
+		int longPointer = 0x1_0000;
 		int value       = 0xFF;
 		int offset      = 10;
 		
@@ -336,7 +336,7 @@ public class TestMemory extends TestBase {
 
 	@Test
 	public void testStoreByte2() {
-		int longPointer = 0x123456;
+		int longPointer = 0x1_0000;
 		int value       = 0xFF;
 		int offset      = 11;
 		
