@@ -238,6 +238,12 @@ public class GenerateType {
 			out.println("//     %s", field.toMesaType());
 			out.println("public static final class %s {", fieldName);
 			
+			if (!field.isBitfield()) {
+				out.println("public static int getAddress(int base, int index) {");
+				out.println("return %s.%s.getAddress(%s.getAddress(base, index));", recordName, fieldName, prefix);
+				out.println("}");
+			}
+			
 			if (type != null) {
 				Type baseType = type.isReference() ? ((TypeReference)type).baseType : type;
 				switch(baseType.kind) {
