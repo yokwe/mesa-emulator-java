@@ -145,10 +145,6 @@ BEGIN
 --    LinkType: TYPE  =  {frame(0), procedure(1), indirect(2)};
     -- changed chapter
     LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
---  TaggedControlLink: TYPE = RECORD [
---      data (0: 0..13): UNSPECIFIED,
---      tag  (0:14..15): LinkType,
---      fill (1: 0..15): UNSPECIFIED];
     TaggedControlLink: TYPE = RECORD [
         data (0: 0..13): UNSPECIFIED,
         tag  (0:14..15): LinkType,
