@@ -32,15 +32,15 @@ BEGIN
     -- GlobalFrameHandle: TYPE = LONG POINTER TO GlobalVariables;
     GlobalFrameHandle: TYPE = LONG POINTER;
     
-    GlobalWord: TYPE = RECORD [
-        available(0:  0..13): CARDINAL,
-        trapxfers(0: 14..14): BOOLEAN,
-        codelinks(0: 15..15): BOOLEAN];
+--  GlobalWord: TYPE = RECORD [
+--      available(0:  0..13): CARDINAL,
+--      trapxfers(0: 14..14): BOOLEAN,
+--       codelinks(0: 15..15): BOOLEAN];
 -- PrincOpsExtras2
---    GlobalWord: TYPE = RECORD [
---        gfi       (0: 0..13): GFTIndex,
---        trapxfers (0:14..14): BOOLEAN,
---        codelinks (0:15..15): BOOLEAN];
+    GlobalWord: TYPE = RECORD [
+        gfi       (0: 0..13): GFTIndex,
+        trapxfers (0:14..14): BOOLEAN,
+        codelinks (0:15..15): BOOLEAN];
 --    GFTIndex: TYPE = CARDINAL[0..16383];
     
     GlobalOverhead: TYPE = RECORD [

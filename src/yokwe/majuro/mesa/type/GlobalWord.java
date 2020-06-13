@@ -28,14 +28,14 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 
 //
-// GlobalWord: TYPE = RECORD[available (0:0..13): CARDINAL, trapxfers (0:14..14): BOOL, codelinks (0:15..15): BOOL];
+// GlobalWord: TYPE = RECORD[gfi (0:0..13): GFTIndex, trapxfers (0:14..14): BOOL, codelinks (0:15..15): BOOL];
 //
 
 public final class GlobalWord {
     public static final int SIZE = 1;
 
-    // available (0:0..13): CARDINAL
-    public static final class available {
+    // gfi (0:0..13): GFTIndex
+    public static final class gfi {
         public static final int SIZE = 1;
 
         private static final int OFFSET = 0;
@@ -57,13 +57,13 @@ public final class GlobalWord {
 
         public static int checkValue(int value) {
             SUBRANGE.check(value);
-            return CARDINAL.checkValue(value);
+            return GFTIndex.checkValue(value);
         }
         public static int get(int base) {
             return getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), GlobalWord.available::setBit, newValue);
+            Memory.modify(getAddress(base), GlobalWord.gfi::setBit, newValue);
         }
     }
     // trapxfers (0:14..14): BOOL

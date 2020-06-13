@@ -58,9 +58,9 @@ public final class GlobalOverhead {
             return base + OFFSET;
         }
         // Expand Record in Record
-        //   GlobalWord: TYPE = RECORD[available (0:0..13): CARDINAL, trapxfers (0:14..14): BOOL, codelinks (0:15..15): BOOL];
-        //     available (0:0..13): CARDINAL
-        public static final class available {
+        //   GlobalWord: TYPE = RECORD[gfi (0:0..13): GFTIndex, trapxfers (0:14..14): BOOL, codelinks (0:15..15): BOOL];
+        //     gfi (0:0..13): GFTIndex
+        public static final class gfi {
             public static final int SIZE = 1;
 
             private static final int OFFSET = 0;
@@ -82,13 +82,13 @@ public final class GlobalOverhead {
 
             public static int checkValue(int value) {
                 SUBRANGE.check(value);
-                return CARDINAL.checkValue(value);
+                return GFTIndex.checkValue(value);
             }
             public static int get(int base) {
                 return getBit(Memory.fetch(getAddress(base)));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), GlobalOverhead.word.available::setBit, newValue);
+                Memory.modify(getAddress(base), GlobalOverhead.word.gfi::setBit, newValue);
             }
         }
         //     trapxfers (0:14..14): BOOL
