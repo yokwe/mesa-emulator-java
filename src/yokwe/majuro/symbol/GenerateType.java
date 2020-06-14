@@ -729,7 +729,7 @@ public class GenerateType {
 		if (2 <= prefix.size()) {
 			out.println("return %s.getAddress(base) + OFFSET;", prefix);
 		} else {
-			out.println("return base + OFFSET;", prefix);
+			out.println("return base + OFFSET;");
 		}
 		out.println("}");
 
@@ -748,8 +748,8 @@ public class GenerateType {
 		case TAG_ANON:
 			// Output definition of anon enum
 			// FIXME Add more methods
-			tagTypeName = "TagType";
-			out.println("public static class %s {", tagTypeName);
+			tagTypeName = String.format("%s.%s.TagType", prefix, fieldName);
+			out.println("public static class TagType {");
 			out.println("// enum value");
 			for(Element element: tagType.elementList) {
 				out.println("public static final int %-16s = %d;", StringUtil.toJavaConstName(element.name), element.value);

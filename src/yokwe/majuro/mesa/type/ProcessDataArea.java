@@ -51,7 +51,7 @@ public final class ProcessDataArea {
         }
         // header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector]
         public static final class header {
-            public static final int TAG  = TagType.HEADER;
+            public static final int TAG  = ProcessDataArea.vp.TagType.HEADER;
             public static final int SIZE = 64;
             public static int getAddress(int base) {
                 return ProcessDataArea.vp.getAddress(base);
@@ -460,7 +460,7 @@ public final class ProcessDataArea {
         }
         // blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock]
         public static final class blocks {
-            public static final int TAG  = TagType.BLOCKS;
+            public static final int TAG  = ProcessDataArea.vp.TagType.BLOCKS;
             public static final int SIZE = 8192;
             public static int getAddress(int base) {
                 return ProcessDataArea.vp.getAddress(base);
