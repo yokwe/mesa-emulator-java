@@ -25,21 +25,19 @@
  *******************************************************************************/
 package yokwe.majuro.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.type.GlobalWord;
-import yokwe.majuro.mesa.type.LocalOverhead;
-import yokwe.majuro.mesa.type.LocalWord;
-import yokwe.majuro.mesa.type.TaggedControlLink;
+import yokwe.majuro.mesa.type.*;
+import yokwe.util.LoggingUtil;
 
 public class TestType extends TestBase {
 	@Test
 	public void testLocalWord() {
-		int va = 0x10000;
+		int va = 0x1_0000;
 		
 		//LocalWord: TYPE = MACHINE DEPENDENT RECORD[
 		//  available(0:0..7): BYTE,
@@ -77,7 +75,7 @@ public class TestType extends TestBase {
 	
 	@Test
 	public void testLocalOverhead() {
-		int va = 0x10000;
+		int va = 0x1_0000;
 		
 		//LocalOverhead : TYPE = MACHINE DEPENDENT RECORD [
 		//  word (0):       LocalWord.
@@ -116,7 +114,7 @@ public class TestType extends TestBase {
 	
 	@Test
 	public void testTaggedControlLink() {
-		int va = 0x10000;
+		int va = 0x1_0000;
 		
 		// TaggedControlLink: TYPE = RECORD[
 		//   data (0: 0..13): UNSPECIFIED,
@@ -143,7 +141,7 @@ public class TestType extends TestBase {
 
 	@Test
 	public void testGlobalWord() {
-		int va = 0x10000;
+		int va = 0x1_0000;
 		
 		// GlobalWord: TYPE = MACHINE DEPENDENT RECORD [
 		//   gfi (0:0..13): GFTIndex,
@@ -188,6 +186,229 @@ public class TestType extends TestBase {
 			GlobalWord.codelinks.set(va, true);			
 			
 			assertEquals(0x0001, Memory.rawRead(va));
+		}
+	}
+
+	
+	// Simple Record
+	public void testAVItem() {
+		int va = 0x1_0000;
+		
+		// AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType];
+		
+		assertEquals(1, AVItem.SIZE);
+
+		// read
+		{
+			fillPageZero(va);
+			
+			assertNotEquals(0xABCD >> 2, AVItem.data.get(va));
+			assertNotEquals(0x01, AVItem.tag.get(va));
+
+			Memory.rawWrite(va, 0xABCD);
+			
+			assertEquals(0xABCD >> 2, AVItem.data.get(va));
+			assertEquals(0x01, AVItem.tag.get(va));
+		}
+
+		// write
+		{
+			fillPageZero(va);
+			
+			AVItem.data.set(va, 0x3FFF);
+			
+			assertEquals(0xFFFC, Memory.rawRead(va));
+		}
+		// write
+		{
+			fillPageZero(va);
+			
+			AVItem.tag.set(va, 0x3);
+			
+			assertEquals(0x3, Memory.rawRead(va));
+		}
+	}
+	
+	// Simple Enum
+	@Test
+	public void testAVItemType() {
+		int va = 0x1_0000;
+		
+		// AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
+		
+		assertEquals(1, AVItemType.SIZE);
+
+		// read
+		{
+			fillPageZero(va);
+			
+			Memory.rawWrite(va, AVItemType.UNUSED);
+			
+			assertEquals(0x3, AVItemType.get(va));
+		}
+
+		// write
+		{
+			fillPageZero(va);
+			
+			AVItemType.set(va, AVItemType.UNUSED);
+			
+			assertEquals(AVItemType.UNUSED, Memory.rawRead(va));
+		}
+		
+		// Exception get
+		{
+			fillPageZero(va);
+
+			Memory.rawWrite(va, 0xFFFF);
+			
+			try {
+				LoggingUtil.turnOff();
+				
+				AVItemType.get(va);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+		
+		// Exception set
+		{
+			fillPageZero(va);
+			
+			try {
+				LoggingUtil.turnOff();
+
+				AVItemType.set(va, 0xFFFF);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+	}
+
+	// Simple Array
+	@Test
+	public void testStateAllocationTable() {
+		int va = 0x1_0000;
+
+		assertEquals(8, StateAllocationTable.SIZE);
+
+		// read
+		{
+			fillPageZero(va);
+			
+			Memory.rawWrite(va + 3, 0xABCD);
+			
+			assertEquals(0xABCD, StateAllocationTable.get(va, 3));
+		}
+		
+		// write
+		{
+			fillPageZero(va);
+			
+			StateAllocationTable.set(va, 3, 0xABCD);
+			
+			assertEquals(0xABCD, Memory.rawRead(va + 3));
+		}
+		
+		// Exception get
+		{
+			fillPageZero(va);
+
+			try {
+				LoggingUtil.turnOff();
+				
+				StateAllocationTable.get(va, 10);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+		
+		// Exception set
+		{
+			fillPageZero(va);
+
+			try {
+				LoggingUtil.turnOff();
+				
+				StateAllocationTable.set(va, 10, 10);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+
+	}
+
+	// Simple Subrange
+	@Test
+	public void testPriority() {
+		int va = 0x1_0000;
+		
+	//  Priority: TYPE = CARDINAL [0..7];
+		
+		assertEquals(1, Priority.SIZE);
+
+		// read
+		{
+			fillPageZero(va);
+			
+			Memory.rawWrite(va, 0x7);
+			
+			assertEquals(0x7, Priority.get(va));
+		}
+
+		// write
+		{
+			fillPageZero(va);
+			
+			Priority.set(va, 0x7);
+			
+			assertEquals(0x7, Memory.rawRead(va));
+		}
+		
+		// Exception get
+		{
+			fillPageZero(va);
+
+			Memory.rawWrite(va, 0xFFFF);
+			
+			try {
+				LoggingUtil.turnOff();
+				
+				Priority.get(va);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+		
+		// Exception set
+		{
+			fillPageZero(va);
+			
+			try {
+				LoggingUtil.turnOff();
+
+				Priority.set(va, 0xFFFF);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
 		}
 	}
 
