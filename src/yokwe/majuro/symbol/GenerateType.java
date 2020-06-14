@@ -116,6 +116,8 @@ public class GenerateType {
 			}
 		}
 		{
+			boolean foundProblem = false;
+
 			for(Type e: Type.map.values()) {
 				if (e.isReference()) continue;
 				if (e.isPredefined()) continue;
@@ -123,36 +125,117 @@ public class GenerateType {
 				switch(e.kind) {
 				case SUBRANGE:
 				{
-					// FIXME
 					TypeSubrange typeSubrange = (TypeSubrange)e;
+					
+					if (typeSubrange.getValueMax() <= typeSubrange.getValueMin()) {
+						foundProblem = true;
+						logger.error("{}", typeSubrange.toMesaString());
+						logger.error(" valueMin is greater than or equals to valueMAx");
+					}
 					
 				}
 					break;
 				case ARRAY:
 				{
 					// FIXME
-					TypeArray typeSubrange = (TypeArray)e;
-					
+					TypeArray typeArray = (TypeArray)e;
 				}
 					break;
 				case ENUM:
 				{
-					// FIXME
 					TypeEnum typeEnum = (TypeEnum)e;
+					if (typeEnum.valueMax <= typeEnum.valueMin) {
+						foundProblem = true;
+						logger.error("{}", typeEnum.toMesaString());
+						logger.error(" valueMin is greater than or equals to valueMAx");
+					}
 					
 				}
 					break;
 				case RECORD:
 				{
-					// FIXME
 					TypeRecord typeRecord = (TypeRecord)e;
 					
+					int bitSize = typeRecord.getSize() * 16;
+					boolean[] bitArray = new boolean[bitSize];
+					for(int i = 0; i < bitArray.length; i++) bitArray[i] = false;
+					
+					for(Field field: typeRecord.fieldList) {
+						if (field.type != null) {
+							int size     = field.getSize();
+							int offset   = field.fieldName.offset;
+							int startPos = field.fieldName.startPos;
+							int stopPos  = field.fieldName.stopPos;
+							
+							// skip  open array
+							if (startPos == -1) {
+								continue;
+							}
+							
+							for(int i = startPos; i <= stopPos; i++) {
+								int pos = offset * 16 + i;
+								if (bitArray[pos]) {
+									foundProblem = true;
+									logger.error("{}", typeRecord.toMesaString());
+									logger.error("{}: TYPE = {}", field.fieldName.name, field.toMesaType());
+									logger.error("{}:{}..{}", offset, startPos, stopPos);
+									logger.error(" field overlap at {}:{}", pos / 16, pos % 16);
+								} else {
+									bitArray[pos] = true;
+								}
+							}
+						}
+						if (field.select != null) {
+							for(SelectCase selectCase: field.select.selectCaseList) {
+								for(Field selectField: selectCase.fieldList) {
+									int size     = selectField.getSize();
+									int offset   = selectField.fieldName.offset;
+									int startPos = selectField.fieldName.startPos;
+									int stopPos  = selectField.fieldName.stopPos;
+									
+									// special for open array
+									if (startPos == -1) {
+										TypeArray typeArray = (TypeArray)selectField.type.getBaseType();
+										int arraySize = typeArray.length * typeArray.elementType.getSize() * 16;
+										for(int i = 0; i < arraySize; i++) {
+											int pos = offset * 16 + i;
+											if (bitArray[pos]) {
+												// select can overlap
+											} else {
+												bitArray[pos] = true;
+											}
+										}
+										continue;
+									}
+									
+									for(int i = startPos; i <= stopPos; i++) {
+										int pos = offset * 16 + i;
+										if (bitArray[pos]) {
+											// select can overlap
+										} else {
+											bitArray[pos] = true;
+										}
+									}
+								}
+							}
+						}
+					}
+					for(int i = 0; i < bitArray.length; i++) {
+						if (!bitArray[i]) {
+							logger.warn("{} may have hole at {}:{}", typeRecord.name, i / 16, i % 16);
+							break;
+						}
+					}
 				}
 					break;
 				default:
 					throw new UnexpectedException();
 				}
-				
+			}
+			
+			if (foundProblem) {
+				logger.error("has problem that needs fix");
+				throw new UnexpectedException("has problem that needs fix");
 			}
 		}
 	}
