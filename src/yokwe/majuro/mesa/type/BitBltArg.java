@@ -28,13 +28,13 @@ package yokwe.majuro.mesa.type;
 import yokwe.majuro.mesa.Memory;
 
 //
-// BitBltArg: TYPE = RECORD[dst (0:0..31): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
+// BitBltArg: TYPE = RECORD[dst (0:0..47): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
 //
 
 public final class BitBltArg {
     public static final int SIZE = 12;
 
-    // dst (0:0..31): BitAddress
+    // dst (0:0..47): BitAddress
     public static final class dst {
         public static final int SIZE = 3;
 

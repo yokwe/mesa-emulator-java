@@ -121,7 +121,7 @@ BEGIN
     Direction: TYPE = {forward(0), backward(1)};
 
     BitBltArg: TYPE = RECORD[
-        dst     ( 0:0..31): BitAddress,
+        dst     ( 0:0..47): BitAddress,
         dstBpl  ( 3:0..15): INTEGER,
         src     ( 4:0..47): BitAddress,
         srcBpl  ( 7:0..15): INTEGER,
