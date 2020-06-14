@@ -85,7 +85,7 @@ public final class Processes {
 		int src = ProcessDataArea.vp.header.ready.getAddress(Memory.PDA);
 		int dst = ProcessDataArea.vp.header.fault.getAddress(Memory.PDA, fi);
 		requeue(src, dst, faulted);
-//		notifyWakeup(ProcessDataArea.vp.header.fault.condition.getAddress(Memory.PDA, fi)); // FIXME
+		notifyWakeup(ProcessDataArea.vp.header.fault.condition.getAddress(Memory.PDA, fi));
 		CodeCache.setPC(Processor.savedPC);
 		Processor.SP = Processor.savedSP;
 		reschedule(true);
