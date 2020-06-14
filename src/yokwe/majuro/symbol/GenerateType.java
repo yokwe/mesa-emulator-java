@@ -2,8 +2,11 @@ package yokwe.majuro.symbol;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +189,22 @@ public class GenerateType {
 							}
 						}
 						if (field.select != null) {
-							for(SelectCase selectCase: field.select.selectCaseList) {
+							Select select = field.select;
+							if (select.tagName != null) {
+								int offset   = select.tagName.offset;
+								int startPos = select.tagName.startPos;
+								int stopPos  = select.tagName.stopPos;
+								
+								for(int i = startPos; i <= stopPos; i++) {
+									int pos = offset * 16 + i;
+									if (bitArray[pos]) {
+										// select can overlap
+									} else {
+										bitArray[pos] = true;
+									}
+								}
+							}
+							for(SelectCase selectCase: select.selectCaseList) {
 								for(Field selectField: selectCase.fieldList) {
 									int size     = selectField.getSize();
 									int offset   = selectField.fieldName.offset;
@@ -716,12 +734,61 @@ public class GenerateType {
 		out.println("}");
 
 		out.println("// %s", select.toMesaType());
-		// FIXME SELECT tag name and tag type
+		out.println("// %s", select.selectKind);
+		
+		// FIXME
+		if (select.selectKind != Select.SelectKind.OVERLAID_ANON) {
+			throw new UnexpectedException();
+		}
+		
+		String tagTypeName;
+		TypeEnum tagType = (TypeEnum)select.tagType.getBaseType();
+		switch (select.selectKind) {
+		case OVERLAID_ANON:
+		case TAG_ANON:
+			// Output definition of anon enum
+			// FIXME Add more methods
+			tagTypeName = "TagType";
+			out.println("public static class %s {", tagTypeName);
+			out.println("// enum value");
+			for(Element element: tagType.elementList) {
+				out.println("public static final int %-16s = %d;", StringUtil.toJavaConstName(element.name), element.value);
+			}
+			out.println("}");
+			break;
+		case OVERLAID_TYPE:
+		case TAG_TYPE:
+			tagTypeName = select.tagType.getBaseType().name;
+			break;
+		default:
+			throw new UnexpectedException();
+		}
+
+		if (select.tagName != null) {
+			// FIXME
+			out.println("public static final class %s {", select.tagName.name);
+			if (select.tagName.bitField) {
+				// FIXME
+				// define getBit/setBit get/set of tagType
+				out.println("public static int get(int base) {");
+				// FIXME
+				out.println("return 0;");
+				out.println("}");
+				out.println("public static void set(int base, int newValue) {");
+				// FIXME
+				out.println("}");
+			} else {
+				// FIXME
+				// define get/set of tagType
+			}
+			out.println("}");
+			out.println();
+		}
 	
 		for(SelectCase selectCase: select.selectCaseList) {
 			out.println("// %s", selectCase.toMesaType());
 			out.println("public static final class %s {", selectCase.selector);
-			out.println("public static final int TAG  = %d;", selectCase.value);
+			out.println("public static final int TAG  = %s.%s;", tagTypeName, StringUtil.toJavaConstName(selectCase.selector));
 			out.println("public static final int SIZE = %d;", selectCase.getSize());
 			
 			out.println("public static int getAddress(int base) {");
