@@ -25,15 +25,47 @@
  *******************************************************************************/
 package yokwe.majuro;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import yokwe.majuro.mesa.Debug;
+
 @SuppressWarnings("serial")
 public class UnexpectedException extends RuntimeException {
-	public UnexpectedException() {
+    private static final Logger logger = LoggerFactory.getLogger(UnexpectedException.class);
+
+    public UnexpectedException() {
 		super();
+		
+		logger.error("stack trace limits {} levels", Debug.STACK_TRACE_LIMIT);
+        int count = 0;
+        for(var e: getStackTrace()) {
+        	if (Debug.STACK_TRACE_LIMIT <= count++) break;
+        	logger.error("  {}", e);
+        }
 	}
 	public UnexpectedException(String message) {
 		super(message);
+		
+		logger.error("message {}", message);
+		logger.error("stack trace limits {} levels", Debug.STACK_TRACE_LIMIT);
+        int count = 0;
+        for(var e: getStackTrace()) {
+        	if (Debug.STACK_TRACE_LIMIT <= count++) break;
+        	logger.error("  {}", e);
+        }
+
 	}
 	public UnexpectedException(String message, Throwable throwable) {
 		super(message, throwable);
+		
+		logger.error("message   {}", message);
+		logger.error("throwable {}", throwable);
+		logger.error("stack trace limits {} levels", Debug.STACK_TRACE_LIMIT);
+        int count = 0;
+        for(var e: getStackTrace()) {
+        	if (Debug.STACK_TRACE_LIMIT <= count++) break;
+        	logger.error("  {}", e);
+        }
 	}
 }

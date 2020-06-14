@@ -95,7 +95,9 @@ public final class Debug {
 
 	public static final boolean STOP_MESSAGE_UNTIL_MP = false;
 
+	// UnexpectedException
+	public static final int     STACK_TRACE_LIMIT = 10;
+
 	// Type
 	public static final boolean ENABLE_TYPE_RANGE_CHECK = true;
-
 }
