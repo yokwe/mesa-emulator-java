@@ -25,6 +25,7 @@
  *******************************************************************************/
 package yokwe.majuro.symbol.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.symbol.model.TypeEnum.Element;
 
 public class Select {
 	private static final Logger logger = LoggerFactory.getLogger(Select.class);
@@ -128,7 +130,22 @@ public class Select {
 	private Select(String prefix, SelectKind selectKind, FieldName tagName, String tagTypeName, List<SelectCase> selectCaseList) {
 		this.selectKind     = selectKind;
 		this.tagName        = tagName;
-		this.tagType        = (tagTypeName == null) ? null : new TypeReference(prefix + "#" + tagTypeName + "#selector", tagTypeName);
+		
+		if (tagTypeName != null) {
+			this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#tagType", tagTypeName);
+		} else {
+			String enumName = prefix + "#" + tagTypeName + "#anon";
+			
+			this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#tagType", enumName);
+			
+			// create anon enum
+			List<Element> elementList = new ArrayList<>();
+			for(SelectCase selectCase: selectCaseList) {
+				elementList.add(new TypeEnum.Element(selectCase.selector, selectCase.value));
+			}
+			new TypeEnum(enumName, elementList);
+		}
+		
 		this.selectCaseList = selectCaseList;
 		
 		this.needsFix       = true;
