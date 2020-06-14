@@ -43,9 +43,15 @@ public final class ProcessDataArea {
             return base + OFFSET;
         }
         // SELECT OVERLAID * FROM header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector], blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock] ENDCASE
+        // OVERLAID_ANON
+        public static class TagType {
+            // enum value
+            public static final int HEADER           = 0;
+            public static final int BLOCKS           = 1;
+        }
         // header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector]
         public static final class header {
-            public static final int TAG  = 0;
+            public static final int TAG  = TagType.HEADER;
             public static final int SIZE = 64;
             public static int getAddress(int base) {
                 return ProcessDataArea.vp.getAddress(base);
@@ -454,7 +460,7 @@ public final class ProcessDataArea {
         }
         // blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock]
         public static final class blocks {
-            public static final int TAG  = 1;
+            public static final int TAG  = TagType.BLOCKS;
             public static final int SIZE = 8192;
             public static int getAddress(int base) {
                 return ProcessDataArea.vp.getAddress(base);
