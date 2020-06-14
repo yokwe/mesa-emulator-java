@@ -39,7 +39,7 @@ public class TypeEnum extends Type {
 	public static class Element {
 		public final String name;
 		public final int    value;
-		Element(String name, int value) {
+		public Element(String name, int value) {
 			this.name  = name;
 			this.value = value;
 		}
