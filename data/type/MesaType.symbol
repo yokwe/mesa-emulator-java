@@ -64,7 +64,7 @@ BEGIN
     GFTHandle: TYPE = POINTER;
     GFTIndex: TYPE = [0..16384);
     GFTItem: TYPE = RECORD[
-        globalFrame(0: 0..15): GlobalFrameHandle,
+        globalFrame(0: 0..31): GlobalFrameHandle,
 --      codebase   (2: 0..15): LONG POINTER TO CodeSegment];
         codebase   (2: 0..31): LONG POINTER];
 

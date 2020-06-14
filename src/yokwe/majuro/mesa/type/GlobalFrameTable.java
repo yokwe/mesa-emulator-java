@@ -28,7 +28,7 @@ package yokwe.majuro.mesa.type;
 //
 // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
 //   GFTIndex: TYPE = CARDINAL [0..16384)
-//   GFTItem: TYPE = RECORD[globalFrame (0:0..15): LONG_POINTER, codebase (2:0..31): LONG_POINTER]
+//   GFTItem: TYPE = RECORD[globalFrame (0:0..31): LONG_POINTER, codebase (2:0..31): LONG_POINTER]
 //
 
 public final class GlobalFrameTable {
@@ -44,9 +44,12 @@ public final class GlobalFrameTable {
     }
 
     // Expand Record in Array
-    //   GFTItem: TYPE = RECORD[globalFrame (0:0..15): LONG_POINTER, codebase (2:0..31): LONG_POINTER];
-    //     globalFrame (0:0..15): LONG_POINTER
+    //   GFTItem: TYPE = RECORD[globalFrame (0:0..31): LONG_POINTER, codebase (2:0..31): LONG_POINTER];
+    //     globalFrame (0:0..31): LONG_POINTER
     public static final class globalFrame {
+        public static int getAddress(int base, int index) {
+            return GFTItem.globalFrame.getAddress(GlobalFrameTable.getAddress(base, index));
+        }
         public static int get(int base, int index) {
             return GFTItem.globalFrame.get(GlobalFrameTable.getAddress(base, index));
         }
