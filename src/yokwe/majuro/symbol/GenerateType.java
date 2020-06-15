@@ -723,13 +723,6 @@ public class GenerateType {
 		out.println("// %s", select.toMesaType());
 		out.println("// %s", select.selectKind);
 		
-		// FIXME
-		if (select.selectKind != Select.SelectKind.OVERLAID_ANON) {
-			throw new UnexpectedException();
-		}
-		
-		//////////////////////////////////////////////////////////////////////
-		
 		String tagTypeName;
 		TypeEnum tagType = (TypeEnum)select.tagType.getBaseType();
 		if (select.isAnon) {
@@ -767,9 +760,15 @@ public class GenerateType {
 			out.println("ENUM.check(value);");
 			out.println("return value;");
 			out.println("}");
+			
+			out.println("public static int get(int base) {");
+			out.println("return checkValue(Memory.fetch(base));");
+			out.println("}");
+			out.println("public static void set(int base, int newValue) {");
+			out.println("Memory.store(base, checkValue(newValue));");
+			out.println("}");
 
 			out.println("}");
-			
 		} else {
 			tagTypeName = select.tagType.getBaseType().name;
 			// need to define class that represents tag enum
@@ -777,20 +776,63 @@ public class GenerateType {
 		
 		if (select.tagName != null) {
 			FieldName tagName = select.tagName;
+			out.println("// tagName %s", tagName);
 			
+			out.println("public static final class %s {", tagName.name);
+
+			out.println("public static final int SIZE = %d;", tagType.getSize());
+			out.println();
+			
+			out.println("private static final int OFFSET = %d;", tagName.offset);
+			out.println("public static int getAddress(int base) {");
+			out.println("return base + OFFSET;", prefix);
+			out.println("}");
+
 			if (tagName.bitField) {
 				// FIXME
 				//   define getBit/setBit
+				BitInfo bitInfo = new BitInfo(tagType.getSize(), tagName.startPos, tagName.stopPos);
+
+				out.println("private static final int MASK  = %s;", bitInfo.mask);
+				out.println("private static final int SHIFT = %d;", bitInfo.shift);
+				out.println();
+
+				out.println("private static int getBit(int value) {");
+				out.println("return checkValue((value & MASK) >>> SHIFT);");
+				out.println("}");
+				out.println("private static int setBit(int value, int newValue) {");
+				out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
+				out.println("}");
+				out.println();
+				
+				out.println("private static final int MAX = MASK >>> SHIFT;");
+				out.println("private static final Subrange SUBRANGE = new Subrange(0, MAX);");
+				out.println();
+
+				out.println("public static int checkValue(int value) {");
+				out.println("SUBRANGE.check(value);");
+				out.println("return %s.checkValue(value);", tagTypeName);
+				out.println("}");
+
+				out.println("public static int get(int base) {");
+				out.println("return getBit(Memory.fetch(getAddress(base)));");
+				out.println("}");
+				out.println("public static void set(int base, int newValue) {");
+				out.println("Memory.modify(getAddress(base), %s.%s.%s::setBit, newValue);", prefix, fieldName, tagName.name);
+				out.println("}");
+
 			} else {
-				// FIXME
-			}	
+				out.println("public static int get(int base) {");
+				out.println("return %s.get(getAddress(base));", tagTypeName);
+				out.println("}");
+				out.println("public static void set(int base, int newValue) {");
+				out.println("%s.set(getAddress(base), newValue);", tagTypeName);
+				out.println("}");
+			}
+			
+			out.println("}");
 		}
 
-		
-		
-		
-		////////////////////////////////////////////////////////////////////////
-		
 		
 		for(SelectCase selectCase: select.selectCaseList) {
 			out.println("// %s", selectCase.toMesaType());
