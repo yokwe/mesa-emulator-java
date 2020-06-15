@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
+import yokwe.majuro.symbol.model.FieldName;
 import yokwe.majuro.symbol.model.Select;
 import yokwe.majuro.symbol.model.Select.SelectCase;
 import yokwe.majuro.symbol.model.Symbol;
@@ -492,11 +495,6 @@ public class GenerateType {
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
 			out.println();
-			out.println("import org.slf4j.Logger;");
-			out.println("import org.slf4j.LoggerFactory;");
-			out.println();
-			out.println("import yokwe.majuro.UnexpectedException;");
-			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println();
 			
@@ -506,28 +504,34 @@ public class GenerateType {
 			out.println();
 
 			out.println("public final class %s {", className);
-			out.println("private static final Logger logger = LoggerFactory.getLogger(%s.class);", className);
-			out.println();
-			
 			out.println("public static final int SIZE = %d;", size);
 			out.println();
-
-			out.println("// enum value");
-			for(Element element: typeEnum.elementList) {
-				out.println("public static final int %-16s = %d;", StringUtil.toJavaConstName(element.name), element.value);
+			
+			{
+				int maxLen = typeEnum.elementList.stream().mapToInt(o -> StringUtil.toJavaConstName(o.name).length()).max().getAsInt();
+				String format = String.format("public static final int %%-%ds = %%2d;", maxLen);
+				for(Element element: typeEnum.elementList) {
+					out.println(format, StringUtil.toJavaConstName(element.name), element.value);
+				}
+				out.println();
 			}
-			out.println();
+			
+			{
+				StringBuilder sb = new StringBuilder();
+				for(Element element: typeEnum.elementList) {
+					sb.append(String.format(".add(%1$s, \"%1$s\")", StringUtil.toJavaConstName(element.name)));
+				}
+				out.println("private static final Enum ENUM = Enum.builder()%s.build();", sb.toString());
+			}
 			
 			out.println("public static String toString(int value) {");
-			out.println("switch(value) {");
-			for(Element element: typeEnum.elementList) {
-				out.println("case %1$-16s: return \"%1$s\";", StringUtil.toJavaConstName(element.name));
-			}
-			out.println("default:");
-			out.println("logger.error(\"value is out of range\");");
-			out.println("logger.error(\"  value {}\", value);");
-			out.println("throw new UnexpectedException(\"value is out of range\");");
+			out.println("return ENUM.toString(value);");
 			out.println("}");
+
+			// Don't use Subrange. Becuase enum can have hole.
+			out.println("public static int checkValue(int value) {");
+			out.println("ENUM.check(value);");
+			out.println("return value;");
 			out.println("}");
 
 			out.println("public static int get(int base) {");
@@ -535,23 +539,6 @@ public class GenerateType {
 			out.println("}");
 			out.println("public static void set(int base, int newValue) {");
 			out.println("Memory.store(base, checkValue(newValue));");
-			out.println("}");
-
-			// Don't use Subrange. Becuase enum can have hole.
-			out.println("public static int checkValue(int value) {");
-			out.println("if (Debug.ENABLE_TYPE_RANGE_CHECK) {");
-			out.println("switch(value) {");
-			for(Element element: typeEnum.elementList) {
-				out.println("case %s:", StringUtil.toJavaConstName(element.name));
-			}
-			out.println("break;");
-			out.println("default:");
-			out.println("logger.error(\"value is out of range\");");
-			out.println("logger.error(\"  value {}\", value);");
-			out.println("throw new UnexpectedException(\"value is out of range\");");
-			out.println("}");
-			out.println("}");
-			out.println("return value;");
 			out.println("}");
 
 			out.println("}");
@@ -741,50 +728,70 @@ public class GenerateType {
 			throw new UnexpectedException();
 		}
 		
+		//////////////////////////////////////////////////////////////////////
+		
 		String tagTypeName;
 		TypeEnum tagType = (TypeEnum)select.tagType.getBaseType();
-		switch (select.selectKind) {
-		case OVERLAID_ANON:
-		case TAG_ANON:
-			// Output definition of anon enum
-			// FIXME Add more methods
+		if (select.isAnon) {
 			tagTypeName = String.format("%s.%s.TagType", prefix, fieldName);
+			// need to define class that represents tag enum
 			out.println("public static class TagType {");
-			out.println("// enum value");
-			for(Element element: tagType.elementList) {
-				out.println("public static final int %-16s = %d;", StringUtil.toJavaConstName(element.name), element.value);
-			}
-			out.println("}");
-			break;
-		case OVERLAID_TYPE:
-		case TAG_TYPE:
-			tagTypeName = select.tagType.getBaseType().name;
-			break;
-		default:
-			throw new UnexpectedException();
-		}
+			
+			out.println("public static final int SIZE = %d;", tagType.getSize());
+			out.println();
 
+			out.println("// enum value");
+			{
+				int maxLen = tagType.elementList.stream().mapToInt(o -> StringUtil.toJavaConstName(o.name).length()).max().getAsInt();
+				String format = String.format("public static final int %%-%ds = %%2d;", maxLen);
+				for(Element element: tagType.elementList) {
+					out.println(format, StringUtil.toJavaConstName(element.name), element.value);
+				}
+			}
+			out.println();
+
+			{
+				StringBuilder sb = new StringBuilder();
+				for(Element element: tagType.elementList) {
+					sb.append(String.format(".add(%1$s, \"%1$s\")", StringUtil.toJavaConstName(element.name)));
+				}
+				out.println("private static final Enum ENUM = Enum.builder()%s.build();", sb.toString());
+			}
+			
+			out.println("public static String toString(int value) {");
+			out.println("return ENUM.toString(value);");
+			out.println("}");
+
+			// Don't use Subrange. Becuase enum can have hole.
+			out.println("public static int checkValue(int value) {");
+			out.println("ENUM.check(value);");
+			out.println("return value;");
+			out.println("}");
+
+			out.println("}");
+			
+		} else {
+			tagTypeName = select.tagType.getBaseType().name;
+			// need to define class that represents tag enum
+		}
+		
 		if (select.tagName != null) {
-			// FIXME
-			out.println("public static final class %s {", select.tagName.name);
-			if (select.tagName.bitField) {
+			FieldName tagName = select.tagName;
+			
+			if (tagName.bitField) {
 				// FIXME
-				// define getBit/setBit get/set of tagType
-				out.println("public static int get(int base) {");
-				// FIXME
-				out.println("return 0;");
-				out.println("}");
-				out.println("public static void set(int base, int newValue) {");
-				// FIXME
-				out.println("}");
+				//   define getBit/setBit
 			} else {
 				// FIXME
-				// define get/set of tagType
-			}
-			out.println("}");
-			out.println();
+			}	
 		}
-	
+
+		
+		
+		
+		////////////////////////////////////////////////////////////////////////
+		
+		
 		for(SelectCase selectCase: select.selectCaseList) {
 			out.println("// %s", selectCase.toMesaType());
 			out.println("public static final class %s {", selectCase.selector);
@@ -833,7 +840,6 @@ public class GenerateType {
 			out.println();
 			
 			for(Field field: typeRecord.fieldList) {
-				String  fieldName = field.fieldName.name;
 				Type    type      = field.type;
 				Select  select    = field.select;
 				
