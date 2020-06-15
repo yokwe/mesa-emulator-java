@@ -59,6 +59,12 @@ public final class ProcessDataArea {
                 ENUM.check(value);
                 return value;
             }
+            public static int get(int base) {
+                return checkValue(Memory.fetch(base));
+            }
+            public static void set(int base, int newValue) {
+                Memory.store(base, checkValue(newValue));
+            }
         }
         // header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector]
         public static final class header {
