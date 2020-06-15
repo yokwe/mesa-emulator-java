@@ -123,6 +123,7 @@ public class Select {
 	public final FieldName        tagName;
 	public final TypeReference    tagType;
 	public final List<SelectCase> selectCaseList;
+	public final boolean          isAnon;
 	
 	private boolean needsFix;
 	private int     size;
@@ -131,6 +132,8 @@ public class Select {
 		this.selectKind     = selectKind;
 		this.tagName        = tagName;
 		
+		isAnon = tagTypeName == null;
+
 		if (tagTypeName != null) {
 			this.tagType = new TypeReference(prefix + "#" + tagTypeName + "#tagType", tagTypeName);
 		} else {
