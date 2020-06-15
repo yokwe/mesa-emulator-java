@@ -25,11 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
@@ -37,48 +32,25 @@ import yokwe.majuro.mesa.Memory;
 //
 
 public final class AVItemType {
-    private static final Logger logger = LoggerFactory.getLogger(AVItemType.class);
-
     public static final int SIZE = 1;
 
-    // enum value
-    public static final int FRAME            = 0;
-    public static final int EMPTY            = 1;
-    public static final int INDIRECT         = 2;
-    public static final int UNUSED           = 3;
+    public static final int FRAME    =  0;
+    public static final int EMPTY    =  1;
+    public static final int INDIRECT =  2;
+    public static final int UNUSED   =  3;
 
+    private static final Enum ENUM = Enum.builder().add(FRAME, "FRAME").add(EMPTY, "EMPTY").add(INDIRECT, "INDIRECT").add(UNUSED, "UNUSED").build();
     public static String toString(int value) {
-        switch(value) {
-        case FRAME           : return "FRAME";
-        case EMPTY           : return "EMPTY";
-        case INDIRECT        : return "INDIRECT";
-        case UNUSED          : return "UNUSED";
-        default:
-            logger.error("value is out of range");
-            logger.error("  value {}", value);
-            throw new UnexpectedException("value is out of range");
-        }
+        return ENUM.toString(value);
+    }
+    public static int checkValue(int value) {
+        ENUM.check(value);
+        return value;
     }
     public static int get(int base) {
         return checkValue(Memory.fetch(base));
     }
     public static void set(int base, int newValue) {
         Memory.store(base, checkValue(newValue));
-    }
-    public static int checkValue(int value) {
-        if (Debug.ENABLE_TYPE_RANGE_CHECK) {
-            switch(value) {
-            case FRAME:
-            case EMPTY:
-            case INDIRECT:
-            case UNUSED:
-                break;
-            default:
-                logger.error("value is out of range");
-                logger.error("  value {}", value);
-                throw new UnexpectedException("value is out of range");
-            }
-        }
-        return value;
     }
 }

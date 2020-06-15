@@ -45,9 +45,20 @@ public final class ProcessDataArea {
         // SELECT OVERLAID * FROM header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector], blocks(1) => [block (0): ARRAY PsbIndex OF ProcessStateBlock] ENDCASE
         // OVERLAID_ANON
         public static class TagType {
+            public static final int SIZE = 1;
+
             // enum value
-            public static final int HEADER           = 0;
-            public static final int BLOCKS           = 1;
+            public static final int HEADER =  0;
+            public static final int BLOCKS =  1;
+
+            private static final Enum ENUM = Enum.builder().add(HEADER, "HEADER").add(BLOCKS, "BLOCKS").build();
+            public static String toString(int value) {
+                return ENUM.toString(value);
+            }
+            public static int checkValue(int value) {
+                ENUM.check(value);
+                return value;
+            }
         }
         // header(0) => [ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY CARDINAL [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector]
         public static final class header {

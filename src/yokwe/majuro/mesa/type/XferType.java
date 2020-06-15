@@ -25,11 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
@@ -37,60 +32,29 @@ import yokwe.majuro.mesa.Memory;
 //
 
 public final class XferType {
-    private static final Logger logger = LoggerFactory.getLogger(XferType.class);
-
     public static final int SIZE = 1;
 
-    // enum value
-    public static final int RETURN           = 0;
-    public static final int CALL             = 1;
-    public static final int LOCAL_CALL       = 2;
-    public static final int PART             = 3;
-    public static final int XFER             = 4;
-    public static final int TRAP             = 5;
-    public static final int PROCESS_SWITCH   = 6;
-    public static final int UNUSED           = 7;
+    public static final int RETURN         =  0;
+    public static final int CALL           =  1;
+    public static final int LOCAL_CALL     =  2;
+    public static final int PART           =  3;
+    public static final int XFER           =  4;
+    public static final int TRAP           =  5;
+    public static final int PROCESS_SWITCH =  6;
+    public static final int UNUSED         =  7;
 
+    private static final Enum ENUM = Enum.builder().add(RETURN, "RETURN").add(CALL, "CALL").add(LOCAL_CALL, "LOCAL_CALL").add(PART, "PART").add(XFER, "XFER").add(TRAP, "TRAP").add(PROCESS_SWITCH, "PROCESS_SWITCH").add(UNUSED, "UNUSED").build();
     public static String toString(int value) {
-        switch(value) {
-        case RETURN          : return "RETURN";
-        case CALL            : return "CALL";
-        case LOCAL_CALL      : return "LOCAL_CALL";
-        case PART            : return "PART";
-        case XFER            : return "XFER";
-        case TRAP            : return "TRAP";
-        case PROCESS_SWITCH  : return "PROCESS_SWITCH";
-        case UNUSED          : return "UNUSED";
-        default:
-            logger.error("value is out of range");
-            logger.error("  value {}", value);
-            throw new UnexpectedException("value is out of range");
-        }
+        return ENUM.toString(value);
+    }
+    public static int checkValue(int value) {
+        ENUM.check(value);
+        return value;
     }
     public static int get(int base) {
         return checkValue(Memory.fetch(base));
     }
     public static void set(int base, int newValue) {
         Memory.store(base, checkValue(newValue));
-    }
-    public static int checkValue(int value) {
-        if (Debug.ENABLE_TYPE_RANGE_CHECK) {
-            switch(value) {
-            case RETURN:
-            case CALL:
-            case LOCAL_CALL:
-            case PART:
-            case XFER:
-            case TRAP:
-            case PROCESS_SWITCH:
-            case UNUSED:
-                break;
-            default:
-                logger.error("value is out of range");
-                logger.error("  value {}", value);
-                throw new UnexpectedException("value is out of range");
-            }
-        }
-        return value;
     }
 }
