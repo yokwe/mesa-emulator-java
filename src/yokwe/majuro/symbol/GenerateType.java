@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.type.Bitfield;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
 import yokwe.majuro.symbol.model.FieldName;
@@ -288,8 +287,7 @@ public class GenerateType {
 			out.println();
 			
 			out.println("public static int checkValue(int value) {");
-			out.println("SUBRANGE.check(value);");
-			out.println("return value;");
+			out.println("return SUBRANGE.checkValue(value);");
 			out.println("}");
 			out.println();
 			
@@ -399,8 +397,7 @@ public class GenerateType {
 				out.println("private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);");
 
 				out.println("private static int checkIndex(int index) {");
-				out.println("INDEX_SUBRANGE.check(index);");
-				out.println("return index;");
+				out.println("return INDEX_SUBRANGE.checkValue(index);");
 				out.println("}");
 			}
 		}
@@ -649,18 +646,18 @@ public class GenerateType {
 			switch(type.getSize()) {
 			case 1:
 				out.println("public static int get(int base) {");
-				out.println("return BITFIELD.getBit(Memory.fetch(getAddress(base)));");
+				out.println("return %s.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));", type.name);
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, newValue);");
+				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, %s.checkValue(newValue));", type.name);
 				out.println("}");
 				break;
 			case 2:
 				out.println("public static int get(int base) {");
-				out.println("return BITFIELD.getBit(Memory.readDbl(getAddress(base)));");
+				out.println("return %s.checkValue(BITFIELD.getBit(Memory.readDbl(getAddress(base))));", type.name);
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modifyDbl(getAddress(base), BITFIELD::setBit, newValue);");
+				out.println("Memory.modifyDbl(getAddress(base), BITFIELD::setBit, %s.checkValue(newValue));", type.name);
 				out.println("}");
 				break;
 			default:
@@ -767,23 +764,20 @@ public class GenerateType {
 			out.println("}");
 
 			if (tagName.bitField) {
-				// FIXME
-				//   define getBit/setBit
 				BitInfo bitInfo = new BitInfo(tagType.getSize(), tagName.startPos, tagName.stopPos);
 				out.println("private static final int SHIFT = %d;", bitInfo.shift);
 				out.println("private static final int MASK  = %s;", bitInfo.mask);
 				out.println("private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);", bitInfo.shift, bitInfo.mask);
 
 				out.println("public static int checkValue(int value) {");
-				out.println("BITFIELD.check(value);");
-				out.println("return %s.checkValue(value);", tagTypeName);
+				out.println("return %s.checkValue(BITFIELD.checkValue(value));", tagTypeName);
 				out.println("}");
 
 				out.println("public static int get(int base) {");
-				out.println("return BITFIELD.getBit(Memory.fetch(getAddress(base)));");
+				out.println("return %s.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));", tagTypeName);
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, newValue);");
+				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, %s.checkValue(newValue));", tagTypeName);
 				out.println("}");
 			} else {
 				out.println("public static int get(int base) {");
