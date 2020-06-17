@@ -42,28 +42,17 @@ public final class AVItem {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1111_1111_1111_1100;
         private static final int SHIFT = 2;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b1111_1111_1111_1100;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
+            return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), AVItem.data::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // tag (0:14..15): AVItemType
@@ -74,28 +63,17 @@ public final class AVItem {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0000_0000_0011;
         private static final int SHIFT = 0;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_0000_0000_0011;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return AVItemType.checkValue(value);
+            return AVItemType.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), AVItem.tag::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
 }

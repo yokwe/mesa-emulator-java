@@ -42,28 +42,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1000_0000_0000_0000;
         private static final int SHIFT = 15;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b1000_0000_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return Direction.checkValue(value);
+            return Direction.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.direction::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // disjoint (0:1..1): BOOL
@@ -74,28 +63,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0100_0000_0000_0000;
         private static final int SHIFT = 14;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0100_0000_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return value;
+            return BITFIELD.checkValue(value);
         }
         public static boolean get(int base) {
-            return getBit(Memory.fetch(getAddress(base))) != 0;
+            return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.disjoint::setBit, (newValue ? 1 : 0));
+            Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
         }
     }
     // disjointItems (0:2..2): BOOL
@@ -106,28 +84,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0010_0000_0000_0000;
         private static final int SHIFT = 13;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0010_0000_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return value;
+            return BITFIELD.checkValue(value);
         }
         public static boolean get(int base) {
-            return getBit(Memory.fetch(getAddress(base))) != 0;
+            return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.disjointItems::setBit, (newValue ? 1 : 0));
+            Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
         }
     }
     // gray (0:3..3): BOOL
@@ -138,28 +105,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0001_0000_0000_0000;
         private static final int SHIFT = 12;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0001_0000_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return value;
+            return BITFIELD.checkValue(value);
         }
         public static boolean get(int base) {
-            return getBit(Memory.fetch(getAddress(base))) != 0;
+            return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.gray::setBit, (newValue ? 1 : 0));
+            Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
         }
     }
     // srcFunc (0:4..4): SrcFunc
@@ -170,28 +126,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_1000_0000_0000;
         private static final int SHIFT = 11;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_1000_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return SrcFunc.checkValue(value);
+            return SrcFunc.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.srcFunc::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // dstFunc (0:5..6): DstFunc
@@ -202,28 +147,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0110_0000_0000;
         private static final int SHIFT = 9;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_0110_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return DstFunc.checkValue(value);
+            return DstFunc.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.dstFunc::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // reserved (0:7..15): UNSPECIFIED
@@ -234,28 +168,17 @@ public final class BitBltFlags {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0001_1111_1111;
         private static final int SHIFT = 0;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_0001_1111_1111;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return UNSPECIFIED.checkValue(value);
+            return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BitBltFlags.reserved::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
 }

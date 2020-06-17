@@ -42,8 +42,7 @@ public final class Direction {
         return ENUM.toString(value);
     }
     public static int checkValue(int value) {
-        ENUM.check(value);
-        return value;
+        return ENUM.checkValue(value);
     }
     public static int get(int base) {
         return checkValue(Memory.fetch(base));

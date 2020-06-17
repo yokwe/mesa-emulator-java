@@ -52,28 +52,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.link.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b1110_0000_0000_0000;
             private static final int SHIFT = 13;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b1110_0000_0000_0000;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return Priority.checkValue(value);
+                return Priority.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return getBit(Memory.fetch(getAddress(base)));
+                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.link.priority::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
             }
         }
         //     next (0:3..12): PsbIndex
@@ -84,28 +73,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.link.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0001_1111_1111_1000;
             private static final int SHIFT = 3;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0001_1111_1111_1000;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return PsbIndex.checkValue(value);
+                return PsbIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return getBit(Memory.fetch(getAddress(base)));
+                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.link.next::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
             }
         }
         //     failed (0:13..13): BOOL
@@ -116,28 +94,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.link.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0000_0000_0000_0100;
             private static final int SHIFT = 2;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0000_0000_0000_0100;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return value;
+                return BITFIELD.checkValue(value);
             }
             public static boolean get(int base) {
-                return getBit(Memory.fetch(getAddress(base))) != 0;
+                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.link.failed::setBit, (newValue ? 1 : 0));
+                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
             }
         }
         //     permanent (0:14..14): BOOL
@@ -148,28 +115,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.link.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0000_0000_0000_0010;
             private static final int SHIFT = 1;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0000_0000_0000_0010;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return value;
+                return BITFIELD.checkValue(value);
             }
             public static boolean get(int base) {
-                return getBit(Memory.fetch(getAddress(base))) != 0;
+                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.link.permanent::setBit, (newValue ? 1 : 0));
+                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
             }
         }
         //     preempted (0:15..15): BOOL
@@ -180,28 +136,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.link.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0000_0000_0000_0001;
             private static final int SHIFT = 0;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0000_0000_0000_0001;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return value;
+                return BITFIELD.checkValue(value);
             }
             public static boolean get(int base) {
-                return getBit(Memory.fetch(getAddress(base))) != 0;
+                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.link.preempted::setBit, (newValue ? 1 : 0));
+                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
             }
         }
     }
@@ -223,28 +168,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.flags.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b1110_0000_0000_0000;
             private static final int SHIFT = 13;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b1110_0000_0000_0000;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return UNSPECIFIED.checkValue(value);
+                return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return getBit(Memory.fetch(getAddress(base)));
+                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.flags.available::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
             }
         }
         //     cleanup (0:3..12): PsbIndex
@@ -255,28 +189,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.flags.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0001_1111_1111_1000;
             private static final int SHIFT = 3;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0001_1111_1111_1000;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return PsbIndex.checkValue(value);
+                return PsbIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return getBit(Memory.fetch(getAddress(base)));
+                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.flags.cleanup::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
             }
         }
         //     reserved (0:13..13): UNSPECIFIED
@@ -287,28 +210,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.flags.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0000_0000_0000_0100;
             private static final int SHIFT = 2;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0000_0000_0000_0100;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return UNSPECIFIED.checkValue(value);
+                return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return getBit(Memory.fetch(getAddress(base)));
+                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.flags.reserved::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
             }
         }
         //     waiting (0:14..14): BOOL
@@ -319,28 +231,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.flags.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0000_0000_0000_0010;
             private static final int SHIFT = 1;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0000_0000_0000_0010;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return value;
+                return BITFIELD.checkValue(value);
             }
             public static boolean get(int base) {
-                return getBit(Memory.fetch(getAddress(base))) != 0;
+                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.flags.waiting::setBit, (newValue ? 1 : 0));
+                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
             }
         }
         //     abort (0:15..15): BOOL
@@ -351,28 +252,17 @@ public final class ProcessStateBlock {
             public static int getAddress(int base) {
                 return ProcessStateBlock.flags.getAddress(base) + OFFSET;
             }
-            private static final int MASK  = 0b0000_0000_0000_0001;
             private static final int SHIFT = 0;
-
-            private static int getBit(int value) {
-                return checkValue((value & MASK) >>> SHIFT);
-            }
-            private static int setBit(int value, int newValue) {
-                return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-            }
-
-            private static final int MAX = MASK >>> SHIFT;
-            private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+            private static final int MASK  = 0b0000_0000_0000_0001;
+            private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                SUBRANGE.check(value);
-                return value;
+                return BITFIELD.checkValue(value);
             }
             public static boolean get(int base) {
-                return getBit(Memory.fetch(getAddress(base))) != 0;
+                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), ProcessStateBlock.flags.abort::setBit, (newValue ? 1 : 0));
+                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
             }
         }
     }

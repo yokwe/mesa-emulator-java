@@ -84,10 +84,10 @@ public final class Enum {
         throw new UnexpectedException("value is out of range");
 	}
 	
-	public void check(int value) {
+	public int checkValue(int value) {
         if (Debug.ENABLE_TYPE_RANGE_CHECK) {
         	if (0 <= value && value < names.length) {
-        		if (names[value] != null) return;
+        		if (names[value] != null) return value;
         	}
         	
             logger.error("value is out of range");
@@ -96,5 +96,6 @@ public final class Enum {
             
             throw new UnexpectedException("value is out of range");
         }
+		return value;
 	}
 }

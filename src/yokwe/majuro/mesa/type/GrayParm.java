@@ -42,28 +42,17 @@ public final class GrayParm {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b1111_0000_0000_0000;
         private static final int SHIFT = 12;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b1111_0000_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return NIBBLE.checkValue(value);
+            return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), GrayParm.reserved::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // yOffset (0:4..7): NIBBLE
@@ -74,28 +63,17 @@ public final class GrayParm {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_1111_0000_0000;
         private static final int SHIFT = 8;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_1111_0000_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return NIBBLE.checkValue(value);
+            return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), GrayParm.yOffset::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // widthMinusOne (0:8..11): NIBBLE
@@ -106,28 +84,17 @@ public final class GrayParm {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0000_1111_0000;
         private static final int SHIFT = 4;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_0000_1111_0000;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return NIBBLE.checkValue(value);
+            return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), GrayParm.widthMinusOne::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
     // heightMinusOne (0:12..15): NIBBLE
@@ -138,28 +105,17 @@ public final class GrayParm {
         public static int getAddress(int base) {
             return base + OFFSET;
         }
-        private static final int MASK  = 0b0000_0000_0000_1111;
         private static final int SHIFT = 0;
-
-        private static int getBit(int value) {
-            return checkValue((value & MASK) >>> SHIFT);
-        }
-        private static int setBit(int value, int newValue) {
-            return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);
-        }
-
-        private static final int MAX = MASK >>> SHIFT;
-        private static final Subrange SUBRANGE = new Subrange(0, MAX);
-
+        private static final int MASK  = 0b0000_0000_0000_1111;
+        private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            SUBRANGE.check(value);
-            return NIBBLE.checkValue(value);
+            return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return getBit(Memory.fetch(getAddress(base)));
+            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), GrayParm.heightMinusOne::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
         }
     }
 }
