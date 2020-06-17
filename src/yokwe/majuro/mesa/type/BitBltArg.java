@@ -74,10 +74,10 @@ public final class BitBltArg {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
         //     bit (2:12..15): CARDINAL
@@ -95,10 +95,10 @@ public final class BitBltArg {
                 return CARDINAL.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return CARDINAL.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, CARDINAL.checkValue(newValue));
             }
         }
     }
@@ -157,10 +157,10 @@ public final class BitBltArg {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
         //     bit (2:12..15): CARDINAL
@@ -178,10 +178,10 @@ public final class BitBltArg {
                 return CARDINAL.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return CARDINAL.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, CARDINAL.checkValue(newValue));
             }
         }
     }
@@ -255,10 +255,10 @@ public final class BitBltArg {
                 return Direction.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return Direction.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, Direction.checkValue(newValue));
             }
         }
         //     disjoint (0:1..1): BOOL
@@ -339,10 +339,10 @@ public final class BitBltArg {
                 return SrcFunc.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return SrcFunc.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, SrcFunc.checkValue(newValue));
             }
         }
         //     dstFunc (0:5..6): DstFunc
@@ -360,10 +360,10 @@ public final class BitBltArg {
                 return DstFunc.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return DstFunc.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, DstFunc.checkValue(newValue));
             }
         }
         //     reserved (0:7..15): UNSPECIFIED
@@ -381,10 +381,10 @@ public final class BitBltArg {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
     }

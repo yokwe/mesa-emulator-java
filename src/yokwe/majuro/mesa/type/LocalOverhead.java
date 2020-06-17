@@ -59,10 +59,10 @@ public final class LocalOverhead {
                 return BYTE.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
             }
         }
         //     fsi (0:8..15): FSIndex
@@ -80,10 +80,10 @@ public final class LocalOverhead {
                 return FSIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return FSIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, FSIndex.checkValue(newValue));
             }
         }
     }

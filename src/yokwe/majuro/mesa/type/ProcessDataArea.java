@@ -98,10 +98,10 @@ public final class ProcessDataArea {
                         return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
                     }
                     public static int get(int base) {
-                        return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                        return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
                     }
                     public static void set(int base, int newValue) {
-                        Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                        Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
                     }
                 }
                 //     tail (0:3..12): PsbIndex
@@ -119,10 +119,10 @@ public final class ProcessDataArea {
                         return PsbIndex.checkValue(BITFIELD.checkValue(value));
                     }
                     public static int get(int base) {
-                        return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                        return PsbIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
                     }
                     public static void set(int base, int newValue) {
-                        Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                        Memory.modify(getAddress(base), BITFIELD::setBit, PsbIndex.checkValue(newValue));
                     }
                 }
                 //     reserved2 (0:13..15): UNSPECIFIED
@@ -140,10 +140,10 @@ public final class ProcessDataArea {
                         return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
                     }
                     public static int get(int base) {
-                        return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                        return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
                     }
                     public static void set(int base, int newValue) {
-                        Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                        Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
                     }
                 }
             }
@@ -200,8 +200,7 @@ public final class ProcessDataArea {
                 private static final int INDEX_MAX    = 4;
                 private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
                 private static int checkIndex(int index) {
-                    INDEX_SUBRANGE.check(index);
-                    return index;
+                    return INDEX_SUBRANGE.checkValue(index);
                 }
 
                 public static int get(int base, int index) {

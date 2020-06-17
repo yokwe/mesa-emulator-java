@@ -49,10 +49,10 @@ public final class GrayParm {
             return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
         }
     }
     // yOffset (0:4..7): NIBBLE
@@ -70,10 +70,10 @@ public final class GrayParm {
             return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
         }
     }
     // widthMinusOne (0:8..11): NIBBLE
@@ -91,10 +91,10 @@ public final class GrayParm {
             return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
         }
     }
     // heightMinusOne (0:12..15): NIBBLE
@@ -112,10 +112,10 @@ public final class GrayParm {
             return NIBBLE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
         }
     }
 }

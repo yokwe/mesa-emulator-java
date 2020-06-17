@@ -49,10 +49,10 @@ public final class PsbLink {
             return Priority.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return Priority.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, Priority.checkValue(newValue));
         }
     }
     // next (0:3..12): PsbIndex
@@ -70,10 +70,10 @@ public final class PsbLink {
             return PsbIndex.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return PsbIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, PsbIndex.checkValue(newValue));
         }
     }
     // failed (0:13..13): BOOL

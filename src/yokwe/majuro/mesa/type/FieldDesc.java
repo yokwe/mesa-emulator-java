@@ -49,10 +49,10 @@ public final class FieldDesc {
             return BYTE.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
         }
     }
     // field (0:8..15): FieldSpec
@@ -80,10 +80,10 @@ public final class FieldDesc {
                 return NIBBLE.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
             }
         }
         //     size (0:4..7): NIBBLE
@@ -101,10 +101,10 @@ public final class FieldDesc {
                 return NIBBLE.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
             }
         }
     }

@@ -49,10 +49,10 @@ public final class AVItem {
             return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
         }
     }
     // tag (0:14..15): AVItemType
@@ -70,10 +70,10 @@ public final class AVItem {
             return AVItemType.checkValue(BITFIELD.checkValue(value));
         }
         public static int get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+            return AVItemType.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+            Memory.modify(getAddress(base), BITFIELD::setBit, AVItemType.checkValue(newValue));
         }
     }
 }

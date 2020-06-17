@@ -59,10 +59,10 @@ public final class InterruptItem {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
         //     tail (0:3..12): PsbIndex
@@ -80,10 +80,10 @@ public final class InterruptItem {
                 return PsbIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return PsbIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, PsbIndex.checkValue(newValue));
             }
         }
         //     available (0:13..13): UNSPECIFIED
@@ -101,10 +101,10 @@ public final class InterruptItem {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
         //     abortable (0:14..14): BOOL

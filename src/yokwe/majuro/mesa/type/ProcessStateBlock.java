@@ -59,10 +59,10 @@ public final class ProcessStateBlock {
                 return Priority.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return Priority.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, Priority.checkValue(newValue));
             }
         }
         //     next (0:3..12): PsbIndex
@@ -80,10 +80,10 @@ public final class ProcessStateBlock {
                 return PsbIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return PsbIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, PsbIndex.checkValue(newValue));
             }
         }
         //     failed (0:13..13): BOOL
@@ -175,10 +175,10 @@ public final class ProcessStateBlock {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
         //     cleanup (0:3..12): PsbIndex
@@ -196,10 +196,10 @@ public final class ProcessStateBlock {
                 return PsbIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return PsbIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, PsbIndex.checkValue(newValue));
             }
         }
         //     reserved (0:13..13): UNSPECIFIED
@@ -217,10 +217,10 @@ public final class ProcessStateBlock {
                 return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
             }
         }
         //     waiting (0:14..14): BOOL

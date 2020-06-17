@@ -54,8 +54,7 @@ public final class StateVector {
         private static final int INDEX_MAX    = 13;
         private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
         private static int checkIndex(int index) {
-            INDEX_SUBRANGE.check(index);
-            return index;
+            return INDEX_SUBRANGE.checkValue(index);
         }
 
         public static int get(int base, int index) {
@@ -90,10 +89,10 @@ public final class StateVector {
                 return BYTE.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
             }
         }
         //     stkPtr (0:8..15): BYTE
@@ -111,10 +110,10 @@ public final class StateVector {
                 return BYTE.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
             }
         }
     }

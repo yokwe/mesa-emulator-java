@@ -74,10 +74,10 @@ public final class NewGlobalOverhead {
                 return GFTIndex.checkValue(BITFIELD.checkValue(value));
             }
             public static int get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base)));
+                return GFTIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, newValue);
+                Memory.modify(getAddress(base), BITFIELD::setBit, GFTIndex.checkValue(newValue));
             }
         }
         //     trapxfers (0:14..14): BOOL

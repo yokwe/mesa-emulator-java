@@ -37,8 +37,7 @@ public final class Bitfield {
 	}
 	
 	public int checkValue(int value) {
-		subrange.check(value);
-		return value;
+		return subrange.checkValue(value);
 	}
 	
     public int getBit(int value) {

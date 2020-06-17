@@ -52,8 +52,7 @@ public final class CodeSegment {
         private static final int INDEX_MAX    = 3;
         private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
         private static int checkIndex(int index) {
-            INDEX_SUBRANGE.check(index);
-            return index;
+            return INDEX_SUBRANGE.checkValue(index);
         }
 
         public static int get(int base, int index) {

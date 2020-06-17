@@ -39,8 +39,7 @@ public final class UNSPECIFIED {
     private static final Subrange SUBRANGE = new Subrange(MIN, MAX);
 
     public static int checkValue(int value) {
-        SUBRANGE.check(value);
-        return value;
+        return SUBRANGE.checkValue(value);
     }
 
     public static int get(int base) {
