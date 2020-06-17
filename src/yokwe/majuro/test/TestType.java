@@ -412,4 +412,86 @@ public class TestType extends TestBase {
 		}
 	}
 
+	// Array of Record
+	@Test
+	public void testAllocationVector() {
+		// AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
+		//   FSIndex: TYPE = CARDINAL [0..256)
+		//   AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType]
+		int va = 0x1_0000;
+
+		assertEquals(256, AllocationVector.SIZE);
+
+		// read
+		{
+			fillPageZero(va);
+			
+			Memory.rawWrite(va + 3, 0xABCD);
+			
+			assertEquals(0xABCD >> 2, AllocationVector.data.get(va, 3));
+			assertEquals(0xABCD & 0x3, AllocationVector.tag.get(va, 3));
+		}
+		
+		// write
+		{
+			fillPageZero(va);
+			
+			AllocationVector.data.set(va, 3, 0xABCD >> 2);
+			
+			assertEquals(0xABCC, Memory.rawRead(va + 3));
+		}
+		{
+			fillPageZero(va);
+			
+			AllocationVector.tag.set(va, 3, 0xABCD & 3);
+			
+			assertEquals(0xABCD & 3, Memory.rawRead(va + 3));
+		}
+		
+		// Exception get
+		{
+			fillPageZero(va);
+
+			try {
+				LoggingUtil.turnOff();
+				
+				AllocationVector.data.get(va, 1000);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+		
+		// Exception set
+		{
+			fillPageZero(va);
+
+			try {
+				LoggingUtil.turnOff();
+				
+				AllocationVector.tag.set(va, 1000, 1);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+		{
+			fillPageZero(va);
+
+			try {
+				LoggingUtil.turnOff();
+				
+				AllocationVector.tag.set(va, 3, 11);
+				fail();
+			} catch (UnexpectedException e) {
+				//
+			} finally {
+				LoggingUtil.turnOn();
+			}
+		}
+	}
 }
