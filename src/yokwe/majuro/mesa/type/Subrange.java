@@ -46,18 +46,20 @@ public final class Subrange {
 		this.signed = min < 0;
 	}
 	
-	public void check(int value) {
+	public int checkValue(int value) {
         if (Debug.ENABLE_TYPE_RANGE_CHECK) {
         	long longValue = signed ? (long)value : Integer.toUnsignedLong(value);
-        	if (min <= longValue && longValue <= max) return;
-        	
-            logger.error("value is out of range");
-            logger.error("  value     {}", value);
-            logger.error("  longValue {}", longValue);
-            logger.error("  min       {}", min);
-            logger.error("  max       {}", max);
-            
-            throw new UnexpectedException("value is out of range");
+        	if (min <= longValue && longValue <= max) {
+                return value;
+        	} else {
+                logger.error("value is out of range");
+                logger.error("  value     {}", value);
+                logger.error("  longValue {}", longValue);
+                logger.error("  min       {}", min);
+                logger.error("  max       {}", max);
+                throw new UnexpectedException("value is out of range");
+        	}
         }
+        return value;
 	}
 }
