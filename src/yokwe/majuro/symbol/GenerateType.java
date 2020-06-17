@@ -2,18 +2,14 @@ package yokwe.majuro.symbol;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.type.Bitfield;
 import yokwe.majuro.symbol.model.Constant;
 import yokwe.majuro.symbol.model.Field;
 import yokwe.majuro.symbol.model.FieldName;
@@ -209,7 +205,6 @@ public class GenerateType {
 							}
 							for(SelectCase selectCase: select.selectCaseList) {
 								for(Field selectField: selectCase.fieldList) {
-									int size     = selectField.getSize();
 									int offset   = selectField.fieldName.offset;
 									int startPos = selectField.fieldName.startPos;
 									int stopPos  = selectField.fieldName.stopPos;
@@ -530,8 +525,7 @@ public class GenerateType {
 
 			// Don't use Subrange. Becuase enum can have hole.
 			out.println("public static int checkValue(int value) {");
-			out.println("ENUM.check(value);");
-			out.println("return value;");
+			out.println("return ENUM.checkValue(value);");
 			out.println("}");
 
 			out.println("public static int get(int base) {");
@@ -630,58 +624,43 @@ public class GenerateType {
 		Type type = field.type.getBaseType();
 
 		BitInfo bitInfo = new BitInfo(field.getSize(), field.fieldName.startPos, field.fieldName.stopPos);
-
-		out.println("private static final int MASK  = %s;", bitInfo.mask);
 		out.println("private static final int SHIFT = %d;", bitInfo.shift);
-		out.println();
-
-		out.println("private static int getBit(int value) {");
-		out.println("return checkValue((value & MASK) >>> SHIFT);");
-		out.println("}");
-		out.println("private static int setBit(int value, int newValue) {");
-		out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
-		out.println("}");
-		out.println();
+		out.println("private static final int MASK  = %s;", bitInfo.mask);
+		out.println("private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);", bitInfo.shift, bitInfo.mask);
 		
-		out.println("private static final int MAX = MASK >>> SHIFT;");
-		out.println("private static final Subrange SUBRANGE = new Subrange(0, MAX);");
-		out.println();
-
 		switch (type.kind) {
 		case BOOL:
 			out.println("public static int checkValue(int value) {");
-			out.println("SUBRANGE.check(value);");
-			out.println("return value;");
+			out.println("return BITFIELD.checkValue(value);");
 			out.println("}");
 			out.println("public static boolean get(int base) {");
-			out.println("return getBit(Memory.fetch(getAddress(base))) != 0;");
+			out.println("return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;");
 			out.println("}");
 			out.println("public static void set(int base, boolean newValue) {");
-			out.println("Memory.modify(getAddress(base), %s.%s::setBit, (newValue ? 1 : 0));", prefix, fieldName);
+			out.println("Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));");
 			out.println("}");
 			break;
 		case SUBRANGE:
 		case ENUM:
 			out.println("public static int checkValue(int value) {");
-			out.println("SUBRANGE.check(value);");
-			out.println("return %s.checkValue(value);", type.name);
+			out.println("return %s.checkValue(BITFIELD.checkValue(value));", type.name);
 			out.println("}");
 			
 			switch(type.getSize()) {
 			case 1:
 				out.println("public static int get(int base) {");
-				out.println("return getBit(Memory.fetch(getAddress(base)));");
+				out.println("return BITFIELD.getBit(Memory.fetch(getAddress(base)));");
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modify(getAddress(base), %s.%s::setBit, newValue);", prefix, fieldName);
+				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, newValue);");
 				out.println("}");
 				break;
 			case 2:
 				out.println("public static int get(int base) {");
-				out.println("return getBit(Memory.readDbl(getAddress(base)));");
+				out.println("return BITFIELD.getBit(Memory.readDbl(getAddress(base)));");
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modifyDbl(getAddress(base), %s.%s::setBit, newValue);", prefix, fieldName);
+				out.println("Memory.modifyDbl(getAddress(base), BITFIELD::setBit, newValue);");
 				out.println("}");
 				break;
 			default:
@@ -757,8 +736,7 @@ public class GenerateType {
 
 			// Don't use Subrange. Becuase enum can have hole.
 			out.println("public static int checkValue(int value) {");
-			out.println("ENUM.check(value);");
-			out.println("return value;");
+			out.println("return ENUM.checkValue(value);");
 			out.println("}");
 			
 			out.println("public static int get(int base) {");
@@ -792,35 +770,21 @@ public class GenerateType {
 				// FIXME
 				//   define getBit/setBit
 				BitInfo bitInfo = new BitInfo(tagType.getSize(), tagName.startPos, tagName.stopPos);
-
-				out.println("private static final int MASK  = %s;", bitInfo.mask);
 				out.println("private static final int SHIFT = %d;", bitInfo.shift);
-				out.println();
-
-				out.println("private static int getBit(int value) {");
-				out.println("return checkValue((value & MASK) >>> SHIFT);");
-				out.println("}");
-				out.println("private static int setBit(int value, int newValue) {");
-				out.println("return ((checkValue(newValue) << SHIFT) & MASK) | (value & ~MASK);");
-				out.println("}");
-				out.println();
-				
-				out.println("private static final int MAX = MASK >>> SHIFT;");
-				out.println("private static final Subrange SUBRANGE = new Subrange(0, MAX);");
-				out.println();
+				out.println("private static final int MASK  = %s;", bitInfo.mask);
+				out.println("private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);", bitInfo.shift, bitInfo.mask);
 
 				out.println("public static int checkValue(int value) {");
-				out.println("SUBRANGE.check(value);");
+				out.println("BITFIELD.check(value);");
 				out.println("return %s.checkValue(value);", tagTypeName);
 				out.println("}");
 
 				out.println("public static int get(int base) {");
-				out.println("return getBit(Memory.fetch(getAddress(base)));");
+				out.println("return BITFIELD.getBit(Memory.fetch(getAddress(base)));");
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modify(getAddress(base), %s.%s.%s::setBit, newValue);", prefix, fieldName, tagName.name);
+				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, newValue);");
 				out.println("}");
-
 			} else {
 				out.println("public static int get(int base) {");
 				out.println("return %s.get(getAddress(base));", tagTypeName);
