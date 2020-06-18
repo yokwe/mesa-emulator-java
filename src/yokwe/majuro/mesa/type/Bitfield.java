@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 public final class Bitfield {
     private final int      shift;
     private final int      mask;
@@ -37,7 +39,11 @@ public final class Bitfield {
 	}
 	
 	public int checkValue(int value) {
-		return subrange.checkValue(value);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+        	return subrange.checkValue(value);
+        } else {
+        	return value;
+        }
 	}
 	
     public int getBit(int value) {

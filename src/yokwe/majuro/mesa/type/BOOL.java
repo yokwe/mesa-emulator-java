@@ -25,6 +25,7 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
@@ -53,7 +54,11 @@ public final class BOOL {
     }
     
     public static int checkValue(Bitfield bitfield, int value) {
-        return checkValue(bitfield.checkValue(value));
+    	if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return checkValue(bitfield.checkValue(value));
+    	} else {
+    		return value;
+    	}
     }
     public static boolean get(Bitfield bitfield, int base) {
         return toBoolean(checkValue(bitfield.getBit(Memory.fetch(base))));
