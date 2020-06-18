@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // NewGlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, global (2): BLOCK];
 //
@@ -69,7 +71,11 @@ public final class NewGlobalOverhead {
             private static final int MASK  = 0b1111_1111_1111_1100;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return GFTIndex.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return GFTIndex.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return GFTIndex.get(BITFIELD, getAddress(base));
@@ -90,7 +96,11 @@ public final class NewGlobalOverhead {
             private static final int MASK  = 0b0000_0000_0000_0010;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -111,7 +121,11 @@ public final class NewGlobalOverhead {
             private static final int MASK  = 0b0000_0000_0000_0001;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -138,7 +152,11 @@ public final class NewGlobalOverhead {
         }
 
         private static int checkIndex(int index) {
-            return CARDINAL.checkValue(index);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return CARDINAL.checkValue(index);
+            } else {
+                return index;
+            }
         }
 
         public static int get(int base, int index) {

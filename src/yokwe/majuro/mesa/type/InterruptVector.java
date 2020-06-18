@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // InterruptVector: TYPE = ARRAY InterruptLevel OF InterruptItem;
 //   InterruptLevel: TYPE = CARDINAL [0..16)
@@ -40,7 +42,11 @@ public final class InterruptVector {
     }
 
     private static int checkIndex(int index) {
-        return InterruptLevel.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return InterruptLevel.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     // Expand Record in Array

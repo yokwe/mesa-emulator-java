@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
 //   FSIndex: TYPE = CARDINAL [0..256)
@@ -40,7 +42,11 @@ public final class AllocationVector {
     }
 
     private static int checkIndex(int index) {
-        return FSIndex.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return FSIndex.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     // Expand Record in Array

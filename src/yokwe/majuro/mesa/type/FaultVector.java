@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // FaultVector: TYPE = ARRAY FaultIndex OF FaultQueue;
 //   FaultIndex: TYPE = CARDINAL [0..8)
@@ -40,7 +42,11 @@ public final class FaultVector {
     }
 
     private static int checkIndex(int index) {
-        return FaultIndex.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return FaultIndex.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     // Expand Record in Array

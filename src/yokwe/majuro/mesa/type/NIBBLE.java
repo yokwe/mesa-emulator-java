@@ -25,6 +25,7 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
@@ -39,7 +40,11 @@ public final class NIBBLE {
     private static final Subrange SUBRANGE = new Subrange(MIN, MAX);
 
     public static int checkValue(int value) {
-        return SUBRANGE.checkValue(value);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return SUBRANGE.checkValue(value);
+        } else {
+            return value;
+        }
     }
     public static int get(int base) {
         return checkValue(Memory.fetch(base));
@@ -49,7 +54,11 @@ public final class NIBBLE {
     }
 
     public static int checkValue(Bitfield bitfield, int value) {
-        return checkValue(bitfield.checkValue(value));
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return checkValue(bitfield.checkValue(value));
+        } else {
+            return value;
+        }
     }
     public static int get(Bitfield bitfield, int base) {
         return checkValue(bitfield.getBit(Memory.fetch(base)));

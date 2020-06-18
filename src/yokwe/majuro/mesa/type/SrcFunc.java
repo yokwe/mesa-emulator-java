@@ -25,6 +25,7 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
@@ -42,7 +43,11 @@ public final class SrcFunc {
         return ENUM.toString(value);
     }
     public static int checkValue(int value) {
-        return ENUM.checkValue(value);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return ENUM.checkValue(value);
+        } else {
+            return value;
+        }
     }
     public static int get(int base) {
         return checkValue(Memory.fetch(base));
@@ -51,7 +56,11 @@ public final class SrcFunc {
         Memory.store(base, checkValue(newValue));
     }
     public static int checkValue(Bitfield bitfield, int value) {
-        return checkValue(bitfield.checkValue(value));
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return checkValue(bitfield.checkValue(value));
+        } else {
+            return value;
+        }
     }
     public static int get(Bitfield bitfield, int base) {
         return checkValue(bitfield.getBit(Memory.fetch(base)));

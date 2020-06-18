@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
 //
@@ -44,7 +46,11 @@ public final class Queue {
         private static final int MASK  = 0b1110_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return UNSPECIFIED.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class Queue {
         private static final int MASK  = 0b0001_1111_1111_1000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return PsbIndex.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return PsbIndex.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return PsbIndex.get(BITFIELD, getAddress(base));
@@ -86,7 +96,11 @@ public final class Queue {
         private static final int MASK  = 0b0000_0000_0000_0111;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return UNSPECIFIED.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return UNSPECIFIED.get(BITFIELD, getAddress(base));

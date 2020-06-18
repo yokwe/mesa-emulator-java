@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
 //
@@ -44,7 +46,11 @@ public final class StateWord {
         private static final int MASK  = 0b1111_1111_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BYTE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return BYTE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return BYTE.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class StateWord {
         private static final int MASK  = 0b0000_0000_1111_1111;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BYTE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return BYTE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return BYTE.get(BITFIELD, getAddress(base));

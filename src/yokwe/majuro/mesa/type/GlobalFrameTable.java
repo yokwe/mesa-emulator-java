@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
 //   GFTIndex: TYPE = CARDINAL [0..16384)
@@ -40,7 +42,11 @@ public final class GlobalFrameTable {
     }
 
     private static int checkIndex(int index) {
-        return GFTIndex.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return GFTIndex.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     // Expand Record in Array

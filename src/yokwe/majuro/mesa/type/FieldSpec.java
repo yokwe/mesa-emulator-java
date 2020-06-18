@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // FieldSpec: TYPE = RECORD[pos (0:0..3): NIBBLE, size (0:4..7): NIBBLE];
 //
@@ -44,7 +46,11 @@ public final class FieldSpec {
         private static final int MASK  = 0b1111_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return NIBBLE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return NIBBLE.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class FieldSpec {
         private static final int MASK  = 0b0000_1111_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return NIBBLE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return NIBBLE.get(BITFIELD, getAddress(base));

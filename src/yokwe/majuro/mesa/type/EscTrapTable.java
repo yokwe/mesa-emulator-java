@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
 //   BYTE: TYPE = CARDINAL [0..256)
@@ -40,7 +42,11 @@ public final class EscTrapTable {
     }
 
     private static int checkIndex(int index) {
-        return BYTE.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return BYTE.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     public static int get(int base, int index) {

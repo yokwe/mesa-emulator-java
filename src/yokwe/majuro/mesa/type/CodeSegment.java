@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY CARDINAL [0..4) OF UNSPECIFIED, code (4): BLOCK];
 //
@@ -52,7 +54,11 @@ public final class CodeSegment {
         private static final int INDEX_MAX    = 3;
         private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
         private static int checkIndex(int index) {
-            return INDEX_SUBRANGE.checkValue(index);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return INDEX_SUBRANGE.checkValue(index);
+            } else {
+                return index;
+            }
         }
 
         public static int get(int base, int index) {
@@ -79,7 +85,11 @@ public final class CodeSegment {
         }
 
         private static int checkIndex(int index) {
-            return CARDINAL.checkValue(index);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return CARDINAL.checkValue(index);
+            } else {
+                return index;
+            }
         }
 
         public static int get(int base, int index) {

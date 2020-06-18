@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
 //
@@ -44,7 +46,11 @@ public final class PsbLink {
         private static final int MASK  = 0b1110_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return Priority.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return Priority.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return Priority.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class PsbLink {
         private static final int MASK  = 0b0001_1111_1111_1000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return PsbIndex.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return PsbIndex.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return PsbIndex.get(BITFIELD, getAddress(base));
@@ -86,7 +96,11 @@ public final class PsbLink {
         private static final int MASK  = 0b0000_0000_0000_0100;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BOOL.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return BOOL.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static boolean get(int base) {
             return BOOL.get(BITFIELD, getAddress(base));
@@ -107,7 +121,11 @@ public final class PsbLink {
         private static final int MASK  = 0b0000_0000_0000_0010;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BOOL.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return BOOL.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static boolean get(int base) {
             return BOOL.get(BITFIELD, getAddress(base));
@@ -128,7 +146,11 @@ public final class PsbLink {
         private static final int MASK  = 0b0000_0000_0000_0001;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BOOL.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return BOOL.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static boolean get(int base) {
             return BOOL.get(BITFIELD, getAddress(base));

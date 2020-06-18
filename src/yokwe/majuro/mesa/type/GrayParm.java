@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // GrayParm: TYPE = RECORD[reserved (0:0..3): NIBBLE, yOffset (0:4..7): NIBBLE, widthMinusOne (0:8..11): NIBBLE, heightMinusOne (0:12..15): NIBBLE];
 //
@@ -44,7 +46,11 @@ public final class GrayParm {
         private static final int MASK  = 0b1111_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return NIBBLE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return NIBBLE.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class GrayParm {
         private static final int MASK  = 0b0000_1111_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return NIBBLE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return NIBBLE.get(BITFIELD, getAddress(base));
@@ -86,7 +96,11 @@ public final class GrayParm {
         private static final int MASK  = 0b0000_0000_1111_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return NIBBLE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return NIBBLE.get(BITFIELD, getAddress(base));
@@ -107,7 +121,11 @@ public final class GrayParm {
         private static final int MASK  = 0b0000_0000_0000_1111;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return NIBBLE.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return NIBBLE.get(BITFIELD, getAddress(base));

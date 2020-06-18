@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // SystemData: TYPE = ARRAY SDIndex OF ControlLink;
 //   SDIndex: TYPE = CARDINAL [0..256)
@@ -40,7 +42,11 @@ public final class SystemData {
     }
 
     private static int checkIndex(int index) {
-        return SDIndex.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return SDIndex.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     public static int get(int base, int index) {

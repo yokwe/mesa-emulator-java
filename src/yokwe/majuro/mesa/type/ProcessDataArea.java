@@ -25,6 +25,7 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 
 //
@@ -56,7 +57,11 @@ public final class ProcessDataArea {
                 return ENUM.toString(value);
             }
             public static int checkValue(int value) {
-                return ENUM.checkValue(value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return ENUM.checkValue(value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return checkValue(Memory.fetch(base));
@@ -95,7 +100,11 @@ public final class ProcessDataArea {
                     private static final int MASK  = 0b1110_0000_0000_0000;
                     private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
                     public static int checkValue(int value) {
-                        return UNSPECIFIED.checkValue(BITFIELD, value);
+                        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                            return UNSPECIFIED.checkValue(BITFIELD, value);
+                        } else {
+                            return value;
+                        }
                     }
                     public static int get(int base) {
                         return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -116,7 +125,11 @@ public final class ProcessDataArea {
                     private static final int MASK  = 0b0001_1111_1111_1000;
                     private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
                     public static int checkValue(int value) {
-                        return PsbIndex.checkValue(BITFIELD, value);
+                        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                            return PsbIndex.checkValue(BITFIELD, value);
+                        } else {
+                            return value;
+                        }
                     }
                     public static int get(int base) {
                         return PsbIndex.get(BITFIELD, getAddress(base));
@@ -137,7 +150,11 @@ public final class ProcessDataArea {
                     private static final int MASK  = 0b0000_0000_0000_0111;
                     private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
                     public static int checkValue(int value) {
-                        return UNSPECIFIED.checkValue(BITFIELD, value);
+                        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                            return UNSPECIFIED.checkValue(BITFIELD, value);
+                        } else {
+                            return value;
+                        }
                     }
                     public static int get(int base) {
                         return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -200,7 +217,11 @@ public final class ProcessDataArea {
                 private static final int INDEX_MAX    = 4;
                 private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
                 private static int checkIndex(int index) {
-                    return INDEX_SUBRANGE.checkValue(index);
+                    if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                        return INDEX_SUBRANGE.checkValue(index);
+                    } else {
+                        return index;
+                    }
                 }
 
                 public static int get(int base, int index) {
@@ -228,7 +249,11 @@ public final class ProcessDataArea {
                 }
 
                 private static int checkIndex(int index) {
-                    return Priority.checkValue(index);
+                    if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                        return Priority.checkValue(index);
+                    } else {
+                        return index;
+                    }
                 }
 
                 public static int get(int base, int index) {
@@ -256,7 +281,11 @@ public final class ProcessDataArea {
                 }
 
                 private static int checkIndex(int index) {
-                    return InterruptLevel.checkValue(index);
+                    if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                        return InterruptLevel.checkValue(index);
+                    } else {
+                        return index;
+                    }
                 }
 
                 // Expand Record in Array
@@ -345,7 +374,11 @@ public final class ProcessDataArea {
                 }
 
                 private static int checkIndex(int index) {
-                    return FaultIndex.checkValue(index);
+                    if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                        return FaultIndex.checkValue(index);
+                    } else {
+                        return index;
+                    }
                 }
 
                 // Expand Record in Array
@@ -465,7 +498,11 @@ public final class ProcessDataArea {
                 }
 
                 private static int checkIndex(int index) {
-                    return PsbIndex.checkValue(index);
+                    if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                        return PsbIndex.checkValue(index);
+                    } else {
+                        return index;
+                    }
                 }
 
                 // Expand Record in Array

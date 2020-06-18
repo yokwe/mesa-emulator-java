@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // BLOCK: TYPE = ARRAY CARDINAL [0..0) OF UNSPECIFIED;
 //   CARDINAL: TYPE = CARDINAL [0..65536)
@@ -40,7 +42,11 @@ public final class BLOCK {
     }
 
     private static int checkIndex(int index) {
-        return CARDINAL.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return CARDINAL.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     public static int get(int base, int index) {

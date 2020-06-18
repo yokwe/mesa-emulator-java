@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // TaggedControlLink: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
 //
@@ -44,7 +46,11 @@ public final class TaggedControlLink {
         private static final int MASK  = 0b1111_1111_1111_1100;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return UNSPECIFIED.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class TaggedControlLink {
         private static final int MASK  = 0b0000_0000_0000_0011;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return LinkType.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return LinkType.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return LinkType.get(BITFIELD, getAddress(base));

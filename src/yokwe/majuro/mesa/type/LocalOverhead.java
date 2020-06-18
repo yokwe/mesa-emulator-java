@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // LocalOverhead: TYPE = RECORD[word (0:0..15): LocalWord, returnlink (1:0..15): UNSPECIFIED, globallink (2:0..15): POINTER, pc (3:0..15): CARDINAL, local (4): BLOCK];
 //
@@ -54,7 +56,11 @@ public final class LocalOverhead {
             private static final int MASK  = 0b1111_1111_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BYTE.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BYTE.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return BYTE.get(BITFIELD, getAddress(base));
@@ -75,7 +81,11 @@ public final class LocalOverhead {
             private static final int MASK  = 0b0000_0000_1111_1111;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return FSIndex.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return FSIndex.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return FSIndex.get(BITFIELD, getAddress(base));
@@ -147,7 +157,11 @@ public final class LocalOverhead {
         }
 
         private static int checkIndex(int index) {
-            return CARDINAL.checkValue(index);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return CARDINAL.checkValue(index);
+            } else {
+                return index;
+            }
         }
 
         public static int get(int base, int index) {

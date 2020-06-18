@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY CARDINAL [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): POINTER, data (16): BLOCK];
 //
@@ -52,7 +54,11 @@ public final class StateVector {
         private static final int INDEX_MAX    = 13;
         private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);
         private static int checkIndex(int index) {
-            return INDEX_SUBRANGE.checkValue(index);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return INDEX_SUBRANGE.checkValue(index);
+            } else {
+                return index;
+            }
         }
 
         public static int get(int base, int index) {
@@ -84,7 +90,11 @@ public final class StateVector {
             private static final int MASK  = 0b1111_1111_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BYTE.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BYTE.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return BYTE.get(BITFIELD, getAddress(base));
@@ -105,7 +115,11 @@ public final class StateVector {
             private static final int MASK  = 0b0000_0000_1111_1111;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BYTE.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BYTE.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return BYTE.get(BITFIELD, getAddress(base));
@@ -147,7 +161,11 @@ public final class StateVector {
         }
 
         private static int checkIndex(int index) {
-            return CARDINAL.checkValue(index);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return CARDINAL.checkValue(index);
+            } else {
+                return index;
+            }
         }
 
         public static int get(int base, int index) {

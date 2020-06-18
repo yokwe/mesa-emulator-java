@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // Monitor: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..14): UNSPECIFIED, locked (0:15..15): BOOL];
 //
@@ -44,7 +46,11 @@ public final class Monitor {
         private static final int MASK  = 0b1110_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return UNSPECIFIED.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -65,7 +71,11 @@ public final class Monitor {
         private static final int MASK  = 0b0001_1111_1111_1000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return PsbIndex.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return PsbIndex.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return PsbIndex.get(BITFIELD, getAddress(base));
@@ -86,7 +96,11 @@ public final class Monitor {
         private static final int MASK  = 0b0000_0000_0000_0110;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return UNSPECIFIED.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static int get(int base) {
             return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -107,7 +121,11 @@ public final class Monitor {
         private static final int MASK  = 0b0000_0000_0000_0001;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BOOL.checkValue(BITFIELD, value);
+            if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                return BOOL.checkValue(BITFIELD, value);
+            } else {
+                return value;
+            }
         }
         public static boolean get(int base) {
             return BOOL.get(BITFIELD, getAddress(base));

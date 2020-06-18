@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // StateAllocationTable: TYPE = ARRAY Priority OF POINTER;
 //   Priority: TYPE = CARDINAL [0..7]
@@ -40,7 +42,11 @@ public final class StateAllocationTable {
     }
 
     private static int checkIndex(int index) {
-        return Priority.checkValue(index);
+        if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+            return Priority.checkValue(index);
+        } else {
+            return index;
+        }
     }
 
     public static int get(int base, int index) {

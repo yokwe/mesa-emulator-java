@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // BitBltArg: TYPE = RECORD[dst (0:0..47): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
 //
@@ -69,7 +71,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b1111_1111_1111_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return UNSPECIFIED.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return UNSPECIFIED.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -90,7 +96,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0000_0000_0000_1111;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return CARDINAL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return CARDINAL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return CARDINAL.get(BITFIELD, getAddress(base));
@@ -152,7 +162,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b1111_1111_1111_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return UNSPECIFIED.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return UNSPECIFIED.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -173,7 +187,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0000_0000_0000_1111;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return CARDINAL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return CARDINAL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return CARDINAL.get(BITFIELD, getAddress(base));
@@ -250,7 +268,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b1000_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return Direction.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return Direction.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return Direction.get(BITFIELD, getAddress(base));
@@ -271,7 +293,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0100_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -292,7 +318,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0010_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -313,7 +343,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0001_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -334,7 +368,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0000_1000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return SrcFunc.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return SrcFunc.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return SrcFunc.get(BITFIELD, getAddress(base));
@@ -355,7 +393,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0000_0110_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return DstFunc.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return DstFunc.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return DstFunc.get(BITFIELD, getAddress(base));
@@ -376,7 +418,11 @@ public final class BitBltArg {
             private static final int MASK  = 0b0000_0001_1111_1111;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return UNSPECIFIED.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return UNSPECIFIED.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return UNSPECIFIED.get(BITFIELD, getAddress(base));

@@ -25,6 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
+import yokwe.majuro.mesa.Debug;
+
 //
 // ProcessStateBlock: TYPE = RECORD[link (0:0..15): PsbLink, flags (1:0..15): PsbFlags, context (2:0..15): POINTER, timeout (3:0..15): CARDINAL, mds (4:0..15): CARDINAL, available (5:0..15): UNSPECIFIED, stickty (6:0..31): LONG_UNSPECIFIED];
 //
@@ -54,7 +56,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b1110_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return Priority.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return Priority.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return Priority.get(BITFIELD, getAddress(base));
@@ -75,7 +81,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0001_1111_1111_1000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return PsbIndex.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return PsbIndex.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return PsbIndex.get(BITFIELD, getAddress(base));
@@ -96,7 +106,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0000_0000_0000_0100;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -117,7 +131,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0000_0000_0000_0010;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -138,7 +156,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0000_0000_0000_0001;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -170,7 +192,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b1110_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return UNSPECIFIED.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return UNSPECIFIED.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -191,7 +217,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0001_1111_1111_1000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return PsbIndex.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return PsbIndex.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return PsbIndex.get(BITFIELD, getAddress(base));
@@ -212,7 +242,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0000_0000_0000_0100;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return UNSPECIFIED.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return UNSPECIFIED.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static int get(int base) {
                 return UNSPECIFIED.get(BITFIELD, getAddress(base));
@@ -233,7 +267,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0000_0000_0000_0010;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
@@ -254,7 +292,11 @@ public final class ProcessStateBlock {
             private static final int MASK  = 0b0000_0000_0000_0001;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BOOL.checkValue(BITFIELD, value);
+                if (Debug.ENABLE_TYPE_CHECK_VALUE) {
+                    return BOOL.checkValue(BITFIELD, value);
+                } else {
+                    return value;
+                }
             }
             public static boolean get(int base) {
                 return BOOL.get(BITFIELD, getAddress(base));
