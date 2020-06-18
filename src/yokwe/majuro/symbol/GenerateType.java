@@ -268,8 +268,8 @@ public class GenerateType {
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
 			out.println();
+			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println("import yokwe.majuro.mesa.Memory;");
-
 			out.println();
 			
 			out.println("//");
@@ -287,7 +287,11 @@ public class GenerateType {
 			out.println();
 			
 			out.println("public static int checkValue(int value) {");
+			out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 			out.println("return SUBRANGE.checkValue(value);");
+			out.println("} else {");
+			out.println("return value;");
+			out.println("}");
 			out.println("}");
 			
 			switch(size) {
@@ -301,7 +305,11 @@ public class GenerateType {
 				out.println();
 				
 				out.println("public static int checkValue(Bitfield bitfield, int value) {");
+				out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 				out.println("return checkValue(bitfield.checkValue(value));");
+				out.println("} else {");
+				out.println("return value;");
+				out.println("}");
 				out.println("}");
 				out.println("public static int get(Bitfield bitfield, int base) {");
 				out.println("return checkValue(bitfield.getBit(Memory.fetch(base)));");
@@ -320,7 +328,11 @@ public class GenerateType {
 				out.println();
 				
 				out.println("public static int checkValue(Bitfield bitfield, int value) {");
+				out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 				out.println("return checkValue(bitfield.checkValue(value));");
+				out.println("} else {");
+				out.println("return value;");
+				out.println("}");
 				out.println("}");
 				out.println("public static int get(Bitfield bitfield, int base) {");
 				out.println("return checkValue(bitfield.getBit(Memory.readDbl(base)));");
@@ -410,7 +422,11 @@ public class GenerateType {
 			
 			if (useName) {
 				out.println("private static int checkIndex(int index) {");
+				out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 				out.println("return %s.checkValue(index);", indexType.name);
+				out.println("} else {");
+				out.println("return index;");
+				out.println("}");
 				out.println("}");
 			} else {
 				out.println("private static final int INDEX_MIN    = %d;", typeArray.rangeMin);
@@ -418,7 +434,11 @@ public class GenerateType {
 				out.println("private static final Subrange INDEX_SUBRANGE = new Subrange(INDEX_MIN, INDEX_MAX);");
 
 				out.println("private static int checkIndex(int index) {");
+				out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 				out.println("return INDEX_SUBRANGE.checkValue(index);");
+				out.println("} else {");
+				out.println("return index;");
+				out.println("}");
 				out.println("}");
 			}
 		}
@@ -470,6 +490,8 @@ public class GenerateType {
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
 			out.println();
+			out.println("import yokwe.majuro.mesa.Debug;");
+			out.println();
 			
 			out.println("//");
 			out.println("// %s", typeArray.toMesaString());
@@ -508,6 +530,7 @@ public class GenerateType {
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
 			out.println();
+			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println();
 			
@@ -543,7 +566,11 @@ public class GenerateType {
 
 			// Don't use Subrange. Becuase enum can have hole.
 			out.println("public static int checkValue(int value) {");
+			out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 			out.println("return ENUM.checkValue(value);");
+			out.println("} else {");
+			out.println("return value;");
+			out.println("}");
 			out.println("}");
 
 			out.println("public static int get(int base) {");
@@ -554,7 +581,11 @@ public class GenerateType {
 			out.println("}");
 
 			out.println("public static int checkValue(Bitfield bitfield, int value) {");
+			out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 			out.println("return checkValue(bitfield.checkValue(value));");
+			out.println("} else {");
+			out.println("return value;");
+			out.println("}");
 			out.println("}");
 			out.println("public static int get(Bitfield bitfield, int base) {");
 			out.println("return checkValue(bitfield.getBit(Memory.fetch(base)));");
@@ -659,7 +690,11 @@ public class GenerateType {
 		switch (type.kind) {
 		case BOOL:
 			out.println("public static int checkValue(int value) {");
+			out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 			out.println("return BOOL.checkValue(BITFIELD, value);");
+			out.println("} else {");
+			out.println("return value;");
+			out.println("}");
 			out.println("}");
 			out.println("public static boolean get(int base) {");
 			out.println("return BOOL.get(BITFIELD, getAddress(base));");
@@ -671,7 +706,11 @@ public class GenerateType {
 		case SUBRANGE:
 		case ENUM:
 			out.println("public static int checkValue(int value) {");
+			out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 			out.println("return %s.checkValue(BITFIELD, value);", type.name);
+			out.println("} else {");
+			out.println("return value;");
+			out.println("}");
 			out.println("}");
 			
 			if (field.getSize() != type.getSize()) {
@@ -756,7 +795,11 @@ public class GenerateType {
 
 			// Don't use Subrange. Becuase enum can have hole.
 			out.println("public static int checkValue(int value) {");
+			out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 			out.println("return ENUM.checkValue(value);");
+			out.println("} else {");
+			out.println("return value;");
+			out.println("}");
 			out.println("}");
 			
 			out.println("public static int get(int base) {");
@@ -793,7 +836,11 @@ public class GenerateType {
 				out.println("private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);", bitInfo.shift, bitInfo.mask);
 
 				out.println("public static int checkValue(int value) {");
+				out.println("if (Debug.ENABLE_TYPE_CHECK_VALUE) {");
 				out.println("return %s.checkValue(BITFIELD, value);", tagTypeName);
+				out.println("} else {");
+				out.println("return value;");
+				out.println("}");
 				out.println("}");
 
 				out.println("public static int get(int base) {");
@@ -850,6 +897,7 @@ public class GenerateType {
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(new PrintWriter(path))) {			
 			out.println("package yokwe.majuro.mesa.type;");
 			out.println();
+			out.println("import yokwe.majuro.mesa.Debug;");
 			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println();
 			
