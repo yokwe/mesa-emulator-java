@@ -99,5 +99,5 @@ public final class Debug {
 	public static final int     STACK_TRACE_LIMIT = 10;
 
 	// Type
-	public static final boolean ENABLE_TYPE_RANGE_CHECK = true;
+	public static final boolean ENABLE_TYPE_CHECK_VALUE = true;
 }
