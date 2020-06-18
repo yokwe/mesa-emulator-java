@@ -289,7 +289,6 @@ public class GenerateType {
 			out.println("public static int checkValue(int value) {");
 			out.println("return SUBRANGE.checkValue(value);");
 			out.println("}");
-			out.println();
 			
 			switch(size) {
 			case 1:
@@ -299,6 +298,17 @@ public class GenerateType {
 				out.println("public static void set(int base, int newValue) {");
 				out.println("Memory.store(base, checkValue(newValue));");
 				out.println("}");
+				out.println();
+				
+				out.println("public static int checkValue(Bitfield bitfield, int value) {");
+				out.println("return checkValue(bitfield.checkValue(value));");
+				out.println("}");
+				out.println("public static int get(Bitfield bitfield, int base) {");
+				out.println("return checkValue(bitfield.getBit(Memory.fetch(base)));");
+				out.println("}");
+				out.println("public static void set(Bitfield bitfield, int base, int newValue) {");
+				out.println("Memory.modify(base, bitfield::setBit, checkValue(newValue));");
+				out.println("}");
 				break;
 			case 2:
 				out.println("public static int get(int base) {");
@@ -306,6 +316,17 @@ public class GenerateType {
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
 				out.println("Memory.writeDbl(base, checkValue(newValue));");
+				out.println("}");
+				out.println();
+				
+				out.println("public static int checkValue(Bitfield bitfield, int value) {");
+				out.println("return checkValue(bitfield.checkValue(value));");
+				out.println("}");
+				out.println("public static int get(Bitfield bitfield, int base) {");
+				out.println("return checkValue(bitfield.getBit(Memory.readDbl(base)));");
+				out.println("}");
+				out.println("public static void set(Bitfield bitfield, int base, int newValue) {");
+				out.println("Memory.modifyDbl(base, bitfield::setBit, checkValue(newValue));");
 				out.println("}");
 				break;
 			default:
@@ -532,6 +553,16 @@ public class GenerateType {
 			out.println("Memory.store(base, checkValue(newValue));");
 			out.println("}");
 
+			out.println("public static int checkValue(Bitfield bitfield, int value) {");
+			out.println("return checkValue(bitfield.checkValue(value));");
+			out.println("}");
+			out.println("public static int get(Bitfield bitfield, int base) {");
+			out.println("return checkValue(bitfield.getBit(Memory.fetch(base)));");
+			out.println("}");
+			out.println("public static void set(Bitfield bitfield, int base, int newValue) {");
+			out.println("Memory.modify(base, bitfield::setBit, checkValue(newValue));");
+			out.println("}");
+
 			out.println("}");
 		} catch (FileNotFoundException e) {
 			String exceptionName = e.getClass().getSimpleName();
@@ -628,41 +659,33 @@ public class GenerateType {
 		switch (type.kind) {
 		case BOOL:
 			out.println("public static int checkValue(int value) {");
-			out.println("return BITFIELD.checkValue(value);");
+			out.println("return BOOL.checkValue(BITFIELD, value);");
 			out.println("}");
 			out.println("public static boolean get(int base) {");
-			out.println("return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;");
+			out.println("return BOOL.get(BITFIELD, getAddress(base));");
 			out.println("}");
 			out.println("public static void set(int base, boolean newValue) {");
-			out.println("Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));");
+			out.println("BOOL.set(BITFIELD, getAddress(base), newValue);");
 			out.println("}");
 			break;
 		case SUBRANGE:
 		case ENUM:
 			out.println("public static int checkValue(int value) {");
-			out.println("return %s.checkValue(BITFIELD.checkValue(value));", type.name);
+			out.println("return %s.checkValue(BITFIELD, value);", type.name);
 			out.println("}");
 			
-			switch(type.getSize()) {
-			case 1:
-				out.println("public static int get(int base) {");
-				out.println("return %s.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));", type.name);
-				out.println("}");
-				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, %s.checkValue(newValue));", type.name);
-				out.println("}");
-				break;
-			case 2:
-				out.println("public static int get(int base) {");
-				out.println("return %s.checkValue(BITFIELD.getBit(Memory.readDbl(getAddress(base))));", type.name);
-				out.println("}");
-				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modifyDbl(getAddress(base), BITFIELD::setBit, %s.checkValue(newValue));", type.name);
-				out.println("}");
-				break;
-			default:
-				throw new UnexpectedException();
+			if (field.getSize() != type.getSize()) {
+				logger.error("field.getSize() != type.getSize()");
+				logger.error("  field {}", field.getSize());
+				logger.error("  type  {}", type.getSize());
+				throw new UnexpectedException("field.getSize() != type.getSize()");
 			}
+			out.println("public static int get(int base) {");
+			out.println("return %s.get(BITFIELD, getAddress(base));", type.name);
+			out.println("}");
+			out.println("public static void set(int base, int newValue) {");
+			out.println("%s.set(BITFIELD, getAddress(base), newValue);", type.name);
+			out.println("}");
 			break;
 		default:
 			logger.error("type {}", type);
@@ -770,14 +793,14 @@ public class GenerateType {
 				out.println("private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);", bitInfo.shift, bitInfo.mask);
 
 				out.println("public static int checkValue(int value) {");
-				out.println("return %s.checkValue(BITFIELD.checkValue(value));", tagTypeName);
+				out.println("return %s.checkValue(BITFIELD, value);", tagTypeName);
 				out.println("}");
 
 				out.println("public static int get(int base) {");
-				out.println("return %s.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));", tagTypeName);
+				out.println("return %s.get(BITFIELD, getAddress(base));", tagTypeName);
 				out.println("}");
 				out.println("public static void set(int base, int newValue) {");
-				out.println("Memory.modify(getAddress(base), BITFIELD::setBit, %s.checkValue(newValue));", tagTypeName);
+				out.println("%s.set(BITFIELD, getAddress(base), newValue);", tagTypeName);
 				out.println("}");
 			} else {
 				out.println("public static int get(int base) {");
