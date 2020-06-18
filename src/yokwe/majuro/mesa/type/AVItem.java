@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType];
 //
@@ -46,13 +44,13 @@ public final class AVItem {
         private static final int MASK  = 0b1111_1111_1111_1100;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
+            return UNSPECIFIED.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return UNSPECIFIED.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
+            UNSPECIFIED.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // tag (0:14..15): AVItemType
@@ -67,13 +65,13 @@ public final class AVItem {
         private static final int MASK  = 0b0000_0000_0000_0011;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return AVItemType.checkValue(BITFIELD.checkValue(value));
+            return AVItemType.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return AVItemType.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return AVItemType.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, AVItemType.checkValue(newValue));
+            AVItemType.set(BITFIELD, getAddress(base), newValue);
         }
     }
 }

@@ -41,11 +41,20 @@ public final class LONG_POINTER {
     public static int checkValue(int value) {
         return SUBRANGE.checkValue(value);
     }
-
     public static int get(int base) {
         return checkValue(Memory.readDbl(base));
     }
     public static void set(int base, int newValue) {
         Memory.writeDbl(base, checkValue(newValue));
+    }
+
+    public static int checkValue(Bitfield bitfield, int value) {
+        return checkValue(bitfield.checkValue(value));
+    }
+    public static int get(Bitfield bitfield, int base) {
+        return checkValue(bitfield.getBit(Memory.readDbl(base)));
+    }
+    public static void set(Bitfield bitfield, int base, int newValue) {
+        Memory.modifyDbl(base, bitfield::setBit, checkValue(newValue));
     }
 }

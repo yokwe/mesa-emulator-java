@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // NewGlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, global (2): BLOCK];
 //
@@ -71,13 +69,13 @@ public final class NewGlobalOverhead {
             private static final int MASK  = 0b1111_1111_1111_1100;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return GFTIndex.checkValue(BITFIELD.checkValue(value));
+                return GFTIndex.checkValue(BITFIELD, value);
             }
             public static int get(int base) {
-                return GFTIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+                return GFTIndex.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, GFTIndex.checkValue(newValue));
+                GFTIndex.set(BITFIELD, getAddress(base), newValue);
             }
         }
         //     trapxfers (0:14..14): BOOL
@@ -92,13 +90,13 @@ public final class NewGlobalOverhead {
             private static final int MASK  = 0b0000_0000_0000_0010;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BITFIELD.checkValue(value);
+                return BOOL.checkValue(BITFIELD, value);
             }
             public static boolean get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
+                return BOOL.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
+                BOOL.set(BITFIELD, getAddress(base), newValue);
             }
         }
         //     codelinks (0:15..15): BOOL
@@ -113,13 +111,13 @@ public final class NewGlobalOverhead {
             private static final int MASK  = 0b0000_0000_0000_0001;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BITFIELD.checkValue(value);
+                return BOOL.checkValue(BITFIELD, value);
             }
             public static boolean get(int base) {
-                return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
+                return BOOL.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, boolean newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
+                BOOL.set(BITFIELD, getAddress(base), newValue);
             }
         }
     }

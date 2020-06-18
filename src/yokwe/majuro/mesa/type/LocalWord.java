@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
 //
@@ -46,13 +44,13 @@ public final class LocalWord {
         private static final int MASK  = 0b1111_1111_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BYTE.checkValue(BITFIELD.checkValue(value));
+            return BYTE.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return BYTE.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
+            BYTE.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // fsi (0:8..15): FSIndex
@@ -67,13 +65,13 @@ public final class LocalWord {
         private static final int MASK  = 0b0000_0000_1111_1111;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return FSIndex.checkValue(BITFIELD.checkValue(value));
+            return FSIndex.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return FSIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return FSIndex.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, FSIndex.checkValue(newValue));
+            FSIndex.set(BITFIELD, getAddress(base), newValue);
         }
     }
 }

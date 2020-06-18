@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // GrayParm: TYPE = RECORD[reserved (0:0..3): NIBBLE, yOffset (0:4..7): NIBBLE, widthMinusOne (0:8..11): NIBBLE, heightMinusOne (0:12..15): NIBBLE];
 //
@@ -46,13 +44,13 @@ public final class GrayParm {
         private static final int MASK  = 0b1111_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD.checkValue(value));
+            return NIBBLE.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return NIBBLE.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
+            NIBBLE.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // yOffset (0:4..7): NIBBLE
@@ -67,13 +65,13 @@ public final class GrayParm {
         private static final int MASK  = 0b0000_1111_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD.checkValue(value));
+            return NIBBLE.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return NIBBLE.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
+            NIBBLE.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // widthMinusOne (0:8..11): NIBBLE
@@ -88,13 +86,13 @@ public final class GrayParm {
         private static final int MASK  = 0b0000_0000_1111_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD.checkValue(value));
+            return NIBBLE.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return NIBBLE.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
+            NIBBLE.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // heightMinusOne (0:12..15): NIBBLE
@@ -109,13 +107,13 @@ public final class GrayParm {
         private static final int MASK  = 0b0000_0000_0000_1111;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return NIBBLE.checkValue(BITFIELD.checkValue(value));
+            return NIBBLE.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return NIBBLE.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
+            NIBBLE.set(BITFIELD, getAddress(base), newValue);
         }
     }
 }

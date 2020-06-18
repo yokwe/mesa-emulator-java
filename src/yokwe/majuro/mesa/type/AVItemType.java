@@ -52,4 +52,13 @@ public final class AVItemType {
     public static void set(int base, int newValue) {
         Memory.store(base, checkValue(newValue));
     }
+    public static int checkValue(Bitfield bitfield, int value) {
+        return checkValue(bitfield.checkValue(value));
+    }
+    public static int get(Bitfield bitfield, int base) {
+        return checkValue(bitfield.getBit(Memory.fetch(base)));
+    }
+    public static void set(Bitfield bitfield, int base, int newValue) {
+        Memory.modify(base, bitfield::setBit, checkValue(newValue));
+    }
 }

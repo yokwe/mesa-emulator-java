@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOL, permanent (0:14..14): BOOL, preempted (0:15..15): BOOL];
 //
@@ -46,13 +44,13 @@ public final class PsbLink {
         private static final int MASK  = 0b1110_0000_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return Priority.checkValue(BITFIELD.checkValue(value));
+            return Priority.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return Priority.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return Priority.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, Priority.checkValue(newValue));
+            Priority.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // next (0:3..12): PsbIndex
@@ -67,13 +65,13 @@ public final class PsbLink {
         private static final int MASK  = 0b0001_1111_1111_1000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return PsbIndex.checkValue(BITFIELD.checkValue(value));
+            return PsbIndex.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return PsbIndex.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return PsbIndex.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, PsbIndex.checkValue(newValue));
+            PsbIndex.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // failed (0:13..13): BOOL
@@ -88,13 +86,13 @@ public final class PsbLink {
         private static final int MASK  = 0b0000_0000_0000_0100;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BITFIELD.checkValue(value);
+            return BOOL.checkValue(BITFIELD, value);
         }
         public static boolean get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
+            return BOOL.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
+            BOOL.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // permanent (0:14..14): BOOL
@@ -109,13 +107,13 @@ public final class PsbLink {
         private static final int MASK  = 0b0000_0000_0000_0010;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BITFIELD.checkValue(value);
+            return BOOL.checkValue(BITFIELD, value);
         }
         public static boolean get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
+            return BOOL.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
+            BOOL.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // preempted (0:15..15): BOOL
@@ -130,13 +128,13 @@ public final class PsbLink {
         private static final int MASK  = 0b0000_0000_0000_0001;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BITFIELD.checkValue(value);
+            return BOOL.checkValue(BITFIELD, value);
         }
         public static boolean get(int base) {
-            return BITFIELD.getBit(Memory.fetch(getAddress(base))) != 0;
+            return BOOL.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, boolean newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, (newValue ? 1 : 0));
+            BOOL.set(BITFIELD, getAddress(base), newValue);
         }
     }
 }

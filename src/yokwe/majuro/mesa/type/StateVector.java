@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY CARDINAL [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): POINTER, data (16): BLOCK];
 //
@@ -86,13 +84,13 @@ public final class StateVector {
             private static final int MASK  = 0b1111_1111_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BYTE.checkValue(BITFIELD.checkValue(value));
+                return BYTE.checkValue(BITFIELD, value);
             }
             public static int get(int base) {
-                return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+                return BYTE.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
+                BYTE.set(BITFIELD, getAddress(base), newValue);
             }
         }
         //     stkPtr (0:8..15): BYTE
@@ -107,13 +105,13 @@ public final class StateVector {
             private static final int MASK  = 0b0000_0000_1111_1111;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return BYTE.checkValue(BITFIELD.checkValue(value));
+                return BYTE.checkValue(BITFIELD, value);
             }
             public static int get(int base) {
-                return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+                return BYTE.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
+                BYTE.set(BITFIELD, getAddress(base), newValue);
             }
         }
     }

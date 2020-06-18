@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // BitAddress: TYPE = RECORD[word (0:0..31): LONG_POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
 //
@@ -61,13 +59,13 @@ public final class BitAddress {
         private static final int MASK  = 0b1111_1111_1111_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return UNSPECIFIED.checkValue(BITFIELD.checkValue(value));
+            return UNSPECIFIED.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return UNSPECIFIED.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return UNSPECIFIED.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, UNSPECIFIED.checkValue(newValue));
+            UNSPECIFIED.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // bit (2:12..15): CARDINAL
@@ -82,13 +80,13 @@ public final class BitAddress {
         private static final int MASK  = 0b0000_0000_0000_1111;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return CARDINAL.checkValue(BITFIELD.checkValue(value));
+            return CARDINAL.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return CARDINAL.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return CARDINAL.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, CARDINAL.checkValue(newValue));
+            CARDINAL.set(BITFIELD, getAddress(base), newValue);
         }
     }
 }

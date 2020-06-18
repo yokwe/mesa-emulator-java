@@ -25,8 +25,6 @@
  *******************************************************************************/
 package yokwe.majuro.mesa.type;
 
-import yokwe.majuro.mesa.Memory;
-
 //
 // FieldDesc: TYPE = RECORD[offset (0:0..7): BYTE, field (0:8..15): FieldSpec];
 //
@@ -46,13 +44,13 @@ public final class FieldDesc {
         private static final int MASK  = 0b1111_1111_0000_0000;
         private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
         public static int checkValue(int value) {
-            return BYTE.checkValue(BITFIELD.checkValue(value));
+            return BYTE.checkValue(BITFIELD, value);
         }
         public static int get(int base) {
-            return BYTE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+            return BYTE.get(BITFIELD, getAddress(base));
         }
         public static void set(int base, int newValue) {
-            Memory.modify(getAddress(base), BITFIELD::setBit, BYTE.checkValue(newValue));
+            BYTE.set(BITFIELD, getAddress(base), newValue);
         }
     }
     // field (0:8..15): FieldSpec
@@ -77,13 +75,13 @@ public final class FieldDesc {
             private static final int MASK  = 0b1111_0000_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return NIBBLE.checkValue(BITFIELD.checkValue(value));
+                return NIBBLE.checkValue(BITFIELD, value);
             }
             public static int get(int base) {
-                return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+                return NIBBLE.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
+                NIBBLE.set(BITFIELD, getAddress(base), newValue);
             }
         }
         //     size (0:4..7): NIBBLE
@@ -98,13 +96,13 @@ public final class FieldDesc {
             private static final int MASK  = 0b0000_1111_0000_0000;
             private static final Bitfield BITFIELD = new Bitfield(SHIFT, MASK);
             public static int checkValue(int value) {
-                return NIBBLE.checkValue(BITFIELD.checkValue(value));
+                return NIBBLE.checkValue(BITFIELD, value);
             }
             public static int get(int base) {
-                return NIBBLE.checkValue(BITFIELD.getBit(Memory.fetch(getAddress(base))));
+                return NIBBLE.get(BITFIELD, getAddress(base));
             }
             public static void set(int base, int newValue) {
-                Memory.modify(getAddress(base), BITFIELD::setBit, NIBBLE.checkValue(newValue));
+                NIBBLE.set(BITFIELD, getAddress(base), newValue);
             }
         }
     }
