@@ -83,7 +83,7 @@ public final class Processes {
 		
 		// Requeue[src: @PDA.ready, dst: @PDA.fault[fi].queue, psb: faulted];
 		int src = ProcessDataArea.vp.header.ready.getAddress(Memory.PDA);
-		int dst = ProcessDataArea.vp.header.fault.getAddress(Memory.PDA, fi);
+		int dst = ProcessDataArea.vp.header.fault.queue.getAddress(Memory.PDA, fi);
 		requeue(src, dst, faulted);
 		notifyWakeup(ProcessDataArea.vp.header.fault.condition.getAddress(Memory.PDA, fi));
 		CodeCache.setPC(Processor.savedPC);
