@@ -48,7 +48,7 @@ public final class PageCache {
 		PageCache.Entry entry = getEntry(vp);
 		if (entry.vp == vp) entry.clear();
 	}
-	public int fetchCache(int va) {
+	public int fetch(int va) {
 		int vp = va >>> Memory.PAGE_BITS;
 		int of = va & Memory.PAGE_MASK;
 
@@ -69,11 +69,11 @@ public final class PageCache {
 			entry.flagFetch = true;
 			entry.flagStore = false;
 			entry.vp = vp;
-			entry.ra = memory.fetchMemory(vp << Memory.PAGE_BITS);
+			entry.ra = memory.fetch(vp << Memory.PAGE_BITS);
 		}
 		return entry.ra + of;
 	}
-	public int storeCache(int va) {
+	public int store(int va) {
 		int vp = va >>> Memory.PAGE_BITS;
 		int of = va & Memory.PAGE_MASK;
 
@@ -94,7 +94,7 @@ public final class PageCache {
 			entry.flagFetch = true;
 			entry.flagStore = true;
 			entry.vp = vp;
-			entry.ra = memory.storeMemory(vp << Memory.PAGE_BITS);
+			entry.ra = memory.store(vp << Memory.PAGE_BITS);
 		}
 		return entry.ra + of;
 	}

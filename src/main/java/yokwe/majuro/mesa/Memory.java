@@ -76,8 +76,6 @@ public final class Memory {
 	// index of realMemory is real address
 	private final short[] realMemory;
 	
-	private final PageCache pageCache;
-
 	public Memory(int vmbits, int rmbits, int ioRegionPage) {
 		logger.info("vmbits {}", vmbits);
 		logger.info("rmbits {}", rmbits);
@@ -87,7 +85,6 @@ public final class Memory {
 		
 		realMemory = new short[rpSize];
 		flagPages  = new int[vpSize];
-		pageCache  = new PageCache(this);
 		
 		// clear realMemory and flagPage
 		for(int i = 0; i < realMemory.length; i++) {
@@ -143,7 +140,7 @@ public final class Memory {
 	
 	
 	// fetch returns real address == offset of realMemory
-	int fetchMemory(int va) {
+	int fetch(int va) {
 		if (Perf.ENABLED) Perf.fetchMemory++;
 		
 		int vp = va >>> PAGE_BITS;
@@ -163,7 +160,7 @@ public final class Memory {
 		return (realPage << PAGE_BITS) + of;
 	}
 	// store returns real address == offset of realMemory
-	int storeMemory(int va) {
+	int store(int va) {
 		if (Perf.ENABLED) Perf.storeMemory++;
 
 		int vp = va >>> PAGE_BITS;
@@ -186,31 +183,11 @@ public final class Memory {
 		}
 		return (realPage << PAGE_BITS) + of;
 	}
-
-
-	public int fetch(int va) {
-		if (Perf.ENABLED) Perf.fetch++;
-		return pageCache.fetchCache(va);
-	}
-	public int store(int va) {
-		if (Perf.ENABLED) Perf.store++;
-		return pageCache.storeCache(va);
-	}
 	
-	// FIXME read and write
-	public int read(int va) {
-		return realMemory[fetch(va)] & WORD_MASK;
+	int readMemory(int va) {
+		return realMemory[va] & WORD_MASK;
 	}
-	public void write(int va, int newValue) {
-		realMemory[fetch(va)] = (short)newValue;
+	void writeMemory(int va, int newValue) {
+		realMemory[va] = (short)newValue;
 	}
-	public int readDbl(int va) {
-		if (Perf.ENABLED) Perf.readDbl++;
-		int p0 = fetch(va);
-		int p1 = p0 + 1;
-		if ((va & Memory.PAGE_MASK) == Memory.PAGE_MASK) p1 = fetch(va + 1);
-		
-		return (realMemory[p1] << WORD_SIZE) | (realMemory[p0] & WORD_MASK);
-	}
-
 }
