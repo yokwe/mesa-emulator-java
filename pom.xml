@@ -3,39 +3,193 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <parent>
-        <groupId>yokwe</groupId>
-        <artifactId>yokwe-root</artifactId>
-        <version>1.0.0</version>
-    </parent>
-    
-    <artifactId>mesa-emulator-java</artifactId>
+    <groupId>yokwe.majuro</groupId>
+    <artifactId>mesa-emulator</artifactId>
+    <version>1.0.0</version>
     
     <properties>
         <automatic-module-name>yokwe.majuro</automatic-module-name>
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
     
+    <profiles>
+        <profile>
+            <id>freebsd</id>
+            <activation>
+                <os>
+                    <name>freebsd</name>
+                </os>
+            </activation>
+            <!-- libreoffice 7.1 -->
+            <properties>
+                <libreoffice.install.dir>/usr/local/lib/libreoffice/program</libreoffice.install.dir>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.libreoffice</groupId>
+                    <artifactId>libreoffice</artifactId>
+                    <version>7.1</version>
+                    <scope>system</scope>
+                    <systemPath>${libreoffice.install.dir}/classes/libreoffice.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <!-- libreoffice 6.4 -->
+            <properties>
+                <libreoffice.install.dir>/usr/lib/libreoffice/program</libreoffice.install.dir>
+            </properties>
+        </profile>
+    </profiles>
+    
     <dependencies>
+        <!-- LOGGING -->
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
-            <groupId>yokwe</groupId>
-            <artifactId>yokwe-util</artifactId>
-            <version>1.0.0</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
+        <!-- JUNIT -->
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
         <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-            <version>4.9.2</version>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version>
+            <scope>test</scope>
         </dependency>
-        
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.surefire/common-java5 -->
+        <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>common-java5</artifactId>
+            <version>3.0.0-M5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-surefire-provider -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>1.3.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ANTLR -->
         <!-- antlr4 is required for ant target compile-antlr-symbol -->
         <!-- https://mvnrepository.com/artifact/org.antlr/antlr4 -->
         <dependency>
-            <groupId>org.antlr</groupId>
+          <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
             <version>4.9.2</version>
         </dependency>
-   </dependencies>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/data</directory>
+                <includes>
+                    <include>logback-test.xml</include>
+                </includes>
+            </testResource>
+        </testResources>
+        
+        <resources>
+            <resource>
+                <directory>${project.basedir}/data</directory>
+                <includes>
+                    <include>logback.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        
+        <plugins>
+            <!-- compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!--  require version 3.7 or higher for java module -->
+                <version>3.8.1</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/study/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            
+            <!-- JAR -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>3.1.0</version>
+              <configuration>
+                <archive>
+                  <manifestEntries>
+                    <Automatic-Module-Name>${automatic-module-name}</Automatic-Module-Name>
+                  </manifestEntries>
+                </archive>
+              </configuration>
+            </plugin>
+            
+            <!-- SUREFIRE for JUNIT -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <!--
+                <configuration>
+                  <systemPropertyVariables>
+                    <logback.conf>data/logback-junit.xml</logback.conf>
+                  </systemPropertyVariables>
+                </configuration>
+                -->
+            </plugin>
+        </plugins>
+    </build>
+        
     
 </project>

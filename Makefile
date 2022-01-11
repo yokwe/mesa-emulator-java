@@ -1,7 +1,8 @@
 #
 #
 #
-SHELL := /bin/bash
+#SHELL := /usr/local/bin/bash
+
 
 all:
 	@echo all
@@ -14,15 +15,11 @@ clean:
 #
 
 # to make project independent from misc-lib, copy files from misc-lib
-copy-misc-lib-files:
-	mkdir -p data/jar data/market
-	cp ../misc-lib/tmp/build/jar/misc-lib.jar data/jar
-	cp ../misc-lib/data/jar/*                 data/jar
-	cp ../misc-lib/data/market/*              data/market
+build-yokwe:
+	cd ../yokwe-root/; mvn clean ant:ant install
 
-build-misc-lib:
-	pushd ../misc-lib/; ant build ; popd; make copy-misc-lib-files
-
+build:
+	mvn clean ant:ant install
 
 #
 # ANTLR

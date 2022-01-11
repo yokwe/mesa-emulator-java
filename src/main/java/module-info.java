@@ -1,24 +1,13 @@
 open module yokwe.majuro {
-        exports yokwe.majuro;
+    exports yokwe.majuro.study;
 
-        // http
-        requires httpcore5;
-        requires httpcore5.h2;
-        
-        // json
-        requires transitive jakarta.json;
-        requires jakarta.json.bind;
-        
-        // xml binding
-        requires transitive java.xml;
-        requires transitive jakarta.xml.bind;
-        
-        // logging
-        requires org.slf4j;
-        
-        // yokwe-util
-        requires transitive yokwe.util;
-        
-        // antlr
-		requires org.antlr.antlr4.runtime;
+	// logging
+	requires org.slf4j;
+	
+    // antlr
+	requires org.antlr.antlr4.runtime;
+	requires logback.classic;
+	
+	// junit
+//	requires org.junit.jupiter.api;
 }

@@ -7,8 +7,34 @@
 <project name="mesa-emulator-java" default="package" basedir=".">
         <import file="maven-build.xml" />
 
-        <property name="logback.conf" value="data/logback.xml" />
+        <property name="logback.configurationFile" value="data/logback.xml" />
 
+        <path id="target.jar">
+                <pathelement location="${maven.build.dir}/${maven.build.finalName}.jar" />
+        </path>
+
+        <path id="libreoffice.jar">
+                <fileset dir="${libreoffice.install.dir}/classes">
+                        <include name="unoloader.jar" />
+                        <include name="libreoffice.jar" />
+                        <include name="unoil.jar" />
+                        <include name="juh.jar" />
+                        <include name="jurt.jar" />
+                        <include name="ridl.jar" />
+                </fileset>
+        </path>
+
+        <!-- study -->
+        <target name="study-T104">
+                <java module="yokwe.majuro/yokwe.majuro.study.T104" fork="true">
+                        <modulepath refid="build.classpath" />
+                        <modulepath refid="target.jar" />
+                        <modulepath refid="libreoffice.jar" />
+                        <classpath  location="${libreoffice.install.dir}" />
+                        <sysproperty key="logback.configurationFile" value="${logback.conf}" />
+                </java>
+        </target>
+	
         <!-- ANTLR -->
         <target name="compile-antlr-symbol">
                 <java module="antlr4/org.antlr.v4.Tool" fork="true">

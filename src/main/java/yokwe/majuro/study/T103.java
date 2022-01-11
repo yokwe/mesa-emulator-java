@@ -37,6 +37,7 @@ public class T103 {
 		logger.info("START");
 		
 		logger.info("native byte order {}", ByteOrder.nativeOrder());
+		
 		logger.info("STOP");
 	}
 
