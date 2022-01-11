@@ -1,6 +1,4 @@
 open module yokwe.majuro {
-    exports yokwe.majuro.study;
-
 	// logging
 	requires org.slf4j;
 	
