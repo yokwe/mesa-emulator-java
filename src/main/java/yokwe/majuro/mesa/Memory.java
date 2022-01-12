@@ -131,19 +131,8 @@ public final class Memory {
 		final int vp = va >>> Mesa.PAGE_BITS;
 		final int ra;
 		
-		// check cache
-		Cache cache = Cache.get(vp);
-		if (cache.vp == vp) {
-			if (Perf.ENABLED) {
-				Perf.cacheHit++;
-			}
-			ra = cache.ra;
-		} else {
-			if (Perf.ENABLED) {
-				if (cache.vp == 0) Perf.cacheMissEmpty++;
-				else Perf.cacheMissConflict++;
-			}
-
+		if (Debug.DISABLE_MEMORY_CACHE) {
+			// FIXME DUPLICATE CODE START
 			char mapFlag = mapFlags[vp];
 			if (MapFlag.isVacant(mapFlag)) {
 				Mesa.pageFault(va);
@@ -155,13 +144,43 @@ public final class Memory {
 			}
 			ra = realPages[vp] << Mesa.PAGE_BITS;
 			if (ra == 0) throw new Error();
-			
-			cache.vp    = vp;
-			cache.ra    = ra;
-			cache.dirty = MapFlag.isDirty(mapFlag);
+			// FIXME DUPLICATE CODE STOP
+		} else {
+			// check cache
+			Cache cache = Cache.get(vp);
+			if (cache.vp == vp) {
+				if (Perf.ENABLED) {
+					Perf.cacheHit++;
+				}
+				ra = cache.ra;
+			} else {
+				if (Perf.ENABLED) {
+					if (cache.vp == 0) Perf.cacheMissEmpty++;
+					else Perf.cacheMissConflict++;
+				}
+
+				// FIXME DUPLICATE CODE START
+				char mapFlag = mapFlags[vp];
+				if (MapFlag.isVacant(mapFlag)) {
+					Mesa.pageFault(va);
+				}
+				
+				// NO FAULT FROM HERE
+				if (MapFlag.isNotReferenced(mapFlag)) {
+					mapFlags[vp] = MapFlag.setReferenced(mapFlag);
+				}
+				ra = realPages[vp] << Mesa.PAGE_BITS;
+				if (ra == 0) throw new Error();
+				// FIXME DUPLICATE CODE STOP
+				
+				cache.vp    = vp;
+				cache.ra    = ra;
+				cache.dirty = MapFlag.isDirty(mapFlag);
+			}
 		}
 		return ra | (va & Mesa.PAGE_MASK);
 	}
+	
 	// store returns real address == offset of realMemory
 	public int store(int va) {
 		if (Perf.ENABLED) Perf.memoryStore++;
@@ -169,23 +188,8 @@ public final class Memory {
 		final int vp = va >>> Mesa.PAGE_BITS;
 		final int ra;
 		
-		Cache cache = Cache.get(vp);
-		if (cache.vp == vp) {
-			if (Perf.ENABLED) {
-				Perf.cacheHit++;
-			}
-			
-			ra = cache.ra;
-			if (!cache.dirty) {
-				mapFlags[vp] = MapFlag.setReferencedDirty(mapFlags[vp]);
-				cache.dirty  = true;
-			}
-		} else {
-			if (Perf.ENABLED) {
-				if (cache.vp == 0) Perf.cacheMissEmpty++;
-				else Perf.cacheMissConflict++;
-			}
-
+		if (Debug.DISABLE_MEMORY_CACHE) {
+			// FIXME DUPLICATE CODE START
 			char mapFlag = mapFlags[vp];
 			if (MapFlag.isVacant(mapFlag)) {
 				Mesa.pageFault(va);
@@ -200,12 +204,48 @@ public final class Memory {
 			}
 			ra = realPages[vp] << Mesa.PAGE_BITS;
 			if (ra == 0) throw new Error();
-			
-			cache.vp    = vp;
-			cache.ra    = ra;
-			cache.dirty = true;
+			// FIXME DUPLICATE CODE STOP
+		} else {
+			Cache cache = Cache.get(vp);
+			if (cache.vp == vp) {
+				if (Perf.ENABLED) {
+					Perf.cacheHit++;
+				}
+				
+				ra = cache.ra;
+				if (!cache.dirty) {
+					mapFlags[vp] = MapFlag.setReferencedDirty(mapFlags[vp]);
+					cache.dirty  = true;
+				}
+			} else {
+				if (Perf.ENABLED) {
+					if (cache.vp == 0) Perf.cacheMissEmpty++;
+					else Perf.cacheMissConflict++;
+				}
+
+				// FIXME DUPLICATE CODE START
+				char mapFlag = mapFlags[vp];
+				if (MapFlag.isVacant(mapFlag)) {
+					Mesa.pageFault(va);
+				}
+				if (MapFlag.isProtect(mapFlag)) {
+					Mesa.writeProtectFault(va);
+				}
+				
+				// NO FAULT FROM HERE
+				if (MapFlag.isNotReferencedDirty(mapFlag)) {
+					mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
+				}
+				ra = realPages[vp] << Mesa.PAGE_BITS;
+				if (ra == 0) throw new Error();
+				// FIXME DUPLICATE CODE STOP
+				
+				cache.vp    = vp;
+				cache.ra    = ra;
+				cache.dirty = true;
+			}
 		}
-		
+				
 		return ra | (va & Mesa.PAGE_MASK);
 	}
 	
