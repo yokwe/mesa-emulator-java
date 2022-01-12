@@ -20,10 +20,12 @@ public final class Mesa {
 	}
 	
 	public static void pageFault(int va) {
+		if (Perf.ENABLED) Perf.pageFault++;
 		// FIXME
 		logger.info("pageFault {}", Integer.toHexString(va).toUpperCase());
 	}
 	public static void writeProtectFault(int va) {
+		if (Perf.ENABLED) Perf.writeProtectFault++;
 		// FIXME
 		logger.info("writeProtectFault {}", Integer.toHexString(va).toUpperCase());
 	}
@@ -39,11 +41,11 @@ public final class Mesa {
 	
 	public static int readDbl(int va) {
 		if (Perf.ENABLED) Perf.readDbl++;
-		int p0 = fetch(va);
+		int p0 = memory.fetch(va);
 		int p1 = p0 + 1;
-		if ((va & PAGE_MASK) == PAGE_MASK) p1 = fetch(va + 1);
+		if ((va & PAGE_MASK) == PAGE_MASK) p1 = memory.fetch(va + 1);
 		
-		return (memory.getRealMemory(p1) << WORD_SIZE) | (memory.getRealMemory(p0) & WORD_MASK);
+		return (memory.readRealMemory(p1) << WORD_SIZE) | (memory.readRealMemory(p0) & WORD_MASK);
 	}
 
 }
