@@ -19,7 +19,7 @@ public final class Memory {
 	private final char[] mapFlags;
 	private final char[] realPages;
 
-	// index of realMemory is real address
+	// index of realMemory is real address up to rpSize * Mesa.PAGE_SIZE
 	private final char[] realMemory;
 	
 	public Memory(int vmbits, int rmbits, int ioRegionPage) {
@@ -31,7 +31,7 @@ public final class Memory {
 		logger.info("vpSize {}", String.format("%X", vpSize));
 		logger.info("rpSize {}", String.format("%X", rpSize));
 		
-		realMemory = new char[rpSize];
+		realMemory = new char[rpSize * Mesa.PAGE_SIZE];
 		mapFlags   = new char[vpSize];
 		realPages  = new char[vpSize];
 		
@@ -88,7 +88,7 @@ public final class Memory {
 		
 		char mapFlag = mapFlags[vp];
 		if (MapFlag.isVacant(mapFlag)) {
-			// PageFault(virtualAddress)
+			Mesa.pageFault(va);
 		}
 		if (MapFlag.isNotReferenced(mapFlag)) {
 			mapFlags[vp] = MapFlag.setReferenced(mapFlag);
@@ -107,10 +107,10 @@ public final class Memory {
 		
 		char mapFlag = mapFlags[vp];
 		if (MapFlag.isVacant(mapFlag)) {
-			// PageFault(virtualAddress)
+			Mesa.pageFault(va);
 		}
 		if (MapFlag.isProtect(mapFlag)) {
-			// WriteProtectFault(virtualAddress)
+			Mesa.writeProtectFault(va);
 		}
 		if (MapFlag.isNotReferencedDirty(mapFlag)) {
 			mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
