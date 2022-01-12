@@ -3,16 +3,39 @@ package yokwe.majuro.mesa;
 public final class Memory {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Memory.class);
 	
+	public static final class Cache {
+		private static final int N_BIT = 14;
+		private static final int SIZE  = 1 << N_BIT;
+		private static final int MASK  = SIZE - 1;
+				
+		private static Cache[] array = new Cache[SIZE];
+
+		public  int     vp;
+		public  int     ra;
+		private boolean dirty;
+		
+		public Cache() {
+			clear();
+		}
+		
+		public void clear() {
+			vp    = 0;
+			ra    = 0;
+			dirty = false;
+		}
+		
+		public static Cache get(int vp) {
+			return array[((vp >> N_BIT) ^ vp) & MASK];
+		}
+	}
+	
+	
 	// use memory based array of int
 	public static final int VM_MAX = 24;
 	public static final int RM_MAX = 20;
 	
 	private final int rpSize;
 	private final int vpSize;
-	
-	// index of entry is virtual page
-	// value of entry is MAPFLAG and REALPAGE
-	// MAPFLAG [0..16), REALPAGE [16..32)
 	
 	// index of mapFlags and realPages is virtual page
 	// value of realPages contains realPage number of virtual page
@@ -71,7 +94,29 @@ public final class Memory {
 		for(int i = rpSize; i < vpSize; i++) {
 			mapFlags[i]  = MapFlag.getVacant();
 			realPages[i] = 0;
-		}
+		}		
+	}
+
+	// provide access to mapFlags
+	public char getMapFlag(int vp) {
+		return mapFlags[vp];
+	}
+	public void setMapFlag(int vp, char newValue) {
+		mapFlags[vp] = newValue;
+	}
+	// provide access to realPages
+	public char getRealPage(int vp) {
+		return realPages[vp];
+	}
+	public void setRealPage(int vp, char newValue) {
+		realPages[vp] = newValue;
+	}
+	// provide access to realMemory
+	public char getRealMemory(int ra) {
+		return realMemory[ra];
+	}
+	public void setRealMemory(int ra, char newValue) {
+		realMemory[ra] = newValue;
 	}
 
 	public void setReferenced(int vp) {
@@ -81,52 +126,84 @@ public final class Memory {
 		mapFlags[vp] = MapFlag.setReferencedDirty(mapFlags[vp]);
 	}
 	// fetch returns real address == offset of realMemory
-	int fetch(int va) {
+	public int fetch(int va) {
 		if (Perf.ENABLED) Perf.fetchMemory++;
 		
-		int vp = va >>> Mesa.PAGE_BITS;
+		final int vp = va >>> Mesa.PAGE_BITS;
+		final int ra;
 		
-		char mapFlag = mapFlags[vp];
-		if (MapFlag.isVacant(mapFlag)) {
-			Mesa.pageFault(va);
+		// check cache
+		Cache cache = Cache.get(vp);
+		if (cache.vp == vp) {
+			if (Perf.ENABLED) {
+				Perf.cacheHit++;
+			}
+			ra = cache.ra;
+		} else {
+			if (Perf.ENABLED) {
+				if (cache.vp == 0) Perf.cacheMissEmpty++;
+				else Perf.cacheMissConflict++;
+			}
+
+			char mapFlag = mapFlags[vp];
+			if (MapFlag.isVacant(mapFlag)) {
+				Mesa.pageFault(va);
+			}
+			if (MapFlag.isNotReferenced(mapFlag)) {
+				mapFlags[vp] = MapFlag.setReferenced(mapFlag);
+			}
+			ra = realPages[vp] << Mesa.PAGE_BITS;
+			
+			cache.vp    = vp;
+			cache.ra    = ra;
+			cache.dirty = MapFlag.isDirty(mapFlag);
 		}
-		if (MapFlag.isNotReferenced(mapFlag)) {
-			mapFlags[vp] = MapFlag.setReferenced(mapFlag);
-		}
-		int ra = realPages[vp] << Mesa.PAGE_BITS;
-		if (ra == 0) {
-			throw new Error();
-		}
-		return ra + (va & Mesa.PAGE_MASK);
+		if (ra == 0) throw new Error();
+		return ra | (va & Mesa.PAGE_MASK);
 	}
 	// store returns real address == offset of realMemory
-	int store(int va) {
+	public int store(int va) {
 		if (Perf.ENABLED) Perf.storeMemory++;
 
-		int vp = va >>> Mesa.PAGE_BITS;
+		final int vp = va >>> Mesa.PAGE_BITS;
+		final int ra;
 		
-		char mapFlag = mapFlags[vp];
-		if (MapFlag.isVacant(mapFlag)) {
-			Mesa.pageFault(va);
-		}
-		if (MapFlag.isProtect(mapFlag)) {
-			Mesa.writeProtectFault(va);
-		}
-		if (MapFlag.isNotReferencedDirty(mapFlag)) {
-			mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
-		}
+		Cache cache = Cache.get(vp);
+		if (cache.vp == vp) {
+			if (Perf.ENABLED) {
+				Perf.cacheHit++;
+			}
+			
+			ra = cache.ra;
+			if (!cache.dirty) {
+				char mapFlag = mapFlags[vp];
+				mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
+				cache.dirty  = true;
+			}
+		} else {
+			if (Perf.ENABLED) {
+				if (cache.vp == 0) Perf.cacheMissEmpty++;
+				else Perf.cacheMissConflict++;
+			}
 
-		int ra = realPages[vp] << Mesa.PAGE_BITS;
-		if (ra == 0) {
-			throw new Error();
+			char mapFlag = mapFlags[vp];
+			if (MapFlag.isVacant(mapFlag)) {
+				Mesa.pageFault(va);
+			}
+			if (MapFlag.isProtect(mapFlag)) {
+				Mesa.writeProtectFault(va);
+			}
+			if (MapFlag.isNotReferencedDirty(mapFlag)) {
+				mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
+			}
+			ra = realPages[vp] << Mesa.PAGE_BITS;
+			
+			cache.vp    = vp;
+			cache.ra    = ra;
+			cache.dirty = true;
 		}
-		return ra + (va & Mesa.PAGE_MASK);
+		
+		return ra | (va & Mesa.PAGE_MASK);
 	}
 	
-	int readMemory(int va) {
-		return realMemory[va];
-	}
-	void writeMemory(int va, int newValue) {
-		realMemory[va] = (char)newValue;
-	}
 }

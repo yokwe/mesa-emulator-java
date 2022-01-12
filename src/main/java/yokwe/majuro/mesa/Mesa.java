@@ -13,12 +13,10 @@ public final class Mesa {
 	
 	public static final int MAX_REALMEMORY_PAGE_SIZE = /* RealMemoryImplGuam::largestArraySize */ 4086 * WORD_BITS;
 
-	private static Memory    memory;
-	private static PageCache pageCache;
+	private static Memory memory;
 	
 	public static void init(int vmbits, int rmbits, int ioRegionPage) {
-		memory    = new Memory(vmbits, rmbits, ioRegionPage);
-		pageCache = new PageCache(memory);
+		memory = new Memory(vmbits, rmbits, ioRegionPage);
 	}
 	
 	public static void pageFault(int va) {
@@ -32,26 +30,20 @@ public final class Mesa {
 	
 	public static int fetch(int va) {
 		if (Perf.ENABLED) Perf.fetch++;
-		return pageCache.fetch(va);
+		return memory.fetch(va);
 	}
 	public static int store(int va) {
 		if (Perf.ENABLED) Perf.store++;
-		return pageCache.store(va);
+		return memory.store(va);
 	}
 	
-	public static int readWord(int va) {
-		return memory.readMemory(va);
-	}
-	public static void writeWord(int va, int newValue) {
-		memory.writeMemory(va, newValue);
-	}
 	public static int readDbl(int va) {
 		if (Perf.ENABLED) Perf.readDbl++;
 		int p0 = fetch(va);
 		int p1 = p0 + 1;
 		if ((va & PAGE_MASK) == PAGE_MASK) p1 = fetch(va + 1);
 		
-		return (readWord(p1) << WORD_SIZE) | (readWord(p0) & WORD_MASK);
+		return (memory.getRealMemory(p1) << WORD_SIZE) | (memory.getRealMemory(p0) & WORD_MASK);
 	}
 
 }
