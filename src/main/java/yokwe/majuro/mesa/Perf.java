@@ -8,8 +8,8 @@ public final class Perf {
 
 	public static final boolean ENABLED = true;
 	
-	public static long fetchMemory = 0;
-	public static long storeMemory = 0;
+	public static long memoryFetch = 0;
+	public static long memoryStore = 0;
 	
 	public static long cacheHit          = 0;
 	public static long cacheMissConflict = 0;
@@ -18,6 +18,10 @@ public final class Perf {
 	public static long fetch       = 0;
 	public static long store       = 0;
 	public static long readDbl     = 0;
+	
+	// fault
+	public static long pageFault         = 0;
+	public static long writeProtectFault = 0;
 	
 	public static void dump() {
 		Class<?> clazz = Perf.class;
