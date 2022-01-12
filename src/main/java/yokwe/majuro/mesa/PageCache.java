@@ -11,53 +11,70 @@ public final class PageCache {
 	}
 
 	private static final class Entry {
-		public boolean flagFetch;
-		public boolean flagStore;
-		public int     vp;
-		public int     ra; // real address
+		private static final int MASK_FETCH = 0x00000002;
+		private static final int MASK_STORE = 0x00000001;
+		
+		public static final int FLAG_FETCH       = MASK_FETCH;
+		public static final int FLAG_FETCH_STORE = MASK_FETCH | MASK_STORE;
+		
+		
+		public int flags; // fetch and store
+		public int vp;    // virtual page
+		public int ra;    // real address
 		
 		Entry() {
 			clear();
 		}
 		
 		void clear() {
-			flagFetch = false;
-			flagStore = false;
-			vp = 0;
-			ra = 0;
+			flags = 0;
+			vp    = 0;
+			ra    = 0;
+		}
+		
+		private boolean isNotFetch() {
+			return (flags & MASK_FETCH) == 0;
+		}
+		private boolean isNotStore() {
+			return (flags & MASK_FETCH) == 0;
+		}
+		private void setFetch() {
+			flags |= MASK_FETCH;
+		}
+		private void setStore() {
+			flags |= MASK_STORE;
 		}
 	}
 	
 	private final Memory memory;
-	private final PageCache.Entry entries[];
+	private final Entry  entries[];
 	
 	PageCache(Memory memory_) {
-		entries = new PageCache.Entry[N_ENTRY];
+		memory  = memory_;
+		entries = new Entry[N_ENTRY];
 		
-		this.memory = memory_;
 		for(int i = 0; i < entries.length; i++) {
 			entries[i] = new Entry();
 		}
 	}
 	
-	private PageCache.Entry getEntry(int vp) {
+	private Entry getEntry(int vp) {
 		return entries[hash(vp)];
 	}
 	
 	public void invalidate(int vp) {
-		PageCache.Entry entry = getEntry(vp);
+		Entry entry = getEntry(vp);
 		if (entry.vp == vp) entry.clear();
 	}
 	public int fetch(int va) {
-		int vp = va >>> Memory.PAGE_BITS;
-		int of = va & Memory.PAGE_MASK;
+		int vp = va >>> Mesa.PAGE_BITS;
 
-		PageCache.Entry entry = getEntry(vp);
+		Entry entry = getEntry(vp);
 		if (entry.vp == vp) {
 			if (Perf.ENABLED) Perf.pageCacheHit++;
-			if (!entry.flagFetch) {
+			if (entry.isNotFetch()) {
 				memory.setReferenced(vp);
-				entry.flagFetch = true;
+				entry.setFetch();
 			}
 		} else {
 			// setup entry
@@ -65,24 +82,25 @@ public final class PageCache {
 				if (entry.vp == 0) Perf.pageCacheMissEmpty++;
 				else Perf.pageCacheMissConflict++;
 			}
+			// generate PageFault before update entry
+			int ra = memory.fetch(va & ~Mesa.PAGE_MASK);
+			
 			// Overwrite content of entry
-			entry.flagFetch = true;
-			entry.flagStore = false;
-			entry.vp = vp;
-			entry.ra = memory.fetch(vp << Memory.PAGE_BITS);
+			entry.flags = Entry.FLAG_FETCH;
+			entry.vp    = vp;
+			entry.ra    = ra;
 		}
-		return entry.ra + of;
+		return entry.ra | (va & Mesa.PAGE_MASK);
 	}
 	public int store(int va) {
-		int vp = va >>> Memory.PAGE_BITS;
-		int of = va & Memory.PAGE_MASK;
+		int vp = va >>> Mesa.PAGE_BITS;
 
-		PageCache.Entry entry = getEntry(vp);
+		Entry entry = getEntry(vp);
 		if (entry.vp == vp) {
 			if (Perf.ENABLED) Perf.pageCacheHit++;
-			if (!entry.flagStore) {
+			if (entry.isNotStore()) {
 				memory.setReferencedDirty(vp);
-				entry.flagStore = true;
+				entry.setStore();
 			}
 		} else {
 			// setup entry
@@ -90,13 +108,15 @@ public final class PageCache {
 				if (entry.vp == 0) Perf.pageCacheMissEmpty++;
 				else Perf.pageCacheMissConflict++;
 			}
+			// generate PageFault before update entry
+			int ra = memory.fetch(va & ~Mesa.PAGE_MASK);
+
 			// Overwrite content of entry
-			entry.flagFetch = true;
-			entry.flagStore = true;
-			entry.vp = vp;
-			entry.ra = memory.store(vp << Memory.PAGE_BITS);
+			entry.flags = Entry.FLAG_FETCH_STORE;
+			entry.vp    = vp;
+			entry.ra    = ra;
 		}
-		return entry.ra + of;
+		return entry.ra | (va & Mesa.PAGE_MASK);
 	}
 	
 }
