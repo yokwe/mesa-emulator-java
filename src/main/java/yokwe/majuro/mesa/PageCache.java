@@ -109,7 +109,7 @@ public final class PageCache {
 				else Perf.pageCacheMissConflict++;
 			}
 			// generate PageFault before update entry
-			int ra = memory.fetch(va & ~Mesa.PAGE_MASK);
+			int ra = memory.store(va & ~Mesa.PAGE_MASK);
 
 			// Overwrite content of entry
 			entry.flags = Entry.FLAG_FETCH_STORE;
