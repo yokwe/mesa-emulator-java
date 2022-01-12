@@ -17,6 +17,9 @@ public final class MapFlag {
 	public static boolean isProtect(char mapFlag) {
 		return (mapFlag & MASK_PROTECT) != 0;
 	}
+	public static boolean isDirty(char mapFlag) {
+		return (mapFlag & MASK_DIRTY) != 0;
+	}
 	
 	public static boolean isNotReferenced(char mapFlag) {
 		return (mapFlag & MASK_REFERENCED) == 0;
