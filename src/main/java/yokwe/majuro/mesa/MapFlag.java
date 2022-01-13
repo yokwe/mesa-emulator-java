@@ -17,8 +17,8 @@ public final class MapFlag {
 	public void clear() {
 		value = 0;
 	}
-	public int get() {
-		return value;
+	public char get() {
+		return (char)value;
 	}
 	public void set(char newValue) {
 		value = newValue;
