@@ -25,3 +25,109 @@ public final class BitField {
 		return mask(startBit, stopBit) << shift32(stopBit);
 	}
 }
+
+
+// Use constant expression for performance
+// Use int type to reduce implicit or explicit type conversion
+final class NibblePair {
+	public static final int SIZE_BITS = 8;
+
+	private static final int LEFT_START = 0;
+	private static final int LEFT_STOP = 3;
+
+	private static final int RIGHT_START = 4;
+	private static final int RIGHT_STOP = 7;
+
+	private static final int LEFT_BITS = LEFT_STOP - LEFT_START + 1;
+	private static final int LEFT_PAT = (1 << LEFT_BITS) - 1;
+	private static final int LEFT_SHIFT = SIZE_BITS - LEFT_STOP - 1;
+	private static final int LEFT_MASK = LEFT_PAT << LEFT_SHIFT;
+
+	private static final int RIGHT_BITS = RIGHT_STOP - RIGHT_START + 1;
+	private static final int RIGHT_PAT = (1 << RIGHT_BITS) - 1;
+	private static final int RIGHT_SHIFT = SIZE_BITS - RIGHT_STOP - 1;
+	private static final int RIGHT_MASK = RIGHT_PAT << RIGHT_SHIFT;
+	
+	private int value;
+	
+	public NibblePair(int newValue) {
+		value = newValue;
+	}
+	public NibblePair() {
+		this(0);
+	}
+	
+	public int rawValue() {
+		return value;
+	}
+	
+	public int left() {
+		return (value & LEFT_MASK) >> LEFT_SHIFT;
+	}
+	public void left(int newValue) {
+		value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
+	}
+	public int right() {
+		return (value & RIGHT_MASK) >> RIGHT_SHIFT;
+	}
+	public void right(int newValue) {
+		value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
+	}
+
+}
+
+final class Monitor {
+	public static final int SIZE = 1;
+	public static final int SIZE_BITS = 16;
+
+	private static final int TAIL_START = 3;
+	private static final int TAIL_STOP = 12;
+
+	private static final int LOCKED_START = 15;
+	private static final int LOCKED_STOP = 15;
+
+	private static final int TAIL_BITS = TAIL_STOP - TAIL_START + 1;
+	private static final int TAIL_PAT = (1 << TAIL_BITS) - 1;
+	private static final int TAIL_SHIFT = SIZE_BITS - TAIL_STOP - 1;
+	private static final int TAIL_MASK = TAIL_PAT << TAIL_SHIFT;
+
+	private static final int LOCKED_BITS = LOCKED_STOP - LOCKED_START + 1;
+	private static final int LOCKED_PAT = (1 << LOCKED_BITS) - 1;
+	private static final int LOCKED_SHIFT = SIZE_BITS - LOCKED_START - 1;
+	private static final int LOCKED_MASK  = LOCKED_PAT << LOCKED_SHIFT;
+
+	
+	private int value;
+	
+	public Monitor(int newValue) {
+		value = newValue;
+	}
+	public Monitor() {
+		this(0);
+	}
+	
+	public int rawValue() {
+		return value;
+	}
+
+	
+	public int tail() {
+		return (value & TAIL_MASK) >> TAIL_SHIFT;
+	}
+
+	public void tail(int newValue) {
+		value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
+	}
+
+	public boolean locked() {
+		return (value & LOCKED_MASK) != 0;
+	}
+
+	public void locked(boolean newValue) {
+		if (newValue) {
+			value |= LOCKED_MASK; // set LOCKED_START_BIT
+		} else {
+			value &= ~LOCKED_MASK; // clear LOCKED_START_BIT
+		}
+	}
+}
