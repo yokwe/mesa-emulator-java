@@ -3,29 +3,29 @@ package yokwe.majuro.mesa;
 public final class Memory {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Memory.class);
 	
-	public static final class Cache {
+	private static final class Cache {
 		private static final int N_BIT = 14;
 		private static final int SIZE  = 1 << N_BIT;
 		private static final int MASK  = SIZE - 1;
-				
-		private static Cache[] array = new Cache[SIZE];
+		
+		private static Cache[] getCacheArray() {
+			return new Cache[SIZE];
+		}
+		private static Cache getCache(Cache[] cacheArray, int vp) {
+			return cacheArray[((vp >> Cache.N_BIT) ^ vp) & Cache.MASK];
+		}
 
-		public  int     vp;
-		public  int     ra;
+		private int     vp;
+		private int     ra;
 		private boolean dirty;
 		
-		public Cache() {
+		private Cache() {
 			clear();
 		}
-		
-		public void clear() {
+		private void clear() {
 			vp    = 0;
 			ra    = 0;
 			dirty = false;
-		}
-		
-		public static Cache get(int vp) {
-			return array[((vp >> N_BIT) ^ vp) & MASK];
 		}
 	}
 	
@@ -38,11 +38,14 @@ public final class Memory {
 	
 	// index of mapFlags and realPages is virtual page
 	// value of realPages contains realPage number of virtual page
-	private final char[] mapFlags;
-	private final char[] realPages;
+	private final MapFlag[] mapFlags;
+	private final char[]    realPages;
 
 	// index of realMemory is real address up to rpSize * Mesa.PAGE_SIZE
-	private final char[] realMemory;
+	private final char[]    realMemory;
+	
+	// array of cache
+	private final Cache[]   cacheArray;
 	
 	public Memory(int vmbits, int rmbits, int ioRegionPage) {
 		logger.info("vmbits {}", vmbits);
@@ -54,15 +57,16 @@ public final class Memory {
 		logger.info("rpSize {}", String.format("%X", rpSize));
 		
 		realMemory = new char[rpSize * Mesa.PAGE_SIZE];
-		mapFlags   = new char[vpSize];
+		mapFlags   = new MapFlag[vpSize];
 		realPages  = new char[vpSize];
+		cacheArray = Cache.getCacheArray();
 		
 		// clear realMemory, mapFlags and realPages
 		for(int i = 0; i < realMemory.length; i++) {
 			realMemory[i] = 0;
 		}
 		for(int i = 0; i < mapFlags.length; i++) {
-			mapFlags[i] = 0;
+			mapFlags[i].clear();
 		}
 		for(int i = 0; i < realPages.length; i++) {
 			realPages[i] = 0;
@@ -72,17 +76,17 @@ public final class Memory {
 		char rp = 0;
 		// vp:[ioRegionPage .. 256) <=> rp:[0..256-ioRegionPage)
 		for(int i = ioRegionPage; i < 256; i++) {
-			mapFlags[i]  = MapFlag.getClear();
+			mapFlags[i].clear();
 			realPages[i] = rp++;
 		}
 		// vp:[0..ioRegionPage) <=> rp: [256-ioRegionPage .. 256)
 		for(int i = 0; i < ioRegionPage; i++) {
-			mapFlags[i]  = MapFlag.getClear();
+			mapFlags[i].clear();
 			realPages[i] = rp++;
 		}
 		// vp: [256 .. rpSize)
 		for(int i = 256; i < rpSize; i++) {
-			mapFlags[i]  = MapFlag.getClear();
+			mapFlags[i].clear();
 			realPages[i] = rp++;
 		}
 		if (rp != rpSize) {
@@ -91,17 +95,19 @@ public final class Memory {
 		}
 		// vp: [rpSize .. vpSize)
 		for(int i = rpSize; i < vpSize; i++) {
-			mapFlags[i]  = MapFlag.getVacant();
+			mapFlags[i].setVacant();
 			realPages[i] = 0;
 		}		
 	}
+	
+	private Cache getCache(int vp) {
+		return Cache.getCache(cacheArray, vp);
+	}
+
 
 	// provide access to mapFlags
-	public char getMapFlag(int vp) {
+	public MapFlag getMapFlag(int vp) {
 		return mapFlags[vp];
-	}
-	public void setMapFlag(int vp, char newValue) {
-		mapFlags[vp] = newValue;
 	}
 	// provide access to realPages
 	public char getRealPage(int vp) {
@@ -114,15 +120,12 @@ public final class Memory {
 	public char readRealMemory(int ra) {
 		return realMemory[ra];
 	}
-	public void writeRealMemory(int ra, char newValue) {
+	public void setRealMemory(int ra, char newValue) {
 		realMemory[ra] = newValue;
 	}
 
-	public void setReferenced(int vp) {
-		mapFlags[vp] = MapFlag.setReferenced(mapFlags[vp]);
-	}
-	public void setReferencedDirty(int vp) {
-		mapFlags[vp] = MapFlag.setReferencedDirty(mapFlags[vp]);
+	public void invalidate(int vp) {
+		getCache(vp).clear();
 	}
 	// fetch returns real address == offset of realMemory
 	public int fetch(int va) {
@@ -133,21 +136,21 @@ public final class Memory {
 		
 		if (Debug.DISABLE_MEMORY_CACHE) {
 			// FIXME DUPLICATE CODE START
-			char mapFlag = mapFlags[vp];
-			if (MapFlag.isVacant(mapFlag)) {
+			MapFlag mapFlag = mapFlags[vp];
+			if (mapFlag.isVacant()) {
 				Mesa.pageFault(va);
 			}
 			
 			// NO FAULT FROM HERE
-			if (MapFlag.isNotReferenced(mapFlag)) {
-				mapFlags[vp] = MapFlag.setReferenced(mapFlag);
+			if (mapFlag.isNotReferenced()) {
+				mapFlag.setReferenced();
 			}
 			ra = realPages[vp] << Mesa.PAGE_BITS;
 			if (ra == 0) throw new Error();
 			// FIXME DUPLICATE CODE STOP
 		} else {
 			// check cache
-			Cache cache = Cache.get(vp);
+			var cache = getCache(vp);
 			if (cache.vp == vp) {
 				if (Perf.ENABLED) {
 					Perf.cacheHit++;
@@ -160,14 +163,14 @@ public final class Memory {
 				}
 
 				// FIXME DUPLICATE CODE START
-				char mapFlag = mapFlags[vp];
-				if (MapFlag.isVacant(mapFlag)) {
+				MapFlag mapFlag = mapFlags[vp];
+				if (mapFlag.isVacant()) {
 					Mesa.pageFault(va);
 				}
 				
 				// NO FAULT FROM HERE
-				if (MapFlag.isNotReferenced(mapFlag)) {
-					mapFlags[vp] = MapFlag.setReferenced(mapFlag);
+				if (mapFlag.isNotReferenced()) {
+					mapFlags[vp].setReferenced();
 				}
 				ra = realPages[vp] << Mesa.PAGE_BITS;
 				if (ra == 0) throw new Error();
@@ -175,7 +178,7 @@ public final class Memory {
 				
 				cache.vp    = vp;
 				cache.ra    = ra;
-				cache.dirty = MapFlag.isDirty(mapFlag);
+				cache.dirty = mapFlag.isDirty();
 			}
 		}
 		return ra | (va & Mesa.PAGE_MASK);
@@ -190,23 +193,23 @@ public final class Memory {
 		
 		if (Debug.DISABLE_MEMORY_CACHE) {
 			// FIXME DUPLICATE CODE START
-			char mapFlag = mapFlags[vp];
-			if (MapFlag.isVacant(mapFlag)) {
+			MapFlag mapFlag = mapFlags[vp];
+			if (mapFlag.isVacant()) {
 				Mesa.pageFault(va);
 			}
-			if (MapFlag.isProtect(mapFlag)) {
+			if (mapFlag.isProtect()) {
 				Mesa.writeProtectFault(va);
 			}
 			
 			// NO FAULT FROM HERE
-			if (MapFlag.isNotReferencedDirty(mapFlag)) {
-				mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
+			if (mapFlag.isNotReferencedDirty()) {
+				mapFlags[vp].setReferencedDirty();
 			}
 			ra = realPages[vp] << Mesa.PAGE_BITS;
 			if (ra == 0) throw new Error();
 			// FIXME DUPLICATE CODE STOP
 		} else {
-			Cache cache = Cache.get(vp);
+			var cache = getCache(vp);
 			if (cache.vp == vp) {
 				if (Perf.ENABLED) {
 					Perf.cacheHit++;
@@ -214,7 +217,7 @@ public final class Memory {
 				
 				ra = cache.ra;
 				if (!cache.dirty) {
-					mapFlags[vp] = MapFlag.setReferencedDirty(mapFlags[vp]);
+					mapFlags[vp].setReferencedDirty();
 					cache.dirty  = true;
 				}
 			} else {
@@ -224,17 +227,17 @@ public final class Memory {
 				}
 
 				// FIXME DUPLICATE CODE START
-				char mapFlag = mapFlags[vp];
-				if (MapFlag.isVacant(mapFlag)) {
+				MapFlag mapFlag = mapFlags[vp];
+				if (mapFlag.isVacant()) {
 					Mesa.pageFault(va);
 				}
-				if (MapFlag.isProtect(mapFlag)) {
+				if (mapFlag.isProtect()) {
 					Mesa.writeProtectFault(va);
 				}
 				
 				// NO FAULT FROM HERE
-				if (MapFlag.isNotReferencedDirty(mapFlag)) {
-					mapFlags[vp] = MapFlag.setReferencedDirty(mapFlag);
+				if (mapFlag.isNotReferencedDirty()) {
+					mapFlags[vp].setReferencedDirty();
 				}
 				ra = realPages[vp] << Mesa.PAGE_BITS;
 				if (ra == 0) throw new Error();
