@@ -5,43 +5,56 @@ public final class MapFlag {
 	private static final int MASK_DIRTY      = 0x4000;
 	private static final int MASK_PROTECT    = 0x2000;
 	
-	private static final int MASK_REFERENCED_DIRTY = MASK_REFERENCED | MASK_DIRTY;
-	
 	private static final int MASK_VACANT = MASK_REFERENCED | MASK_DIRTY | MASK_PROTECT;
-	
 	private static final int FLAG_VACANT = MASK_DIRTY | MASK_PROTECT; // not referenced and dirty and protect
-			
-	public static boolean isVacant(char mapFlag) {
-		return (mapFlag & MASK_VACANT) == FLAG_VACANT;
-	}
-	public static boolean isProtect(char mapFlag) {
-		return (mapFlag & MASK_PROTECT) != 0;
-	}
-	public static boolean isDirty(char mapFlag) {
-		return (mapFlag & MASK_DIRTY) != 0;
+				
+	
+	private int value;
+	public MapFlag() {
+		value = 0;
 	}
 	
-	public static boolean isNotReferenced(char mapFlag) {
-		return (mapFlag & MASK_REFERENCED) == 0;
+	public void clear() {
+		value = 0;
 	}
-	public static boolean isNotReferencedDirty(char mapFlag) {
-		return (mapFlag & (MASK_REFERENCED | MASK_DIRTY)) != (MASK_REFERENCED | MASK_DIRTY);
+	public int get() {
+		return value;
+	}
+	public void set(char newValue) {
+		value = newValue;
+	}
+	public void set(int newValue) {
+		value = (char)newValue;
 	}
 	
-	public static char getClear() {
-		return 0;
+	public boolean isVacant() {
+		return (value & MASK_VACANT) == FLAG_VACANT;
 	}
-	public static char getVacant() {
-		return (char)FLAG_VACANT;
+	public boolean isProtect() {
+		return (value & MASK_PROTECT) != 0;
+	}
+	public boolean isDirty() {
+		return (value & MASK_DIRTY) != 0;
 	}
 	
-	public static char setReferenced(char mapFlag) {
-		return (char)(mapFlag | MASK_REFERENCED);
+	public boolean isNotReferenced() {
+		return (value & MASK_REFERENCED) == 0;
 	}
-	public static char setReferencedDirty(char mapFlag) {
-		return (char)(mapFlag | MASK_REFERENCED_DIRTY);
+	public boolean isNotReferencedDirty() {
+		return (value & (MASK_REFERENCED | MASK_DIRTY)) != (MASK_REFERENCED | MASK_DIRTY);
 	}
-	public static char setProtect(char mapFlag) {
-		return (char)(mapFlag | MASK_PROTECT);
+
+	public void setReferenced() {
+		value |= MASK_REFERENCED;
+	}
+	public void setReferencedDirty() {
+		value |= MASK_REFERENCED;
+		value |= MASK_DIRTY;
+	}
+	public void setProtect() {
+		value |= MASK_PROTECT;
+	}
+	public void setVacant() {
+		value = FLAG_VACANT;
 	}
 }
