@@ -1,5 +1,10 @@
 package yokwe.majuro.mesa;
 
+import static yokwe.majuro.mesa.Constant.MAX_REALMEMORY_PAGE_SIZE;
+import static yokwe.majuro.mesa.Constant.PAGE_BITS;
+import static yokwe.majuro.mesa.Constant.PAGE_MASK;
+import static yokwe.majuro.mesa.Constant.PAGE_SIZE;
+
 public final class Memory {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Memory.class);
 	
@@ -51,12 +56,12 @@ public final class Memory {
 		logger.info("vmbits {}", vmbits);
 		logger.info("rmbits {}", rmbits);
 		
-		vpSize = 1 << (vmbits - Mesa.PAGE_BITS);
-		rpSize = Integer.max(Mesa.MAX_REALMEMORY_PAGE_SIZE, 1 << (rmbits - Mesa.PAGE_BITS));
+		vpSize = 1 << (vmbits - PAGE_BITS);
+		rpSize = Integer.max(MAX_REALMEMORY_PAGE_SIZE, 1 << (rmbits - PAGE_BITS));
 		logger.info("vpSize {}", String.format("%X", vpSize));
 		logger.info("rpSize {}", String.format("%X", rpSize));
 		
-		realMemory = new char[rpSize * Mesa.PAGE_SIZE];
+		realMemory = new char[rpSize * PAGE_SIZE];
 		mapFlags   = new MapFlag[vpSize];
 		realPages  = new char[vpSize];
 		cacheArray = Cache.getCacheArray();
@@ -131,7 +136,7 @@ public final class Memory {
 	public int fetch(int va) {
 		if (Perf.ENABLED) Perf.memoryFetch++;
 		
-		final int vp = va >>> Mesa.PAGE_BITS;
+		final int vp = va >>> PAGE_BITS;
 		final int ra;
 		
 		if (Debug.DISABLE_MEMORY_CACHE) {
@@ -145,7 +150,7 @@ public final class Memory {
 			if (mapFlag.isNotReferenced()) {
 				mapFlag.setReferenced();
 			}
-			ra = realPages[vp] << Mesa.PAGE_BITS;
+			ra = realPages[vp] << PAGE_BITS;
 			if (ra == 0) throw new Error();
 			// FIXME DUPLICATE CODE STOP
 		} else {
@@ -172,7 +177,7 @@ public final class Memory {
 				if (mapFlag.isNotReferenced()) {
 					mapFlags[vp].setReferenced();
 				}
-				ra = realPages[vp] << Mesa.PAGE_BITS;
+				ra = realPages[vp] << PAGE_BITS;
 				if (ra == 0) throw new Error();
 				// FIXME DUPLICATE CODE STOP
 				
@@ -181,14 +186,14 @@ public final class Memory {
 				cache.dirty = mapFlag.isDirty();
 			}
 		}
-		return ra | (va & Mesa.PAGE_MASK);
+		return ra | (va & PAGE_MASK);
 	}
 	
 	// store returns real address == offset of realMemory
 	public int store(int va) {
 		if (Perf.ENABLED) Perf.memoryStore++;
 
-		final int vp = va >>> Mesa.PAGE_BITS;
+		final int vp = va >>> PAGE_BITS;
 		final int ra;
 		
 		if (Debug.DISABLE_MEMORY_CACHE) {
@@ -205,7 +210,7 @@ public final class Memory {
 			if (mapFlag.isNotReferencedDirty()) {
 				mapFlags[vp].setReferencedDirty();
 			}
-			ra = realPages[vp] << Mesa.PAGE_BITS;
+			ra = realPages[vp] << PAGE_BITS;
 			if (ra == 0) throw new Error();
 			// FIXME DUPLICATE CODE STOP
 		} else {
@@ -239,7 +244,7 @@ public final class Memory {
 				if (mapFlag.isNotReferencedDirty()) {
 					mapFlags[vp].setReferencedDirty();
 				}
-				ra = realPages[vp] << Mesa.PAGE_BITS;
+				ra = realPages[vp] << PAGE_BITS;
 				if (ra == 0) throw new Error();
 				// FIXME DUPLICATE CODE STOP
 				
@@ -249,7 +254,7 @@ public final class Memory {
 			}
 		}
 				
-		return ra | (va & Mesa.PAGE_MASK);
+		return ra | (va & PAGE_MASK);
 	}
 	
 }
