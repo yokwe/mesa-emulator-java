@@ -1,9 +1,5 @@
 package yokwe.majuro.mesa;
 
-import static yokwe.majuro.mesa.Constant.PAGE_MASK;
-import static yokwe.majuro.mesa.Constant.WORD_MASK;
-import static yokwe.majuro.mesa.Constant.WORD_SIZE;
-
 public final class Mesa {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Mesa.class);
 
@@ -33,13 +29,24 @@ public final class Mesa {
 		return memory.store(va);
 	}
 	
-	public static int readDbl(int va) {
-		if (Perf.ENABLED) Perf.readDbl++;
-		int p0 = memory.fetch(va);
-		int p1 = p0 + 1;
-		if ((va & PAGE_MASK) == PAGE_MASK) p1 = memory.fetch(va + 1);
-		
-		return (memory.readRealMemory(p1) << WORD_SIZE) | (memory.readRealMemory(p0) & WORD_MASK);
+	//
+	// memory read and write
+	//
+	public static char read16(int va) {
+		if (Perf.ENABLED) Perf.read16++;
+		return memory.read16(va);
+	}
+	public static void write16(int va, char newValue) {
+		if (Perf.ENABLED) Perf.write16++;
+		memory.write16(va, newValue);
+	}
+	public static int read32(int va) {
+		if (Perf.ENABLED) Perf.read32++;
+		return memory.read32(va);
+	}
+	public static void write32(int va, int newValue) {
+		if (Perf.ENABLED) Perf.write32++;
+		memory.write32(va, newValue);
 	}
 
 }
