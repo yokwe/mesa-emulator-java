@@ -4,6 +4,8 @@ import static yokwe.majuro.mesa.Constant.MAX_REALMEMORY_PAGE_SIZE;
 import static yokwe.majuro.mesa.Constant.PAGE_BITS;
 import static yokwe.majuro.mesa.Constant.PAGE_MASK;
 import static yokwe.majuro.mesa.Constant.PAGE_SIZE;
+import static yokwe.majuro.mesa.Constant.WORD_SIZE;
+
 
 public final class Memory {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Memory.class);
@@ -125,7 +127,7 @@ public final class Memory {
 	public char readRealMemory(int ra) {
 		return realMemory[ra];
 	}
-	public void setRealMemory(int ra, char newValue) {
+	public void writeRealMemory(int ra, char newValue) {
 		realMemory[ra] = newValue;
 	}
 
@@ -257,4 +259,29 @@ public final class Memory {
 		return ra | (va & PAGE_MASK);
 	}
 	
+	//
+	// memory read and write
+	//
+	public char read16(int va) {
+		return realMemory[fetch(va)];
+	}
+	public void write16(int va, char newValue) {
+		realMemory[store(va)] = newValue;
+	}
+	public int read32(int va) {
+		int p0 = fetch(va);
+		int p1 = p0 + 1;
+		if ((va & PAGE_MASK) == PAGE_MASK) p1 = fetch(va + 1);
+		
+		return (realMemory[p1] << WORD_SIZE) | realMemory[p0];
+	}
+	public void write32(int va, int newValue) {
+		int p0 = store(va);
+		int p1 = p0 + 1;
+		if ((va & PAGE_MASK) == PAGE_MASK) p1 = store(va + 1);
+		
+		realMemory[p0] = (char)newValue;
+		realMemory[p1] = (char)(newValue >>> 16);
+	}
+
 }
