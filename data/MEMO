@@ -1,0 +1,51 @@
+Memory Byte Order
+-----------------
+Memory Byte Order of Mesa Processor           is Big Endian
+Memory Byte Order of Java                     is Big Endian
+Memory Byte Order of x86                      is Little Endian
+Byte Order of GVWin Virtual disk image        is Little Endian
+
+GVWin virtual disk contains mesa executable files and disk are mapped to computer memory.
+
+If you read GVWin Virtual disk image, you can read first 16 bit word must be 0121212 as octal and second word must be 7.
+
+
+PrincOps
+--------
+RECORD defined in PrincOps is memory layout. So actual bit position of field in CARD32 is different.
+In C++
+----
+//TaggedControl link: TYPE =  MACHINE DEPENDENT RECORD [
+//  data (0:  0..13): [0 .. 377778];
+//  tag  (0: 14..15): [0 .. 3],
+//  fill (1) :  UNSPECIFIED);
+union TaggedControlLink {
+        CARD32 u;
+        struct {
+                CARD16 tag  :  2;
+                CARD16 data : 14;
+                CARD16 fill;
+        };
+};
+----
+void testTaggedControlLink() {
+        CPPUNIT_ASSERT_EQUAL((CARD32)2, SIZE(TaggedControlLink));
+
+        TaggedControlLink t;
+
+        t.u = 0;
+        t.data = ~t.data;
+        CPPUNIT_ASSERT_EQUAL((CARD32)0x0000fffc, t.u);
+
+        t.u = 0;
+        t.tag = ~t.tag;
+        CPPUNIT_ASSERT_EQUAL((CARD32)0x00000003, t.u);
+
+        t.u = 0;
+        t.fill = ~t.fill;
+        CPPUNIT_ASSERT_EQUAL((CARD32)0xffff0000, t.u);
+}
+----
+field fill occupy upper 16bit of CARD32. Because in ReadDbl() first word is lower 16bit of CARD32 and second word is for upper 16 bit of CARD32.
+Calculate bit position of CARD32 is not simplef as bit position of CARD32
+----
