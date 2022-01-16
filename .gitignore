@@ -6,3 +6,6 @@
 **/maven-build.xml
 **/maven-build.properties
 /bin/
+data/Dawn/
+data/GVWin*/
+data/floppy/
