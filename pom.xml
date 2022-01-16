@@ -155,9 +155,11 @@
                 <!--  require version 3.7 or higher for java module -->
                 <version>3.8.1</version>
                 <configuration>
+                    <!--
                     <excludes>
-                        <exclude>**/study/*.java</exclude>
+                        <exclude>**/test/*.java</exclude>
                     </excludes>
+                    -->
                 </configuration>
             </plugin>
             
