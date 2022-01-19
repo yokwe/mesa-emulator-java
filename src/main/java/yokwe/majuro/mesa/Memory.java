@@ -6,6 +6,8 @@ import static yokwe.majuro.mesa.Constant.PAGE_MASK;
 import static yokwe.majuro.mesa.Constant.PAGE_SIZE;
 import static yokwe.majuro.mesa.Constant.WORD_SIZE;
 
+import yokwe.majuro.UnexpectedException;
+
 
 public final class Memory {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Memory.class);
@@ -98,7 +100,7 @@ public final class Memory {
 		}
 		if (rp != rpSize) {
 			logger.error("rp != rpSize");
-			throw new Error();
+			throw new UnexpectedException();
 		}
 		// vp: [rpSize .. vpSize)
 		for(int i = rpSize; i < vpSize; i++) {
@@ -153,7 +155,7 @@ public final class Memory {
 				mapFlag.setReferenced();
 			}
 			ra = realPages[vp] << PAGE_BITS;
-			if (ra == 0) throw new Error();
+			if (ra == 0) throw new UnexpectedException();
 			// FIXME DUPLICATE CODE STOP
 		} else {
 			// check cache
@@ -180,7 +182,7 @@ public final class Memory {
 					mapFlags[vp].setReferenced();
 				}
 				ra = realPages[vp] << PAGE_BITS;
-				if (ra == 0) throw new Error();
+				if (ra == 0) throw new UnexpectedException();
 				// FIXME DUPLICATE CODE STOP
 				
 				cache.vp    = vp;
@@ -213,7 +215,7 @@ public final class Memory {
 				mapFlags[vp].setReferencedDirty();
 			}
 			ra = realPages[vp] << PAGE_BITS;
-			if (ra == 0) throw new Error();
+			if (ra == 0) throw new UnexpectedException();
 			// FIXME DUPLICATE CODE STOP
 		} else {
 			var cache = getCache(vp);
@@ -247,7 +249,7 @@ public final class Memory {
 					mapFlags[vp].setReferencedDirty();
 				}
 				ra = realPages[vp] << PAGE_BITS;
-				if (ra == 0) throw new Error();
+				if (ra == 0) throw new UnexpectedException();
 				// FIXME DUPLICATE CODE STOP
 				
 				cache.vp    = vp;
@@ -268,6 +270,14 @@ public final class Memory {
 	public void write16(int va, char newValue) {
 		realMemory[store(va)] = newValue;
 	}
+	
+
+	// 2.3.1 Long Types
+	// When these types are stored in memory, the low-order (least significant) sixteen bits
+	// occupy the first memory word (at the lower numbered address), and the high-order (most
+	// significant) sixteen bits occupy the second memory word(at the higher memory address).
+	//         |15    31|0   15|
+	// address  n        n+1    n+2
 	public int read32(int va) {
 		int p0 = fetch(va);
 		int p1 = p0 + 1;

@@ -29,6 +29,37 @@ public final class BitField {
 
 // Use constant expression for performance
 // Use int type to reduce implicit or explicit type conversion
+
+// StateAllocationTable: TYPE = ARRAY Priority OF POINTER
+final class StateAllocationTable {
+	public static final int ELEMENT_SIZE = 1;
+	
+	public static int offset(int n) {
+		return n * ELEMENT_SIZE;
+	}
+}
+
+// final int StateAllocationTable(
+
+//NewGlobalOverhead: TYPE = RECORD [
+//	available(0: 0..15): UNSPECIFIED,
+//	word     (1: 0..15): GlobalWord,
+//	global   (2): GlobalVariables];
+final class NewGlobalOverhead {
+	public static final int SIZE = 2;
+
+	public static final int available = 0;
+	public static final int word = 1;
+	public static final int global = 2;
+	
+	// calculate offset of member using field
+	//   int word = Memory.fetch(p + NewGlobalOverhead.word);
+}
+
+
+//NibblePair: TYPE = RECORD[
+//  left  (0: 0..3): NIBBLE,
+//  right (0: 4..7): NIBBLE];
 final class NibblePair {
 	public static final int SIZE_BITS = 8;
 
@@ -73,9 +104,14 @@ final class NibblePair {
 	public void right(int newValue) {
 		value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
 	}
-
 }
 
+
+//Monitor: TYPE = RECORD[
+//   reserved (0: 0.. 2): UNSPECIFIED,
+//   tail     (0: 3..12): PsbIndex,
+//   available(0:13..14): UNSPECIFIED,
+//   locked   (0:15..15): BOOLEAN];
 final class Monitor {
 	public static final int SIZE = 1;
 	public static final int SIZE_BITS = 16;
@@ -109,7 +145,6 @@ final class Monitor {
 	public int rawValue() {
 		return value;
 	}
-
 	
 	public int tail() {
 		return (value & TAIL_MASK) >> TAIL_SHIFT;

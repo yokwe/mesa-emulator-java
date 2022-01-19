@@ -3,6 +3,8 @@ package yokwe.majuro.mesa;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import yokwe.majuro.UnexpectedException;
+
 public final class Perf {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Perf.class);
 
@@ -47,7 +49,7 @@ public final class Perf {
 				logger.error("{} {}", exceptionName, e);
 				logger.error("clazz {}", clazz);
 				logger.error("field {}", field);
-				throw new Error(exceptionName, e);
+				throw new UnexpectedException(exceptionName, e);
 			}
 		}
 		logger.info("Perf dump STOP");

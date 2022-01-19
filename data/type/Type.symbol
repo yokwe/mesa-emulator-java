@@ -1,6 +1,15 @@
-MesaType: SYMBOL =
+Type: SYMBOL =
 BEGIN
-
+    -- BUILTIN types
+    --   MESA type         JAVA type
+    --   BOOLEAN           boolean
+    --   CARDINAL          char
+    --   INTEGER           short
+    --   UNSPECIFIED       char
+    --   LONG UNSPECIFIED  int
+    --   POINTER           char
+    --   LONG POINTER      int
+ 
     -- 2.1.1. Unspecified
     BLOCK: TYPE = ARRAY [0..0) OF UNSPECIFIED;
 
@@ -18,9 +27,14 @@ BEGIN
         right (0: 8..15): BYTE];
 
     -- 2.3.1 Long Types
-    LongNumber: TYPE = RECORD [
-        low (0:0..15): UNSPECIFIED,
-        high(1:0..15): UNSPECIFIED];
+    -- When these types are stored in memory, the low-order (least significant) sixteen bits
+    -- occupy the first memory word (at the lower numbered address), and the high-order (most
+    -- significant) sixteen bits occupy the second memory word(at the higher memory address).
+    --         |15    31|0   15|
+    -- address  n        n+1    n+2
+    Long: TYPE = RECORD32 [ -- RECORD32 --
+      low (0:0..15): UNSPECIFIED,
+      high(1:0..15): UNSPECIFIED];
 
     -- 3.1.4.3 Code Segments
     CodeSegment: TYPE = RECORD [ 
@@ -29,8 +43,7 @@ BEGIN
 
     -- 3.2.2.2 Local and Global Frames
     GlobalVariables: TYPE = BLOCK;
-    -- GlobalFrameHandle: TYPE = LONG POINTER TO GlobalVariables;
-    GlobalFrameHandle: TYPE = LONG POINTER;
+    GlobalFrameHandle: TYPE = LONG POINTER TO GlobalVariables;
     
 --  GlobalWord: TYPE = RECORD [
 --      available(0:  0..13): CARDINAL,
@@ -45,8 +58,7 @@ BEGIN
     GlobalOverhead: TYPE = RECORD [
         available(0: 0..15): UNSPECIFIED,
         word     (1: 0..15): GlobalWord,
- --     codebase (2: 0..15): LONG POINTER TO CodeSegment,
-        codebase (2: 0..31): LONG POINTER,
+        codebase (2: 0..15): LONG POINTER TO CodeSegment,
         global   (4): GlobalVariables];
 -- changed chapter
     NewGlobalOverhead: TYPE = RECORD [
@@ -58,19 +70,18 @@ BEGIN
     -- changed chapter
     --9.1.4.1 Global frame table
     -- GFT: LONG POINTER TO GlobalFrameTable = LOOPHOLE[mGFT];
+    GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constant.mGFT;
     -- GlobalFrameTable: TYPE = LONG BASE POINTER TO ARRAY GFTIndex OF GFTItem;
     GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
     -- GFTHandle: TYPE = GlobalFrameTable RELATIVE POINTER TO GFTItem;
-    GFTHandle: TYPE = POINTER;
+    GFTHandle: TYPE = CARDINAL; -- access as GFT + GFTHandle as LONG POINTER TO GFTItem
     GFTIndex: TYPE = [0..16384);
     GFTItem: TYPE = RECORD[
         globalFrame(0: 0..31): GlobalFrameHandle,
---      codebase   (2: 0..15): LONG POINTER TO CodeSegment];
-        codebase   (2: 0..31): LONG POINTER];
+        codebase   (2: 0..15): LONG POINTER TO CodeSegment];
 
     -- Local Frames
---  LocalFrameHandle: TYPE = POINTER TO LocalVariables;
-    LocalFrameHandle: TYPE = POINTER;
+    LocalFrameHandle: TYPE = POINTER TO LocalVariables;
     LocalVariables: TYPE = BLOCK;
 
     LocalWord: TYPE = RECORD [
@@ -103,6 +114,7 @@ BEGIN
     -- 8.4.1 Bit Transfer Utilities
     BitAddress: TYPE = RECORD[
         word    (0: 0..31): LONG POINTER,
+        -- FIXME bit field at offset 2
         reserved(2: 0..11): UNSPECIFIED,
         bit     (2:12..15): CARDINAL];
 
@@ -145,7 +157,7 @@ BEGIN
 --    LinkType: TYPE  =  {frame(0), procedure(1), indirect(2)};
     -- changed chapter
     LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
-    TaggedControlLink: TYPE = RECORD [
+    TaggedControlLink: TYPE = RECORD32 [ -- RECORD32 --
         data (0: 0..13): UNSPECIFIED,
         tag  (0:14..15): LinkType,
         fill (1: 0..15): UNSPECIFIED];
@@ -154,17 +166,18 @@ BEGIN
     FrameLink : TYPE = LocalFrameHandle;
     
     -- 9.1.3 Procedure Descriptor
-    ProcDesc: TYPE =  RECORD [
+    ProcDesc: TYPE =  RECORD32 [ -- RECORD32 --
         taggedGF(0:0..15): UNSPECIFIED,
         pc      (1:0..15): CARDINAL];
 
     -- 9.1.4 New Procedure descriptors
-    NewProdDesc: TYPE = RECORD [
+    NewProdDesc: TYPE = RECORD32 [ -- RECORD32 --
         taggedGFI(0:0..15): UNSPECIFIED, -- GFTIndex
         pc       (1:0..15): CARDINAL];
 
     -- 9.2.1 Frame Allocation Vector
-    -- AV: POINTER TO AllocationVector = LOOPHOCE[mAV];
+    -- AV: POINTER TO AllocationVector = LOOPHOLsE[mAV];
+    AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constant.mAV;
     AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
     FSIndex: TYPE = [0..256);
     AVItem: TYPE = RECORD [
@@ -185,8 +198,11 @@ BEGIN
 
     -- 9.5.1 Trap Routines
     -- SD: POINTER TO SystemData = LOOPHOLE[mSD];
+    SD: POINTER TO SystemData = yokwe.majuro.mesa.Constant.mSD;
     SystemData: TYPE = ARRAY SDIndex OF ControlLink;
     SDIndex: TYPE = [0..256);
+    -- ETT: POINTER TO EscTrapTable = LOOPHOLE[mETT];
+    ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constant.mETT;
     EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
 
     -- 9.5.3 Trap Handlers
@@ -209,19 +225,19 @@ BEGIN
         dst     (2:0..31): ControlLink];
         
     -- 10.1.1 Process Data Area
-    ProcessDataArea: TYPE = RECORD [
-        vp (0:0..1023): SELECT OVERLAID * FROM
-            header(0) => [
-                ready     ( 0:0.. 15): Queue,
-                count     ( 1:0.. 15): CARDINAL,
-                unused    ( 2:0.. 15): UNSPECIFIED,
-                available ( 3:0.. 79): ARRAY [0..4] OF UNSPECIFIED,
-                state     ( 8:0..127): StateAllocationTable,
-                interrupt (16:0..511): InterruptVector,
-                fault     (48:0..255): FaultVector],
-            blocks(1) => [
-                block (0): ARRAY PsbIndex OF ProcessStateBlock],
-            ENDCASE];
+--    ProcessDataArea: TYPE = RECORD [
+--        vp (0:0..1023): SELECT OVERLAID * FROM
+--            header(0) => [
+--                ready     ( 0:0.. 15): Queue,
+--                count     ( 1:0.. 15): CARDINAL,
+--                unused    ( 2:0.. 15): UNSPECIFIED,
+--                available ( 3:0.. 79): ARRAY [0..4] OF UNSPECIFIED,
+--                state     ( 8:0..127): StateAllocationTable,
+--                interrupt (16:0..511): InterruptVector,
+--                fault     (48:0..255): FaultVector],
+--            blocks(1) => [
+--                block (0): ARRAY PsbIndex OF ProcessStateBlock],
+--            ENDCASE];
 
 --    ProcessDataArea: TYPE = RECORD [
 --    SELECT OVERLAID * FROM
@@ -236,7 +252,22 @@ BEGIN
 --        blocks(1) => [
 --            block: ARRAY [0..0) OF ProcessStateBlock],
 --        ENDCASE];
-   PsbIndex: TYPE = [0..1024);
+
+    -- PDA: LONG POINTER TO ProcessDataArea = LOOPHOLE[mPDA];
+    PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constant.mPDA;
+    ProcessDataArea: TYPE = RECORD [
+        -- equivalent of header arm of SELECT OVERLAID of ProcessDataArea
+        ready     ( 0:0.. 15): Queue,
+        count     ( 1:0.. 15): CARDINAL,
+        unused    ( 2:0.. 15): UNSPECIFIED,
+        available ( 3:0.. 79): ARRAY [0..4] OF UNSPECIFIED,
+        state     ( 8:0..127): StateAllocationTable,
+        interrupt (16:0..511): InterruptVector,
+        fault     (48:0..255): FaultVector,
+        -- equivalent of blocks arm of SELECT OVERLAID of ProcessDataArea
+        block     (0): ARRAY PsbIndex OF ProcessStateBlock];
+
+    PsbIndex: TYPE = [0..1024);
     
     -- 10.1.2 Process State Blocks
     ProcessStateBlock: TYPE = RECORD[
@@ -286,8 +317,7 @@ BEGIN
         reserved2(0:13..15): UNSPECIFIED];
     
     -- 10.4.2.2 State Vector Allocation
-    --StateAllocationTable: TYPE = ARRAY Priority OF POINTER TO StateVector;
-    StateAllocationTable: TYPE = ARRAY Priority OF POINTER;
+    StateAllocationTable: TYPE = ARRAY Priority OF POINTER TO StateVector;
     
     -- 10.4.3 Faults
     FaultVector: TYPE = ARRAY FaultIndex OF FaultQueue;

@@ -23,12 +23,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/usr/local/lib/libreoffice/program/classes/unoil.jar"/>
-	<classpathentry kind="lib" path="/usr/local/lib/libreoffice/program/classes/unoloader.jar"/>
-	<classpathentry kind="lib" path="/usr/local/lib/libreoffice/program/classes/juh.jar"/>
-	<classpathentry kind="lib" path="/usr/local/lib/libreoffice/program/classes/jurt.jar"/>
-	<classpathentry kind="lib" path="/usr/local/lib/libreoffice/program/classes/libreoffice.jar"/>
-	<classpathentry kind="lib" path="/usr/local/lib/libreoffice/program/classes/ridl.jar"/>
 	<classpathentry excluding="**" kind="src" output="target/test-classes" path="data">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

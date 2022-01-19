@@ -17,42 +17,6 @@
         <maven.compiler.release>11</maven.compiler.release>
     </properties>
     
-    <profiles>
-        <profile>
-            <id>freebsd</id>
-            <activation>
-                <os>
-                    <name>freebsd</name>
-                </os>
-            </activation>
-            <!-- libreoffice 7.1 -->
-            <properties>
-                <libreoffice.install.dir>/usr/local/lib/libreoffice/program</libreoffice.install.dir>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.libreoffice</groupId>
-                    <artifactId>libreoffice</artifactId>
-                    <version>7.1</version>
-                    <scope>system</scope>
-                    <systemPath>${libreoffice.install.dir}/classes/libreoffice.jar</systemPath>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>linux</id>
-            <activation>
-                <os>
-                    <name>linux</name>
-                </os>
-            </activation>
-            <!-- libreoffice 6.4 -->
-            <properties>
-                <libreoffice.install.dir>/usr/lib/libreoffice/program</libreoffice.install.dir>
-            </properties>
-        </profile>
-    </profiles>
-    
     <dependencies>
         <!-- LOGGING -->
         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
@@ -124,7 +88,7 @@
         <dependency>
           <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
-            <version>4.9.2</version>
+            <version>4.9.3</version>
         </dependency>
     </dependencies>
 
@@ -182,13 +146,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
-                <!--
-                <configuration>
-                  <systemPropertyVariables>
-                    <logback.conf>data/logback-junit.xml</logback.conf>
-                  </systemPropertyVariables>
-                </configuration>
-                -->
             </plugin>
         </plugins>
     </build>

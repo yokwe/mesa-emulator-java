@@ -18,8 +18,10 @@ OVERLAID     : 'OVERLAID';
 PACKED       : 'PACKED';
 POINTER      : 'POINTER';
 RECORD       : 'RECORD';
+RECORD32     : 'RECORD32';
 SELECT       : 'SELECT';
 SYMBOL       : 'SYMBOL';
+TO           : 'TO';
 TYPE         : 'TYPE';
 UNSPECIFIED  : 'UNSPECIFIED';
 WORD         : 'WORD';
@@ -38,7 +40,7 @@ NUMBER_10 : CHAR_DEC+;
 NUMBER_16 : CHAR_DEC(CHAR_DEC|CHAR_AF)*[Xx];
 
 COMMENT_PARTIAL
-    : '--' ~[\n\r]*? '--'      ->skip;
+    : '//' ~[\n\r]*? '--'      ->skip;
 
 COMMENT_LINE
     : '--' ~[\n\r]* '\r'? '\n' ->skip;
@@ -69,8 +71,8 @@ positive_number
     ;
 
 constant
-    : number # ConstNumber
-    | ID     # ConstRef
+    : number  # ConstNumber // numeric literal
+    | name=ID # ConstName   // name of constant
     ;
     
 //
@@ -94,24 +96,65 @@ declList
 
 decl
     :   declType
-    |   declConst
+    |   declConstant
     ;
 
 //
 // TYPE
 //
 declType
-    :   name=ID ':' TYPE      '=' typeType ';'
+    :   name=ID ':' TYPE '=' typeType ';'
     ;
 
 
 typeType
-    :    arrayType
-    |    enumType
-    |    subrangeType
-    |    recordType
-    |    predefinedType
+    :    simpleType
     |    referenceType
+    |    pointerType
+    |    subrangeType
+    |    enumType
+    |    arrayType
+    |    recordType
+    ;
+
+
+//
+// SIMPLE
+//
+simpleType
+    :    BOOLEAN          # TypeBoolean
+    |    INTEGER          # TypeInteger
+    |    CARDINAL         # TypeCardinal
+    |    LONG CARDINAL    # TypeLongCardinal
+    |    UNSPECIFIED      # TypeUnspecified
+    |    LONG UNSPECIFIED # TypeLongUnspecified
+    |    POINTER          # TypePointer
+    |    LONG POINTER     # TypeLongPointer
+    ;
+
+
+//
+// REFERENCE
+//
+referenceType
+    :    name=ID  // name of other type
+    ;
+
+
+//
+// POINTER
+//
+pointerType
+    :   POINTER      TO referenceType # TypePointerShort
+    |   LONG POINTER TO referenceType # TypePointerLong
+    ;
+
+
+//
+// SUBRANGE
+//
+subrangeType
+    :  '[' minValue=constant '..' maxValue=constant closeChar=(']' | ')')  // assume base type is CARDINAL
     ;
 
 
@@ -119,13 +162,14 @@ typeType
 // ARRAY
 //
 arrayType
-    :   ARRAY indexName=ID                                                                          OF arrayTypeElement # TypeArrayType
-    |   ARRAY (indexName=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')') OF arrayTypeElement # TypeArrayRange
+    :   ARRAY referenceType OF arrayElementType # TypeArrayReference  // referenceType must be ENUM
+    |   ARRAY subrangeType  OF arrayElementType # TypeArraySubrange
     ;
 
 
-arrayTypeElement
-    :   predefinedType
+arrayElementType
+    :   simpleType
+    |   pointerType
     |   referenceType
     ;
 
@@ -146,18 +190,11 @@ eumElement
     ;
 
 //
-// SUBRANGE
-//
-subrangeType
-    :    (baseName=ID)? '[' startIndex=constant '..' stopIndex=constant closeChar=(']' | ')')
-    ;
-
-
-//
 // RECORD
 //
 recordType
-    :   RECORD '[' recordFieldList ']'
+    :   RECORD   '[' recordFieldList ']' # TypeRecord16
+    |   RECORD32 '[' recordFieldList ']' # TypeRecord32
     ;
 
 recordFieldList
@@ -170,58 +207,14 @@ recordField
 
 fieldName
     :   name=ID '(' offset=positive_number ')'                                                           # TypeFieldName
-    |   name=ID '(' offset=positive_number ':' startPos=positive_number '..' stopPos=positive_number ')' # TypeFieldNameBit
+    |   name=ID '(' offset=positive_number ':' startBit=positive_number '..' stopBit=positive_number ')' # TypeFieldNameBit
     ;
     
 fieldType
-    :   arrayType
-    |   predefinedType
+    :   simpleType
     |   referenceType
-    |   select
-    ;
-
-select
-    :   SELECT OVERLAID              '*'            FROM selectCaseList ENDCASE # TypeSelectOverlaidAnon
-    |   SELECT OVERLAID              tagTypeName=ID FROM selectCaseList ENDCASE # TypeSelectOverlaidType
-    |   SELECT tagName=fieldName ':' '*'            FROM selectCaseList ENDCASE # TypeSelectTagAnon
-    |   SELECT tagName=fieldName ':' tagTypeName=ID FROM selectCaseList ENDCASE # TypeSelectTagType
-    ;
-
-selectCaseList
-    :   elements+=selectCase (',' elements+=selectCase ',')*
-    ;
-
-selectCase
-    :   selectCaseSelector '=>' '[' (recordFieldList)? ']'
-    ;
-
-selectCaseSelector
-    :   selectorName=ID                                       # TypeSelectCaseSelector
-    |   selectorName=ID '(' selectorValue=positive_number ')' # TypeSelectCaseSelectorValue
-    ;
-
-
-//
-// REFERENCE
-//
-referenceType
-    :    name=ID
-    ;
-
-
-//
-// PREDEFINED
-//
-predefinedType
-    :    BOOLEAN          # TypeBoolean
-    |    CARDINAL         # TypeCardinal
-    |    LONG CARDINAL    # TypeLongCardinal
-    |    INTEGER          # TypeInteger
-    |    LONG INTEGER     # TypeLongInteger
-    |    UNSPECIFIED      # TypeUnspecified
-    |    LONG UNSPECIFIED # TypeLongUnspecified
-    |    POINTER          # TypePointer
-    |    LONG POINTER     # TypeLongPointer
+    |   arrayType
+    |   pointerType
     ;
 
 
@@ -229,16 +222,19 @@ predefinedType
 // CONSTANT
 //
 
-declConst
-    :   name=ID ':' constType '=' constValue ';'
+declConstant
+    :   name=ID ':' constantType '=' constantValue ';'
     ;
 
-constType
-    :   CARDINAL
-    |   POINTER
-    |   LONG POINTER
+constantType
+    :   constantTypeNumeric
+    |   pointerType
     ;
-    
-constValue
-    :   name+=ID ('.' name+=ID)* // refer to static field in Java class
+
+constantTypeNumeric
+    :   CARDINAL # ConstantTypeNumericCARDINAL
+    ;
+
+constantValue
+    :   name+=ID ('.' name+=ID)* // name of qualified field name of public static final int or long
     ;
