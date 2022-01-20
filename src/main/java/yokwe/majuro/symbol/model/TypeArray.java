@@ -26,7 +26,7 @@ public abstract class TypeArray extends Type {
 					needsFix = false;
 					setValue(typeSubrange.minValue, typeSubrange.maxValue);
 					
-					bitSize = arrayElement.bitSize() * (int)size;;
+					bitSize = arrayElement.bitSize() * (int)size;
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public abstract class TypeArray extends Type {
 						throw new UnexpectedException("Unexpected");
 					}
 					
-					bitSize = arrayElement.bitSize() * (int)size;;
+					bitSize = arrayElement.bitSize() * (int)size;
 				}
 			}
 		}
