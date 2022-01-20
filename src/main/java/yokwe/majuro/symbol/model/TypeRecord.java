@@ -176,6 +176,41 @@ public class TypeRecord extends Type {
 			}
 			if (countNeedsFix == 0) {
 				needsFix = false;
+				
+				// check field width
+				{
+					boolean foundProblem = false;
+					
+					for(var e: fieldList) {
+						Type type = e.type;
+						if (type.kind == Kind.REFERENCE) {
+							type = ((TypeReference)type).realType;
+						}
+						
+						int fieldBitSize = e.bitSize;
+						int typeBitSize  = type.bitSize;
+						
+						if (fieldBitSize == 0) continue;
+						if (fieldBitSize != typeBitSize) {
+							if (type.kind == Kind.SUBRANGE) {
+								if (((TypeSubrange)type).variableBitSize) continue;
+							}
+							foundProblem = true;
+							logger.error("field  {}  fieldBitSize  {}  typeBitSize  {}", e.name, fieldBitSize, typeBitSize);
+						}
+					}
+					
+					if (foundProblem) {
+						logger.error("found problem");
+						logger.error("  {}", name);
+						for(var e: fieldList) {
+							logger.error("  {}", String.format("%-10s  %-10s  %2d  %2d", e.name, e.type.kind, e.bitSize, e.type.bitSize));
+						}
+						throw new UnexpectedException("found problem");
+					}
+				}
+				
+
 			}
 		}
 	}
