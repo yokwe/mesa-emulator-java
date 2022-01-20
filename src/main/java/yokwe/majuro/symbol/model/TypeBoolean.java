@@ -16,6 +16,7 @@ public class TypeBoolean extends Type {
 	@Override
 	public void fix() {
 		needsFix = false;
+		bitSize = 1;
 	}
 
 }

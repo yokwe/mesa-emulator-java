@@ -30,6 +30,8 @@ public class TypeReference extends Type {
 				
 				if (!realType.needsFix) {
 					needsFix = false;
+					
+					bitSize = realType.bitSize();
 				}
 			}
 		}

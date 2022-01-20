@@ -25,6 +25,8 @@ public abstract class TypeArray extends Type {
 				if (!arrayElement.needsFix && !typeSubrange.needsFix) {
 					needsFix = false;
 					setValue(typeSubrange.minValue, typeSubrange.maxValue);
+					
+					bitSize = arrayElement.bitSize() * (int)size;;
 				}
 			}
 		}
@@ -66,8 +68,10 @@ public abstract class TypeArray extends Type {
 					default:
 						logger.error("Unexpected");
 						logger.error("  this  {}", this);
-						throw new UnexpectedException("Unepxected");
+						throw new UnexpectedException("Unexpected");
 					}
+					
+					bitSize = arrayElement.bitSize() * (int)size;;
 				}
 			}
 		}
@@ -99,7 +103,7 @@ public abstract class TypeArray extends Type {
 		logger.error("Unexpected");
 		logger.error("  value {}", value);
 		logger.error("  this  {}", this);
-		throw new UnexpectedException("Unepxected");
+		throw new UnexpectedException("Unexpected");
 	}
 	
 	protected void setValue(long minValue, long maxValue) {

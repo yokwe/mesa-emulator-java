@@ -27,6 +27,22 @@ public abstract class Type {
 		}
 	}
 
+	public static int bitSize(long value) {
+		if (value == 0) return 0;
+		if (0 < value) {
+			for(int i = 1; i <= 32; i++) {
+				long n = 1L << i;
+				if (value == n) return i + 1;
+				if (value < n)  return i;
+			}
+		}
+		logger.error("Unexpected");
+		logger.error("  value dec {}", Long.toString(value));
+		logger.error("  value hex {}", Long.toHexString(value));
+		logger.error("  value bin {}", Long.toBinaryString(value));
+		throw new UnexpectedException("Unexpected");
+	}
+
 	public static Map<String, Type> map = new TreeMap<>();
 	//                name
 	private static void add(Type type) {
@@ -97,7 +113,20 @@ public abstract class Type {
 	
 	public boolean needsFix;
 	abstract public void fix();
-
+	
+	private static final int NO_VALUE = -1;
+	public int bitSize = NO_VALUE;
+	public int bitSize() {
+		if (needsFix) throw new UnexpectedException("Unexpected");
+		if (bitSize == NO_VALUE) {
+			logger.error("bitSize == NO_VALUE");
+			logger.error("name  {}", name);
+			logger.error("type  {}", this);
+			throw new UnexpectedException("Unexpected");
+		}
+		return bitSize;
+	}
+	
 	protected Type(String name, Kind kind) {
 		this.name = name;
 		this.kind = kind;

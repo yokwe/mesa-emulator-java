@@ -41,7 +41,7 @@ public class TypePointer extends Type {
 		default:
 			logger.error("Unexpected");
 			logger.error("  this  {}", this);
-			throw new UnexpectedException("Unepxected");
+			throw new UnexpectedException("Unexpected");
 		}
 	}
 
@@ -56,6 +56,19 @@ public class TypePointer extends Type {
 				if (!type.needsFix) {
 					needsFix = false;
 				}
+			}
+			
+			switch(size) {
+			case SHORT:
+				bitSize = 16;
+				break;
+			case LONG:
+				bitSize = 32;
+				break;
+			default:
+				logger.error("Unexpected");
+				logger.error("  this  {}", this);
+				throw new UnexpectedException("Unexpected");
 			}
 		}
 	}

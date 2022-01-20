@@ -385,7 +385,7 @@ public class Symbol {
 		for(var e: Type.map.values()) {
 			if (e.needsFix) logger.info("needsFix type {}", e);
 		}
-				
+		
 		logger.info("STOP");
 	}
 }

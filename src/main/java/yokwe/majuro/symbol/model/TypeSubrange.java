@@ -27,17 +27,7 @@ public class TypeSubrange extends Type {
 		fix();
 	}
 	public TypeSubrange(String name, long minValue, long maxValue) {
-		super(name, Kind.SUBRANGE);
-		
-		this.minString = Long.toString(minValue);
-		this.maxString = Long.toString(maxValue);
-		this.closeChar = CLOSE_CHAR_INCLUSIVE;
-		
-		this.minValue = minValue;
-		this.maxValue = maxValue;
-		this.size     = this.maxValue - this.minValue + 1;
-		
-		this.needsFix = false;
+		this(name, Long.toString(minValue), Long.toString(maxValue), CLOSE_CHAR_INCLUSIVE);
 	}
 
 	@Override
@@ -50,9 +40,10 @@ public class TypeSubrange extends Type {
 		logger.error("Unexpected");
 		logger.error("  value {}", value);
 		logger.error("  this  {}", this);
-		throw new UnexpectedException("Unepxected");
+		throw new UnexpectedException("Unexpected");
 	}
 	
+	@Override
 	public void fix() {
 		if (needsFix) {
 			Long minNumeric = Constant.getNumericValue(minString);
@@ -64,6 +55,12 @@ public class TypeSubrange extends Type {
 				maxValue = maxNumeric;
 				if (closeChar.equals(CLOSE_CHAR_EXCLUSIVE)) maxValue--;
 				size = maxValue - minValue + 1;
+				
+				if (size == 0) {
+					bitSize = 0;
+				} else {
+					bitSize = Type.bitSize(size - 1);
+				}
 
 				// sanity check
 				if (minString.equals(maxString) && closeChar.equals(CLOSE_CHAR_EXCLUSIVE)) {
@@ -72,10 +69,11 @@ public class TypeSubrange extends Type {
 					if (maxValue < minValue) {
 						logger.error("Unexpected");
 						logger.error("  {}", this);
-						throw new UnexpectedException("Unepxected");
+						throw new UnexpectedException("Unexpected");
 					}
 				}
 			}
 		}
 	}
+
 }

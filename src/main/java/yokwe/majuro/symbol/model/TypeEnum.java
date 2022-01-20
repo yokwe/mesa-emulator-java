@@ -45,12 +45,28 @@ public class TypeEnum extends Type {
 			minValue = min;
 			maxValue = max;
 		}
-		size = maxValue - minValue + 1;
-		needsFix = false;
+		size    = maxValue - minValue + 1;
+		bitSize = Type.bitSize(size - 1);
+		needsFix = true;
 		
 		// sanity check
 		{
+			{
+				if (minValue != 0) {
+					logger.warn("Unexpected");
+					logger.warn("  minValue != 0");
+					logger.warn("  enum {}", this);
+				}
+			}
+
 			boolean foundProblem = false;
+			{
+				if (size == 0) {
+					logger.error("Unexpected");
+					logger.error("  size == 0");
+					foundProblem = true;
+				}
+			}
 			{
 				for(var e: itemList) {
 					int value = e.value;
@@ -89,7 +105,7 @@ public class TypeEnum extends Type {
 			
 			if (foundProblem) {
 				logger.error("found problem");
-				logger.error("  name {}", name);
+				logger.error("  enum {}", this);
 				throw new UnexpectedException("found problem");
 			}
 		}

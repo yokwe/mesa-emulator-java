@@ -86,7 +86,7 @@ public class Constant {
 				} else {
 					logger.error("Unexpected");
 					logger.error("  this  {}", this);
-					throw new UnexpectedException("Unepxected");
+					throw new UnexpectedException("Unexpected");
 				}
 			}
 		}

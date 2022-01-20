@@ -86,6 +86,10 @@ public class TypeRecord extends Type {
 					}
 				}
 			}
+			{
+				// FIXME check hole in record
+				// FIXME check field overlap
+			}
 			
 			if (foundProblem) {
 				logger.error("found problem");
@@ -110,8 +114,16 @@ public class TypeRecord extends Type {
 			}
 			if (countNeedsFix == 0) {
 				needsFix = false;
+				
+				{
+					int n = 0;
+					for(var e: fieldList) {
+						n += e.type.bitSize();
+					}
+					bitSize = n;
+				}
 			}
 		}
 	}
-	
+
 }
