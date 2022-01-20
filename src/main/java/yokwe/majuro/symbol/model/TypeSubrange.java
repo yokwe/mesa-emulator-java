@@ -9,25 +9,30 @@ public class TypeSubrange extends Type {
 	public static final String CLOSE_CHAR_INCLUSIVE = "]";
 	public static final String CLOSE_CHAR_EXCLUSIVE = ")";
 	
-	public final String minString;
-	public final String maxString;
-	public final String closeChar;
+	public final String  minString;
+	public final String  maxString;
+	public final String  closeChar;
+	public final boolean variableBitSize;
 	
 	public long minValue;
 	public long maxValue;
 	public long size;
 
-	public TypeSubrange(String name, String minString, String maxString, String closeChar) {
+	private TypeSubrange(String name, String minString, String maxString, String closeChar, boolean fixedBitSize) {
 		super(name, Kind.SUBRANGE);
 		
-		this.minString = minString;
-		this.maxString = maxString;
-		this.closeChar = closeChar;
+		this.minString       = minString;
+		this.maxString       = maxString;
+		this.closeChar       = closeChar;
+		this.variableBitSize = fixedBitSize;
 		
 		fix();
 	}
+	public TypeSubrange(String name, String minString, String maxString, String closeChar) {
+		this(name, minString, maxString, closeChar, false);
+	}
 	public TypeSubrange(String name, long minValue, long maxValue) {
-		this(name, Long.toString(minValue), Long.toString(maxValue), CLOSE_CHAR_INCLUSIVE);
+		this(name, Long.toString(minValue), Long.toString(maxValue), CLOSE_CHAR_INCLUSIVE, true);
 	}
 
 	@Override
