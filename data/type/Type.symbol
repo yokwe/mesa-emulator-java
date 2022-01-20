@@ -58,7 +58,7 @@ BEGIN
     GlobalOverhead: TYPE = RECORD [
         available(0: 0..15): UNSPECIFIED,
         word     (1: 0..15): GlobalWord,
-        codebase (2: 0..15): LONG POINTER TO CodeSegment,
+        codebase (2: 0..31): LONG POINTER TO CodeSegment,
         global   (4): GlobalVariables];
 -- changed chapter
     NewGlobalOverhead: TYPE = RECORD [
@@ -78,7 +78,7 @@ BEGIN
     GFTIndex: TYPE = [0..16384);
     GFTItem: TYPE = RECORD[
         globalFrame(0: 0..31): GlobalFrameHandle,
-        codebase   (2: 0..15): LONG POINTER TO CodeSegment];
+        codebase   (2: 0..31): LONG POINTER TO CodeSegment];
 
     -- Local Frames
     LocalFrameHandle: TYPE = POINTER TO LocalVariables;
