@@ -39,11 +39,8 @@ NUMBER_8  : CHAR_OCT+[Bb];
 NUMBER_10 : CHAR_DEC+;
 NUMBER_16 : CHAR_DEC(CHAR_DEC|CHAR_AF)*[Xx];
 
-COMMENT_PARTIAL
-    : '//' ~[\n\r]*? '--'      ->skip;
-
 COMMENT_LINE
-    : '--' ~[\n\r]* '\r'? '\n' ->skip;
+    : '//' ~[\n\r]* '\r'? '\n' ->skip;
 
 SPACE
     : [ \r\t\n]                ->skip;
