@@ -192,11 +192,10 @@ public class TypeRecord extends Type {
 						
 						if (fieldBitSize == 0) continue;
 						if (fieldBitSize != typeBitSize) {
-							if (type.kind == Kind.SUBRANGE) {
-								if (((TypeSubrange)type).variableBitSize) continue;
-							}
+							if (type == Type.UNSPECIFIED) continue;
+							if (type == Type.CARDINAL)    continue;
 							foundProblem = true;
-							logger.error("field  {}  fieldBitSize  {}  typeBitSize  {}", e.name, fieldBitSize, typeBitSize);
+							logger.error("field  {}  {}  fieldBitSize  {}  typeBitSize  {}", e.name, type.name, fieldBitSize, typeBitSize);
 						}
 					}
 					
