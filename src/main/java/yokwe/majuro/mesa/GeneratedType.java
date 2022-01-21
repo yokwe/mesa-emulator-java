@@ -1,240 +1,151 @@
 package yokwe.majuro.mesa;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import yokwe.majuro.UnexpectedException;
 
 public final class GeneratedType {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GeneratedType.class);
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public static @interface BitField16 {
-		int offset()   default 0;
-		int startPos() default 0;
-		int stopPos()  default 15;
-	}
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public static @interface BitField32 {
-		int offset()   default 0;
-		int startPos() default 0;
-		int stopPos()  default 31;
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public static @interface Record {
-		int elementSize() default 16;
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public static @interface Record32 {
-		int elementSize() default 32;
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public static @interface Getter {}
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public static @interface Setter {}
-	
-	
-	//
-	// Subrange2
-	//
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public static @interface Subrange2 {
-		long minValue() default 0;
-		long maxValue() default 0;
+			
+	public static final class EnumContext {
+		public final Class<?> clazz;
+		public final int[]    validValues;
+		public final String[] validNames;
+		
+		public EnumContext(Class<?> clazz, int[] validValues, String[] validNames) {
+			this.clazz       = clazz;
+			this.validValues = validValues;
+			this.validNames  = validNames;
+		}
+		
+		public void checkValue(int value) {
+			toString(value);
+		}
+		public String toString(int value) {
+			for(int i = 0; i < validValues.length; i++) {
+				if (validValues[i] == value) return validNames[i];
+			}
+			logger.error("Unexpected");
+			logger.error("  class {}", clazz.getName());
+			logger.error("  value {}", value);
+			throw new UnexpectedException("Unexpected");
+		}
 	}
 
-	@Subrange2(minValue = 0, maxValue = 0x0001) class BIT {}
-	@Subrange2(minValue = 0, maxValue = 0x000F) class NIBBLE {}
-	@Subrange2(minValue = 0, maxValue = 0x00FF) class BYTE {}
-	@Subrange2(minValue = 0, maxValue = 0xFFFF) class CARD16 {}
-	@Subrange2(minValue = 0, maxValue = 0xFFFF_FFFF) class CARD32 {}
-	
-	
-	//NibblePair: TYPE = RECORD[
-	//    left  (0: 0..3): NIBBLE,
-	//    right (0: 4..7): NIBBLE];
-	public static final class NibblePair {
-		public static final int SIZE_BITS = 8;
-		
-		public static final int LEFT_START = 0;
-		public static final int LEFT_STOP  = 3;
-		
-		public static final int RIGHT_START = 4;
-		public static final int RIGHT_STOP  = 7;
-		
-		private static final int LEFT_BITS = LEFT_STOP - LEFT_START + 1;
-		private static final int LEFT_PAT = (1 << LEFT_BITS) - 1;
-		private static final int LEFT_SHIFT = SIZE_BITS - LEFT_STOP - 1;
-		private static final int LEFT_MASK = LEFT_PAT << LEFT_SHIFT;
-		
-		private static final int RIGHT_BITS = RIGHT_STOP - RIGHT_START + 1;
-		private static final int RIGHT_PAT = (1 << RIGHT_BITS) - 1;
-		private static final int RIGHT_SHIFT = SIZE_BITS - RIGHT_STOP - 1;
-		private static final int RIGHT_MASK = RIGHT_PAT << RIGHT_SHIFT;
-		
-		private int rawValue;
-		
-		public NibblePair(int newValue) {
-			rawValue = newValue;
-		}
-		
-		public int left;
-		
-		// left
-		// static
-		public static int leftValue(int value) {
-			return (value & LEFT_MASK) >>> LEFT_SHIFT; 
-		}
-		public static int leftValue(int value, int newValue) {
-			return (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
-		}
-		// instance
-		public int left() {
-			return (rawValue & LEFT_MASK) >>> LEFT_SHIFT; 
-		}
-		public void left(int newValue) {
-			rawValue = (rawValue & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
-		}
-		
-		// right
-		// static
-		public static int rightValue(int value) {
-			return (value & RIGHT_MASK) >>> RIGHT_SHIFT; 
-		}
-		public static int rightValue(int value, int newValue) {
-			return (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
-		}
-		// instance
-		public int rightValues(int newValue) {
-			return (newValue & RIGHT_MASK) >>> RIGHT_SHIFT; 
-		}
-		public int right() {
-			return (rawValue & RIGHT_MASK) >>> RIGHT_SHIFT; 
-		}
-		public void right(int newValue) {
-			rawValue = (rawValue & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
-		}
-		
-	}
-
-	@Record
-	public static class NibblePair2 {
-		@BitField16(startPos = 0, stopPos = 3) public int left;
-		@BitField16(startPos = 4, stopPos = 7) public int right;
-	}
-	@Record
-	public static final class NibblePair3 {
-		@BitField16(startPos =  0, stopPos =  3) public NIBBLE left;
-		@BitField16(startPos =  4, stopPos =  7) public NIBBLE right;
-		
-		@Getter @Setter
-		private int value;
-		
-		public static final int SIZE_BIT = 8;
-		
-		public NibblePair3(int newValue) {
-			value = newValue;
-		}
-		public NibblePair3() {
-			this(0);
-		}
-		public int get() {
-			return value;
-		}
-		public void set(int newValue) {
-			value = newValue;
-		}
-		
-		private static final int LEFT_MASK = 0xF0;
-		private static final int LEFT_SHIFT = 4;
-		private static final int RIGHT_MASK = 0x0F;
-		private static final int RIGHT_SHIFT = 0;
-		
-		
-		public int left() {
-			return (value & LEFT_MASK) >>> LEFT_SHIFT; 
-		}
-		public void left(int newValue) {
-			value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
-		}
-		public int right() {
-			return (value & RIGHT_MASK) >>> RIGHT_SHIFT; 
-		}
-		public void right(int newValue) {
-			value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
-		}
-		
-		
-	}
-	
-
-	
-	public static final class Subrange {
-		public static final Subrange BIT      = new Subrange(0, 0x0001);
-		public static final Subrange NIBBLE   = new Subrange(0, 0x000F);
-		public static final Subrange BYTE     = new Subrange(0, 0x00FF);
-		public static final Subrange CARDINAL = new Subrange(0, 0xFFFF);
-		
+	public static final class SubrangeContext {
+		public final Class<?> clazz;
 		public final long minValue;
 		public final long maxValue;
 		
-		public Subrange(long minValue, long maxValue) {
+		public SubrangeContext(Class<?> clazz, long minValue, long maxValue) {
+			this.clazz    = clazz;
 			this.minValue = minValue;
 			this.maxValue = maxValue;
 		}
 		
-		public void check(long value) {
-			if (Debug.ENABLE_SUBRANGE_CHECK) {
-				if (minValue <= value && value <= maxValue) {
-					//
-				} else {
-					logger.error("Subrange check error");
-					logger.error("  min   {}", minValue);
-					logger.error("  max   {}", maxValue);
-					logger.error("  value {}", value);
-					throw new UnexpectedException("Subrange check error");
-				}
-			}
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("[%d .. %d]", minValue, maxValue);
+		public void checkValue(long value) {
+			if (minValue <= value && value <= maxValue) return;
+			logger.error("Unexpected");
+			logger.error("  class {}", clazz.getName());
+			logger.error("  value {}", value);
+			throw new UnexpectedException("Unexpected");
 		}
 	}
 
-	// BLOCK: TYPE = ARRAY [0..0) OF UNSPECIFIED;
-	public static final class BLOCK {
-		public static final int BIT_SIZE = 0;
-		public static final int ELEMENT_SIZE = 1;
+	
+	//
+	// Below is good for one word record
+	//
+	
+//  FSIndex: TYPE = [0..256);
+	public static final class FSIndex  {
+		public static final long MIN_VALUE = 0;
+		public static final long MAX_VALUE = 255;
 		
-		public static final Subrange subrange = Subrange.CARDINAL;
+		private static SubrangeContext context = new SubrangeContext(FSIndex.class, MIN_VALUE, MAX_VALUE);
 		
+		public static void checkValue(long value) {
+			context.checkValue(value);
+		}
+	}
+
+//  AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
+	public static final class AVItemType {
+		public static final int frame    = 0;
+		public static final int empty    = 1;
+		public static final int indirect = 2;
+		public static final int unused   = 3;
+		
+		private static final int[] VALID_VALUES = {
+				frame, empty, indirect, unused,
+		};
+		private static final String[] VALID_NAMES = {
+				"frmae", "empty", "indirect", "unused",
+		};
+		private static final EnumContext context = new EnumContext(AVItem.class, VALID_VALUES, VALID_NAMES);
+		
+		public static final void checkValue(int value) {
+			if (Debug.ENABLE_CHECK_VALUE) context.checkValue(value);
+		}
+		
+		public static final String toString(int value) {
+			return context.toString(value);
+		}
+	}
+//  AVItem: TYPE = RECORD [
+//    data(0:  0 .. 13): UNSPECIFIED,
+//    tag (0: 14 .. 15): AVItemType];
+	public static final class AVItem {
+		public static final int SIZE = 1;
+		
+		private static final int DATA_MASK  = 0xFFFC;
+		private static final int DATA_SHIFT = 2;
+		private static final int TAG_MASK   = 0x0003;
+		private static final int TAG_SHIFT  = 0;
+		
+		public char value;
+		
+		public AVItem(char value) {
+			this.value = value;
+		}
+		
+		public int data() {
+			int ret = (value & DATA_MASK) >>> DATA_SHIFT;
+//			if (Debug.ENABLE_CHECK_VALUE) Nibble.checkValue(ret);
+			return ret;
+		}
+		public int tag() {
+			int ret = (value & TAG_MASK) >>> TAG_SHIFT;
+			if (Debug.ENABLE_CHECK_VALUE) AVItemType.checkValue(ret);
+			return ret;
+		}
+		public void data(int newValue) {
+//			if (Debug.ENABLE_CHECK_VALUE) Nibble.checkValue(newValue);
+			value = (char)((value & ~DATA_MASK) | (newValue << DATA_SHIFT) & DATA_MASK);
+		}
+		public void tag(int newValue) {
+			if (Debug.ENABLE_CHECK_VALUE) AVItemType.checkValue(newValue);
+			value = (char)((value & ~TAG_MASK) | (newValue << TAG_SHIFT) & TAG_MASK);
+		}
+	}
+	
+//  AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
+	public static class AllocationVector {
 		public static int offset(int index) {
-			subrange.check(index);
-			return index * ELEMENT_SIZE;
-		}
-		
-		public static char read(int va, int index) {
-			return Mesa.read16(va + offset(index));
-		}
-		public static void write(int va, int index, char newValue) {
-			Mesa.write16(va + offset(index), newValue);
+			if (Debug.ENABLE_CHECK_VALUE) FSIndex.checkValue(index);
+			return AVItem.SIZE * index;
 		}
 	}
 
+//  AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constant.mAV;s
+	public static class AV {
+		public final int base = yokwe.majuro.mesa.Constant.mAV;
+		
+		public AVItem read(int va, int index) {
+			return new AVItem(Mesa.read16(va + AllocationVector.offset(index)));
+		}
+		public void write(int va, int index, AVItem value) {
+			Mesa.write16(va + AllocationVector.offset(index), value.value);
+		}
+	}
 
 
 }
