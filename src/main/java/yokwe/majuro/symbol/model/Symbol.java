@@ -70,6 +70,9 @@ public class Symbol {
 			}
 		}
 		
+		logger.info("cons {}", Constant.map.size());
+		logger.info("type {}", Type.map.keySet().stream().filter(o -> !o.contains("#")).count());
+		
 		{
 			int needsFixCountCons = Constant.fixAll();
 			int needsFixCountType = Type.fixAll();
