@@ -22,8 +22,7 @@ public class SymbolParser extends Parser {
 		CARDINAL=17, END=18, ENDCASE=19, FROM=20, INTEGER=21, LONG=22, OF=23, 
 		OVERLAID=24, PACKED=25, POINTER=26, RECORD=27, RECORD32=28, SELECT=29, 
 		SYMBOL=30, TO=31, TYPE=32, UNSPECIFIED=33, WORD=34, TRUE=35, FALSE=36, 
-		ID=37, NUMBER_8=38, NUMBER_10=39, NUMBER_16=40, COMMENT_PARTIAL=41, COMMENT_LINE=42, 
-		SPACE=43;
+		ID=37, NUMBER_8=38, NUMBER_10=39, NUMBER_16=40, COMMENT_LINE=41, SPACE=42;
 	public static final int
 		RULE_number = 0, RULE_positive_number = 1, RULE_constant = 2, RULE_symbol = 3, 
 		RULE_header = 4, RULE_body = 5, RULE_declList = 6, RULE_decl = 7, RULE_declType = 8, 
@@ -61,8 +60,8 @@ public class SymbolParser extends Parser {
 			null, null, "ARRAY", "BEGIN", "BOOLEAN", "CARDINAL", "END", "ENDCASE", 
 			"FROM", "INTEGER", "LONG", "OF", "OVERLAID", "PACKED", "POINTER", "RECORD", 
 			"RECORD32", "SELECT", "SYMBOL", "TO", "TYPE", "UNSPECIFIED", "WORD", 
-			"TRUE", "FALSE", "ID", "NUMBER_8", "NUMBER_10", "NUMBER_16", "COMMENT_PARTIAL", 
-			"COMMENT_LINE", "SPACE"
+			"TRUE", "FALSE", "ID", "NUMBER_8", "NUMBER_10", "NUMBER_16", "COMMENT_LINE", 
+			"SPACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -1718,7 +1717,7 @@ public class SymbolParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u00f2\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3,\u00f2\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
