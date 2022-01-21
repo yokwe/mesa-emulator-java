@@ -206,7 +206,7 @@ BEGIN
     EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
 
     -- 9.5.3 Trap Handlers
-    --StateHandle: TYPE = LONG POINTER TO Statevector;
+    StateHandle: TYPE = LONG POINTER TO StateVector;
 
     StateWord: TYPE = RECORD [
         instByte(0: 0.. 7): BYTE,
