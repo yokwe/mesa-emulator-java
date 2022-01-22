@@ -190,10 +190,7 @@ public class TypeRecord extends Type {
 					boolean foundProblem = false;
 					
 					for(var e: fieldList) {
-						Type type = e.type;
-						if (type.kind == Kind.REFERENCE) {
-							type = ((TypeReference)type).realType;
-						}
+						Type type = e.type.getRealType();
 						
 						int fieldBitSize = e.bitSize;
 						int typeBitSize  = type.bitSize;
