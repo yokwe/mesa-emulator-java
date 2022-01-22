@@ -8,7 +8,7 @@ import yokwe.majuro.symbol.model.Type.Kind;
 import yokwe.majuro.util.ClassUtil;
 import yokwe.majuro.util.StringUtil;
 
-public class Constant {
+public class Constant implements Comparable<Constant> {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Constant.class);
 	
 	public static Map<String, Constant> map = new TreeMap<>();
@@ -43,9 +43,48 @@ public class Constant {
 		return countNeedsFix;
 	}
 	
+	
+	//
+	// parse mesa string
+	//
+	public static long parseLong(String text) {
+		long numberSign;
+		String numberString;
+		if (text.startsWith("-")) {
+			numberSign = -1;
+			numberString = text.substring(1);
+		} else {
+			numberSign = +1;
+			numberString = text;
+		}
+		
+		int length = numberString.length();
+		try {
+			switch(numberString.charAt(length - 1)) {
+			case 'b':
+			case 'B':
+				return Long.parseUnsignedLong(numberString.substring(0, length - 1), 8) * numberSign;
+			case 'x':
+			case 'X':
+				return Long.parseUnsignedLong(numberString.substring(0, length - 1), 16) * numberSign;
+			case 'd':
+			case 'D':
+				return Long.parseUnsignedLong(numberString.substring(0, length - 1), 10) * numberSign;
+			default:
+				return Long.parseUnsignedLong(numberString, 10) * numberSign;
+			}
+		} catch (NumberFormatException e) {
+			logger.error("Unexpected number format");
+			logger.error("  text {}!", text);
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
+	}
+
 	public static Long getNumericValue(String string) {
-		if (string.matches("^(\\+|-)?\\d+$")) {
-			return Long.parseLong(string);
+		if (string.matches("^(\\+|-)?\\d+[bBxDdD]?$")) {
+			return parseLong(string);
 		} else {
 			if (map.containsKey(string)) {
 				Constant cons = map.get(string);
@@ -112,4 +151,8 @@ public class Constant {
 		return StringUtil.toString(this);
 	}
 
+	@Override
+	public int compareTo(Constant that) {
+		return this.name.compareTo(that.name);
+	}
 }
