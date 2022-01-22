@@ -6,10 +6,10 @@ import java.util.TreeMap;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
-public abstract class Type {
+public abstract class Type implements Comparable<Type> {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Type.class);
 
-	public static Type getRealType(String name) {
+	public static Type findRealType(String name) {
 		if (map.containsKey(name)) {
 			Type realType = map.get(name);
 			while(realType instanceof TypeReference) {
@@ -140,5 +140,18 @@ public abstract class Type {
 	public String toString() {
 		return StringUtil.toString(this);
 	}
+	
+	@Override
+	public int compareTo(Type that) {
+		return this.name.compareTo(that.name);
+	}
 
+	public Type getRealType() {
+		if (needsFix) throw new UnexpectedException("Unexpected");
+		if (kind == Kind.REFERENCE) {
+			return ((TypeReference)this).realType;
+		} else {
+			return this;
+		}
+	}
 }
