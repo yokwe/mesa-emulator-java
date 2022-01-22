@@ -16,8 +16,6 @@ import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Align;
 import yokwe.majuro.util.AutoIndentPrintWriter;
-import yokwe.majuro.util.StringUtil;
-import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 
 public class Generate {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Generate.class);
@@ -91,20 +89,13 @@ public class Generate {
 				out.println("// %s: TYPE = %s;", e.name, e.toMesaType());
 			}
 			
-			out.prepareLayout();
 			for(var e: Constant.map.values()) {
-				String name = e.name;
-				Type type = e.type.getRealType();
-				long numericValue = e.numericValue;
+				String javaType = toJavaType(e.type.getRealType());
+				String javaName = e.name;
 				
-				String javaType = toJavaType(type);
-				String javaName = name;
-								
-				out.println("public static %s %s = %d;", javaType, javaName, numericValue);
+				out.println("// %s;", e.toMesaType());
+				out.println("public static final %s %s = %s;", javaType, javaName, e.valueString);
 			}
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);				
-
-			
 			out.println("}");
 		} catch (IOException e) {
 			String exceptionName = e.getClass().getSimpleName();
