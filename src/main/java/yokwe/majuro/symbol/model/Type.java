@@ -114,6 +114,9 @@ public abstract class Type implements Comparable<Type> {
 	public boolean needsFix;
 	abstract public void fix();
 	
+	abstract public String toMesaType();
+	abstract public String toJavaType();
+	
 	private static final int NO_VALUE = -1;
 	public int bitSize = NO_VALUE;
 	public int bitSize() {

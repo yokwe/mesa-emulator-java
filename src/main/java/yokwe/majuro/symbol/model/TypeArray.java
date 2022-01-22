@@ -35,6 +35,17 @@ public abstract class TypeArray extends Type {
 		public String toString() {
 			return StringUtil.toString(this);
 		}
+
+		@Override
+		public String toMesaType() {
+			return String.format("ARRAY %s OF %s", typeSubrange.toMesaType(), arrayElement.toMesaType());
+		}
+
+		@Override
+		public String toJavaType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	public static class Reference extends TypeArray {
 		public TypeReference typeReference;
@@ -79,6 +90,17 @@ public abstract class TypeArray extends Type {
 		@Override
 		public String toString() {
 			return StringUtil.toString(this);
+		}
+
+		@Override
+		public String toMesaType() {
+			return String.format("ARRAY %s OF %s", typeReference.toMesaType(), arrayElement.toMesaType());
+		}
+
+		@Override
+		public String toJavaType() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

@@ -72,5 +72,43 @@ public class TypePointer extends Type {
 			}
 		}
 	}
+	
+	@Override
+	public String toMesaType() {
+		
+		String baseType;
+		switch(size) {
+		case SHORT:
+			baseType = "POINTER";
+			break;
+		case LONG:
+			baseType = "LONG POINTER";
+			break;
+		default:
+			logger.error("Unexpected");
+			logger.error("  this  {}", this);
+			throw new UnexpectedException("Unexpected");
+		}
+		
+		String secondHalf;
+		if (type == null) {
+			return baseType;
+		} else {
+			return baseType + " TO " + type.toMesaType();
+		}
+	}
+	@Override
+	public String toJavaType() {
+		switch(size) {
+		case SHORT:
+			return "char";
+		case LONG:
+			return "int";
+		default:
+			logger.error("Unexpected");
+			logger.error("  this  {}", this);
+			throw new UnexpectedException("Unexpected");
+		}
+	}
 
 }

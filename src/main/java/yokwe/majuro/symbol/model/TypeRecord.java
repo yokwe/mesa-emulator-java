@@ -3,6 +3,7 @@ package yokwe.majuro.symbol.model;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
@@ -46,7 +47,14 @@ public class TypeRecord extends Type {
 		public boolean hasStartBit() {
 			return startBit != NO_VALUE;
 		}
-
+		
+		public String toMesaType() {
+			if (this.startBit == NO_VALUE) {
+				return String.format("%s (%d): %s", name, offset, type.toMesaType());
+			} else {
+				return String.format("%s (%d:%d..%d): %s", name, offset, startBit, stopBit, type.toMesaType());
+			}
+		}
 	}
 
 	public enum Align {
@@ -208,10 +216,32 @@ public class TypeRecord extends Type {
 						throw new UnexpectedException("found problem");
 					}
 				}
-				
-
 			}
 		}
+	}
+
+	@Override
+	public String toMesaType() {
+		String baseType;
+		switch(align) {
+		case BIT_16:
+			baseType = "RECORD";
+			break;
+		case BIT_32:
+			baseType = "RECORD32";
+			break;
+		default:
+			throw new UnexpectedException("Unexpected");
+		}
+		
+		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
+		return String.format("%s[%s]", baseType, String.join(", ", list));
+	}
+
+	@Override
+	public String toJavaType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

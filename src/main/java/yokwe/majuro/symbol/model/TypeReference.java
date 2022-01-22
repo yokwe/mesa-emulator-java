@@ -1,5 +1,6 @@
 package yokwe.majuro.symbol.model;
 
+import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public class TypeReference extends Type {
@@ -35,6 +36,16 @@ public class TypeReference extends Type {
 				}
 			}
 		}
+	}
+
+	@Override
+	public String toMesaType() {
+		return typeString;
+	}
+
+	@Override
+	public String toJavaType() {
+		return realType.toJavaType();
 	}
 
 }

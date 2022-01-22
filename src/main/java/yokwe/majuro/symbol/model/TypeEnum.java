@@ -3,6 +3,7 @@ package yokwe.majuro.symbol.model;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
@@ -128,5 +129,17 @@ public class TypeEnum extends Type {
 		logger.error("Unexpected");
 		logger.error("  itemName {}", itemName);
 		throw new UnexpectedException("Unexpected");
+	}
+
+	@Override
+	public String toMesaType() {
+		List<String> list = itemList.stream().map(o -> String.format("%s(%d)", o.name, o.value)).collect(Collectors.toList());
+		return String.format("{%s}", String.join(", ", list));
+	}
+
+	@Override
+	public String toJavaType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

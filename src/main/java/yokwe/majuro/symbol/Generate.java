@@ -86,6 +86,11 @@ public class Generate {
 			out.println();
 			out.println("public class Constant {");
 			
+			for(var e: Type.map.values()) {
+				if (e.name.contains("#")) continue;
+				out.println("// %s: TYPE = %s;", e.name, e.toMesaType());
+			}
+			
 			out.prepareLayout();
 			for(var e: Constant.map.values()) {
 				String name = e.name;
