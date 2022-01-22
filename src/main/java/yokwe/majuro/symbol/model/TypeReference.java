@@ -23,7 +23,7 @@ public class TypeReference extends Type {
 	public void fix() {
 		if (needsFix) {
 			if (realType == null) {
-				realType = Type.getRealType(typeString);
+				realType = Type.findRealType(typeString);
 			}
 			if (realType != null) {
 				realType.fix();
