@@ -293,5 +293,54 @@ public final class Memory {
 		realMemory[p0] = (char)newValue;
 		realMemory[p1] = (char)(newValue >>> 16);
 	}
+	
+	
+	//
+	// MDS
+	//
+	public int mds = 0;
+	
+	public int fetchMDS(char va) {
+		return fetch(mds + va);
+	}
+	public int storeMDS(char va) {
+		return store(mds + va);
+	}
+	public char read16MDS(char va) {
+		return read16(mds + va);
+	}
+	public void write16MDS(char va, char newValue) {
+		write16(mds + va, newValue);
+	}
+	public int read32MDS(char va) {
+		return read32(mds + va);
+	}
+	public void write32MDS(char va, int newValue) {
+		write32(mds + va, newValue);
+	}
+	//
+	// prohibit int promotion of above methods
+	// capture wrong parameter invocation of (fetch|store|read16|write16|read32|write32)MDS
+	//
+	public int fetchMDS(int va) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public int storeMDS(int va) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public char read16MDS(int va) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public void write16MDS(int va, char newValue) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public int read32MDS(int va) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public void write32MDS(int va, int newValue) {
+		throw new UnexpectedException("Unexpected");
+	}
 
+	
+	
 }

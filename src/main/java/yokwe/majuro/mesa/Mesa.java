@@ -1,5 +1,7 @@
 package yokwe.majuro.mesa;
 
+import yokwe.majuro.UnexpectedException;
+
 public final class Mesa {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Mesa.class);
 
@@ -47,6 +49,34 @@ public final class Mesa {
 	public static void write32(int va, int newValue) {
 		if (Perf.ENABLED) Perf.write32++;
 		memory.write32(va, newValue);
+	}
+	//
+	// MDS
+	//
+	public static char read16MDS(char va) {
+		return memory.read16MDS(va);
+	}
+	public static void write16MDS(char va, char newValue) {
+		memory.write16MDS(va, newValue);
+	}
+	public static int read32MDS(char va) {
+		return memory.read32MDS(va);
+	}
+	public static void write32MDS(char va, int newValue) {
+		memory.write32MDS(va, newValue);
+	}
+	// capture wrong parameter calls
+	public static char read16MDS(int va) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public static void write16MDS(int va, char newValue) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public static int read32MDS(int va) {
+		throw new UnexpectedException("Unexpected");
+	}
+	public static void write32MDS(int va, int newValue) {
+		throw new UnexpectedException("Unexpected");
 	}
 
 }
