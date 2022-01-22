@@ -76,10 +76,16 @@ public class Constant {
     // TransferDescriptor: TYPE = RECORD[src (0:0..15): ShortControlLink, reserved (1:0..15): UNSPECIFIED, dst (2:0..31): ControlLink];
     // UNSPECIFIED: TYPE = UNSPECIFIED;
     // XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
-    public static char AV         =    256;
-    public static char ETT        =   1024;
-    public static int  GFT        = 131072;
-    public static int  PDA        =  65536;
-    public static char SD         =    512;
-    public static char StackDepth =     14;
+    // AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constant.mAV;
+    public static final char AV = yokwe.majuro.mesa.Constant.mAV;
+    // ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constant.mETT;
+    public static final char ETT = yokwe.majuro.mesa.Constant.mETT;
+    // GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constant.mGFT;
+    public static final int GFT = yokwe.majuro.mesa.Constant.mGFT;
+    // PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constant.mPDA;
+    public static final int PDA = yokwe.majuro.mesa.Constant.mPDA;
+    // SD: POINTER TO SystemData = yokwe.majuro.mesa.Constant.mSD;
+    public static final char SD = yokwe.majuro.mesa.Constant.mSD;
+    // StackDepth: CARDINAL = yokwe.majuro.mesa.Constant.cSS;
+    public static final char StackDepth = yokwe.majuro.mesa.Constant.cSS;
 }
