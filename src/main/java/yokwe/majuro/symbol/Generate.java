@@ -144,24 +144,26 @@ public class Generate {
 			// single word bit field
 			out.prepareLayout();
 			for(var e: type.fieldList) {
-				int offset   = e.offset;
+				String fieldCons = StringUtil.toJavaConstName(e.name);
+
+				int offset = e.offset;
 				if (offset != 0) throw new UnexpectedException("Unexpected");
-				int start = e.startBit;
-				int stop  = e.stopBit;
+				int start  = e.startBit;
+				int stop   = e.stopBit;
 				
-				int bits = stop - start + 1;
-				int pat  = (1 << bits) - 1;
+				int bits  = stop - start + 1;
+				int pat   = (1 << bits) - 1;
 				int shift = 16 - stop - 1;
-				int mask = (pat << shift);
+				int mask  = (pat << shift);
 				
-				out.println("public static final int %s_MASK  = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaBinaryString(mask, type.bitSize));
-				out.println("public static final int %s_SHIFT = %d;",   StringUtil.toJavaConstName(e.name), shift);
+				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(mask, type.bitSize));
+				out.println("public static final int %s_SHIFT = %d;", fieldCons, shift);
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
 			// To reduce type conversion, use type int for value.
-			out.println("private int value;");
+			out.println("public int value;");
 			out.println();
 			
 			out.println("public %s(char newValue) {", context.name);
@@ -181,11 +183,7 @@ public class Generate {
 				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
 				out.println("}");
 				out.println();
-
 			}
-			
-			
-			context.success = true; // FIXME
 		} else if (type.bitSize == 32 && type.align == Align.BIT_32) {
 			// double word bit field
 			// FIXME
