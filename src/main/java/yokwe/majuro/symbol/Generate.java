@@ -1,12 +1,8 @@
 package yokwe.majuro.symbol;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.model.Constant;
@@ -25,15 +21,16 @@ import yokwe.majuro.symbol.model.TypeRecord.Align;
 import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
+import yokwe.majuro.util.StringUtil;
+import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 
 public class Generate {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Generate.class);
 
 	private static final String PACKAGE = "yokwe.majuro.type";
-	
+	private static final String PATH_OUTPUT_DIR = String.format("src/main/java/%s", PACKAGE.replace('.', '/'));
 	
 	/*
-	private static final String PATH_OUTPUT_DIR = String.format("src/main/java/%s", PACKAGE.replace('.', '/'));
 
 	private static final Map<Type, String> simpleTypeToJapaMap = new TreeMap<>();
 	static {
@@ -178,7 +175,54 @@ public class Generate {
 		// FIXME
 	}
 	private static void genDecl(TypeEnum type) {
-		// FIXME
+		final String name = StringUtil.toJavaName(type.name);
+		
+		String path = String.format("%s/%s.java", PATH_OUTPUT_DIR, name);
+		
+		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
+		String valueList = String.join(", ", itemList);
+		String nameList  = String.join(", ", itemList.stream().map(o -> "\"" + o + "\"").collect(Collectors.toList()));
+
+		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(path)) {
+			out.println("package %s;", PACKAGE);
+			out.println();
+			out.println("import yokwe.majuro.mesa.Debug;");
+			out.println();
+			out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
+			out.println("public final class %s {", name);
+			out.println("public static final String NAME = \"%s\";", name);
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.itemList) {
+				out.println("public static final char %s = %d;", StringUtil.toJavaConstName(e.name), e.value);
+			}
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.println();
+			
+			out.println("private static final int[] values = {");
+			out.println("%s", valueList);
+			out.println("};");
+			out.println("private static final String[] names = {");
+			out.println("%s", nameList);
+			out.println("};");
+			out.println("private static final EnumContext checkValue = new EnumContext(NAME, values, names);");
+			out.println();
+
+			out.println("public static final String toString(int value) {");
+			out.println("return checkValue.toString(value);");
+			out.println("}");
+			out.println();
+			out.println("public static final void checkValue(int value) {");
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);");
+			out.println("}");
+			
+			out.println("}"); // end of class
+		} catch (IOException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
 	}
 	private static void genDecl(TypeRecord type) {
 		// FIXME
