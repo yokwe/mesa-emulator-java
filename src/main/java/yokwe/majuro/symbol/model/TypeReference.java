@@ -1,6 +1,5 @@
 package yokwe.majuro.symbol.model;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public class TypeReference extends Type {
