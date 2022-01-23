@@ -165,11 +165,48 @@ public class Generate {
 	}
 	
 	private static void genDecl(TypeBoolean type) {
-		logger.error("{}: TYPE = {}", type.name, type.toMesaType());
-		throw new UnexpectedException("Unexpected");
+		// DO NOTHING
 	}
 	private static void genDecl(TypeSubrange type) {
-		// FIXME
+		final String name = StringUtil.toJavaName(type.name);
+		
+		String path = String.format("%s/%s.java", PATH_OUTPUT_DIR, name);
+		
+		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(path)) {
+			out.println("package %s;", PACKAGE);
+			out.println();
+			out.println("import yokwe.majuro.mesa.Debug;");
+			out.println();
+			out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
+			out.println("public final class %s {", name);
+			out.println("public static final String NAME = \"%s\";", name);
+			out.println();
+			
+			out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
+			out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
+			out.println("public static final long SIZE_VALUE = MAX_VALUE - MIN_VALUE + 1L;");
+			out.println();
+			
+			out.println("private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);");
+			out.println();
+			
+			out.println("public static final void checkValue(long value) {");
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);");
+			out.println("}");
+			
+			// if this type is unsigned, ...
+			if (0 <= type.minValue) {
+				out.println("public static void checkValue(int value) {");
+				out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(Integer.toUnsignedLong(value));");
+				out.println("}");
+			}
+			
+			out.println("}"); // end of class
+		} catch (IOException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
 	}
 	private static void genDecl(TypeArray type) {
 		// FIXME
