@@ -78,14 +78,6 @@ public class TypeSubrange extends Type {
 	
 	@Override
 	public String toMesaType() {
-		if (name.equals(Type.INTEGER.name)) return "INTEGER";
-		
-		if (name.equals(Type.CARDINAL.name))      return "CARDINAL";
-		if (name.equals(Type.LONG_CARDINAL.name)) return "LONG CARDINAL";
-		
-		if (name.equals(Type.UNSPECIFIED.name))      return "UNSPECIFIED";
-		if (name.equals(Type.LONG_UNSPECIFIED.name)) return "LONG UNSPECIFIED";
-		
 		return String.format("[%s..%s%s", minString, maxString, closeChar);
 	}
 	
