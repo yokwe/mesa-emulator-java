@@ -27,69 +27,66 @@ public class Generate {
 	private static final String PACKAGE = "yokwe.majuro.type";
 	private static final String PATH_OUTPUT_DIR = String.format("src/main/java/%s", PACKAGE.replace('.', '/'));
 	
-	
-	private static void genDecl(Type type) {
-//		logger.info("{}: TYPE = {};", type.name, type.toMesaType());
+	private static class Context {
+		final String  name;
+		final String  path;
+		final File    ouputFile;
+		final File    tempFile;
 		
-		String  name             = StringUtil.toJavaName(type.name);
-		String  path             = String.format("%s/%s.java", PATH_OUTPUT_DIR, name);
-		File    ouputFile        = new File(path);
-		boolean deleteOutputFile = false;
-		
-		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(ouputFile)) {
-			out.println("package %s;", PACKAGE);
-			out.println();
-			out.println("import yokwe.majuro.mesa.Debug;");
-			out.println();
-			out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
-			out.println("public final class %s {", name);
-			out.println("public static final String NAME = \"%s\";", name);
-			out.println();
+		boolean       success;
+
+		public Context(Decl decl) {
+			name      = StringUtil.toJavaName(decl.name);
+			path      = String.format("%s/%s.java", PATH_OUTPUT_DIR, name);
+			ouputFile = new File(path);
+			tempFile  = new File("tmp/Generate.java");
 			
-			switch(type.kind) {
-			case BOOLEAN:
-				deleteOutputFile = true;
-				break;
-			case SUBRANGE:
-				genDecl(out, (TypeSubrange)type);
-				break;
-			case ARRAY:
-				genDecl(out, (TypeArray)type);
-				break;
-			case ENUM:
-				genDecl(out, (TypeEnum)type);
-				break;
-			case RECORD:
-				genDecl(out, (TypeRecord)type);
-				break;
-			case POINTER:
-				genDecl(out, (TypePointer)type);
-				break;
-			case REFERENCE:
-				deleteOutputFile = true;
-				break;
-			default:
-				logger.error("type {}  {}", type.name, type.kind);
-				logger.error("mesa {}", type.toMesaType());
-				throw new UnexpectedException("Unexpected");
-			}
-			
-			out.println("}"); // end of class
-		} catch (IOException e) {
-			String exceptionName = e.getClass().getSimpleName();
-			logger.error("{} {}", exceptionName, e);
-			throw new UnexpectedException(exceptionName, e);
+			success   = true;
 		}
 		
-		if (deleteOutputFile) {
-			ouputFile.delete();
+		public void moveFile() {
+			if (success) {
+				tempFile.renameTo(ouputFile);
+			}
 		}
 	}
 	
-	private static void genDecl(AutoIndentPrintWriter out, TypeSubrange type) {
+	private static void genDecl(Context context, AutoIndentPrintWriter out, Type type) {
+		switch(type.kind) {
+		case BOOLEAN:
+			context.success = false;
+			break;
+		case SUBRANGE:
+			genDecl(context, out, (TypeSubrange)type);
+			break;
+		case ARRAY:
+			genDecl(context, out, (TypeArray)type);
+			break;
+		case ENUM:
+			genDecl(context, out, (TypeEnum)type);
+			break;
+		case RECORD:
+			genDecl(context, out, (TypeRecord)type);
+			break;
+		case POINTER:
+			genDecl(context, out, (TypePointer)type);
+			break;
+		case REFERENCE:
+			context.success = false;
+			break;
+		default:
+			logger.error("type {}  {}", type.name, type.kind);
+			logger.error("mesa {}", type.toMesaType());
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeSubrange type) {
+		out.prepareLayout();
 		out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
 		out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
-		out.println("public static final long SIZE_VALUE = MAX_VALUE - MIN_VALUE + 1L;");
+		out.println("public static final long SIZE_VALUE = %s;", StringUtil.toJavaString(type.maxValue - type.minValue + 1));
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
 		
 		out.println("private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);");
@@ -106,17 +103,18 @@ public class Generate {
 			out.println("}");
 		}
 	}
-	private static void genDecl(AutoIndentPrintWriter out, TypeArray type) {
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeArray type) {
 		// FIXME
+		context.success = false;
 	}
-	private static void genDecl(AutoIndentPrintWriter out, TypeEnum type) {
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeEnum type) {
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
 		String valueList = String.join(", ", itemList);
 		String nameList  = String.join(", ", itemList.stream().map(o -> "\"" + o + "\"").collect(Collectors.toList()));
 
 		out.prepareLayout();
 		for(var e: type.itemList) {
-			out.println("public static final char %s = %d;", StringUtil.toJavaConstName(e.name), e.value);
+			out.println("public static final char %s = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaString(e.value));
 		}
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
@@ -138,24 +136,71 @@ public class Generate {
 		out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);");
 		out.println("}");
 	}
-	private static void genDecl(AutoIndentPrintWriter out, TypeRecord type) {
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
 		// FIXME
+		context.success = false; // FIXME
 	}
-	private static void genDecl(AutoIndentPrintWriter out, TypePointer type) {
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
 		// FIXME
+		context.success = false; // FIXME
 	}
 	
-	private static void genDecl(Constant cons) {
+	private static void genDecl(Context context, AutoIndentPrintWriter out, Constant cons) {
 		// FIXME
+		context.success = false; // FIXME
 	}
 	
 	private static void genDecl(Decl decl) {
-		if (decl instanceof DeclType) {
-			genDecl(((DeclType)decl).value);
-		} else if (decl instanceof DeclConstant) {
-			genDecl(((DeclConstant)decl).value);
-		} else {
-			throw new UnexpectedException("Unexpected");
+		Context context = new Context(decl);
+
+		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(context.tempFile)) {
+			if (decl instanceof DeclType) {
+				Type type = ((DeclType)decl).value;
+				
+				logger.info("{}: TYPE = {};", type.name, type.toMesaType());
+				
+				out.println("package %s;", PACKAGE);
+				out.println();
+				out.println("import yokwe.majuro.mesa.Debug;");
+				out.println();
+				
+				out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
+				
+				out.println("public final class %s {", context.name);
+				out.println("public static final String NAME = \"%s\";", context.name);
+				out.println();
+				
+				genDecl(context, out, type);
+			} else if (decl instanceof DeclConstant) {
+				Constant cons = ((DeclConstant)decl).value;
+				
+				logger.info("{}: {} = {};", cons.name, cons.type.toMesaType(), cons.valueString);
+				
+				out.println("package %s;", PACKAGE);
+				out.println();
+				out.println("import yokwe.majuro.mesa.Debug;");
+				out.println();
+				
+				out.println("// %s: %s = %s;", cons.name, cons.type.toMesaType(), cons.valueString);
+				
+				out.println("public final class %s {", context.name);
+				out.println("public static final String NAME = \"%s\";", context.name);
+				out.println();
+
+				genDecl(context, out, cons);
+				
+				context.success = false; // FIXME
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+			
+			out.println("}"); // end of class
+			
+			context.moveFile();
+		} catch (IOException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
 		}
 	}
 	
