@@ -84,9 +84,14 @@ public class Constant implements Comparable<Constant> {
 
 	public static Long getNumericValue(String string) {
 		if (string.matches("^(\\+|-)?\\d+[bBxDdD]?$")) {
+			// mesa style numeric constant
 			return parseLong(string);
+		} else if (string.startsWith("0x")) {
+			// java style numeric constant
+			return Long.parseLong(string.substring(2).replaceAll("_", ""), 16);
 		} else {
 			if (map.containsKey(string)) {
+				// constant is defined in type file
 				Constant cons = map.get(string);
 				if (cons.needsFix) {
 					logger.error("cons needs fix");
@@ -95,6 +100,7 @@ public class Constant implements Comparable<Constant> {
 				}
 				return cons.numericValue;
 			} else {
+				// constant is defined in java class file
 				return ClassUtil.getStaticNumericValue(string);
 			}
 		}
