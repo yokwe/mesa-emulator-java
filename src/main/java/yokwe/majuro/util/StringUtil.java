@@ -23,6 +23,28 @@ public final class StringUtil {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StringUtil.class);
 
 	//
+	// toJavaBinaryString
+	//
+	public static String toJavaBinaryString(char value) {
+		return toJavaBinaryString(value, 16);
+	}
+	public static String toJavaBinaryString(short value) {
+		return toJavaBinaryString(value, 16);
+	}
+	public static String toJavaBinaryString(int value) {
+		return toJavaBinaryString(value, 32);
+	}
+	public static String toJavaBinaryString(long value) {
+		return toJavaBinaryString(value, 64);
+	}
+	public static String toJavaBinaryString(long value, int digits) {
+		String binaryString = Long.toBinaryString(value);
+		String prefix = "0".repeat(digits - binaryString.length());
+		String maskString = prefix + binaryString;
+		return "0b" + maskString.replaceAll("....(?!$)", "$0_");
+	}
+	
+	//
 	// toHumanReadableString
 	//
 	private static Map<Long, String> numberStringMap = new TreeMap<>();

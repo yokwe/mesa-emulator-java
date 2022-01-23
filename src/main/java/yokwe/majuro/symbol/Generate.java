@@ -154,7 +154,7 @@ public class Generate {
 				int shift = 16 - stop - 1;
 				int mask = (pat << shift);
 				
-				out.println("public static final int %s_MASK  = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toBinaryString(mask, type.bitSize));
+				out.println("public static final int %s_MASK  = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaBinaryString(mask, type.bitSize));
 				out.println("public static final int %s_SHIFT = %d;",   StringUtil.toJavaConstName(e.name), shift);
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
