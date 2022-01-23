@@ -162,14 +162,44 @@ public class Generate {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
+			out.println("public static final int NO_VALUE = -1;");
+			out.println();
+			
 			// To reduce type conversion, use type int for value.
+			out.println("public final int base;");
 			out.println("public int value;");
 			out.println();
 			
-			out.println("public %s(char newValue) {", context.name);
+			out.println("public %s(int newValue) {", context.name);
+			out.println("base  = newValue;");
+			out.println("value = 0;");
+			out.println("}");
+			out.println("public %s() {", context.name);
+			out.println("base  = NO_VALUE;");
+			out.println("value = 0;");
+			out.println("}");
+			out.println();
+			
+			out.println("public char get() {");
+			out.println("return (char)value;");
+			out.println("}");
+			out.println("public void set(char newValue) {");
 			out.println("value = newValue;");
 			out.println("}");
 			out.println();
+			
+			out.println("public %s read() {", context.name);
+			out.println("if (base == NO_VALUE) throw new UnexpectedException(\"Unexpected\");");
+			out.println("value = Mesa.read16(base);");
+			out.println("return this;");
+			out.println("}");
+			out.println("public %s write() {", context.name);
+			out.println("if (base == NO_VALUE) throw new UnexpectedException(\"Unexpected\");");
+			out.println("Mesa.write16(base, (char)value);");
+			out.println("return this;");
+			out.println("}");
+			out.println();
+			
 			
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
@@ -215,7 +245,9 @@ public class Generate {
 				
 				out.println("package %s;", PACKAGE);
 				out.println();
+				out.println("import yokwe.majuro.UnexpectedException;");
 				out.println("import yokwe.majuro.mesa.Debug;");
+				out.println("import yokwe.majuro.mesa.Mesa;");
 				out.println();
 				
 				out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
