@@ -47,12 +47,17 @@ public class Symbol {
 
 	
 	public abstract static class Decl {
-		//
+		public final String name;
+		
+		public Decl(String name) {
+			this.name = name;
+		}
 	}
 	public static class DeclConstant extends Decl {
 		public final Constant value;
 		
 		public DeclConstant(Constant value) {
+			super(value.name);
 			this.value = value;
 		}
 		@Override
@@ -64,6 +69,7 @@ public class Symbol {
 		public final Type value;
 		
 		public DeclType(Type value) {
+			super(value.name);
 			this.value = value;
 		}
 		@Override
