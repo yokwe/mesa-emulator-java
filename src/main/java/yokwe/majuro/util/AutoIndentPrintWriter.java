@@ -1,5 +1,8 @@
 package yokwe.majuro.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +21,13 @@ public class AutoIndentPrintWriter implements AutoCloseable {
 	public AutoIndentPrintWriter(PrintWriter out) {
 		this.out = out;
 	}
+	public AutoIndentPrintWriter(File file) throws IOException {
+		this(new PrintWriter(new FileWriter(file)));
+	}
+	public AutoIndentPrintWriter(String path) throws IOException {
+		this(new File(path));
+	}
+	
 	public void close() {
 		out.close();
 	}
