@@ -114,25 +114,6 @@ public final class Memory {
 	}
 
 
-	// provide access to mapFlags
-	public MapFlag getMapFlag(int vp) {
-		return mapFlags[vp];
-	}
-	// provide access to realPages
-	public char getRealPage(int vp) {
-		return realPages[vp];
-	}
-	public void setRealPage(int vp, char newValue) {
-		realPages[vp] = newValue;
-	}
-	// provide access to realMemory
-	public char readRealMemory(int ra) {
-		return realMemory[ra];
-	}
-	public void writeRealMemory(int ra, char newValue) {
-		realMemory[ra] = newValue;
-	}
-
 	public void invalidate(int vp) {
 		getCache(vp).clear();
 	}
@@ -142,9 +123,19 @@ public final class Memory {
 		
 		final int vp = va >>> PAGE_BITS;
 		final int ra;
-		
-		if (Debug.DISABLE_MEMORY_CACHE) {
-			// FIXME DUPLICATE CODE START
+		// check cache
+		var cache = getCache(vp);
+		if (cache.vp == vp) {
+			if (Perf.ENABLED) {
+				Perf.cacheHit++;
+			}
+			ra = cache.ra;
+		} else {
+			if (Perf.ENABLED) {
+				if (cache.vp == 0) Perf.cacheMissEmpty++;
+				else Perf.cacheMissConflict++;
+			}
+
 			MapFlag mapFlag = mapFlags[vp];
 			if (mapFlag.isVacant()) {
 				Mesa.pageFault(va);
@@ -152,43 +143,14 @@ public final class Memory {
 			
 			// NO FAULT FROM HERE
 			if (mapFlag.isNotReferenced()) {
-				mapFlag.setReferenced();
+				mapFlags[vp].setReferenced();
 			}
 			ra = realPages[vp] << PAGE_BITS;
 			if (ra == 0) throw new UnexpectedException();
-			// FIXME DUPLICATE CODE STOP
-		} else {
-			// check cache
-			var cache = getCache(vp);
-			if (cache.vp == vp) {
-				if (Perf.ENABLED) {
-					Perf.cacheHit++;
-				}
-				ra = cache.ra;
-			} else {
-				if (Perf.ENABLED) {
-					if (cache.vp == 0) Perf.cacheMissEmpty++;
-					else Perf.cacheMissConflict++;
-				}
-
-				// FIXME DUPLICATE CODE START
-				MapFlag mapFlag = mapFlags[vp];
-				if (mapFlag.isVacant()) {
-					Mesa.pageFault(va);
-				}
-				
-				// NO FAULT FROM HERE
-				if (mapFlag.isNotReferenced()) {
-					mapFlags[vp].setReferenced();
-				}
-				ra = realPages[vp] << PAGE_BITS;
-				if (ra == 0) throw new UnexpectedException();
-				// FIXME DUPLICATE CODE STOP
-				
-				cache.vp    = vp;
-				cache.ra    = ra;
-				cache.dirty = mapFlag.isDirty();
-			}
+			
+			cache.vp    = vp;
+			cache.ra    = ra;
+			cache.dirty = mapFlag.isDirty();
 		}
 		return ra | (va & PAGE_MASK);
 	}
@@ -199,8 +161,24 @@ public final class Memory {
 
 		final int vp = va >>> PAGE_BITS;
 		final int ra;
-		
-		if (Debug.DISABLE_MEMORY_CACHE) {
+		// check cache
+		var cache = getCache(vp);
+		if (cache.vp == vp) {
+			if (Perf.ENABLED) {
+				Perf.cacheHit++;
+			}
+			
+			ra = cache.ra;
+			if (!cache.dirty) {
+				mapFlags[vp].setReferencedDirty();
+				cache.dirty  = true;
+			}
+		} else {
+			if (Perf.ENABLED) {
+				if (cache.vp == 0) Perf.cacheMissEmpty++;
+				else Perf.cacheMissConflict++;
+			}
+
 			// FIXME DUPLICATE CODE START
 			MapFlag mapFlag = mapFlags[vp];
 			if (mapFlag.isVacant()) {
@@ -217,45 +195,10 @@ public final class Memory {
 			ra = realPages[vp] << PAGE_BITS;
 			if (ra == 0) throw new UnexpectedException();
 			// FIXME DUPLICATE CODE STOP
-		} else {
-			var cache = getCache(vp);
-			if (cache.vp == vp) {
-				if (Perf.ENABLED) {
-					Perf.cacheHit++;
-				}
-				
-				ra = cache.ra;
-				if (!cache.dirty) {
-					mapFlags[vp].setReferencedDirty();
-					cache.dirty  = true;
-				}
-			} else {
-				if (Perf.ENABLED) {
-					if (cache.vp == 0) Perf.cacheMissEmpty++;
-					else Perf.cacheMissConflict++;
-				}
-
-				// FIXME DUPLICATE CODE START
-				MapFlag mapFlag = mapFlags[vp];
-				if (mapFlag.isVacant()) {
-					Mesa.pageFault(va);
-				}
-				if (mapFlag.isProtect()) {
-					Mesa.writeProtectFault(va);
-				}
-				
-				// NO FAULT FROM HERE
-				if (mapFlag.isNotReferencedDirty()) {
-					mapFlags[vp].setReferencedDirty();
-				}
-				ra = realPages[vp] << PAGE_BITS;
-				if (ra == 0) throw new UnexpectedException();
-				// FIXME DUPLICATE CODE STOP
-				
-				cache.vp    = vp;
-				cache.ra    = ra;
-				cache.dirty = true;
-			}
+			
+			cache.vp    = vp;
+			cache.ra    = ra;
+			cache.dirty = true;
 		}
 				
 		return ra | (va & PAGE_MASK);
