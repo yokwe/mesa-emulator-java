@@ -88,6 +88,16 @@ public class Symbol {
 	public void build(SymbolContext tree) {
 		logger.info("build START");
 		
+		// append builtin types
+		declList.add(new DeclType(Type.BOOLELAN));
+		declList.add(new DeclType(Type.INTEGER));
+		declList.add(new DeclType(Type.CARDINAL));
+		declList.add(new DeclType(Type.LONG_CARDINAL));
+		declList.add(new DeclType(Type.UNSPECIFIED));
+		declList.add(new DeclType(Type.LONG_UNSPECIFIED));
+		declList.add(new DeclType(Type.POINTER));
+		declList.add(new DeclType(Type.LONG_POINTER));
+		
 		logger.info("build constant and type");
 		for(DeclContext e: tree.body().declList().elements) {
 			if (e.declConstant() != null) {
