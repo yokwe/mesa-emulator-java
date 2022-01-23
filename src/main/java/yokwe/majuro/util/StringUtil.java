@@ -19,15 +19,50 @@ import java.util.TreeMap;
 
 import yokwe.majuro.UnexpectedException;
 
-public class StringUtil {
+public final class StringUtil {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StringUtil.class);
+
+	//
+	// toHumanReadableString
+	//
+	private static Map<Long, String> numberStringMap = new TreeMap<>();
+	static {
+		// usual pattern
+		numberStringMap.put(       0xFFL,        "0xFF");
+		numberStringMap.put(     0xFFFFL,      "0xFFFF");
+		numberStringMap.put(0xFFFF_FFFFL, "0xFFFF_FFFFL");
+
+		// Java constant
+		numberStringMap.put((long)Short.MIN_VALUE,   "Short.MIN_VALUE");
+		numberStringMap.put((long)Short.MAX_VALUE,   "Short.MAX_VALUE");
+		numberStringMap.put((long)Integer.MIN_VALUE, "Integer.MIN_VALUE");
+		numberStringMap.put((long)Integer.MAX_VALUE, "Integer.MAX_VALUE");
+
+	}
+	public static String toJavaString(long value) {
+		if (numberStringMap.containsKey(value)) {
+			return numberStringMap.get(value);
+		} else {
+			final String suffix;
+			if (Integer.MAX_VALUE < value) {
+				// add L suffix
+				suffix = "L";
+			} else {
+				suffix = "";
+			}
+			return Long.toString(value) + suffix;
+		}
+	}
 
 	//
 	// toJavaName
 	//
 	private static Map<String, String> javaKeywordMap = new TreeMap<>();
 	static {
-		javaKeywordMap.put("null", "null_");
+		javaKeywordMap.put("null",             "null_");
+		javaKeywordMap.put("LONG CARDINAL",    "LONG_CARDINAL");
+		javaKeywordMap.put("LONG UNSPECIFIED", "LONG_UNSPECIFIED");
+		javaKeywordMap.put("LONG POINTER",     "LONG_POINTER");
 	}
 	public static String toJavaName(String name) {
 		if (javaKeywordMap.containsKey(name)) {
@@ -49,6 +84,8 @@ public class StringUtil {
 		StringBuilder ret = new StringBuilder();
 		CharKind lastCharKind = CharKind.UNKNOWN;
 		
+		name = name.replace(" ", "_");
+
 		for(int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
 
