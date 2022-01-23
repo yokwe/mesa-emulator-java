@@ -23,6 +23,20 @@ public class StringUtil {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(StringUtil.class);
 
 	//
+	// toJavaName
+	//
+	private static Map<String, String> javaKeywordMap = new TreeMap<>();
+	static {
+		javaKeywordMap.put("null", "null_");
+	}
+	public static String toJavaName(String name) {
+		if (javaKeywordMap.containsKey(name)) {
+			return javaKeywordMap.get(name);
+		} else {
+			return name;
+		}
+	}
+	//
 	// toJavaConstName
 	//
 	private enum CharKind {
