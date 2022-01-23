@@ -90,7 +90,6 @@ public class TypePointer extends Type {
 			throw new UnexpectedException("Unexpected");
 		}
 		
-		String secondHalf;
 		if (type == null) {
 			return baseType;
 		} else {
