@@ -46,10 +46,38 @@ public class Symbol {
 	}
 
 	
+	public abstract static class Decl {
+		//
+	}
+	public static class DeclConstant extends Decl {
+		public final Constant value;
+		
+		public DeclConstant(Constant value) {
+			this.value = value;
+		}
+		@Override
+		public String toString() {
+			return value.toMesaType();
+		}
+	}
+	public static class DeclType extends Decl {
+		public final Type value;
+		
+		public DeclType(Type value) {
+			this.value = value;
+		}
+		@Override
+		public String toString() {
+			return value.toMesaType();
+		}
+	}
+	
 	public final String name;
+	public final List<Decl> declList;
 	
 	private Symbol(SymbolContext tree) {
 		this.name = tree.header().name.getText();
+		this.declList = new ArrayList<>();
 	}
 
 	@Override
@@ -63,10 +91,12 @@ public class Symbol {
 		logger.info("build constant and type");
 		for(DeclContext e: tree.body().declList().elements) {
 			if (e.declConstant() != null) {
-				getConstant(e.declConstant());
+				Constant value = getConstant(e.declConstant());
+				declList.add(new DeclConstant(value));
 			}
 			if (e.declType() != null) {
-				getType(e.declType());
+				Type value = getType(e.declType());
+				declList.add(new DeclType(value));
 			}
 		}
 		
