@@ -16,10 +16,13 @@ import yokwe.majuro.symbol.model.TypeArray;
 import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
+import yokwe.majuro.symbol.model.TypeRecord.Align;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 import yokwe.majuro.util.StringUtil;
+
+import static yokwe.majuro.mesa.Constant.*;
 
 public class Generate {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Generate.class);
@@ -137,8 +140,61 @@ public class Generate {
 		out.println("}");
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
-		// FIXME
-		context.success = false; // FIXME
+		if (type.bitSize == 16 && type.align == Align.BIT_16) {
+			// single word bit field
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				int offset   = e.offset;
+				if (offset != 0) throw new UnexpectedException("Unexpected");
+				int start = e.startBit;
+				int stop  = e.stopBit;
+				
+				int bits = stop - start + 1;
+				int pat  = (1 << bits) - 1;
+				int shift = 16 - stop - 1;
+				int mask = (pat << shift);
+				
+				out.println("public static final int %s_MASK  = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toBinaryString(mask, type.bitSize));
+				out.println("public static final int %s_SHIFT = %d;",   StringUtil.toJavaConstName(e.name), shift);
+			}
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.println();
+			
+			// To reduce type conversion, use type int for value.
+			out.println("private int value;");
+			out.println();
+			
+			out.println("public %s(char newValue) {", context.name);
+			out.println("value = newValue;");
+			out.println("}");
+			out.println();
+			
+			for(var e: type.fieldList) {
+				String fieldName = StringUtil.toJavaName(e.name);
+				String fieldCons = StringUtil.toJavaConstName(e.name);
+				
+				out.println("public int %s() {", fieldName);
+				out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+				out.println("}");
+				
+				out.println("public void %s(int newValue) {", fieldName);
+				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+				out.println("}");
+				out.println();
+
+			}
+			
+			
+			context.success = true; // FIXME
+		} else if (type.bitSize == 32 && type.align == Align.BIT_32) {
+			// double word bit field
+			// FIXME
+			context.success = false; // FIXME
+		} else {
+			// multiple word
+			// FIXME
+			context.success = false; // FIXME
+		}
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
 		// FIXME
@@ -167,7 +223,11 @@ public class Generate {
 				out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
 				
 				out.println("public final class %s {", context.name);
-				out.println("public static final String NAME = \"%s\";", context.name);
+				out.prepareLayout();
+				out.println("public static final String NAME     = \"%s\";", context.name);
+				out.println("public static final int    SIZE     = %d;",     (type.bitSize + WORD_SIZE - 1) / WORD_SIZE);
+				out.println("public static final int    BIT_SIZE = %d;",     type.bitSize);
+				out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 				out.println();
 				
 				genDecl(context, out, type);
