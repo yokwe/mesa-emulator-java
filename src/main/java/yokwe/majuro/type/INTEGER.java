@@ -8,7 +8,7 @@ public final class INTEGER {
 
     public static final long MIN_VALUE  = Short.MIN_VALUE;
     public static final long MAX_VALUE  = Short.MAX_VALUE;
-    public static final long SIZE_VALUE = MAX_VALUE - MIN_VALUE + 1L;
+    public static final long SIZE_VALUE =           65536;
 
     private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);
 

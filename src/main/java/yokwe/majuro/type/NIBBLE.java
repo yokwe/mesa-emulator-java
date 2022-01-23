@@ -6,9 +6,9 @@ import yokwe.majuro.mesa.Debug;
 public final class NIBBLE {
     public static final String NAME = "NIBBLE";
 
-    public static final long MIN_VALUE  = 0;
+    public static final long MIN_VALUE  =  0;
     public static final long MAX_VALUE  = 15;
-    public static final long SIZE_VALUE = MAX_VALUE - MIN_VALUE + 1L;
+    public static final long SIZE_VALUE = 16;
 
     private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);
 

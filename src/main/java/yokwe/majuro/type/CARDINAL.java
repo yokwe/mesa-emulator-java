@@ -6,9 +6,9 @@ import yokwe.majuro.mesa.Debug;
 public final class CARDINAL {
     public static final String NAME = "CARDINAL";
 
-    public static final long MIN_VALUE  = 0;
+    public static final long MIN_VALUE  =      0;
     public static final long MAX_VALUE  = 0xFFFF;
-    public static final long SIZE_VALUE = MAX_VALUE - MIN_VALUE + 1L;
+    public static final long SIZE_VALUE =  65536;
 
     private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);
 
