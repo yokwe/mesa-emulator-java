@@ -66,6 +66,28 @@ public final class GeneratedType {
 		public static void checkValue(int value) {
 			checkValue.check(value);
 		}
+		
+		private static final int NO_VALUE = -1;
+		
+		public int  base;
+		public char value;
+
+		public UNSPECIFIED() {
+			base  = NO_VALUE;			
+			value = 0;
+		}
+		public UNSPECIFIED(int base) {
+			this.base    = base;
+			this.value = Mesa.read16(base);
+		}
+		public void read() {
+			if (base == NO_VALUE) throw new UnexpectedException("Unexpected");
+			value = Mesa.read16(base);
+		}
+		public void write() {
+			if (base == NO_VALUE) throw new UnexpectedException("Unexpected");
+			Mesa.write16(base, value);
+		}
 	}
 	public static final class LONG_UNSPECIFIED {
 		public static final String NAME       = "LONG_UNSPECIFIED";
@@ -79,6 +101,28 @@ public final class GeneratedType {
 		public static void checkValue(int value) {
 			// treat as unsigned integer
 			checkValue.check(Integer.toUnsignedLong(value));
+		}
+		
+		private static final int NO_VALUE = -1;
+		
+		public int  base;
+		public int value;
+
+		public LONG_UNSPECIFIED() {
+			base  = NO_VALUE;			
+			value = 0;
+		}
+		public LONG_UNSPECIFIED(int base) {
+			this.base    = base;
+			this.value = Mesa.read16(base);
+		}
+		public void read() {
+			if (base == NO_VALUE) throw new UnexpectedException("Unexpected");
+			value = Mesa.read32(base);
+		}
+		public void write() {
+			if (base == NO_VALUE) throw new UnexpectedException("Unexpected");
+			Mesa.write32(base, value);
 		}
 	}
 	                                                          
@@ -229,7 +273,6 @@ public final class GeneratedType {
 		private static final int TAG_SHIFT  = 0;
 		
 		private static final CheckValue dataCheckValue = new SubrangeContext("AVItem.data", 0, DATA_MASK >>> DATA_SHIFT);
-		private static final CheckValue tagCheckValue  = AVItemType.checkValue;
 		
 		public char value;
 		
