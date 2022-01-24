@@ -22,6 +22,10 @@ public final class Mesa {
 		logger.info("writeProtectFault {}", Integer.toHexString(va).toUpperCase());
 	}
 	
+	//
+	// low level memory access
+	//
+	
 	public static int fetch(int va) {
 		if (Perf.ENABLED) Perf.fetch++;
 		return memory.fetch(va);
@@ -29,6 +33,18 @@ public final class Mesa {
 	public static int store(int va) {
 		if (Perf.ENABLED) Perf.store++;
 		return memory.store(va);
+	}
+	public static MapFlag mapFlag(int va) {
+		if (Perf.ENABLED) Perf.mapFlag++;
+		return memory.mapFlag(va);
+	}
+	public static char readReal(int ra) {
+		if (Perf.ENABLED) Perf.readReal++;
+		return memory.readReal(ra);
+	}
+	public static void writeReal(int ra, char newValue) {
+		if (Perf.ENABLED) Perf.writeReal++;
+		memory.writeReal(ra, newValue);
 	}
 	
 	//
