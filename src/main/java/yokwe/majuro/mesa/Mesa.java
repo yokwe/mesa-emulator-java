@@ -38,13 +38,21 @@ public final class Mesa {
 		if (Perf.ENABLED) Perf.mapFlag++;
 		return memory.mapFlag(va);
 	}
-	public static char readReal(int ra) {
-		if (Perf.ENABLED) Perf.readReal++;
-		return memory.readReal(ra);
+	public static char readReal16(int ra) {
+		if (Perf.ENABLED) Perf.readReal16++;
+		return memory.readReal16(ra);
 	}
-	public static void writeReal(int ra, char newValue) {
-		if (Perf.ENABLED) Perf.writeReal++;
-		memory.writeReal(ra, newValue);
+	public static void writeReal16(int ra, char newValue) {
+		if (Perf.ENABLED) Perf.writeReal16++;
+		memory.writeReal16(ra, newValue);
+	}
+	public static int readReal32(int ra0, int ra1) {
+		if (Perf.ENABLED) Perf.readReal32++;
+		return memory.readReal32(ra0, ra1);
+	}
+	public static void writeReal32(int ra0, int ra1, int newValue) {
+		if (Perf.ENABLED) Perf.writeReal32++;
+		memory.writeReal32(ra0, ra1, newValue);
 	}
 	
 	//
