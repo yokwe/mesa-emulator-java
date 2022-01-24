@@ -16,25 +16,25 @@ public final class StateWord {
 
     public static final int NO_VALUE = -1;
 
-    public static StateWord value(int value) {
-        return new StateWord(NO_VALUE, value, false);
-    }
-    public static StateWord fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new StateWord(ra, Mesa.readReal16(ra), false);
-    }
-    public static StateWord store(int base) {
-        int ra = Mesa.store(base);
-        return new StateWord(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private StateWord(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public StateWord(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public StateWord(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

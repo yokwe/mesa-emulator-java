@@ -16,25 +16,25 @@ public final class LocalWord {
 
     public static final int NO_VALUE = -1;
 
-    public static LocalWord value(int value) {
-        return new LocalWord(NO_VALUE, value, false);
-    }
-    public static LocalWord fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new LocalWord(ra, Mesa.readReal16(ra), false);
-    }
-    public static LocalWord store(int base) {
-        int ra = Mesa.store(base);
-        return new LocalWord(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private LocalWord(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public LocalWord(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public LocalWord(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

@@ -16,25 +16,25 @@ public final class AVItem {
 
     public static final int NO_VALUE = -1;
 
-    public static AVItem value(int value) {
-        return new AVItem(NO_VALUE, value, false);
-    }
-    public static AVItem fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new AVItem(ra, Mesa.readReal16(ra), false);
-    }
-    public static AVItem store(int base) {
-        int ra = Mesa.store(base);
-        return new AVItem(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private AVItem(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public AVItem(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public AVItem(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

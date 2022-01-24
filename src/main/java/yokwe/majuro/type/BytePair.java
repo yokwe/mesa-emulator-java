@@ -16,25 +16,25 @@ public final class BytePair {
 
     public static final int NO_VALUE = -1;
 
-    public static BytePair value(int value) {
-        return new BytePair(NO_VALUE, value, false);
-    }
-    public static BytePair fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new BytePair(ra, Mesa.readReal16(ra), false);
-    }
-    public static BytePair store(int base) {
-        int ra = Mesa.store(base);
-        return new BytePair(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private BytePair(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public BytePair(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public BytePair(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

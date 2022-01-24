@@ -18,25 +18,25 @@ public final class Queue {
 
     public static final int NO_VALUE = -1;
 
-    public static Queue value(int value) {
-        return new Queue(NO_VALUE, value, false);
-    }
-    public static Queue fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new Queue(ra, Mesa.readReal16(ra), false);
-    }
-    public static Queue store(int base) {
-        int ra = Mesa.store(base);
-        return new Queue(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private Queue(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public Queue(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public Queue(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

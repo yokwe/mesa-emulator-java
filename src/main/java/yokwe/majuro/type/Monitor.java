@@ -20,25 +20,25 @@ public final class Monitor {
 
     public static final int NO_VALUE = -1;
 
-    public static Monitor value(int value) {
-        return new Monitor(NO_VALUE, value, false);
-    }
-    public static Monitor fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new Monitor(ra, Mesa.readReal16(ra), false);
-    }
-    public static Monitor store(int base) {
-        int ra = Mesa.store(base);
-        return new Monitor(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private Monitor(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public Monitor(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public Monitor(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

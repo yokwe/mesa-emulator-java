@@ -22,25 +22,25 @@ public final class Condition {
 
     public static final int NO_VALUE = -1;
 
-    public static Condition value(int value) {
-        return new Condition(NO_VALUE, value, false);
-    }
-    public static Condition fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new Condition(ra, Mesa.readReal16(ra), false);
-    }
-    public static Condition store(int base) {
-        int ra = Mesa.store(base);
-        return new Condition(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private Condition(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public Condition(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public Condition(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {

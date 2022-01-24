@@ -19,35 +19,35 @@ public final class TaggedControlLink {
 
     public static final int NO_VALUE = -1;
 
-    public static TaggedControlLink value(int value) {
-        return new TaggedControlLink(NO_VALUE, NO_VALUE, value, false);
-    }
-    public static TaggedControlLink fetch(int base) {
-        int ra0 = Mesa.fetch(base + 0);
-        int ra1 = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);
-        return new TaggedControlLink(ra0, ra1, Mesa.readReal32(ra0, ra1), false);
-    }
-    public static TaggedControlLink store(int base) {
-        int ra0 = Mesa.store(base + 0);
-        int ra1 = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);
-        return new TaggedControlLink(ra0, ra1, Mesa.readReal32(ra0, ra1), true);
-    }
     private final int     ra0;
     private final int     ra1;
     private final boolean canWrite;
 
     public int value;
 
-    private TaggedControlLink(int ra0, int ra1, int value, boolean canWrite) {
-        this.ra0      = ra0;
-        this.ra1      = ra1;
-        this.canWrite = canWrite;
+    public TaggedControlLink(int value) {
+        this.ra0      = NO_VALUE;
+        this.ra1      = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public TaggedControlLink(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra0      = Mesa.store(base + 0);
+            this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);
+            this.canWrite = true;
+        } else {
+            this.ra0      = Mesa.fetch(base + 0);
+            this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal32(ra0,  ra1);
     }
 
-    public char get() {
-        return (char)value;
+    public int get() {
+        return value;
     }
-    public void set(char newValue) {
+    public void set(int newValue) {
         value = newValue;
     }
     public void write() {

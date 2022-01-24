@@ -22,25 +22,25 @@ public final class PsbFlags {
 
     public static final int NO_VALUE = -1;
 
-    public static PsbFlags value(int value) {
-        return new PsbFlags(NO_VALUE, value, false);
-    }
-    public static PsbFlags fetch(int base) {
-        int ra = Mesa.fetch(base);
-        return new PsbFlags(ra, Mesa.readReal16(ra), false);
-    }
-    public static PsbFlags store(int base) {
-        int ra = Mesa.store(base);
-        return new PsbFlags(ra, Mesa.readReal16(ra), true);
-    }
     private final int     ra;
     private final boolean canWrite;
 
     public int value;
 
-    private PsbFlags(int ra, int value, boolean canWrite) {
-        this.ra       = ra;
-        this.canWrite = canWrite;
+    public PsbFlags(char value) {
+        this.ra       = NO_VALUE;
+        this.canWrite = false;
+        this.value    = value;
+    }
+    public PsbFlags(int base, boolean canWrite) {
+        if (canWrite) {
+            this.ra       = Mesa.store(base);
+            this.canWrite = true;
+        } else {
+            this.ra       = Mesa.fetch(base);
+            this.canWrite = false;
+        }
+        this.value = Mesa.readReal16(ra);
     }
 
     public char get() {
