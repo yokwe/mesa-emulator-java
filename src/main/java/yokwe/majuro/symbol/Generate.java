@@ -170,18 +170,6 @@ public class Generate {
 			out.println("public static final int NO_VALUE = -1;");
 			out.println();
 			
-			out.println("public static %s value(int value) {", context.name);
-			out.println("return new %s(NO_VALUE, value, false);", context.name);
-			out.println("}");
-			out.println("public static %s fetch(int base) {", context.name);
-			out.println("int ra = Mesa.fetch(base);");
-			out.println("return new %s(ra, Mesa.readReal16(ra), false);", context.name);
-			out.println("}");
-			out.println("public static %s store(int base) {", context.name);
-			out.println("int ra = Mesa.store(base);");
-			out.println("return new %s(ra, Mesa.readReal16(ra), true);", context.name);
-			out.println("}");
-			
 			// To reduce type conversion, use type int for value.
 			out.println("private final int     ra;");
 			out.println("private final boolean canWrite;");
@@ -189,9 +177,20 @@ public class Generate {
 			out.println("public int value;");
 			out.println();
 			
-			out.println("private %s(int ra, int value, boolean canWrite) {", context.name);
-			out.println("this.ra       = ra;");
-			out.println("this.canWrite = canWrite;");
+			out.println("public %s(char value) {", context.name);
+			out.println("this.ra       = NO_VALUE;");
+			out.println("this.canWrite = false;");
+			out.println("this.value    = value;");
+			out.println("}");
+			out.println("public %s(int base, boolean canWrite) {", context.name);
+			out.println("if (canWrite) {");
+			out.println("this.ra       = Mesa.store(base);");
+			out.println("this.canWrite = true;");
+			out.println("} else {");
+			out.println("this.ra       = Mesa.fetch(base);");
+			out.println("this.canWrite = false;");
+			out.println("}");
+			out.println("this.value = Mesa.readReal16(ra);");
 			out.println("}");
 			out.println();
 			
@@ -256,20 +255,6 @@ public class Generate {
 			out.println("public static final int NO_VALUE = -1;");
 			out.println();
 			
-			out.println("public static %s value(int value) {", context.name);
-			out.println("return new %s(NO_VALUE, NO_VALUE, value, false);", context.name);
-			out.println("}");
-			out.println("public static %s fetch(int base) {", context.name);
-			out.println("int ra0 = Mesa.fetch(base + 0);");
-			out.println("int ra1 = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);");
-			out.println("return new %s(ra0, ra1, Mesa.readReal32(ra0, ra1), false);", context.name);
-			out.println("}");
-			out.println("public static %s store(int base) {", context.name);
-			out.println("int ra0 = Mesa.store(base + 0);");
-			out.println("int ra1 = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
-			out.println("return new %s(ra0, ra1, Mesa.readReal32(ra0, ra1), true);", context.name);
-			out.println("}");
-			
 			// To reduce type conversion, use type int for value.
 			out.println("private final int     ra0;");
 			out.println("private final int     ra1;");
@@ -278,17 +263,30 @@ public class Generate {
 			out.println("public int value;");
 			out.println();
 			
-			out.println("private %s(int ra0, int ra1, int value, boolean canWrite) {", context.name);
-			out.println("this.ra0      = ra0;");
-			out.println("this.ra1      = ra1;");
-			out.println("this.canWrite = canWrite;");
+			out.println("public %s(int value) {", context.name);
+			out.println("this.ra0      = NO_VALUE;");
+			out.println("this.ra1      = NO_VALUE;");
+			out.println("this.canWrite = false;");
+			out.println("this.value    = value;");
+			out.println("}");
+			out.println("public %s(int base, boolean canWrite) {", context.name);
+			out.println("if (canWrite) {");
+			out.println("this.ra0      = Mesa.store(base + 0);");
+			out.println("this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
+			out.println("this.canWrite = true;");
+			out.println("} else {");
+			out.println("this.ra0      = Mesa.fetch(base + 0);");
+			out.println("this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);");
+			out.println("this.canWrite = false;");
+			out.println("}");
+			out.println("this.value = Mesa.readReal32(ra0,  ra1);");
 			out.println("}");
 			out.println();
 			
-			out.println("public char get() {");
-			out.println("return (char)value;");
+			out.println("public int get() {");
+			out.println("return value;");
 			out.println("}");
-			out.println("public void set(char newValue) {");
+			out.println("public void set(int newValue) {");
 			out.println("value = newValue;");
 			out.println("}");
 			out.println("public void write() {");
