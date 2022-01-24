@@ -146,17 +146,22 @@ public class Generate {
 			for(var e: type.fieldList) {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 
-				int offset = e.offset;
-				if (offset != 0) throw new UnexpectedException("Unexpected");
-				int start  = e.startBit;
-				int stop   = e.stopBit;
+				final int offset = e.offset;
+				final int start;
+				final int stop;
+				if (offset == 0) {
+					start  = e.startBit;
+					stop   = e.stopBit;
+				} else {
+					throw new UnexpectedException("Unexpected");
+				}
 				
 				int bits  = stop - start + 1;
 				int pat   = (1 << bits) - 1;
 				int shift = type.bitSize - stop - 1;
 				int mask  = (pat << shift);
 				
-				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(mask, type.bitSize));
+				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
 				out.println("public static final int %s_SHIFT = %d;", fieldCons, shift);
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
@@ -170,11 +175,11 @@ public class Generate {
 			out.println("}");
 			out.println("public static %s fetch(int base) {", context.name);
 			out.println("int ra = Mesa.fetch(base);");
-			out.println("return new %s(ra, Mesa.readReal(ra), false);", context.name);
+			out.println("return new %s(ra, Mesa.readReal16(ra), false);", context.name);
 			out.println("}");
 			out.println("public static %s store(int base) {", context.name);
 			out.println("int ra = Mesa.store(base);");
-			out.println("return new %s(ra, Mesa.readReal(ra), true);", context.name);
+			out.println("return new %s(ra, Mesa.readReal16(ra), true);", context.name);
 			out.println("}");
 			
 			// To reduce type conversion, use type int for value.
@@ -198,7 +203,7 @@ public class Generate {
 			out.println("}");
 			out.println("public void write() {");
 			out.println("if (ra == NO_VALUE || !canWrite) throw new UnexpectedException(\"Unexpected\");");
-			out.println("Mesa.writeReal(ra, (char)value);");
+			out.println("Mesa.writeReal16(ra, (char)value);");
 			out.println("}");
 			out.println();
 			
@@ -217,8 +222,94 @@ public class Generate {
 			}
 		} else if (type.bitSize == 32 && type.align == Align.BIT_32) {
 			// double word bit field
-			// FIXME
-			context.success = false; // FIXME
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				String fieldCons = StringUtil.toJavaConstName(e.name);
+
+				final int offset = e.offset;
+				final int start;
+				final int stop;
+				if (offset == 0) {
+					start  = 16 + e.startBit;
+					stop   = 16 + e.stopBit;
+				} else if (offset == 1) {
+					start  = e.startBit;
+					stop   = e.stopBit;
+				} else {
+					throw new UnexpectedException("Unexpected");
+				}
+				
+				int bits  = stop - start + 1;
+				int pat   = (1 << bits) - 1;
+				int shift = type.bitSize - stop - 1;
+				int mask  = (pat << shift);
+				
+				logger.info("field {}  start {}  stop {}  bits {}", e.name, start, stop, bits);
+				logger.info("type.bitSize {}  shift  {}", type.bitSize, shift);
+				
+				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+				out.println("public static final int %s_SHIFT = %d;", fieldCons, shift);
+			}
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.println();
+			
+			out.println("public static final int NO_VALUE = -1;");
+			out.println();
+			
+			out.println("public static %s value(int value) {", context.name);
+			out.println("return new %s(NO_VALUE, NO_VALUE, value, false);", context.name);
+			out.println("}");
+			out.println("public static %s fetch(int base) {", context.name);
+			out.println("int ra0 = Mesa.fetch(base + 0);");
+			out.println("int ra1 = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);");
+			out.println("return new %s(ra0, ra1, Mesa.readReal32(ra0, ra1), false);", context.name);
+			out.println("}");
+			out.println("public static %s store(int base) {", context.name);
+			out.println("int ra0 = Mesa.store(base + 0);");
+			out.println("int ra1 = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
+			out.println("return new %s(ra0, ra1, Mesa.readReal32(ra0, ra1), true);", context.name);
+			out.println("}");
+			
+			// To reduce type conversion, use type int for value.
+			out.println("private final int     ra0;");
+			out.println("private final int     ra1;");
+			out.println("private final boolean canWrite;");
+			out.println();
+			out.println("public int value;");
+			out.println();
+			
+			out.println("private %s(int ra0, int ra1, int value, boolean canWrite) {", context.name);
+			out.println("this.ra0      = ra0;");
+			out.println("this.ra1      = ra1;");
+			out.println("this.canWrite = canWrite;");
+			out.println("}");
+			out.println();
+			
+			out.println("public char get() {");
+			out.println("return (char)value;");
+			out.println("}");
+			out.println("public void set(char newValue) {");
+			out.println("value = newValue;");
+			out.println("}");
+			out.println("public void write() {");
+			out.println("if (ra0 == NO_VALUE || !canWrite) throw new UnexpectedException(\"Unexpected\");");
+			out.println("Mesa.writeReal32(ra0, ra1, value);");
+			out.println("}");
+			out.println();
+			
+			for(var e: type.fieldList) {
+				String fieldName = StringUtil.toJavaName(e.name);
+				String fieldCons = StringUtil.toJavaConstName(e.name);
+				
+				out.println("public int %s() {", fieldName);
+				out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+				out.println("}");
+				
+				out.println("public void %s(int newValue) {", fieldName);
+				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+				out.println("}");
+				out.println();
+			}
 		} else {
 			// multiple word
 			// FIXME
@@ -248,7 +339,9 @@ public class Generate {
 				out.println();
 				out.println("import yokwe.majuro.UnexpectedException;");
 				out.println("import yokwe.majuro.mesa.Debug;");
+				out.println("import yokwe.majuro.mesa.Memory;");
 				out.println("import yokwe.majuro.mesa.Mesa;");
+
 				out.println();
 				
 				out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
