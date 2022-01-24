@@ -117,6 +117,11 @@ public final class Memory {
 	public void invalidate(int vp) {
 		getCache(vp).clear();
 	}
+	
+	//
+	// low level memory access
+	//   fetch store mapFlag readReal writeReal
+	//
 	// fetch returns real address == offset of realMemory
 	public int fetch(int va) {
 		if (Perf.ENABLED) Perf.memoryFetch++;
@@ -154,7 +159,6 @@ public final class Memory {
 		}
 		return ra | (va & PAGE_MASK);
 	}
-	
 	// store returns real address == offset of realMemory
 	public int store(int va) {
 		if (Perf.ENABLED) Perf.memoryStore++;
@@ -203,6 +207,16 @@ public final class Memory {
 				
 		return ra | (va & PAGE_MASK);
 	}
+	public MapFlag mapFlag(int vp) {
+		return mapFlags[vp];
+	}
+	public char readReal(int ra) {
+		return realMemory[ra];
+	}
+	public void writeReal(int ra, char newValue) {
+		realMemory[ra] = newValue;
+	}
+
 	
 	//
 	// memory read and write
