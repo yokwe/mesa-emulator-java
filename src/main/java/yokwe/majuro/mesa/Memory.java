@@ -114,7 +114,7 @@ public final class Memory {
 	}
 
 
-	public void invalidate(int vp) {
+	public void clearCache(int vp) {
 		getCache(vp).clear();
 	}
 	
@@ -210,13 +210,20 @@ public final class Memory {
 	public MapFlag mapFlag(int vp) {
 		return mapFlags[vp];
 	}
-	public char readReal(int ra) {
+	public char readReal16(int ra) {
 		return realMemory[ra];
 	}
-	public void writeReal(int ra, char newValue) {
+	public void writeReal16(int ra, char newValue) {
 		realMemory[ra] = newValue;
 	}
-
+	public int readReal32(int ra0, int ra1) {
+		return (realMemory[ra1] << WORD_SIZE) | realMemory[ra0];
+	}
+	public void writeReal32(int ra0, int ra1, int newValue) {
+		realMemory[ra0] = (char)newValue;
+		realMemory[ra1] = (char)(newValue >>> 16);
+	}
+	
 	
 	//
 	// memory read and write
@@ -235,20 +242,20 @@ public final class Memory {
 	// significant) sixteen bits occupy the second memory word(at the higher memory address).
 	//         |15    31|0   15|
 	// address  n        n+1    n+2
+	public static boolean isSamePage(int a, int b) {
+		return (a & ~PAGE_MASK) == (b & ~PAGE_MASK);
+	}
 	public int read32(int va) {
-		int p0 = fetch(va);
-		int p1 = p0 + 1;
-		if ((va & PAGE_MASK) == PAGE_MASK) p1 = fetch(va + 1);
+		int ra0 = fetch(va);
+		int ra1 = isSamePage(va, va + 1) ? ra0 + 1 : fetch(va + 1);
 		
-		return (realMemory[p1] << WORD_SIZE) | realMemory[p0];
+		return readReal32(ra0, ra1);
 	}
 	public void write32(int va, int newValue) {
-		int p0 = store(va);
-		int p1 = p0 + 1;
-		if ((va & PAGE_MASK) == PAGE_MASK) p1 = store(va + 1);
+		int ra0 = store(va);
+		int ra1 = isSamePage(va, va + 1) ? ra0 + 1 : store(va + 1);
 		
-		realMemory[p0] = (char)newValue;
-		realMemory[p1] = (char)(newValue >>> 16);
+		writeReal32(ra0, ra1, newValue);
 	}
 	
 	
