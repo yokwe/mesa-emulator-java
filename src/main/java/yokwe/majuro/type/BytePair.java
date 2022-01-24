@@ -21,11 +21,11 @@ public final class BytePair {
     }
     public static BytePair fetch(int base) {
         int ra = Mesa.fetch(base);
-        return new BytePair(ra, Mesa.readReal(ra), false);
+        return new BytePair(ra, Mesa.readReal16(ra), false);
     }
     public static BytePair store(int base) {
         int ra = Mesa.store(base);
-        return new BytePair(ra, Mesa.readReal(ra), true);
+        return new BytePair(ra, Mesa.readReal16(ra), true);
     }
     private final int     ra;
     private final boolean canWrite;
@@ -45,7 +45,7 @@ public final class BytePair {
     }
     public void write() {
         if (ra == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal(ra, (char)value);
+        Mesa.writeReal16(ra, (char)value);
     }
 
     public int left() {

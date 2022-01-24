@@ -31,11 +31,11 @@ public final class BitBltFlags {
     }
     public static BitBltFlags fetch(int base) {
         int ra = Mesa.fetch(base);
-        return new BitBltFlags(ra, Mesa.readReal(ra), false);
+        return new BitBltFlags(ra, Mesa.readReal16(ra), false);
     }
     public static BitBltFlags store(int base) {
         int ra = Mesa.store(base);
-        return new BitBltFlags(ra, Mesa.readReal(ra), true);
+        return new BitBltFlags(ra, Mesa.readReal16(ra), true);
     }
     private final int     ra;
     private final boolean canWrite;
@@ -55,7 +55,7 @@ public final class BitBltFlags {
     }
     public void write() {
         if (ra == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal(ra, (char)value);
+        Mesa.writeReal16(ra, (char)value);
     }
 
     public int direction() {

@@ -23,11 +23,11 @@ public final class GlobalWord {
     }
     public static GlobalWord fetch(int base) {
         int ra = Mesa.fetch(base);
-        return new GlobalWord(ra, Mesa.readReal(ra), false);
+        return new GlobalWord(ra, Mesa.readReal16(ra), false);
     }
     public static GlobalWord store(int base) {
         int ra = Mesa.store(base);
-        return new GlobalWord(ra, Mesa.readReal(ra), true);
+        return new GlobalWord(ra, Mesa.readReal16(ra), true);
     }
     private final int     ra;
     private final boolean canWrite;
@@ -47,7 +47,7 @@ public final class GlobalWord {
     }
     public void write() {
         if (ra == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal(ra, (char)value);
+        Mesa.writeReal16(ra, (char)value);
     }
 
     public int gfi() {

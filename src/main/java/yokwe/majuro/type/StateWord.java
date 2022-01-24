@@ -21,11 +21,11 @@ public final class StateWord {
     }
     public static StateWord fetch(int base) {
         int ra = Mesa.fetch(base);
-        return new StateWord(ra, Mesa.readReal(ra), false);
+        return new StateWord(ra, Mesa.readReal16(ra), false);
     }
     public static StateWord store(int base) {
         int ra = Mesa.store(base);
-        return new StateWord(ra, Mesa.readReal(ra), true);
+        return new StateWord(ra, Mesa.readReal16(ra), true);
     }
     private final int     ra;
     private final boolean canWrite;
@@ -45,7 +45,7 @@ public final class StateWord {
     }
     public void write() {
         if (ra == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal(ra, (char)value);
+        Mesa.writeReal16(ra, (char)value);
     }
 
     public int instByte() {

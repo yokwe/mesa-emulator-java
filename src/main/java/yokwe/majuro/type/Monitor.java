@@ -25,11 +25,11 @@ public final class Monitor {
     }
     public static Monitor fetch(int base) {
         int ra = Mesa.fetch(base);
-        return new Monitor(ra, Mesa.readReal(ra), false);
+        return new Monitor(ra, Mesa.readReal16(ra), false);
     }
     public static Monitor store(int base) {
         int ra = Mesa.store(base);
-        return new Monitor(ra, Mesa.readReal(ra), true);
+        return new Monitor(ra, Mesa.readReal16(ra), true);
     }
     private final int     ra;
     private final boolean canWrite;
@@ -49,7 +49,7 @@ public final class Monitor {
     }
     public void write() {
         if (ra == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal(ra, (char)value);
+        Mesa.writeReal16(ra, (char)value);
     }
 
     public int reserved() {
