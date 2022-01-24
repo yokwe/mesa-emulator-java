@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
 public final class AVItemType {
-    public static final String NAME = "AVItemType";
+    public static final String NAME     = "AVItemType";
+    public static final int    SIZE     =            1;
+    public static final int    BIT_SIZE =            2;
 
     public static final char FRAME    = 0;
     public static final char EMPTY    = 1;

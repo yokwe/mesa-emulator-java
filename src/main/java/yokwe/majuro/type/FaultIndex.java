@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // FaultIndex: TYPE = [0..8);
 public final class FaultIndex {
-    public static final String NAME = "FaultIndex";
+    public static final String NAME     = "FaultIndex";
+    public static final int    SIZE     =            1;
+    public static final int    BIT_SIZE =            3;
 
     public static final long MIN_VALUE  = 0;
     public static final long MAX_VALUE  = 7;

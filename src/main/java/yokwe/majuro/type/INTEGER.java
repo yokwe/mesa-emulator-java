@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // INTEGER: TYPE = [-32768..32767];
 public final class INTEGER {
-    public static final String NAME = "INTEGER";
+    public static final String NAME     = "INTEGER";
+    public static final int    SIZE     =         1;
+    public static final int    BIT_SIZE =        16;
 
     public static final long MIN_VALUE  = Short.MIN_VALUE;
     public static final long MAX_VALUE  = Short.MAX_VALUE;

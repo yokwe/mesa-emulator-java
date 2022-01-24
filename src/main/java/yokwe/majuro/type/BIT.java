@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // BIT: TYPE = [0..2);
 public final class BIT {
-    public static final String NAME = "BIT";
+    public static final String NAME     = "BIT";
+    public static final int    SIZE     =     1;
+    public static final int    BIT_SIZE =     1;
 
     public static final long MIN_VALUE  = 0;
     public static final long MAX_VALUE  = 1;

@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // Direction: TYPE = {forward(0), backward(1)};
 public final class Direction {
-    public static final String NAME = "Direction";
+    public static final String NAME     = "Direction";
+    public static final int    SIZE     =           1;
+    public static final int    BIT_SIZE =           1;
 
     public static final char FORWARD  = 0;
     public static final char BACKWARD = 1;

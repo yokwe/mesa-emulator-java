@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // FSIndex: TYPE = [0..256);
 public final class FSIndex {
-    public static final String NAME = "FSIndex";
+    public static final String NAME     = "FSIndex";
+    public static final int    SIZE     =         1;
+    public static final int    BIT_SIZE =         8;
 
     public static final long MIN_VALUE  =    0;
     public static final long MAX_VALUE  = 0xFF;

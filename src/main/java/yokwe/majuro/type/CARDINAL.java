@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // CARDINAL: TYPE = [0..65535];
 public final class CARDINAL {
-    public static final String NAME = "CARDINAL";
+    public static final String NAME     = "CARDINAL";
+    public static final int    SIZE     =          1;
+    public static final int    BIT_SIZE =         16;
 
     public static final long MIN_VALUE  =      0;
     public static final long MAX_VALUE  = 0xFFFF;

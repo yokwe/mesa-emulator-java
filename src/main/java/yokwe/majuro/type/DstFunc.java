@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // DstFunc: TYPE = {null(0), and(1), or(2), xor(3)};
 public final class DstFunc {
-    public static final String NAME = "DstFunc";
+    public static final String NAME     = "DstFunc";
+    public static final int    SIZE     =         1;
+    public static final int    BIT_SIZE =         2;
 
     public static final char NULL = 0;
     public static final char AND  = 1;

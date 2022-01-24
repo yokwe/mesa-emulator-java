@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // GFTIndex: TYPE = [0..16384);
 public final class GFTIndex {
-    public static final String NAME = "GFTIndex";
+    public static final String NAME     = "GFTIndex";
+    public static final int    SIZE     =          1;
+    public static final int    BIT_SIZE =         14;
 
     public static final long MIN_VALUE  =     0;
     public static final long MAX_VALUE  = 16383;

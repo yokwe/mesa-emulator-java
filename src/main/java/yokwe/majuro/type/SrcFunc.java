@@ -4,7 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // SrcFunc: TYPE = {null(0), complement(1)};
 public final class SrcFunc {
-    public static final String NAME = "SrcFunc";
+    public static final String NAME     = "SrcFunc";
+    public static final int    SIZE     =         1;
+    public static final int    BIT_SIZE =         1;
 
     public static final char NULL       = 0;
     public static final char COMPLEMENT = 1;
