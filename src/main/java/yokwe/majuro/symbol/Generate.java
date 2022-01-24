@@ -140,7 +140,7 @@ public class Generate {
 		out.println("}");
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
-		if (type.bitSize == 16 && type.align == Align.BIT_16) {
+		if (type.bitSize <= 16 && type.align == Align.BIT_16) {
 			// single word bit field
 			out.prepareLayout();
 			for(var e: type.fieldList) {
@@ -153,7 +153,7 @@ public class Generate {
 				
 				int bits  = stop - start + 1;
 				int pat   = (1 << bits) - 1;
-				int shift = 16 - stop - 1;
+				int shift = type.bitSize - stop - 1;
 				int mask  = (pat << shift);
 				
 				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(mask, type.bitSize));
@@ -165,18 +165,28 @@ public class Generate {
 			out.println("public static final int NO_VALUE = -1;");
 			out.println();
 			
+			out.println("public static %s value(int value) {", context.name);
+			out.println("return new %s(NO_VALUE, value, false);", context.name);
+			out.println("}");
+			out.println("public static %s fetch(int base) {", context.name);
+			out.println("int ra = Mesa.fetch(base);");
+			out.println("return new %s(ra, Mesa.readReal(ra), false);", context.name);
+			out.println("}");
+			out.println("public static %s store(int base) {", context.name);
+			out.println("int ra = Mesa.store(base);");
+			out.println("return new %s(ra, Mesa.readReal(ra), true);", context.name);
+			out.println("}");
+			
 			// To reduce type conversion, use type int for value.
-			out.println("public final int base;");
+			out.println("private final int     ra;");
+			out.println("private final boolean canWrite;");
+			out.println();
 			out.println("public int value;");
 			out.println();
 			
-			out.println("public %s(int newValue) {", context.name);
-			out.println("base  = newValue;");
-			out.println("value = 0;");
-			out.println("}");
-			out.println("public %s() {", context.name);
-			out.println("base  = NO_VALUE;");
-			out.println("value = 0;");
+			out.println("private %s(int ra, int value, boolean canWrite) {", context.name);
+			out.println("this.ra       = ra;");
+			out.println("this.canWrite = canWrite;");
 			out.println("}");
 			out.println();
 			
@@ -186,20 +196,11 @@ public class Generate {
 			out.println("public void set(char newValue) {");
 			out.println("value = newValue;");
 			out.println("}");
-			out.println();
-			
-			out.println("public %s read() {", context.name);
-			out.println("if (base == NO_VALUE) throw new UnexpectedException(\"Unexpected\");");
-			out.println("value = Mesa.read16(base);");
-			out.println("return this;");
-			out.println("}");
-			out.println("public %s write() {", context.name);
-			out.println("if (base == NO_VALUE) throw new UnexpectedException(\"Unexpected\");");
-			out.println("Mesa.write16(base, (char)value);");
-			out.println("return this;");
+			out.println("public void write() {");
+			out.println("if (ra == NO_VALUE || !canWrite) throw new UnexpectedException(\"Unexpected\");");
+			out.println("Mesa.writeReal(ra, (char)value);");
 			out.println("}");
 			out.println();
-			
 			
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
