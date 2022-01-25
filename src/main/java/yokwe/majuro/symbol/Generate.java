@@ -334,12 +334,12 @@ public class Generate {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
 			out.println();
 			
-			out.println("public final int base;");
-			out.println();
 
 			out.println("//");
 			out.println("// Constructor");
 			out.println("//");
+			out.println("public final int base;");
+			out.println();
 			out.println("public %s(int value) {", context.name);
 			out.println("this.base = value;");
 			out.println("}");
