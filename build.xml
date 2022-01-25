@@ -17,9 +17,11 @@
 		<delete>
                 	<fileset dir="src/main/java/yokwe/majuro/type">
                                 <exclude name="CheckValue.java"/>
-                                <exclude name="EnumContext.java"/>
+                                <exclude name="ContextEnum.java"/>
+                                <exclude name="ContextSumbrange.java"/>
                                 <exclude name="MemoryAccess.java"/>
-                                <exclude name="SubrangeContext.java"/>
+                                <exclude name="MemoryData16.java"/>
+                                <exclude name="MemoryData32.java"/>
                 	</fileset>
                 </delete>
 	</target>
