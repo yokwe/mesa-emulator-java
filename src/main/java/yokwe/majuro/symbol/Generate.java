@@ -108,7 +108,7 @@ public class Generate {
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeArray type) {
 		// FIXME
-		context.success = false;
+		context.success = false; // FIXME
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeEnum type) {
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
@@ -167,43 +167,55 @@ public class Generate {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			out.println("public static final int NO_VALUE = -1;");
+			out.println("private final MemoryAccess access;");
+			out.println("private final int          ra;");
 			out.println();
-			
-			// To reduce type conversion, use type int for value.
-			out.println("private final int     ra;");
-			out.println("private final boolean canWrite;");
-			out.println();
+			out.println("// NOTE To reduce type conversion, use int for value");
 			out.println("public int value;");
 			out.println();
 			
 			out.println("public %s(char value) {", context.name);
-			out.println("this.ra       = NO_VALUE;");
-			out.println("this.canWrite = false;");
-			out.println("this.value    = value;");
+			out.println("this.access = MemoryAccess.NONE;");
+			out.println("this.ra     = 0;");
+			out.println("this.value  = value;");
 			out.println("}");
-			out.println("public %s(int base, boolean canWrite) {", context.name);
-			out.println("if (canWrite) {");
-			out.println("this.ra       = Mesa.store(base);");
-			out.println("this.canWrite = true;");
-			out.println("} else {");
-			out.println("this.ra       = Mesa.fetch(base);");
-			out.println("this.canWrite = false;");
-			out.println("}");
+			
+			out.println("public %s(int base, MemoryAccess access) {", context.name);
+			out.println("this.access = access;");
+			out.println("switch(access) {");
+			out.println("case NONE:");
+			out.println("this.ra    = 0;");
+			out.println("this.value = 0;");
+			out.println("break;");
+			out.println("case READ:");
+			out.println("this.ra    = Mesa.fetch(base);");
 			out.println("this.value = Mesa.readReal16(ra);");
+			out.println("break;");
+			out.println("case READ_WRITE:");
+			out.println("this.ra    = Mesa.store(base);");
+			out.println("this.value = Mesa.readReal16(ra);");
+			out.println("break;");
+			out.println("case WRITE:");
+			out.println("this.ra    = Mesa.store(base);");
+			out.println("this.value = 0;");
+			out.println("break;");
+			out.println("default:");
+			out.println("throw new UnexpectedException(\"Unexpected\");");
+			out.println("}");
 			out.println("}");
 			out.println();
 			
-			out.println("public char get() {");
-			out.println("return (char)value;");
-			out.println("}");
-			out.println("public void set(char newValue) {");
-			out.println("value = newValue;");
-			out.println("}");
 			out.println("public void write() {");
-			out.println("if (ra == NO_VALUE || !canWrite) throw new UnexpectedException(\"Unexpected\");");
+			out.println("switch(access) {");
+			out.println("case READ_WRITE:");
+			out.println("case WRITE:");
 			out.println("Mesa.writeReal16(ra, (char)value);");
+			out.println("break;");
+			out.println("default:");
+			out.println("throw new UnexpectedException(\"Unexpected\");");
 			out.println("}");
+			out.println("}");
+			out.println();
 			out.println();
 			
 			for(var e: type.fieldList) {
@@ -252,48 +264,62 @@ public class Generate {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			out.println("public static final int NO_VALUE = -1;");
-			out.println();
-			
-			// To reduce type conversion, use type int for value.
-			out.println("private final int     ra0;");
-			out.println("private final int     ra1;");
-			out.println("private final boolean canWrite;");
+			out.println("private final MemoryAccess access;");
+			out.println("private final int          ra0;");
+			out.println("private final int          ra1;");
 			out.println();
 			out.println("public int value;");
 			out.println();
 			
 			out.println("public %s(int value) {", context.name);
-			out.println("this.ra0      = NO_VALUE;");
-			out.println("this.ra1      = NO_VALUE;");
-			out.println("this.canWrite = false;");
-			out.println("this.value    = value;");
+			out.println("this.access = MemoryAccess.NONE;");
+			out.println("this.ra0    = 0;");
+			out.println("this.ra1    = 0;");
+			out.println("this.value  = value;");
 			out.println("}");
-			out.println("public %s(int base, boolean canWrite) {", context.name);
-			out.println("if (canWrite) {");
-			out.println("this.ra0      = Mesa.store(base + 0);");
-			out.println("this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
-			out.println("this.canWrite = true;");
-			out.println("} else {");
-			out.println("this.ra0      = Mesa.fetch(base + 0);");
-			out.println("this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);");
-			out.println("this.canWrite = false;");
+			
+			out.println("public %s(int base, MemoryAccess access) {", context.name);
+			out.println("this.access = access;");
+			out.println("switch(access) {");
+			out.println("case NONE:");
+			out.println("this.ra0   = 0;");
+			out.println("this.ra1   = 0;");
+			out.println("this.value = 0;");
+			out.println("break;");
+			out.println("case READ:");
+			out.println("this.ra0   = Mesa.fetch(base);");
+			out.println("this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);");
+			out.println("this.value = Mesa.readReal32(ra0, ra1);");
+			out.println("break;");
+			out.println("case READ_WRITE:");
+			out.println("this.ra0   = Mesa.store(base);");
+			out.println("this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
+			out.println("this.value = Mesa.readReal32(ra0, ra1);");
+			out.println("break;");
+			out.println("case WRITE:");
+			out.println("this.ra0   = Mesa.store(base);");
+			out.println("this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
+			out.println("this.value = 0;");
+			out.println("break;");
+			out.println("default:");
+			out.println("throw new UnexpectedException(\"Unexpected\");");
 			out.println("}");
-			out.println("this.value = Mesa.readReal32(ra0,  ra1);");
 			out.println("}");
 			out.println();
 			
-			out.println("public int get() {");
-			out.println("return value;");
-			out.println("}");
-			out.println("public void set(int newValue) {");
-			out.println("value = newValue;");
-			out.println("}");
 			out.println("public void write() {");
-			out.println("if (ra0 == NO_VALUE || !canWrite) throw new UnexpectedException(\"Unexpected\");");
+			out.println("switch(access) {");
+			out.println("case READ_WRITE:");
+			out.println("case WRITE:");
 			out.println("Mesa.writeReal32(ra0, ra1, value);");
+			out.println("break;");
+			out.println("default:");
+			out.println("throw new UnexpectedException(\"Unexpected\");");
+			out.println("}");
 			out.println("}");
 			out.println();
+			out.println();
+
 			
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
