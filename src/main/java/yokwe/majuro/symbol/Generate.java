@@ -85,8 +85,11 @@ public class Generate {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-
-	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeBoolean type) {
+	
+	private static void getnConstructor16(Context context, AutoIndentPrintWriter out) {
+		out.println("//");
+		out.println("// Constructor");
+		out.println("//");
 		out.println("public %s(char value) {", context.name);
 		out.println("super(value);");
 		out.println("}");
@@ -94,6 +97,26 @@ public class Generate {
 		out.println("public %s(int base, MemoryAccess access) {", context.name);
 		out.println("super(base, access);");
 		out.println("}");
+	}
+
+	private static void getnConstructor32(Context context, AutoIndentPrintWriter out) {
+		out.println("//");
+		out.println("// Constructor");
+		out.println("//");
+		out.println("public %s(int value) {", context.name);
+		out.println("super(value);");
+		out.println("}");
+		
+		out.println("public %s(int base, MemoryAccess access) {", context.name);
+		out.println("super(base, access);");
+		out.println("}");
+	}
+
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeBoolean type) {
+		//
+		// Generate Constructor
+		//
+		getnConstructor16(context, out);
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeSubrange type) {
 		out.prepareLayout();
@@ -103,38 +126,28 @@ public class Generate {
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
 		
-		out.println("private static final ContextSubrange checkValue = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);");
+		out.println("private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);");
 		out.println();
 		
 		out.println("public static final void checkValue(long value) {");
-		out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);");
+		out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
 		out.println("}");
 		
 		// if this type is unsigned, ...
 		if (0 <= type.minValue) {
 			out.println("public static void checkValue(int value) {");
-			out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(Integer.toUnsignedLong(value));");
+			out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
 			out.println("}");
 		}
+		out.println();
 		
+		//
+		// Generate Constructor
+		//
 		if (type.bitSize <= 16) {
-			out.println();
-			out.println("public %s(char value) {", context.name);
-			out.println("super(value);");
-			out.println("}");
-			
-			out.println("public %s(int base, MemoryAccess access) {", context.name);
-			out.println("super(base, access);");
-			out.println("}");
+			getnConstructor16(context, out);
 		} else if (type.bitSize <= 32) {
-			out.println();
-			out.println("public %s(int value) {", context.name);
-			out.println("super(value);");
-			out.println("}");
-			
-			out.println("public %s(int base, MemoryAccess access) {", context.name);
-			out.println("super(base, access);");
-			out.println("}");
+			getnConstructor32(context, out);
 		} else {
 			logger.error("type {}", type.toMesaType());
 			logger.error("type {}", type);
@@ -149,6 +162,12 @@ public class Generate {
 		String valueList = String.join(", ", itemList);
 		String nameList  = String.join(", ", itemList.stream().map(o -> "\"" + o + "\"").collect(Collectors.toList()));
 
+		//
+		// enum value constants
+		//
+		out.println("//");
+		out.println("// Enum Value Constants");
+		out.println("//");
 		out.prepareLayout();
 		for(var e: type.itemList) {
 			out.println("public static final char %s = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaString(e.value));
@@ -162,36 +181,40 @@ public class Generate {
 		out.println("private static final String[] names = {");
 		out.println("%s", nameList);
 		out.println("};");
-		out.println("private static final ContextEnum checkValue = new ContextEnum(NAME, values, names);");
+		out.println("private static final ContextEnum context = new ContextEnum(NAME, values, names);");
 		out.println();
 
-		out.println("public static final String toString(int value) {");
-		out.println("return checkValue.toString(value);");
-		out.println("}");
-		out.println();
 		out.println("public static final void checkValue(int value) {");
-		out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);");
+		out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
 		out.println("}");
 		out.println();
 		
-		out.println("public %s(char value) {", context.name);
-		out.println("super(value);");
-		out.println("}");
-		
-		out.println("public %s(int base, MemoryAccess access) {", context.name);
-		out.println("super(base, access);");
-		out.println("}");
+		getnConstructor16(context, out);
 		out.println();
 
-//		out.println("@Override");
-//		out.println("public String toString() {", context.name);
-//		out.println("return checkValue.toString(value);");
-//		out.println("}");
-
+		out.println("@Override");
+		out.println("public String toString() {", context.name);
+		out.println("return context.toString(value);");
+		out.println("}");
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
 		if (type.align == Align.BIT_16 && type.bitSize <= 16) {
 			// single word bit field
+			getnConstructor16(context, out);
+			out.println();
+
+			out.println("//");
+			out.println("// Bit Field");
+			out.println("//");
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				out.println("// %s", e.toMesaType());
+			}
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+			out.println();
+			
 			out.prepareLayout();
 			for(var e: type.fieldList) {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
@@ -211,23 +234,16 @@ public class Generate {
 				int shift = type.bitSize - stop - 1;
 				int mask  = (pat << shift);
 				
-				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
-				out.println("public static final int %s_SHIFT = %d;", fieldCons, shift);
+				out.println("private static final int %s_MASK  = %s;",
+					fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			out.println("public %s(char value) {", context.name);
-			out.println("super(value);");
-			out.println("}");
-			
-			out.println("public %s(int base, MemoryAccess access) {", context.name);
-			out.println("super(base, access);");
-			out.println("}");
-			out.println();
-			out.println();
-			
-			out.println("// field access");
+			out.println("//");
+			out.println("// Bit Field Access Methods");
+			out.println("//");
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
@@ -243,6 +259,21 @@ public class Generate {
 			}
 		} else if (type.align == Align.BIT_32 && type.bitSize == 32) {
 			// double word bit field
+			getnConstructor32(context, out);
+			out.println();
+
+			out.println("//");
+			out.println("// Bit Field");
+			out.println("//");
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				out.println("// %s", e.toMesaType());
+			}
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+			out.println();
+
 			out.prepareLayout();
 			for(var e: type.fieldList) {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
@@ -265,23 +296,15 @@ public class Generate {
 				int shift = type.bitSize - stop - 1;
 				int mask  = (pat << shift);
 				
-				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
-				out.println("public static final int %s_SHIFT = %d;", fieldCons, shift);
+				out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			out.println("public %s(int value) {", context.name);
-			out.println("super(value);");
-			out.println("}");
-			
-			out.println("public %s(int base, MemoryAccess access) {", context.name);
-			out.println("super(base, access);");
-			out.println("}");
-			out.println();
-			out.println();
-			
-			out.println("// field access");
+			out.println("//");
+			out.println("// Bit Field Access Methods");
+			out.println("//");
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
@@ -299,14 +322,9 @@ public class Generate {
 			// multiple word
 			// FIXME
 			
-			out.println("public final int base;");
-			out.println();
-
-			out.println("public %s(int value) {", context.name);
-			out.println("this.base = value;");
-			out.println("}");
-			out.println();
-			
+			out.println("//");
+			out.println("// Constants for field access");
+			out.println("//");
 			out.prepareLayout();
 			for(var e: type.fieldList) {
 				String fieldConstName = StringUtil.toJavaConstName(e.name);
@@ -314,6 +332,17 @@ public class Generate {
 				out.println("public static final int OFFSET_%s = %d;  // %s", fieldConstName, e.offset, e.toMesaType());
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+			out.println();
+			
+			out.println("public final int base;");
+			out.println();
+
+			out.println("//");
+			out.println("// Constructor");
+			out.println("//");
+			out.println("public %s(int value) {", context.name);
+			out.println("this.base = value;");
+			out.println("}");
 			out.println();
 			
 			for(TypeRecord.Field field: type.fieldList) {
@@ -335,6 +364,16 @@ public class Generate {
 		}
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
+		switch(type.size) {
+		case SHORT:
+			getnConstructor16(context, out);
+			break;
+		case LONG:
+			getnConstructor32(context, out);
+			break;
+		default:
+			throw new UnexpectedException("Unexpected");
+		}
 		// FIXME
 	}
 	
@@ -400,8 +439,17 @@ public class Generate {
 					
 					// special for TypePointer
 					if (type instanceof TypePointer) {
-						// FIXME
-						parentClass = null;
+						TypePointer typePointer = (TypePointer)type;
+						switch(typePointer.size) {
+						case SHORT:
+							parentClass = "MemoryData16";
+							break;
+						case LONG:
+							parentClass = "MemoryData32";
+							break;
+						default:
+							throw new UnexpectedException("Unexpected");
+						}
 					}
 
 					if (parentClass == null) {
