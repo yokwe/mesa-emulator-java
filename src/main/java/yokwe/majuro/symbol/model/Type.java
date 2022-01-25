@@ -167,4 +167,54 @@ public abstract class Type implements Comparable<Type> {
 			return this;
 		}
 	}
+	
+	public TypeArray toTypeArray() {
+		if (this instanceof TypeArray) {
+			return (TypeArray)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeBoolean toTypeBoolean() {
+		if (this instanceof TypeBoolean) {
+			return (TypeBoolean)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeEnum toTypeEnum() {
+		if (this instanceof TypeEnum) {
+			return (TypeEnum)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypePointer toTypePointer() {
+		if (this instanceof TypePointer) {
+			return (TypePointer)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeRecord toTypeRecord() {
+		if (this instanceof TypeRecord) {
+			return (TypeRecord)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeReference toTypeReference() {
+		if (this instanceof TypeReference) {
+			return (TypeReference)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeSubrange toTypeSubrange() {
+		if (this instanceof TypeSubrange) {
+			return (TypeSubrange)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
 }
