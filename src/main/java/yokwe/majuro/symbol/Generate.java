@@ -59,22 +59,22 @@ public class Generate {
 	private static void genDecl(Context context, AutoIndentPrintWriter out, Type type) {
 		switch(type.kind) {
 		case BOOLEAN:
-			genDecl(context, out, (TypeBoolean)type);
+			genDecl(context, out, type.toTypeBoolean());
 			break;
 		case SUBRANGE:
-			genDecl(context, out, (TypeSubrange)type);
+			genDecl(context, out, type.toTypeSubrange());
 			break;
 		case ARRAY:
-			genDecl(context, out, (TypeArray)type);
+			genDecl(context, out, type.toTypeArray());
 			break;
 		case ENUM:
-			genDecl(context, out, (TypeEnum)type);
+			genDecl(context, out, type.toTypeEnum());
 			break;
 		case RECORD:
-			genDecl(context, out, (TypeRecord)type);
+			genDecl(context, out, type.toTypeRecord());
 			break;
 		case POINTER:
-			genDecl(context, out, (TypePointer)type);
+			genDecl(context, out, type.toTypePointer());
 			break;
 		case REFERENCE:
 			context.success = false;
@@ -86,7 +86,7 @@ public class Generate {
 		}
 	}
 	
-	private static void getnConstructor16(Context context, AutoIndentPrintWriter out) {
+	private static void getConstructor16(Context context, AutoIndentPrintWriter out) {
 		out.println("//");
 		out.println("// Constructor");
 		out.println("//");
@@ -97,9 +97,13 @@ public class Generate {
 		out.println("public %s(int base, MemoryAccess access) {", context.name);
 		out.println("super(base, access);");
 		out.println("}");
+		
+		out.println("public %s(int base, int index, MemoryAccess access) {", context.name);
+		out.println("super(base + (WORD_SIZE * index), access);");
+		out.println("}");
 	}
 
-	private static void getnConstructor32(Context context, AutoIndentPrintWriter out) {
+	private static void getConstructor32(Context context, AutoIndentPrintWriter out) {
 		out.println("//");
 		out.println("// Constructor");
 		out.println("//");
@@ -110,13 +114,17 @@ public class Generate {
 		out.println("public %s(int base, MemoryAccess access) {", context.name);
 		out.println("super(base, access);");
 		out.println("}");
+		
+		out.println("public %s(int base, int index, MemoryAccess access) {", context.name);
+		out.println("super(base + (WORD_SIZE * index), access);");
+		out.println("}");
 	}
 
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeBoolean type) {
 		//
 		// Generate Constructor
 		//
-		getnConstructor16(context, out);
+		getConstructor16(context, out);
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeSubrange type) {
 		out.prepareLayout();
@@ -145,9 +153,9 @@ public class Generate {
 		// Generate Constructor
 		//
 		if (type.bitSize <= 16) {
-			getnConstructor16(context, out);
+			getConstructor16(context, out);
 		} else if (type.bitSize <= 32) {
-			getnConstructor32(context, out);
+			getConstructor32(context, out);
 		} else {
 			logger.error("type {}", type.toMesaType());
 			logger.error("type {}", type);
@@ -156,6 +164,16 @@ public class Generate {
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeArray type) {
 		// FIXME
+		Type element = type.arrayElement.getRealType();
+		out.prepareLayout();
+		out.println("public static final int INDEX_MIN_VALUE   = %d;", type.minValue);
+		out.println("public static final int INDEX_MAX_VALUE   = %d;", type.maxValue);
+		out.println("public static final int ELEMENT_WORD_SIZE = %d;", element.wordSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+		
+		// FIXME use original Context of index
+		out.println("public static final ContextSubrange context = new ContextSubrange(\"%s#index\", INDEX_MIN_VALUE, INDEX_MAX_VALUE);", type.name);
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeEnum type) {
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
@@ -189,7 +207,7 @@ public class Generate {
 		out.println("}");
 		out.println();
 		
-		getnConstructor16(context, out);
+		getConstructor16(context, out);
 		out.println();
 
 		out.println("@Override");
@@ -200,7 +218,7 @@ public class Generate {
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
 		if (type.align == Align.BIT_16 && type.bitSize <= 16) {
 			// single word bit field
-			getnConstructor16(context, out);
+			getConstructor16(context, out);
 			out.println();
 
 			out.println("//");
@@ -259,7 +277,7 @@ public class Generate {
 			}
 		} else if (type.align == Align.BIT_32 && type.bitSize == 32) {
 			// double word bit field
-			getnConstructor32(context, out);
+			getConstructor32(context, out);
 			out.println();
 
 			out.println("//");
@@ -340,8 +358,11 @@ public class Generate {
 			out.println("//");
 			out.println("public final int base;");
 			out.println();
-			out.println("public %s(int value) {", context.name);
-			out.println("this.base = value;");
+			out.println("public %s(int base) {", context.name);
+			out.println("this.base = base;");
+			out.println("}");
+			out.println("public %s(int base, int index) {", context.name);
+			out.println("this.base = base + (WORD_SIZE * index);");
 			out.println("}");
 			out.println();
 			
@@ -366,10 +387,10 @@ public class Generate {
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
 		switch(type.size) {
 		case SHORT:
-			getnConstructor16(context, out);
+			getConstructor16(context, out);
 			break;
 		case LONG:
-			getnConstructor32(context, out);
+			getConstructor32(context, out);
 			break;
 		default:
 			throw new UnexpectedException("Unexpected");
@@ -420,7 +441,7 @@ public class Generate {
 					if (type instanceof TypeRecord) {
 						parentClass = null;
 						
-						TypeRecord typeRecrd = (TypeRecord)type;
+						TypeRecord typeRecrd = type.toTypeRecord();
 						if (typeRecrd.align == Align.BIT_16) {
 							if (typeRecrd.bitSize <= 16) {
 								parentClass = "MemoryData16";
@@ -439,7 +460,7 @@ public class Generate {
 					
 					// special for TypePointer
 					if (type instanceof TypePointer) {
-						TypePointer typePointer = (TypePointer)type;
+						TypePointer typePointer = type.toTypePointer();
 						switch(typePointer.size) {
 						case SHORT:
 							parentClass = "MemoryData16";
@@ -461,9 +482,9 @@ public class Generate {
 				//
 				
 				out.prepareLayout();
-				out.println("public static final String NAME     = \"%s\";", context.name);
-				out.println("public static final int    SIZE     = %d;",     type.wordSize());
-				out.println("public static final int    BIT_SIZE = %d;",     type.bitSize);
+				out.println("public static final String NAME      = \"%s\";", context.name);
+				out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+				out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize);
 				out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 				out.println();
 				
