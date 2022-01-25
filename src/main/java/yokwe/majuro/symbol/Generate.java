@@ -18,6 +18,7 @@ import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Align;
+import yokwe.majuro.symbol.model.TypeRecord.Field;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
@@ -142,7 +143,6 @@ public class Generate {
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeArray type) {
 		// FIXME
-		context.success = false; // FIXME
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeEnum type) {
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
@@ -265,9 +265,6 @@ public class Generate {
 				int shift = type.bitSize - stop - 1;
 				int mask  = (pat << shift);
 				
-				logger.info("field {}  start {}  stop {}  bits {}", e.name, start, stop, bits);
-				logger.info("type.bitSize {}  shift  {}", type.bitSize, shift);
-				
 				out.println("public static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
 				out.println("public static final int %s_SHIFT = %d;", fieldCons, shift);
 			}
@@ -301,12 +298,44 @@ public class Generate {
 		} else {
 			// multiple word
 			// FIXME
-			context.success = false; // FIXME
+			
+			out.println("public final int base;");
+			out.println();
+
+			out.println("public %s(int value) {", context.name);
+			out.println("this.base = value;");
+			out.println("}");
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				String fieldConstName = StringUtil.toJavaConstName(e.name);
+				
+				out.println("public static final int OFFSET_%s = %d;  // %s", fieldConstName, e.offset, e.toMesaType());
+			}
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+			out.println();
+			
+			for(TypeRecord.Field field: type.fieldList) {
+				if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
+					//
+				} else if (field.startBit == Field.NO_VALUE) {
+					//
+				} else {
+					logger.warn("Field is not aligned");
+					logger.warn("  name {}.{}", type.name, field.name);
+					logger.warn("  mesa {}", field.toMesaType());
+					continue;
+				}
+				
+				// FIXME
+
+			}
+
 		}
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
 		// FIXME
-		context.success = false; // FIXME
 	}
 	
 	private static void genDecl(Context context, AutoIndentPrintWriter out, Constant cons) {
@@ -321,7 +350,7 @@ public class Generate {
 			if (decl instanceof DeclType) {
 				Type type = ((DeclType)decl).value;
 				
-				logger.info("{}: TYPE = {};", type.name, type.toMesaType());
+//				logger.info("{}: TYPE = {};", type.name, type.toMesaType());
 				
 				out.println("package %s;", PACKAGE);
 				out.println();
@@ -339,13 +368,13 @@ public class Generate {
 					String parentClass = null;
 					
 					if (type.bitSize == 0) {
-						//
+						// OK
 					} else if (type.bitSize <= 16) {
 						parentClass = "MemoryData16";
 					} else if (type.bitSize <= 32) {
 						parentClass = "MemoryData32";
 					} else {
-						//
+						// OK
 					}
 					
 					// special for TypeRecord
@@ -353,12 +382,26 @@ public class Generate {
 						parentClass = null;
 						
 						TypeRecord typeRecrd = (TypeRecord)type;
-						if (typeRecrd.align == Align.BIT_16 && typeRecrd.bitSize <= 16) {
-							parentClass = "MemoryData16";
+						if (typeRecrd.align == Align.BIT_16) {
+							if (typeRecrd.bitSize <= 16) {
+								parentClass = "MemoryData16";
+							} else {
+								// multiple word
+								// OK
+							}
+						} else if (typeRecrd.align == Align.BIT_32)  {
+							if (typeRecrd.bitSize == 32) {
+								parentClass = "MemoryData32";
+							} else {
+								throw new UnexpectedException("Unexpected");
+							}
 						}
-						if (typeRecrd.align == Align.BIT_32 && typeRecrd.bitSize == 32)  {
-							parentClass = "MemoryData32";
-						}
+					}
+					
+					// special for TypePointer
+					if (type instanceof TypePointer) {
+						// FIXME
+						parentClass = null;
 					}
 
 					if (parentClass == null) {
@@ -371,7 +414,7 @@ public class Generate {
 				
 				out.prepareLayout();
 				out.println("public static final String NAME     = \"%s\";", context.name);
-				out.println("public static final int    SIZE     = %d;",     (type.bitSize + WORD_BITS - 1) / WORD_BITS);
+				out.println("public static final int    SIZE     = %d;",     type.wordSize());
 				out.println("public static final int    BIT_SIZE = %d;",     type.bitSize);
 				out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 				out.println();
@@ -380,7 +423,7 @@ public class Generate {
 			} else if (decl instanceof DeclConstant) {
 				Constant cons = ((DeclConstant)decl).value;
 				
-				logger.info("{}: {} = {};", cons.name, cons.type.toMesaType(), cons.valueString);
+//				logger.info("{}: {} = {};", cons.name, cons.type.toMesaType(), cons.valueString);
 				
 				out.println("package %s;", PACKAGE);
 				out.println();
@@ -394,8 +437,6 @@ public class Generate {
 				out.println();
 
 				genDecl(context, out, cons);
-				
-				context.success = false; // FIXME
 			} else {
 				throw new UnexpectedException("Unexpected");
 			}
