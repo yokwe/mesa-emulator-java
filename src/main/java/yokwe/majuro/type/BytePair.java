@@ -1,10 +1,5 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
-
 // BytePair: TYPE = RECORD[left (0:0..7): BYTE, right (0:8..15): BYTE];
 public final class BytePair extends MemoryData16 {
     public static final String NAME     = "BytePair";

@@ -1,9 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
 
 // Priority: TYPE = [0..7];
 public final class Priority extends MemoryData16 {

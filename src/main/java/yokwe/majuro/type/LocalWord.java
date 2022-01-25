@@ -1,10 +1,5 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
-
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
 public final class LocalWord extends MemoryData16 {
     public static final String NAME     = "LocalWord";

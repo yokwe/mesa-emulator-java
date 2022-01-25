@@ -1,9 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
 
 // INTEGER: TYPE = [-32768..32767];
 public final class INTEGER extends MemoryData16 {

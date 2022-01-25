@@ -1,9 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
 
 // AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
 public final class AVItemType extends MemoryData16 {

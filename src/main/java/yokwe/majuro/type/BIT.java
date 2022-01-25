@@ -1,9 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
 
 // BIT: TYPE = [0..2);
 public final class BIT extends MemoryData16 {

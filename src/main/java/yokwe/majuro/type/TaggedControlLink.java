@@ -1,10 +1,5 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
-
 // TaggedControlLink: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
 public final class TaggedControlLink extends MemoryData32 {
     public static final String NAME     = "TaggedControlLink";
