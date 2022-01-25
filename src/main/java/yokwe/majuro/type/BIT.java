@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // BIT: TYPE = [0..2);
 public final class BIT extends MemoryData16 {
-    public static final String NAME     = "BIT";
-    public static final int    SIZE     =     1;
-    public static final int    BIT_SIZE =     1;
+    public static final String NAME      = "BIT";
+    public static final int    WORD_SIZE =     1;
+    public static final int    BIT_SIZE  =     1;
 
     public static final long MIN_VALUE  = 0;
     public static final long MAX_VALUE  = 1;
@@ -29,5 +29,8 @@ public final class BIT extends MemoryData16 {
     }
     public BIT(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public BIT(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 }

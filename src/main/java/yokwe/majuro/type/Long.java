@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // Long: TYPE = RECORD32[low (0:0..15): UNSPECIFIED, high (1:0..15): UNSPECIFIED];
 public final class Long extends MemoryData32 {
-    public static final String NAME     = "Long";
-    public static final int    SIZE     =      2;
-    public static final int    BIT_SIZE =     32;
+    public static final String NAME      = "Long";
+    public static final int    WORD_SIZE =      2;
+    public static final int    BIT_SIZE  =     32;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class Long extends MemoryData32 {
     }
     public Long(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public Long(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

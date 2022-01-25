@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // BitBltArg: TYPE = RECORD[dst (0:0..47): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
 public final class BitBltArg {
-    public static final String NAME     = "BitBltArg";
-    public static final int    SIZE     =          12;
-    public static final int    BIT_SIZE =         192;
+    public static final String NAME      = "BitBltArg";
+    public static final int    WORD_SIZE =          12;
+    public static final int    BIT_SIZE  =         192;
 
     //
     // Constants for field access
@@ -18,13 +18,16 @@ public final class BitBltArg {
     public static final int OFFSET_FLAGS    = 10; // flags    (10:0..15): BitBltFlags
     public static final int OFFSET_RESERVED = 11; // reserved (11:0..15): UNSPECIFIED
 
-    public final int base;
-
     //
     // Constructor
     //
-    public BitBltArg(int value) {
-        this.base = value;
+    public final int base;
+
+    public BitBltArg(int base) {
+        this.base = base;
+    }
+    public BitBltArg(int base, int index) {
+        this.base = base + (WORD_SIZE * index);
     }
 
 }

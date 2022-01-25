@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
 public final class LinkType extends MemoryData16 {
-    public static final String NAME     = "LinkType";
-    public static final int    SIZE     =          1;
-    public static final int    BIT_SIZE =          2;
+    public static final String NAME      = "LinkType";
+    public static final int    WORD_SIZE =          1;
+    public static final int    BIT_SIZE  =          2;
 
     //
     // Enum Value Constants
@@ -36,6 +36,9 @@ public final class LinkType extends MemoryData16 {
     }
     public LinkType(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public LinkType(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     @Override

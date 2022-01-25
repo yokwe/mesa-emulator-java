@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOLEAN, abort (0:15..15): BOOLEAN];
 public final class PsbFlags extends MemoryData16 {
-    public static final String NAME     = "PsbFlags";
-    public static final int    SIZE     =          1;
-    public static final int    BIT_SIZE =         16;
+    public static final String NAME      = "PsbFlags";
+    public static final int    WORD_SIZE =          1;
+    public static final int    BIT_SIZE  =         16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class PsbFlags extends MemoryData16 {
     }
     public PsbFlags(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public PsbFlags(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

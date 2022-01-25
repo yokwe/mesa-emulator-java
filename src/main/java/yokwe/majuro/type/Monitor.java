@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // Monitor: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..14): UNSPECIFIED, locked (0:15..15): BOOLEAN];
 public final class Monitor extends MemoryData16 {
-    public static final String NAME     = "Monitor";
-    public static final int    SIZE     =         1;
-    public static final int    BIT_SIZE =        16;
+    public static final String NAME      = "Monitor";
+    public static final int    WORD_SIZE =         1;
+    public static final int    BIT_SIZE  =        16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class Monitor extends MemoryData16 {
     }
     public Monitor(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public Monitor(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

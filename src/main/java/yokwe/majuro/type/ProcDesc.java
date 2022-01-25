@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // ProcDesc: TYPE = RECORD32[taggedGF (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
 public final class ProcDesc extends MemoryData32 {
-    public static final String NAME     = "ProcDesc";
-    public static final int    SIZE     =          2;
-    public static final int    BIT_SIZE =         32;
+    public static final String NAME      = "ProcDesc";
+    public static final int    WORD_SIZE =          2;
+    public static final int    BIT_SIZE  =         32;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class ProcDesc extends MemoryData32 {
     }
     public ProcDesc(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public ProcDesc(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

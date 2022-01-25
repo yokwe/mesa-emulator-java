@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOLEAN, permanent (0:14..14): BOOLEAN, preempted (0:15..15): BOOLEAN];
 public final class PsbLink extends MemoryData16 {
-    public static final String NAME     = "PsbLink";
-    public static final int    SIZE     =         1;
-    public static final int    BIT_SIZE =        16;
+    public static final String NAME      = "PsbLink";
+    public static final int    WORD_SIZE =         1;
+    public static final int    BIT_SIZE  =        16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class PsbLink extends MemoryData16 {
     }
     public PsbLink(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public PsbLink(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

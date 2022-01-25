@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // ProcessDataArea: TYPE = RECORD[ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector, block (0): ARRAY PsbIndex OF ProcessStateBlock];
 public final class ProcessDataArea {
-    public static final String NAME     = "ProcessDataArea";
-    public static final int    SIZE     =                64;
-    public static final int    BIT_SIZE =              1024;
+    public static final String NAME      = "ProcessDataArea";
+    public static final int    WORD_SIZE =                64;
+    public static final int    BIT_SIZE  =              1024;
 
     //
     // Constants for field access
@@ -18,13 +18,16 @@ public final class ProcessDataArea {
     public static final int OFFSET_FAULT     = 48; // fault     (48:0..255): FaultVector
     public static final int OFFSET_BLOCK     =  0; // block     (0):         ARRAY PsbIndex OF ProcessStateBlock
 
-    public final int base;
-
     //
     // Constructor
     //
-    public ProcessDataArea(int value) {
-        this.base = value;
+    public final int base;
+
+    public ProcessDataArea(int base) {
+        this.base = base;
+    }
+    public ProcessDataArea(int base, int index) {
+        this.base = base + (WORD_SIZE * index);
     }
 
 }

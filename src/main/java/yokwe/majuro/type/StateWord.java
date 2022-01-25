@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
 public final class StateWord extends MemoryData16 {
-    public static final String NAME     = "StateWord";
-    public static final int    SIZE     =           1;
-    public static final int    BIT_SIZE =          16;
+    public static final String NAME      = "StateWord";
+    public static final int    WORD_SIZE =           1;
+    public static final int    BIT_SIZE  =          16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class StateWord extends MemoryData16 {
     }
     public StateWord(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public StateWord(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

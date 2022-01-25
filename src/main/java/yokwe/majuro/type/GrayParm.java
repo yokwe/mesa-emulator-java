@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // GrayParm: TYPE = RECORD[reserved (0:0..3): NIBBLE, yOffset (0:4..7): NIBBLE, widthMinusOne (0:8..11): NIBBLE, heightMinusOne (0:12..15): NIBBLE];
 public final class GrayParm extends MemoryData16 {
-    public static final String NAME     = "GrayParm";
-    public static final int    SIZE     =          1;
-    public static final int    BIT_SIZE =         16;
+    public static final String NAME      = "GrayParm";
+    public static final int    WORD_SIZE =          1;
+    public static final int    BIT_SIZE  =         16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class GrayParm extends MemoryData16 {
     }
     public GrayParm(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public GrayParm(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

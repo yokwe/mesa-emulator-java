@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // BitBltFlags: TYPE = RECORD[direction (0:0..0): Direction, disjoint (0:1..1): BOOLEAN, disjointItems (0:2..2): BOOLEAN, gray (0:3..3): BOOLEAN, srcFunc (0:4..4): SrcFunc, dstFunc (0:5..6): DstFunc, reserved (0:7..15): UNSPECIFIED];
 public final class BitBltFlags extends MemoryData16 {
-    public static final String NAME     = "BitBltFlags";
-    public static final int    SIZE     =             1;
-    public static final int    BIT_SIZE =            16;
+    public static final String NAME      = "BitBltFlags";
+    public static final int    WORD_SIZE =             1;
+    public static final int    BIT_SIZE  =            16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class BitBltFlags extends MemoryData16 {
     }
     public BitBltFlags(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public BitBltFlags(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

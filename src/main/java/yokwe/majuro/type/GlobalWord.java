@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // GlobalWord: TYPE = RECORD[gfi (0:0..13): GFTIndex, trapxfers (0:14..14): BOOLEAN, codelinks (0:15..15): BOOLEAN];
 public final class GlobalWord extends MemoryData16 {
-    public static final String NAME     = "GlobalWord";
-    public static final int    SIZE     =            1;
-    public static final int    BIT_SIZE =           16;
+    public static final String NAME      = "GlobalWord";
+    public static final int    WORD_SIZE =            1;
+    public static final int    BIT_SIZE  =           16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class GlobalWord extends MemoryData16 {
     }
     public GlobalWord(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public GlobalWord(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

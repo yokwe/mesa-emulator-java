@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
 public final class LocalWord extends MemoryData16 {
-    public static final String NAME     = "LocalWord";
-    public static final int    SIZE     =           1;
-    public static final int    BIT_SIZE =          16;
+    public static final String NAME      = "LocalWord";
+    public static final int    WORD_SIZE =           1;
+    public static final int    BIT_SIZE  =          16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class LocalWord extends MemoryData16 {
     }
     public LocalWord(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public LocalWord(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

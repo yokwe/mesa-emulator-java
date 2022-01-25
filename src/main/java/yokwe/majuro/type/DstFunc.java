@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // DstFunc: TYPE = {null(0), and(1), or(2), xor(3)};
 public final class DstFunc extends MemoryData16 {
-    public static final String NAME     = "DstFunc";
-    public static final int    SIZE     =         1;
-    public static final int    BIT_SIZE =         2;
+    public static final String NAME      = "DstFunc";
+    public static final int    WORD_SIZE =         1;
+    public static final int    BIT_SIZE  =         2;
 
     //
     // Enum Value Constants
@@ -36,6 +36,9 @@ public final class DstFunc extends MemoryData16 {
     }
     public DstFunc(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public DstFunc(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     @Override

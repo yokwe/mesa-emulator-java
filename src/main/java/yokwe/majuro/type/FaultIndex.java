@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // FaultIndex: TYPE = [0..8);
 public final class FaultIndex extends MemoryData16 {
-    public static final String NAME     = "FaultIndex";
-    public static final int    SIZE     =            1;
-    public static final int    BIT_SIZE =            3;
+    public static final String NAME      = "FaultIndex";
+    public static final int    WORD_SIZE =            1;
+    public static final int    BIT_SIZE  =            3;
 
     public static final long MIN_VALUE  = 0;
     public static final long MAX_VALUE  = 7;
@@ -29,5 +29,8 @@ public final class FaultIndex extends MemoryData16 {
     }
     public FaultIndex(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public FaultIndex(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 }

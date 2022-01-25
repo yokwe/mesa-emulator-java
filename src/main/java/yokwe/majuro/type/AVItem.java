@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType];
 public final class AVItem extends MemoryData16 {
-    public static final String NAME     = "AVItem";
-    public static final int    SIZE     =        1;
-    public static final int    BIT_SIZE =       16;
+    public static final String NAME      = "AVItem";
+    public static final int    WORD_SIZE =        1;
+    public static final int    BIT_SIZE  =       16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class AVItem extends MemoryData16 {
     }
     public AVItem(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public AVItem(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

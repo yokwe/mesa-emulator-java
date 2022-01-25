@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // Direction: TYPE = {forward(0), backward(1)};
 public final class Direction extends MemoryData16 {
-    public static final String NAME     = "Direction";
-    public static final int    SIZE     =           1;
-    public static final int    BIT_SIZE =           1;
+    public static final String NAME      = "Direction";
+    public static final int    WORD_SIZE =           1;
+    public static final int    BIT_SIZE  =           1;
 
     //
     // Enum Value Constants
@@ -34,6 +34,9 @@ public final class Direction extends MemoryData16 {
     }
     public Direction(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public Direction(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     @Override

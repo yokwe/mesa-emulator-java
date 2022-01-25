@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
 public final class AVItemType extends MemoryData16 {
-    public static final String NAME     = "AVItemType";
-    public static final int    SIZE     =            1;
-    public static final int    BIT_SIZE =            2;
+    public static final String NAME      = "AVItemType";
+    public static final int    WORD_SIZE =            1;
+    public static final int    BIT_SIZE  =            2;
 
     //
     // Enum Value Constants
@@ -36,6 +36,9 @@ public final class AVItemType extends MemoryData16 {
     }
     public AVItemType(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public AVItemType(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     @Override

@@ -4,9 +4,9 @@ import yokwe.majuro.mesa.Debug;
 
 // XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
 public final class XferType extends MemoryData16 {
-    public static final String NAME     = "XferType";
-    public static final int    SIZE     =          1;
-    public static final int    BIT_SIZE =          3;
+    public static final String NAME      = "XferType";
+    public static final int    WORD_SIZE =          1;
+    public static final int    BIT_SIZE  =          3;
 
     //
     // Enum Value Constants
@@ -40,6 +40,9 @@ public final class XferType extends MemoryData16 {
     }
     public XferType(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public XferType(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     @Override

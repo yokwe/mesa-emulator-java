@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
 public final class Queue extends MemoryData16 {
-    public static final String NAME     = "Queue";
-    public static final int    SIZE     =       1;
-    public static final int    BIT_SIZE =      16;
+    public static final String NAME      = "Queue";
+    public static final int    WORD_SIZE =       1;
+    public static final int    BIT_SIZE  =      16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class Queue extends MemoryData16 {
     }
     public Queue(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public Queue(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //

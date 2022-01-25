@@ -2,9 +2,9 @@ package yokwe.majuro.type;
 
 // BytePair: TYPE = RECORD[left (0:0..7): BYTE, right (0:8..15): BYTE];
 public final class BytePair extends MemoryData16 {
-    public static final String NAME     = "BytePair";
-    public static final int    SIZE     =          1;
-    public static final int    BIT_SIZE =         16;
+    public static final String NAME      = "BytePair";
+    public static final int    WORD_SIZE =          1;
+    public static final int    BIT_SIZE  =         16;
 
     //
     // Constructor
@@ -14,6 +14,9 @@ public final class BytePair extends MemoryData16 {
     }
     public BytePair(int base, MemoryAccess access) {
         super(base, access);
+    }
+    public BytePair(int base, int index, MemoryAccess access) {
+        super(base + (WORD_SIZE * index), access);
     }
 
     //
