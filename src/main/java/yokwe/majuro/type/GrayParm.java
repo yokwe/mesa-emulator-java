@@ -18,39 +18,52 @@ public final class GrayParm {
     public static final int HEIGHT_MINUS_ONE_MASK  = 0b0000_0000_0000_1111;
     public static final int HEIGHT_MINUS_ONE_SHIFT =                     0;
 
-    public static final int NO_VALUE = -1;
+    private final MemoryAccess access;
+    private final int          ra;
 
-    private final int     ra;
-    private final boolean canWrite;
-
+    // NOTE To reduce type conversion, use int for value
     public int value;
 
     public GrayParm(char value) {
-        this.ra       = NO_VALUE;
-        this.canWrite = false;
-        this.value    = value;
+        this.access = MemoryAccess.NONE;
+        this.ra     = 0;
+        this.value  = value;
     }
-    public GrayParm(int base, boolean canWrite) {
-        if (canWrite) {
-            this.ra       = Mesa.store(base);
-            this.canWrite = true;
-        } else {
-            this.ra       = Mesa.fetch(base);
-            this.canWrite = false;
+    public GrayParm(int base, MemoryAccess access) {
+        this.access = access;
+        switch(access) {
+        case NONE:
+            this.ra    = 0;
+            this.value = 0;
+            break;
+        case READ:
+            this.ra    = Mesa.fetch(base);
+            this.value = Mesa.readReal16(ra);
+            break;
+        case READ_WRITE:
+            this.ra    = Mesa.store(base);
+            this.value = Mesa.readReal16(ra);
+            break;
+        case WRITE:
+            this.ra    = Mesa.store(base);
+            this.value = 0;
+            break;
+        default:
+            throw new UnexpectedException("Unexpected");
         }
-        this.value = Mesa.readReal16(ra);
     }
 
-    public char get() {
-        return (char)value;
-    }
-    public void set(char newValue) {
-        value = newValue;
-    }
     public void write() {
-        if (ra == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal16(ra, (char)value);
+        switch(access) {
+        case READ_WRITE:
+        case WRITE:
+            Mesa.writeReal16(ra, (char)value);
+            break;
+        default:
+            throw new UnexpectedException("Unexpected");
+        }
     }
+
 
     public int reserved() {
         return (value & RESERVED_MASK) >> RESERVED_SHIFT;

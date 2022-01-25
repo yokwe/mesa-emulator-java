@@ -17,43 +17,57 @@ public final class TaggedControlLink {
     public static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
     public static final int FILL_SHIFT =                                        16;
 
-    public static final int NO_VALUE = -1;
-
-    private final int     ra0;
-    private final int     ra1;
-    private final boolean canWrite;
+    private final MemoryAccess access;
+    private final int          ra0;
+    private final int          ra1;
 
     public int value;
 
     public TaggedControlLink(int value) {
-        this.ra0      = NO_VALUE;
-        this.ra1      = NO_VALUE;
-        this.canWrite = false;
-        this.value    = value;
+        this.access = MemoryAccess.NONE;
+        this.ra0    = 0;
+        this.ra1    = 0;
+        this.value  = value;
     }
-    public TaggedControlLink(int base, boolean canWrite) {
-        if (canWrite) {
-            this.ra0      = Mesa.store(base + 0);
-            this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.store(base + 1);
-            this.canWrite = true;
-        } else {
-            this.ra0      = Mesa.fetch(base + 0);
-            this.ra1      = Memory.isSamePage(base,  base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);
-            this.canWrite = false;
+    public TaggedControlLink(int base, MemoryAccess access) {
+        this.access = access;
+        switch(access) {
+        case NONE:
+            this.ra0   = 0;
+            this.ra1   = 0;
+            this.value = 0;
+            break;
+        case READ:
+            this.ra0   = Mesa.fetch(base);
+            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);
+            this.value = Mesa.readReal32(ra0, ra1);
+            break;
+        case READ_WRITE:
+            this.ra0   = Mesa.store(base);
+            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);
+            this.value = Mesa.readReal32(ra0, ra1);
+            break;
+        case WRITE:
+            this.ra0   = Mesa.store(base);
+            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);
+            this.value = 0;
+            break;
+        default:
+            throw new UnexpectedException("Unexpected");
         }
-        this.value = Mesa.readReal32(ra0,  ra1);
     }
 
-    public int get() {
-        return value;
-    }
-    public void set(int newValue) {
-        value = newValue;
-    }
     public void write() {
-        if (ra0 == NO_VALUE || !canWrite) throw new UnexpectedException("Unexpected");
-        Mesa.writeReal32(ra0, ra1, value);
+        switch(access) {
+        case READ_WRITE:
+        case WRITE:
+            Mesa.writeReal32(ra0, ra1, value);
+            break;
+        default:
+            throw new UnexpectedException("Unexpected");
+        }
     }
+
 
     public int data() {
         return (value & DATA_MASK) >> DATA_SHIFT;

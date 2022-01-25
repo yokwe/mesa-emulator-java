@@ -1,6 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // LONG CARDINAL: TYPE = [0..4294967295];
 public final class LONG_CARDINAL {

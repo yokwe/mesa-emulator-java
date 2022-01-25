@@ -1,6 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // CARDINAL: TYPE = [0..65535];
 public final class CARDINAL {
