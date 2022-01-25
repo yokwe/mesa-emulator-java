@@ -12,6 +12,17 @@
         <path id="target.jar">
                 <pathelement location="${maven.build.dir}/${maven.build.finalName}.jar" />
         </path>
+	
+	<target name="clean-yokwe-majuro-type">
+		<delete>
+                	<fileset dir="src/main/java/yokwe/majuro/type">
+                                <exclude name="CheckValue.java"/>
+                                <exclude name="EnumContext.java"/>
+                                <exclude name="MemoryAccess.java"/>
+                                <exclude name="SubrangeContext.java"/>
+                	</fileset>
+                </delete>
+	</target>
 
         <!-- study -->
         <target name="study-T104">
