@@ -44,7 +44,7 @@ public abstract class Type implements Comparable<Type> {
 		logger.error("  value bin {}", Long.toBinaryString(value));
 		throw new UnexpectedException("Unexpected");
 	}
-
+	
 	public static Map<String, Type> map = new TreeMap<>();
 	//                name
 	private static void add(Type type) {
