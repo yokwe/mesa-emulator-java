@@ -6,15 +6,9 @@ public final class GrayParm extends MemoryData16 {
     public static final int    SIZE     =          1;
     public static final int    BIT_SIZE =         16;
 
-    public static final int RESERVED_MASK          = 0b1111_0000_0000_0000;
-    public static final int RESERVED_SHIFT         =                    12;
-    public static final int Y_OFFSET_MASK          = 0b0000_1111_0000_0000;
-    public static final int Y_OFFSET_SHIFT         =                     8;
-    public static final int WIDTH_MINUS_ONE_MASK   = 0b0000_0000_1111_0000;
-    public static final int WIDTH_MINUS_ONE_SHIFT  =                     4;
-    public static final int HEIGHT_MINUS_ONE_MASK  = 0b0000_0000_0000_1111;
-    public static final int HEIGHT_MINUS_ONE_SHIFT =                     0;
-
+    //
+    // Constructor
+    //
     public GrayParm(char value) {
         super(value);
     }
@@ -22,8 +16,27 @@ public final class GrayParm extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // reserved       (0:0..3):   NIBBLE
+    // yOffset        (0:4..7):   NIBBLE
+    // widthMinusOne  (0:8..11):  NIBBLE
+    // heightMinusOne (0:12..15): NIBBLE
+
+    private static final int RESERVED_MASK          = 0b1111_0000_0000_0000;
+    private static final int RESERVED_SHIFT         =                    12;
+    private static final int Y_OFFSET_MASK          = 0b0000_1111_0000_0000;
+    private static final int Y_OFFSET_SHIFT         =                     8;
+    private static final int WIDTH_MINUS_ONE_MASK   = 0b0000_0000_1111_0000;
+    private static final int WIDTH_MINUS_ONE_SHIFT  =                     4;
+    private static final int HEIGHT_MINUS_ONE_MASK  = 0b0000_0000_0000_1111;
+    private static final int HEIGHT_MINUS_ONE_SHIFT =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int reserved() {
         return (value & RESERVED_MASK) >> RESERVED_SHIFT;
     }

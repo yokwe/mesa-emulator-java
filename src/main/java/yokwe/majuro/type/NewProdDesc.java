@@ -6,11 +6,9 @@ public final class NewProdDesc extends MemoryData32 {
     public static final int    SIZE     =             2;
     public static final int    BIT_SIZE =            32;
 
-    public static final int TAGGED_GFI_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-    public static final int TAGGED_GFI_SHIFT =                                         0;
-    public static final int PC_MASK          = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    public static final int PC_SHIFT         =                                        16;
-
+    //
+    // Constructor
+    //
     public NewProdDesc(int value) {
         super(value);
     }
@@ -18,8 +16,21 @@ public final class NewProdDesc extends MemoryData32 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // taggedGFI (0:0..15): UNSPECIFIED
+    // pc        (1:0..15): CARDINAL
+
+    private static final int TAGGED_GFI_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+    private static final int TAGGED_GFI_SHIFT =                                         0;
+    private static final int PC_MASK          = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int PC_SHIFT         =                                        16;
+
+    //
+    // Bit Field Access Methods
+    //
     public int taggedGFI() {
         return (value & TAGGED_GFI_MASK) >> TAGGED_GFI_SHIFT;
     }

@@ -6,11 +6,9 @@ public final class AVItem extends MemoryData16 {
     public static final int    SIZE     =        1;
     public static final int    BIT_SIZE =       16;
 
-    public static final int DATA_MASK  = 0b1111_1111_1111_1100;
-    public static final int DATA_SHIFT =                     2;
-    public static final int TAG_MASK   = 0b0000_0000_0000_0011;
-    public static final int TAG_SHIFT  =                     0;
-
+    //
+    // Constructor
+    //
     public AVItem(char value) {
         super(value);
     }
@@ -18,8 +16,21 @@ public final class AVItem extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // data (0:0..13):  UNSPECIFIED
+    // tag  (0:14..15): AVItemType
+
+    private static final int DATA_MASK  = 0b1111_1111_1111_1100;
+    private static final int DATA_SHIFT =                     2;
+    private static final int TAG_MASK   = 0b0000_0000_0000_0011;
+    private static final int TAG_SHIFT  =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int data() {
         return (value & DATA_MASK) >> DATA_SHIFT;
     }

@@ -6,11 +6,9 @@ public final class Long extends MemoryData32 {
     public static final int    SIZE     =      2;
     public static final int    BIT_SIZE =     32;
 
-    public static final int LOW_MASK   = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-    public static final int LOW_SHIFT  =                                         0;
-    public static final int HIGH_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    public static final int HIGH_SHIFT =                                        16;
-
+    //
+    // Constructor
+    //
     public Long(int value) {
         super(value);
     }
@@ -18,8 +16,21 @@ public final class Long extends MemoryData32 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // low  (0:0..15): UNSPECIFIED
+    // high (1:0..15): UNSPECIFIED
+
+    private static final int LOW_MASK   = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+    private static final int LOW_SHIFT  =                                         0;
+    private static final int HIGH_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int HIGH_SHIFT =                                        16;
+
+    //
+    // Bit Field Access Methods
+    //
     public int low() {
         return (value & LOW_MASK) >> LOW_SHIFT;
     }

@@ -6,12 +6,9 @@ public final class ProcessDataArea {
     public static final int    SIZE     =                64;
     public static final int    BIT_SIZE =              1024;
 
-    public final int base;
-
-    public ProcessDataArea(int value) {
-        this.base = value;
-    }
-
+    //
+    // Constants for field access
+    //
     public static final int OFFSET_READY     =  0; // ready     (0:0..15):   Queue
     public static final int OFFSET_COUNT     =  1; // count     (1:0..15):   CARDINAL
     public static final int OFFSET_UNUSED    =  2; // unused    (2:0..15):   UNSPECIFIED
@@ -20,5 +17,14 @@ public final class ProcessDataArea {
     public static final int OFFSET_INTERRUPT = 16; // interrupt (16:0..511): InterruptVector
     public static final int OFFSET_FAULT     = 48; // fault     (48:0..255): FaultVector
     public static final int OFFSET_BLOCK     =  0; // block     (0):         ARRAY PsbIndex OF ProcessStateBlock
+
+    public final int base;
+
+    //
+    // Constructor
+    //
+    public ProcessDataArea(int value) {
+        this.base = value;
+    }
 
 }

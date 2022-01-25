@@ -6,11 +6,9 @@ public final class FieldSpec extends MemoryData16 {
     public static final int    SIZE     =           1;
     public static final int    BIT_SIZE =           8;
 
-    public static final int POS_MASK   = 0b1111_0000;
-    public static final int POS_SHIFT  =           4;
-    public static final int SIZE_MASK  = 0b0000_1111;
-    public static final int SIZE_SHIFT =           0;
-
+    //
+    // Constructor
+    //
     public FieldSpec(char value) {
         super(value);
     }
@@ -18,8 +16,21 @@ public final class FieldSpec extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // pos  (0:0..3): NIBBLE
+    // size (0:4..7): NIBBLE
+
+    private static final int POS_MASK   = 0b1111_0000;
+    private static final int POS_SHIFT  =           4;
+    private static final int SIZE_MASK  = 0b0000_1111;
+    private static final int SIZE_SHIFT =           0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int pos() {
         return (value & POS_MASK) >> POS_SHIFT;
     }

@@ -6,17 +6,9 @@ public final class PsbLink extends MemoryData16 {
     public static final int    SIZE     =         1;
     public static final int    BIT_SIZE =        16;
 
-    public static final int PRIORITY_MASK   = 0b1110_0000_0000_0000;
-    public static final int PRIORITY_SHIFT  =                    13;
-    public static final int NEXT_MASK       = 0b0001_1111_1111_1000;
-    public static final int NEXT_SHIFT      =                     3;
-    public static final int FAILED_MASK     = 0b0000_0000_0000_0100;
-    public static final int FAILED_SHIFT    =                     2;
-    public static final int PERMANENT_MASK  = 0b0000_0000_0000_0010;
-    public static final int PERMANENT_SHIFT =                     1;
-    public static final int PREEMPTED_MASK  = 0b0000_0000_0000_0001;
-    public static final int PREEMPTED_SHIFT =                     0;
-
+    //
+    // Constructor
+    //
     public PsbLink(char value) {
         super(value);
     }
@@ -24,8 +16,30 @@ public final class PsbLink extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // priority  (0:0..2):   Priority
+    // next      (0:3..12):  PsbIndex
+    // failed    (0:13..13): BOOLEAN
+    // permanent (0:14..14): BOOLEAN
+    // preempted (0:15..15): BOOLEAN
+
+    private static final int PRIORITY_MASK   = 0b1110_0000_0000_0000;
+    private static final int PRIORITY_SHIFT  =                    13;
+    private static final int NEXT_MASK       = 0b0001_1111_1111_1000;
+    private static final int NEXT_SHIFT      =                     3;
+    private static final int FAILED_MASK     = 0b0000_0000_0000_0100;
+    private static final int FAILED_SHIFT    =                     2;
+    private static final int PERMANENT_MASK  = 0b0000_0000_0000_0010;
+    private static final int PERMANENT_SHIFT =                     1;
+    private static final int PREEMPTED_MASK  = 0b0000_0000_0000_0001;
+    private static final int PREEMPTED_SHIFT =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int priority() {
         return (value & PRIORITY_MASK) >> PRIORITY_SHIFT;
     }

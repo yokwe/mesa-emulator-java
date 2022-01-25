@@ -6,13 +6,9 @@ public final class TaggedControlLink extends MemoryData32 {
     public static final int    SIZE     =                   2;
     public static final int    BIT_SIZE =                  32;
 
-    public static final int DATA_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1100;
-    public static final int DATA_SHIFT =                                         2;
-    public static final int TAG_MASK   = 0b0000_0000_0000_0000_0000_0000_0000_0011;
-    public static final int TAG_SHIFT  =                                         0;
-    public static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    public static final int FILL_SHIFT =                                        16;
-
+    //
+    // Constructor
+    //
     public TaggedControlLink(int value) {
         super(value);
     }
@@ -20,8 +16,24 @@ public final class TaggedControlLink extends MemoryData32 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // data (0:0..13):  UNSPECIFIED
+    // tag  (0:14..15): LinkType
+    // fill (1:0..15):  UNSPECIFIED
+
+    private static final int DATA_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1100;
+    private static final int DATA_SHIFT =                                         2;
+    private static final int TAG_MASK   = 0b0000_0000_0000_0000_0000_0000_0000_0011;
+    private static final int TAG_SHIFT  =                                         0;
+    private static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int FILL_SHIFT =                                        16;
+
+    //
+    // Bit Field Access Methods
+    //
     public int data() {
         return (value & DATA_MASK) >> DATA_SHIFT;
     }

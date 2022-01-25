@@ -6,11 +6,9 @@ public final class NibblePair extends MemoryData16 {
     public static final int    SIZE     =            1;
     public static final int    BIT_SIZE =            8;
 
-    public static final int LEFT_MASK   = 0b1111_0000;
-    public static final int LEFT_SHIFT  =           4;
-    public static final int RIGHT_MASK  = 0b0000_1111;
-    public static final int RIGHT_SHIFT =           0;
-
+    //
+    // Constructor
+    //
     public NibblePair(char value) {
         super(value);
     }
@@ -18,8 +16,21 @@ public final class NibblePair extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // left  (0:0..3): NIBBLE
+    // right (0:4..7): NIBBLE
+
+    private static final int LEFT_MASK   = 0b1111_0000;
+    private static final int LEFT_SHIFT  =           4;
+    private static final int RIGHT_MASK  = 0b0000_1111;
+    private static final int RIGHT_SHIFT =           0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int left() {
         return (value & LEFT_MASK) >> LEFT_SHIFT;
     }

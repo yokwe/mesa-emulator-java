@@ -6,12 +6,9 @@ public final class BitBltArg {
     public static final int    SIZE     =          12;
     public static final int    BIT_SIZE =         192;
 
-    public final int base;
-
-    public BitBltArg(int value) {
-        this.base = value;
-    }
-
+    //
+    // Constants for field access
+    //
     public static final int OFFSET_DST      =  0; // dst      (0:0..47):  BitAddress
     public static final int OFFSET_DST_BPL  =  3; // dstBpl   (3:0..15):  INTEGER
     public static final int OFFSET_SRC      =  4; // src      (4:0..47):  BitAddress
@@ -20,5 +17,14 @@ public final class BitBltArg {
     public static final int OFFSET_HEIGHT   =  9; // height   (9:0..15):  CARDINAL
     public static final int OFFSET_FLAGS    = 10; // flags    (10:0..15): BitBltFlags
     public static final int OFFSET_RESERVED = 11; // reserved (11:0..15): UNSPECIFIED
+
+    public final int base;
+
+    //
+    // Constructor
+    //
+    public BitBltArg(int value) {
+        this.base = value;
+    }
 
 }

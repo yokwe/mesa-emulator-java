@@ -8,6 +8,9 @@ public final class XferType extends MemoryData16 {
     public static final int    SIZE     =          1;
     public static final int    BIT_SIZE =          3;
 
+    //
+    // Enum Value Constants
+    //
     public static final char RETURN         = 0;
     public static final char CALL           = 1;
     public static final char LOCAL_CALL     = 2;
@@ -23,16 +26,15 @@ public final class XferType extends MemoryData16 {
     private static final String[] names = {
         "RETURN", "CALL", "LOCAL_CALL", "PART", "XFER", "TRAP", "PROCESS_SWITCH", "UNUSED"
     };
-    private static final ContextEnum checkValue = new ContextEnum(NAME, values, names);
-
-    public static final String toString(int value) {
-        return checkValue.toString(value);
-    }
+    private static final ContextEnum context = new ContextEnum(NAME, values, names);
 
     public static final void checkValue(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);
+        if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
 
+    //
+    // Constructor
+    //
     public XferType(char value) {
         super(value);
     }
@@ -40,4 +42,8 @@ public final class XferType extends MemoryData16 {
         super(base, access);
     }
 
+    @Override
+    public String toString() {
+        return context.toString(value);
+    }
 }

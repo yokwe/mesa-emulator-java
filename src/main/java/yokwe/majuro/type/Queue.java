@@ -6,13 +6,9 @@ public final class Queue extends MemoryData16 {
     public static final int    SIZE     =       1;
     public static final int    BIT_SIZE =      16;
 
-    public static final int RESERVED_1_MASK  = 0b1110_0000_0000_0000;
-    public static final int RESERVED_1_SHIFT =                    13;
-    public static final int TAIL_MASK        = 0b0001_1111_1111_1000;
-    public static final int TAIL_SHIFT       =                     3;
-    public static final int RESERVED_2_MASK  = 0b0000_0000_0000_0111;
-    public static final int RESERVED_2_SHIFT =                     0;
-
+    //
+    // Constructor
+    //
     public Queue(char value) {
         super(value);
     }
@@ -20,8 +16,24 @@ public final class Queue extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // reserved1 (0:0..2):   UNSPECIFIED
+    // tail      (0:3..12):  PsbIndex
+    // reserved2 (0:13..15): UNSPECIFIED
+
+    private static final int RESERVED_1_MASK  = 0b1110_0000_0000_0000;
+    private static final int RESERVED_1_SHIFT =                    13;
+    private static final int TAIL_MASK        = 0b0001_1111_1111_1000;
+    private static final int TAIL_SHIFT       =                     3;
+    private static final int RESERVED_2_MASK  = 0b0000_0000_0000_0111;
+    private static final int RESERVED_2_SHIFT =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int reserved1() {
         return (value & RESERVED_1_MASK) >> RESERVED_1_SHIFT;
     }

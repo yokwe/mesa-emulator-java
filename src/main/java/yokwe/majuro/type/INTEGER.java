@@ -12,12 +12,15 @@ public final class INTEGER extends MemoryData16 {
     public static final long MAX_VALUE  = Short.MAX_VALUE;
     public static final long SIZE_VALUE =           65536;
 
-    private static final ContextSubrange checkValue = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
+    private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
 
     public static final void checkValue(long value) {
-        if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);
+        if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
 
+    //
+    // Constructor
+    //
     public INTEGER(char value) {
         super(value);
     }

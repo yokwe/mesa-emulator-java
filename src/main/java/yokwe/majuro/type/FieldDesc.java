@@ -6,11 +6,9 @@ public final class FieldDesc extends MemoryData16 {
     public static final int    SIZE     =           1;
     public static final int    BIT_SIZE =          16;
 
-    public static final int OFFSET_MASK  = 0b1111_1111_0000_0000;
-    public static final int OFFSET_SHIFT =                     8;
-    public static final int FIELD_MASK   = 0b0000_0000_1111_1111;
-    public static final int FIELD_SHIFT  =                     0;
-
+    //
+    // Constructor
+    //
     public FieldDesc(char value) {
         super(value);
     }
@@ -18,8 +16,21 @@ public final class FieldDesc extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // offset (0:0..7):  BYTE
+    // field  (0:8..15): FieldSpec
+
+    private static final int OFFSET_MASK  = 0b1111_1111_0000_0000;
+    private static final int OFFSET_SHIFT =                     8;
+    private static final int FIELD_MASK   = 0b0000_0000_1111_1111;
+    private static final int FIELD_SHIFT  =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int offset() {
         return (value & OFFSET_MASK) >> OFFSET_SHIFT;
     }

@@ -6,13 +6,9 @@ public final class GlobalWord extends MemoryData16 {
     public static final int    SIZE     =            1;
     public static final int    BIT_SIZE =           16;
 
-    public static final int GFI_MASK        = 0b1111_1111_1111_1100;
-    public static final int GFI_SHIFT       =                     2;
-    public static final int TRAPXFERS_MASK  = 0b0000_0000_0000_0010;
-    public static final int TRAPXFERS_SHIFT =                     1;
-    public static final int CODELINKS_MASK  = 0b0000_0000_0000_0001;
-    public static final int CODELINKS_SHIFT =                     0;
-
+    //
+    // Constructor
+    //
     public GlobalWord(char value) {
         super(value);
     }
@@ -20,8 +16,24 @@ public final class GlobalWord extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // gfi       (0:0..13):  GFTIndex
+    // trapxfers (0:14..14): BOOLEAN
+    // codelinks (0:15..15): BOOLEAN
+
+    private static final int GFI_MASK        = 0b1111_1111_1111_1100;
+    private static final int GFI_SHIFT       =                     2;
+    private static final int TRAPXFERS_MASK  = 0b0000_0000_0000_0010;
+    private static final int TRAPXFERS_SHIFT =                     1;
+    private static final int CODELINKS_MASK  = 0b0000_0000_0000_0001;
+    private static final int CODELINKS_SHIFT =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int gfi() {
         return (value & GFI_MASK) >> GFI_SHIFT;
     }

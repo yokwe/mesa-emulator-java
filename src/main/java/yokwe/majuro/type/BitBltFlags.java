@@ -6,21 +6,9 @@ public final class BitBltFlags extends MemoryData16 {
     public static final int    SIZE     =             1;
     public static final int    BIT_SIZE =            16;
 
-    public static final int DIRECTION_MASK       = 0b1000_0000_0000_0000;
-    public static final int DIRECTION_SHIFT      =                    15;
-    public static final int DISJOINT_MASK        = 0b0100_0000_0000_0000;
-    public static final int DISJOINT_SHIFT       =                    14;
-    public static final int DISJOINT_ITEMS_MASK  = 0b0010_0000_0000_0000;
-    public static final int DISJOINT_ITEMS_SHIFT =                    13;
-    public static final int GRAY_MASK            = 0b0001_0000_0000_0000;
-    public static final int GRAY_SHIFT           =                    12;
-    public static final int SRC_FUNC_MASK        = 0b0000_1000_0000_0000;
-    public static final int SRC_FUNC_SHIFT       =                    11;
-    public static final int DST_FUNC_MASK        = 0b0000_0110_0000_0000;
-    public static final int DST_FUNC_SHIFT       =                     9;
-    public static final int RESERVED_MASK        = 0b0000_0001_1111_1111;
-    public static final int RESERVED_SHIFT       =                     0;
-
+    //
+    // Constructor
+    //
     public BitBltFlags(char value) {
         super(value);
     }
@@ -28,8 +16,36 @@ public final class BitBltFlags extends MemoryData16 {
         super(base, access);
     }
 
+    //
+    // Bit Field
+    //
 
-    // field access
+    // direction     (0:0..0):  Direction
+    // disjoint      (0:1..1):  BOOLEAN
+    // disjointItems (0:2..2):  BOOLEAN
+    // gray          (0:3..3):  BOOLEAN
+    // srcFunc       (0:4..4):  SrcFunc
+    // dstFunc       (0:5..6):  DstFunc
+    // reserved      (0:7..15): UNSPECIFIED
+
+    private static final int DIRECTION_MASK       = 0b1000_0000_0000_0000;
+    private static final int DIRECTION_SHIFT      =                    15;
+    private static final int DISJOINT_MASK        = 0b0100_0000_0000_0000;
+    private static final int DISJOINT_SHIFT       =                    14;
+    private static final int DISJOINT_ITEMS_MASK  = 0b0010_0000_0000_0000;
+    private static final int DISJOINT_ITEMS_SHIFT =                    13;
+    private static final int GRAY_MASK            = 0b0001_0000_0000_0000;
+    private static final int GRAY_SHIFT           =                    12;
+    private static final int SRC_FUNC_MASK        = 0b0000_1000_0000_0000;
+    private static final int SRC_FUNC_SHIFT       =                    11;
+    private static final int DST_FUNC_MASK        = 0b0000_0110_0000_0000;
+    private static final int DST_FUNC_SHIFT       =                     9;
+    private static final int RESERVED_MASK        = 0b0000_0001_1111_1111;
+    private static final int RESERVED_SHIFT       =                     0;
+
+    //
+    // Bit Field Access Methods
+    //
     public int direction() {
         return (value & DIRECTION_MASK) >> DIRECTION_SHIFT;
     }
