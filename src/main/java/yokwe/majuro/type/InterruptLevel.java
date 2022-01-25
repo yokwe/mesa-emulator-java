@@ -3,7 +3,7 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // InterruptLevel: TYPE = [0..16);
-public final class InterruptLevel {
+public final class InterruptLevel extends MemoryData16 {
     public static final String NAME     = "InterruptLevel";
     public static final int    SIZE     =                1;
     public static final int    BIT_SIZE =                4;
@@ -12,12 +12,19 @@ public final class InterruptLevel {
     public static final long MAX_VALUE  = 15;
     public static final long SIZE_VALUE = 16;
 
-    private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);
+    private static final ContextSubrange checkValue = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
 
     public static final void checkValue(long value) {
         if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);
     }
     public static void checkValue(int value) {
         if (Debug.ENABLE_CHECK_VALUE) checkValue.check(Integer.toUnsignedLong(value));
+    }
+
+    public InterruptLevel(char value) {
+        super(value);
+    }
+    public InterruptLevel(int base, MemoryAccess access) {
+        super(base, access);
     }
 }

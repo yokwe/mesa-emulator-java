@@ -1,12 +1,9 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
 
 // BYTE: TYPE = [0..256);
-public final class BYTE {
+public final class BYTE extends MemoryData16 {
     public static final String NAME     = "BYTE";
     public static final int    SIZE     =      1;
     public static final int    BIT_SIZE =      8;
@@ -15,12 +12,19 @@ public final class BYTE {
     public static final long MAX_VALUE  = 0xFF;
     public static final long SIZE_VALUE =  256;
 
-    private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);
+    private static final ContextSubrange checkValue = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
 
     public static final void checkValue(long value) {
         if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);
     }
     public static void checkValue(int value) {
         if (Debug.ENABLE_CHECK_VALUE) checkValue.check(Integer.toUnsignedLong(value));
+    }
+
+    public BYTE(char value) {
+        super(value);
+    }
+    public BYTE(int base, MemoryAccess access) {
+        super(base, access);
     }
 }

@@ -2,14 +2,14 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.UnexpectedException;
 
-public final class SubrangeContext implements CheckValue {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SubrangeContext.class);
+public final class ContextSubrange implements CheckValue {
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ContextSubrange.class);
 
 	public final String name;
 	public final long   minValue;
 	public final long   maxValue;
 	
-	public SubrangeContext(String name, long minValue, long maxValue) {
+	public ContextSubrange(String name, long minValue, long maxValue) {
 		this.name     = name;
 		this.minValue = minValue;
 		this.maxValue = maxValue;

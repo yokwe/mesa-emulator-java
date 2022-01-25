@@ -1,10 +1,7 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Mesa;
-
 // NibblePair: TYPE = RECORD[left (0:0..3): NIBBLE, right (0:4..7): NIBBLE];
-public final class NibblePair {
+public final class NibblePair extends MemoryData16 {
     public static final String NAME     = "NibblePair";
     public static final int    SIZE     =            1;
     public static final int    BIT_SIZE =            8;
@@ -14,53 +11,15 @@ public final class NibblePair {
     public static final int RIGHT_MASK  = 0b0000_1111;
     public static final int RIGHT_SHIFT =           0;
 
-    private final MemoryAccess access;
-    private final int          ra;
-
-    // NOTE To reduce type conversion, use int for value
-    public int value;
-
     public NibblePair(char value) {
-        this.access = MemoryAccess.NONE;
-        this.ra     = 0;
-        this.value  = value;
+        super(value);
     }
     public NibblePair(int base, MemoryAccess access) {
-        this.access = access;
-        switch(access) {
-        case NONE:
-            this.ra    = 0;
-            this.value = 0;
-            break;
-        case READ:
-            this.ra    = Mesa.fetch(base);
-            this.value = Mesa.readReal16(ra);
-            break;
-        case READ_WRITE:
-            this.ra    = Mesa.store(base);
-            this.value = Mesa.readReal16(ra);
-            break;
-        case WRITE:
-            this.ra    = Mesa.store(base);
-            this.value = 0;
-            break;
-        default:
-            throw new UnexpectedException("Unexpected");
-        }
-    }
-
-    public void write() {
-        switch(access) {
-        case READ_WRITE:
-        case WRITE:
-            Mesa.writeReal16(ra, (char)value);
-            break;
-        default:
-            throw new UnexpectedException("Unexpected");
-        }
+        super(base, access);
     }
 
 
+    // field access
     public int left() {
         return (value & LEFT_MASK) >> LEFT_SHIFT;
     }

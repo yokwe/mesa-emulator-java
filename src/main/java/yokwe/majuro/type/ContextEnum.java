@@ -2,14 +2,14 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.UnexpectedException;
 
-public final class EnumContext implements CheckValue {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EnumContext.class);
+public final class ContextEnum implements CheckValue {
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ContextEnum.class);
 
 	public final String   name;
 	public final int[]    validValues;
 	public final String[] validNames;
 	
-	public EnumContext(String name, int[] validValues, String[] validNames) {
+	public ContextEnum(String name, int[] validValues, String[] validNames) {
 		this.name        = name;
 		this.validValues = validValues;
 		this.validNames  = validNames;

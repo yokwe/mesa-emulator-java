@@ -1,13 +1,9 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Memory;
-import yokwe.majuro.mesa.Mesa;
-
 // NewProdDesc: TYPE = RECORD32[taggedGFI (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
-public final class NewProdDesc {
+public final class NewProdDesc extends MemoryData32 {
     public static final String NAME     = "NewProdDesc";
-    public static final int    SIZE     =             1;
+    public static final int    SIZE     =             2;
     public static final int    BIT_SIZE =            32;
 
     public static final int TAGGED_GFI_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
@@ -15,58 +11,15 @@ public final class NewProdDesc {
     public static final int PC_MASK          = 0b1111_1111_1111_1111_0000_0000_0000_0000;
     public static final int PC_SHIFT         =                                        16;
 
-    private final MemoryAccess access;
-    private final int          ra0;
-    private final int          ra1;
-
-    public int value;
-
     public NewProdDesc(int value) {
-        this.access = MemoryAccess.NONE;
-        this.ra0    = 0;
-        this.ra1    = 0;
-        this.value  = value;
+        super(value);
     }
     public NewProdDesc(int base, MemoryAccess access) {
-        this.access = access;
-        switch(access) {
-        case NONE:
-            this.ra0   = 0;
-            this.ra1   = 0;
-            this.value = 0;
-            break;
-        case READ:
-            this.ra0   = Mesa.fetch(base);
-            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);
-            this.value = Mesa.readReal32(ra0, ra1);
-            break;
-        case READ_WRITE:
-            this.ra0   = Mesa.store(base);
-            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);
-            this.value = Mesa.readReal32(ra0, ra1);
-            break;
-        case WRITE:
-            this.ra0   = Mesa.store(base);
-            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);
-            this.value = 0;
-            break;
-        default:
-            throw new UnexpectedException("Unexpected");
-        }
-    }
-
-    public void write() {
-        switch(access) {
-        case READ_WRITE:
-        case WRITE:
-            Mesa.writeReal32(ra0, ra1, value);
-            break;
-        default:
-            throw new UnexpectedException("Unexpected");
-        }
+        super(base, access);
     }
 
 
+    // field access
     public int taggedGFI() {
         return (value & TAGGED_GFI_MASK) >> TAGGED_GFI_SHIFT;
     }
