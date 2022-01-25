@@ -1,5 +1,7 @@
 package yokwe.majuro.symbol.model;
 
+import static yokwe.majuro.mesa.Constant.WORD_BITS;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -111,6 +113,10 @@ public abstract class Type implements Comparable<Type> {
 	public final String name;
 	public final Kind   kind;
 	
+	public String getJavaName() {
+		return StringUtil.toJavaName(name);
+	}
+	
 	public boolean needsFix;
 	abstract public void fix();
 	
@@ -128,6 +134,10 @@ public abstract class Type implements Comparable<Type> {
 			throw new UnexpectedException("Unexpected");
 		}
 		return bitSize;
+	}
+	
+	public int wordSize() {
+		return (bitSize + WORD_BITS - 1) / WORD_BITS;
 	}
 	
 	protected Type(String name, Kind kind) {
