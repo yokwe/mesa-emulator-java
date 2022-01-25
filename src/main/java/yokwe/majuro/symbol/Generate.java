@@ -13,6 +13,7 @@ import yokwe.majuro.symbol.model.Symbol.DeclConstant;
 import yokwe.majuro.symbol.model.Symbol.DeclType;
 import yokwe.majuro.symbol.model.Type;
 import yokwe.majuro.symbol.model.TypeArray;
+import yokwe.majuro.symbol.model.TypeBoolean;
 import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
@@ -57,7 +58,7 @@ public class Generate {
 	private static void genDecl(Context context, AutoIndentPrintWriter out, Type type) {
 		switch(type.kind) {
 		case BOOLEAN:
-			context.success = false;
+			genDecl(context, out, (TypeBoolean)type);
 			break;
 		case SUBRANGE:
 			genDecl(context, out, (TypeSubrange)type);
@@ -83,7 +84,16 @@ public class Generate {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	
+
+	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeBoolean type) {
+		out.println("public %s(char value) {", context.name);
+		out.println("super(value);");
+		out.println("}");
+		
+		out.println("public %s(int base, MemoryAccess access) {", context.name);
+		out.println("super(base, access);");
+		out.println("}");
+	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeSubrange type) {
 		out.prepareLayout();
 		out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
@@ -92,7 +102,7 @@ public class Generate {
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
 		
-		out.println("private static final SubrangeContext checkValue = new SubrangeContext(NAME, MIN_VALUE, MAX_VALUE);");
+		out.println("private static final ContextSubrange checkValue = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);");
 		out.println();
 		
 		out.println("public static final void checkValue(long value) {");
@@ -104,6 +114,30 @@ public class Generate {
 			out.println("public static void checkValue(int value) {");
 			out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(Integer.toUnsignedLong(value));");
 			out.println("}");
+		}
+		
+		if (type.bitSize <= 16) {
+			out.println();
+			out.println("public %s(char value) {", context.name);
+			out.println("super(value);");
+			out.println("}");
+			
+			out.println("public %s(int base, MemoryAccess access) {", context.name);
+			out.println("super(base, access);");
+			out.println("}");
+		} else if (type.bitSize <= 32) {
+			out.println();
+			out.println("public %s(int value) {", context.name);
+			out.println("super(value);");
+			out.println("}");
+			
+			out.println("public %s(int base, MemoryAccess access) {", context.name);
+			out.println("super(base, access);");
+			out.println("}");
+		} else {
+			logger.error("type {}", type.toMesaType());
+			logger.error("type {}", type);
+			throw new UnexpectedException("Unexpected");
 		}
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeArray type) {
@@ -128,7 +162,7 @@ public class Generate {
 		out.println("private static final String[] names = {");
 		out.println("%s", nameList);
 		out.println("};");
-		out.println("private static final EnumContext checkValue = new EnumContext(NAME, values, names);");
+		out.println("private static final ContextEnum checkValue = new ContextEnum(NAME, values, names);");
 		out.println();
 
 		out.println("public static final String toString(int value) {");
@@ -138,9 +172,25 @@ public class Generate {
 		out.println("public static final void checkValue(int value) {");
 		out.println("if (Debug.ENABLE_CHECK_VALUE) checkValue.check(value);");
 		out.println("}");
+		out.println();
+		
+		out.println("public %s(char value) {", context.name);
+		out.println("super(value);");
+		out.println("}");
+		
+		out.println("public %s(int base, MemoryAccess access) {", context.name);
+		out.println("super(base, access);");
+		out.println("}");
+		out.println();
+
+//		out.println("@Override");
+//		out.println("public String toString() {", context.name);
+//		out.println("return checkValue.toString(value);");
+//		out.println("}");
+
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
-		if (type.bitSize <= 16 && type.align == Align.BIT_16) {
+		if (type.align == Align.BIT_16 && type.bitSize <= 16) {
 			// single word bit field
 			out.prepareLayout();
 			for(var e: type.fieldList) {
@@ -167,57 +217,17 @@ public class Generate {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			out.println("private final MemoryAccess access;");
-			out.println("private final int          ra;");
-			out.println();
-			out.println("// NOTE To reduce type conversion, use int for value");
-			out.println("public int value;");
-			out.println();
-			
 			out.println("public %s(char value) {", context.name);
-			out.println("this.access = MemoryAccess.NONE;");
-			out.println("this.ra     = 0;");
-			out.println("this.value  = value;");
+			out.println("super(value);");
 			out.println("}");
 			
 			out.println("public %s(int base, MemoryAccess access) {", context.name);
-			out.println("this.access = access;");
-			out.println("switch(access) {");
-			out.println("case NONE:");
-			out.println("this.ra    = 0;");
-			out.println("this.value = 0;");
-			out.println("break;");
-			out.println("case READ:");
-			out.println("this.ra    = Mesa.fetch(base);");
-			out.println("this.value = Mesa.readReal16(ra);");
-			out.println("break;");
-			out.println("case READ_WRITE:");
-			out.println("this.ra    = Mesa.store(base);");
-			out.println("this.value = Mesa.readReal16(ra);");
-			out.println("break;");
-			out.println("case WRITE:");
-			out.println("this.ra    = Mesa.store(base);");
-			out.println("this.value = 0;");
-			out.println("break;");
-			out.println("default:");
-			out.println("throw new UnexpectedException(\"Unexpected\");");
-			out.println("}");
-			out.println("}");
-			out.println();
-			
-			out.println("public void write() {");
-			out.println("switch(access) {");
-			out.println("case READ_WRITE:");
-			out.println("case WRITE:");
-			out.println("Mesa.writeReal16(ra, (char)value);");
-			out.println("break;");
-			out.println("default:");
-			out.println("throw new UnexpectedException(\"Unexpected\");");
-			out.println("}");
+			out.println("super(base, access);");
 			out.println("}");
 			out.println();
 			out.println();
 			
+			out.println("// field access");
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
@@ -231,7 +241,7 @@ public class Generate {
 				out.println("}");
 				out.println();
 			}
-		} else if (type.bitSize == 32 && type.align == Align.BIT_32) {
+		} else if (type.align == Align.BIT_32 && type.bitSize == 32) {
 			// double word bit field
 			out.prepareLayout();
 			for(var e: type.fieldList) {
@@ -264,63 +274,17 @@ public class Generate {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			out.println("private final MemoryAccess access;");
-			out.println("private final int          ra0;");
-			out.println("private final int          ra1;");
-			out.println();
-			out.println("public int value;");
-			out.println();
-			
 			out.println("public %s(int value) {", context.name);
-			out.println("this.access = MemoryAccess.NONE;");
-			out.println("this.ra0    = 0;");
-			out.println("this.ra1    = 0;");
-			out.println("this.value  = value;");
+			out.println("super(value);");
 			out.println("}");
 			
 			out.println("public %s(int base, MemoryAccess access) {", context.name);
-			out.println("this.access = access;");
-			out.println("switch(access) {");
-			out.println("case NONE:");
-			out.println("this.ra0   = 0;");
-			out.println("this.ra1   = 0;");
-			out.println("this.value = 0;");
-			out.println("break;");
-			out.println("case READ:");
-			out.println("this.ra0   = Mesa.fetch(base);");
-			out.println("this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.fetch(base + 1);");
-			out.println("this.value = Mesa.readReal32(ra0, ra1);");
-			out.println("break;");
-			out.println("case READ_WRITE:");
-			out.println("this.ra0   = Mesa.store(base);");
-			out.println("this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
-			out.println("this.value = Mesa.readReal32(ra0, ra1);");
-			out.println("break;");
-			out.println("case WRITE:");
-			out.println("this.ra0   = Mesa.store(base);");
-			out.println("this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Mesa.store(base + 1);");
-			out.println("this.value = 0;");
-			out.println("break;");
-			out.println("default:");
-			out.println("throw new UnexpectedException(\"Unexpected\");");
+			out.println("super(base, access);");
 			out.println("}");
-			out.println("}");
+			out.println();
 			out.println();
 			
-			out.println("public void write() {");
-			out.println("switch(access) {");
-			out.println("case READ_WRITE:");
-			out.println("case WRITE:");
-			out.println("Mesa.writeReal32(ra0, ra1, value);");
-			out.println("break;");
-			out.println("default:");
-			out.println("throw new UnexpectedException(\"Unexpected\");");
-			out.println("}");
-			out.println("}");
-			out.println();
-			out.println();
-
-			
+			out.println("// field access");
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
@@ -370,10 +334,44 @@ public class Generate {
 				
 				out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
 				
-				out.println("public final class %s {", context.name);
+				// output "public final class XXX" line
+				{
+					String parentClass = null;
+					
+					if (type.bitSize == 0) {
+						//
+					} else if (type.bitSize <= 16) {
+						parentClass = "MemoryData16";
+					} else if (type.bitSize <= 32) {
+						parentClass = "MemoryData32";
+					} else {
+						//
+					}
+					
+					// special for TypeRecord
+					if (type instanceof TypeRecord) {
+						parentClass = null;
+						
+						TypeRecord typeRecrd = (TypeRecord)type;
+						if (typeRecrd.align == Align.BIT_16 && typeRecrd.bitSize <= 16) {
+							parentClass = "MemoryData16";
+						}
+						if (typeRecrd.align == Align.BIT_32 && typeRecrd.bitSize == 32)  {
+							parentClass = "MemoryData32";
+						}
+					}
+
+					if (parentClass == null) {
+						out.println("public final class %s {", context.name);
+					} else {
+						out.println("public final class %s extends %s {", context.name, parentClass);
+					}
+				}
+				//
+				
 				out.prepareLayout();
 				out.println("public static final String NAME     = \"%s\";", context.name);
-				out.println("public static final int    SIZE     = %d;",     (type.bitSize + WORD_SIZE - 1) / WORD_SIZE);
+				out.println("public static final int    SIZE     = %d;",     (type.bitSize + WORD_BITS - 1) / WORD_BITS);
 				out.println("public static final int    BIT_SIZE = %d;",     type.bitSize);
 				out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 				out.println();
