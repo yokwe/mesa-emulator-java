@@ -20,6 +20,7 @@
                                 <exclude name="ContextEnum.java"/>
                                 <exclude name="ContextSumbrange.java"/>
                                 <exclude name="MemoryAccess.java"/>
+                                <exclude name="MemoryBase.java"/>
                                 <exclude name="MemoryData16.java"/>
                                 <exclude name="MemoryData32.java"/>
                 	</fileset>
