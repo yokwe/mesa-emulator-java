@@ -82,6 +82,11 @@ public class TypeRecord extends Type {
 		{
 			boolean foundProblem = false;
 			
+			if (align == Align.BIT_32 && bitSize != 32) {
+				foundProblem = true;
+				logger.error("bitSize is not 32 for RECORD32");
+			}
+			
 			if (8 < bitSize && (bitSize % 16) != 0) {
 				foundProblem = true;
 				logger.error("bitSize is not multiple of 16");
@@ -235,10 +240,17 @@ public class TypeRecord extends Type {
 		return String.format("%s[%s]", baseType, String.join(", ", list));
 	}
 
-	@Override
-	public String toJavaType() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isBitField16() {
+		return align == Align.BIT_16 && bitSize <= 16;
 	}
-
+	public boolean isBitField32() {
+		return align == Align.BIT_32 && bitSize == 32;
+	}
+	
+	@Override
+	public boolean container() {
+		if (isBitField16()) return false;
+		if (isBitField32()) return false;
+		return true;
+	}
 }
