@@ -17,24 +17,26 @@ public final class StateVector extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_STACK =  0; // stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED
-    public static final int OFFSET_WORD  = 14; // word  (14:0..15): StateWord
-    public static final int OFFSET_FRAME = 15; // frame (15:0..15): LocalFrameHandle
-    public static final int OFFSET_DATA  = 16; // data  (16):       BLOCK
-
-    // FIXME
-    // public StateVector#stack stack() {
-    // return new StateVector#stack(base + OFFSET_STACK);
-    // }
+    // stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED
+    private static final int OFFSET_STACK = 0;
+    public UNSPECIFIED stack(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_STACK + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    }
+    // word (14:0..15): StateWord
+    private static final int OFFSET_WORD = 14;
     public StateWord word(MemoryAccess memoryAccess) {
         return new StateWord(base + OFFSET_WORD, memoryAccess);
     }
-    public LocalFrameHandle frame(MemoryAccess memoryAccess) {
-        return new LocalFrameHandle(base + OFFSET_FRAME, memoryAccess);
+    // frame (15:0..15): LocalFrameHandle
+    private static final int OFFSET_FRAME = 15;
+    public BLOCK frame() {
+        return new BLOCK(base + OFFSET_FRAME);
     }
-    public BLOCK data() {
-        return new BLOCK(base + OFFSET_DATA);
+    // data (16): BLOCK
+    private static final int OFFSET_DATA = 16;
+    public UNSPECIFIED data(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_DATA + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
     }
 }

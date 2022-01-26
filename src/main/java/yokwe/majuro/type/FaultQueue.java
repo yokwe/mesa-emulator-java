@@ -17,14 +17,15 @@ public final class FaultQueue extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_QUEUE     = 0; // queue     (0:0..15): Queue
-    public static final int OFFSET_CONDITION = 1; // condition (1:0..15): Condition
-
+    // queue (0:0..15): Queue
+    private static final int OFFSET_QUEUE = 0;
     public Queue queue(MemoryAccess memoryAccess) {
         return new Queue(base + OFFSET_QUEUE, memoryAccess);
     }
+    // condition (1:0..15): Condition
+    private static final int OFFSET_CONDITION = 1;
     public Condition condition(MemoryAccess memoryAccess) {
         return new Condition(base + OFFSET_CONDITION, memoryAccess);
     }

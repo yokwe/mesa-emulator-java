@@ -17,14 +17,15 @@ public final class InterruptItem extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_CONDITION = 0; // condition (0:0..15): Condition
-    public static final int OFFSET_AVAILABLE = 1; // available (1:0..15): UNSPECIFIED
-
+    // condition (0:0..15): Condition
+    private static final int OFFSET_CONDITION = 0;
     public Condition condition(MemoryAccess memoryAccess) {
         return new Condition(base + OFFSET_CONDITION, memoryAccess);
     }
+    // available (1:0..15): UNSPECIFIED
+    private static final int OFFSET_AVAILABLE = 1;
     public UNSPECIFIED available(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_AVAILABLE, memoryAccess);
     }

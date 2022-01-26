@@ -17,13 +17,15 @@ public final class BitAddress extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_WORD     = 0; // word     (0:0..31):  LONG POINTER
-    public static final int OFFSET_RESERVED = 2; // reserved (2:0..11):  UNSPECIFIED
-    public static final int OFFSET_BIT      = 2; // bit      (2:12..15): CARDINAL
-
-    public LONG_POINTER word(MemoryAccess memoryAccess) {
-        return new LONG_POINTER(base + OFFSET_WORD, memoryAccess);
+    // word (0:0..31): LONG POINTER
+    private static final int OFFSET_WORD = 0;
+    public LONG_POINTER word() {
+        return new LONG_POINTER(base + OFFSET_WORD);
     }
+    // reserved (2:0..11): UNSPECIFIED
+    // FIXME  Field is not aligned
+    // bit (2:12..15): CARDINAL
+    // FIXME  Field is not aligned
 }

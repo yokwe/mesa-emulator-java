@@ -17,24 +17,26 @@ public final class GlobalOverhead extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_AVAILABLE = 0; // available (0:0..15): UNSPECIFIED
-    public static final int OFFSET_WORD      = 1; // word      (1:0..15): GlobalWord
-    public static final int OFFSET_CODEBASE  = 2; // codebase  (2:0..31): LONG POINTER TO CodeSegment
-    public static final int OFFSET_GLOBAL    = 4; // global    (4):       GlobalVariables
-
+    // available (0:0..15): UNSPECIFIED
+    private static final int OFFSET_AVAILABLE = 0;
     public UNSPECIFIED available(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_AVAILABLE, memoryAccess);
     }
+    // word (1:0..15): GlobalWord
+    private static final int OFFSET_WORD = 1;
     public GlobalWord word(MemoryAccess memoryAccess) {
         return new GlobalWord(base + OFFSET_WORD, memoryAccess);
     }
-    // FIXME
-    // public GlobalOverhead#codebase codebase(MemoryAccess memoryAccess) {
-    // return new GlobalOverhead#codebase(base + OFFSET_CODEBASE, memoryAccess);
-    // }
-    public BLOCK global() {
-        return new BLOCK(base + OFFSET_GLOBAL);
+    // codebase (2:0..31): LONG POINTER TO CodeSegment
+    private static final int OFFSET_CODEBASE = 2;
+    public CodeSegment codebase() {
+        return new CodeSegment(base + OFFSET_CODEBASE);
+    }
+    // global (4): GlobalVariables
+    private static final int OFFSET_GLOBAL = 4;
+    public UNSPECIFIED global(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_GLOBAL + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
     }
 }

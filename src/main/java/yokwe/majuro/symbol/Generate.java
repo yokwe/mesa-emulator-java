@@ -1,5 +1,7 @@
 package yokwe.majuro.symbol;
 
+import static yokwe.majuro.mesa.Constant.WORD_BITS;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -22,8 +24,6 @@ import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 import yokwe.majuro.util.StringUtil;
-
-import static yokwe.majuro.mesa.Constant.*;
 
 public class Generate {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Generate.class);
@@ -89,6 +89,7 @@ public class Generate {
 			genDecl(context, out, type.toTypePointer());
 			break;
 		case REFERENCE:
+			logger.info("genDecl REF {}: TYPE = {}", type.name, type.toMesaType());
 			context.success = false;
 			break;
 		default:
@@ -140,9 +141,11 @@ public class Generate {
 		out.println("super(base);");
 		out.println("}");
 		
-		out.println("public %s(int base, int index) {", context.name);
-		out.println("super(base + (%s * index));", elementSize);
-		out.println("}");
+		if (!elementSize.equals("ELEMENT_WORD_SIZE")) {
+			out.println("public %s(int base, int index) {", context.name);
+			out.println("super(base + (%s * index));", elementSize);
+			out.println("}");
+		}
 	}
 
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeBoolean type) {
@@ -189,11 +192,54 @@ public class Generate {
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeArray type) {
 		// FIXME
-		Type element = type.arrayElement.getRealType();
+		Type   elementType     = type.arrayElement.getRealType();
+		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		String elementWordSize = Integer.toString(elementType.wordSize());
+		String indexMinValue   = StringUtil.toJavaString(type.minValue);
+		String indexMaxValue   = StringUtil.toJavaString(type.maxValue);
+		
+		if (!elementTypeName.contains("#")) {
+			elementWordSize = String.format("%s.WORD_SIZE", elementTypeName);
+		}
+		if (elementType instanceof TypePointer) {
+			TypePointer typePointer = elementType.toTypePointer();
+			switch(typePointer.pointerSize) {
+			case LONG:
+				elementWordSize = "LONG_POINER.WORD_SIZE";
+				break;
+			case SHORT:
+				elementWordSize = "POINTER.WORD_SIZE";
+				break;
+			default:
+				throw new UnexpectedException("Unexpected");
+			}
+		}
+		if (type instanceof TypeArray.Reference) {
+			Type typeIndex = ((TypeArray.Reference)type).typeReference.getRealType();
+			String typeIndexName = StringUtil.toJavaName(typeIndex.name);
+			if (typeIndex instanceof TypeEnum) {
+				indexMinValue = String.format("%s.MIN_VALUE", typeIndexName);
+				indexMaxValue = String.format("%s.MAX_VALUE", typeIndexName);
+			} else if (typeIndex instanceof TypeSubrange) {
+				indexMinValue = String.format("(int)%s.MIN_VALUE", typeIndexName);
+				indexMaxValue = String.format("(int)%s.MAX_VALUE", typeIndexName);
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+		}
+		if (type instanceof TypeArray.Subrange) {
+			TypeSubrange typeSub = ((TypeArray.Subrange)type).typeSubrange;
+			// special for open subrange
+			if (typeSub.isOpenSubrange()) {
+				indexMinValue = "(int)INTEGER.MIN_VALUE";
+				indexMaxValue = "(int)CARDINAL.MAX_VALUE";
+			}
+		}
+		
 		out.prepareLayout();
-		out.println("public static final int INDEX_MIN_VALUE   = %d;", type.minValue);
-		out.println("public static final int INDEX_MAX_VALUE   = %d;", type.maxValue);
-		out.println("public static final int ELEMENT_WORD_SIZE = %d;", element.wordSize());
+		out.println("public static final int INDEX_MIN_VALUE   = %s;", indexMinValue);
+		out.println("public static final int INDEX_MAX_VALUE   = %s;", indexMaxValue);
+		out.println("public static final int ELEMENT_WORD_SIZE = %s;", elementWordSize);
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
 		
@@ -202,6 +248,33 @@ public class Generate {
 		
 		getConstructorBase(context, out, "ELEMENT_WORD_SIZE");
 		out.println();
+		
+		
+		out.println("//");
+		out.println("// Access to Element of Array");
+		out.println("//");
+		if (elementType.container()) {
+			if (elementType instanceof TypePointer) {
+				TypePointer typePointer = elementType.toTypePointer();
+				switch (typePointer.pointerSize) {
+				case LONG:
+					elementTypeName = "LONG_POINTER";
+					break;
+				case SHORT:
+					elementTypeName = "POINTER";
+					break;
+				default:
+					throw new UnexpectedException("Unexpected");
+				}
+			}
+			out.println("public %s element(int index) {", elementTypeName);
+			out.println("return new %s(base + (ELEMENT_WORD_SIZE * index));", elementTypeName);
+			out.println("}");
+		} else {
+			out.println("public %s element(int index, MemoryAccess memoryAccess) {", elementTypeName);
+			out.println("return new %s(base + (ELEMENT_WORD_SIZE * index), memoryAccess);", elementTypeName);
+			out.println("}");
+		}
 		
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeEnum type) {
@@ -244,127 +317,134 @@ public class Generate {
 		out.println("return context.toString(value);");
 		out.println("}");
 	}
+	
+	private static void genDeclBitField16(Context context, AutoIndentPrintWriter out, TypeRecord type) {
+		// single word bit field
+		getConstructor16(context, out);
+		out.println();
+
+		out.println("//");
+		out.println("// Bit Field");
+		out.println("//");
+		out.println();
+		
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			out.println("// %s", e.toMesaType());
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+		out.println();
+		
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+
+			final int offset = e.offset;
+			final int start;
+			final int stop;
+			if (offset == 0) {
+				start  = e.startBit;
+				stop   = e.stopBit;
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+			
+			int bits  = stop - start + 1;
+			int pat   = (1 << bits) - 1;
+			int shift = type.bitSize - stop - 1;
+			int mask  = (pat << shift);
+			
+			out.println("private static final int %s_MASK  = %s;",
+				fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+		
+		out.println("//");
+		out.println("// Bit Field Access Methods");
+		out.println("//");
+		for(var e: type.fieldList) {
+			String fieldName = StringUtil.toJavaName(e.name);
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+			
+			out.println("public int %s() {", fieldName);
+			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+			out.println("}");
+			
+			out.println("public void %s(int newValue) {", fieldName);
+			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+			out.println("}");
+			out.println();
+		}
+	}
+	private static void genDeclBitField32(Context context, AutoIndentPrintWriter out, TypeRecord type) {
+		// double word bit field
+		getConstructor32(context, out);
+		out.println();
+
+		out.println("//");
+		out.println("// Bit Field");
+		out.println("//");
+		out.println();
+		
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			out.println("// %s", e.toMesaType());
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+		out.println();
+
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+
+			final int offset = e.offset;
+			final int start;
+			final int stop;
+			if (offset == 0) {
+				start  = 16 + e.startBit;
+				stop   = 16 + e.stopBit;
+			} else if (offset == 1) {
+				start  = e.startBit;
+				stop   = e.stopBit;
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+			
+			int bits  = stop - start + 1;
+			int pat   = (1 << bits) - 1;
+			int shift = type.bitSize - stop - 1;
+			int mask  = (pat << shift);
+			
+			out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+		
+		out.println("//");
+		out.println("// Bit Field Access Methods");
+		out.println("//");
+		for(var e: type.fieldList) {
+			String fieldName = StringUtil.toJavaName(e.name);
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+			
+			out.println("public int %s() {", fieldName);
+			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+			out.println("}");
+			
+			out.println("public void %s(int newValue) {", fieldName);
+			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+			out.println("}");
+			out.println();
+		}
+	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
 		if (type.isBitField16()) {
-			// single word bit field
-			getConstructor16(context, out);
-			out.println();
-
-			out.println("//");
-			out.println("// Bit Field");
-			out.println("//");
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				out.println("// %s", e.toMesaType());
-			}
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-
-				final int offset = e.offset;
-				final int start;
-				final int stop;
-				if (offset == 0) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else {
-					throw new UnexpectedException("Unexpected");
-				}
-				
-				int bits  = stop - start + 1;
-				int pat   = (1 << bits) - 1;
-				int shift = type.bitSize - stop - 1;
-				int mask  = (pat << shift);
-				
-				out.println("private static final int %s_MASK  = %s;",
-					fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
-				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-			}
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-			out.println();
-			
-			out.println("//");
-			out.println("// Bit Field Access Methods");
-			out.println("//");
-			for(var e: type.fieldList) {
-				String fieldName = StringUtil.toJavaName(e.name);
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-				
-				out.println("public int %s() {", fieldName);
-				out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
-				out.println("}");
-				
-				out.println("public void %s(int newValue) {", fieldName);
-				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
-				out.println("}");
-				out.println();
-			}
+			genDeclBitField16(context, out, type);
 		} else if (type.isBitField32()) {
-			// double word bit field
-			getConstructor32(context, out);
-			out.println();
-
-			out.println("//");
-			out.println("// Bit Field");
-			out.println("//");
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				out.println("// %s", e.toMesaType());
-			}
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
-			out.println();
-
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-
-				final int offset = e.offset;
-				final int start;
-				final int stop;
-				if (offset == 0) {
-					start  = 16 + e.startBit;
-					stop   = 16 + e.stopBit;
-				} else if (offset == 1) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else {
-					throw new UnexpectedException("Unexpected");
-				}
-				
-				int bits  = stop - start + 1;
-				int pat   = (1 << bits) - 1;
-				int shift = type.bitSize - stop - 1;
-				int mask  = (pat << shift);
-				
-				out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
-				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-			}
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-			out.println();
-			
-			out.println("//");
-			out.println("// Bit Field Access Methods");
-			out.println("//");
-			for(var e: type.fieldList) {
-				String fieldName = StringUtil.toJavaName(e.name);
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-				
-				out.println("public int %s() {", fieldName);
-				out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
-				out.println("}");
-				
-				out.println("public void %s(int newValue) {", fieldName);
-				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
-				out.println("}");
-				out.println();
-			}
+			genDeclBitField32(context, out, type);
 		} else {
 			// multiple word
 			// FIXME
@@ -373,75 +453,101 @@ public class Generate {
 			out.println();
 			
 			out.println("//");
-			out.println("// Constants for field access");
-			out.println("//");
-			out.prepareLayout();
-			for(var field: type.fieldList) {
-				String fieldConstName = StringUtil.toJavaConstName(field.name);
-				
-				out.println("public static final int OFFSET_%s = %d;  // %s", fieldConstName, field.offset, field.toMesaType());
-			}
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
-			out.println();
-			
+			out.println("// Access to Field of Record");
+			out.println("//");			
 			for(TypeRecord.Field field: type.fieldList) {
 				Type   fieldType      = field.type.getRealType();
 				String fieldConstName = StringUtil.toJavaConstName(field.name);
 				String fieldName      = StringUtil.toJavaName(field.name);
 				String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
 
+				out.println("// %s", field.toMesaType());
 				if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
 					//
 				} else if (field.startBit == Field.NO_VALUE) {
 					//
 				} else {
+					out.println("// FIXME  Field is not aligned");
 					logger.warn("Field is not aligned");
 					logger.warn("  name {}.{}", type.name, field.name);
 					logger.warn("  mesa {}", field.toMesaType());
 					continue;
 				}
 				
-				// FIXME
+				out.println("private static final int OFFSET_%s = %d;", fieldConstName, field.offset);
+
 				if (fieldType.container()) {
-					// can be array record of multiple word
-					if (fieldTypeName.contains("#")) {
-						out.println("// FIXME");
-						out.println("// public %s %s() {", fieldTypeName, fieldName);
-						out.println("// return new %s(base + OFFSET_%s);", fieldTypeName, fieldConstName);
-						out.println("// }");
-					} else {
+					// can be array, pointer or multiple word record
+					if (fieldType instanceof TypeArray) {
+						// index of array can be subrange or reference
+						Type elementType = fieldType.toTypeArray().arrayElement.getRealType();
+						String elementTypeString = StringUtil.toJavaName(elementType.name);
+						
+						if (elementType.container()) {
+							if (fieldTypeName.contains("#")) {
+								out.println("public %s %s(int index) {", elementTypeString, fieldName);
+								out.println("return new %1$s(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
+								out.println("}");
+							} else {
+								out.println("public %s %s() {", fieldTypeName, fieldName);
+								out.println("return new %1$s(base + OFFSET_%2$s);", fieldTypeName, fieldConstName);
+								out.println("}");
+							}
+							
+						} else {
+							out.println("public %s %s(int index, MemoryAccess memoryAccess) {", elementTypeString, fieldName);
+							out.println("return new %1$s(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), memoryAccess);", elementTypeString, fieldConstName);
+							out.println("}");
+						}
+						
+					} else if (fieldType instanceof TypePointer) {
+						TypePointer typePointer = fieldType.toTypePointer();
+						if (typePointer.targetType == null) {
+							// naked POINTER and LONG POINTER
+							String typeTargetName = StringUtil.toJavaName(typePointer.name);
+							out.println("public %s %s() {", typeTargetName, fieldName);
+							out.println("return new %s(base + OFFSET_%s);", typeTargetName, fieldConstName);
+							out.println("}");
+						} else {
+							Type typeTarget = typePointer.targetType.getRealType();
+							String typeTargetName = StringUtil.toJavaName(typeTarget.name);
+							// 
+							if (typeTarget.container()) {
+								out.println("public %s %s() {", typeTargetName, fieldName);
+								out.println("return new %s(base + OFFSET_%s);", typeTargetName, fieldConstName);
+								out.println("}");
+							} else {
+								out.println("public %s %s(MemoryAccess memoryAccess) {", typeTargetName, fieldName);
+								out.println("return new %s(base + OFFSET_%s, memoryAccess);", typeTargetName, fieldConstName);
+								out.println("}");
+							}
+						}
+					} else if (fieldType instanceof TypeRecord) {
 						out.println("public %s %s() {", fieldTypeName, fieldName);
 						out.println("return new %s(base + OFFSET_%s);", fieldTypeName, fieldConstName);
 						out.println("}");
+					} else {
+						throw new UnexpectedException("Unexpected");
 					}
 				} else {
-					if (fieldTypeName.contains("#")) {
-						out.println("// FIXME");
-						out.println("// public %s %s(MemoryAccess memoryAccess) {", fieldTypeName, fieldName);
-						out.println("// return new %s(base + OFFSET_%s, memoryAccess);", fieldTypeName, fieldConstName);
-						out.println("// }");
-					} else {
-						out.println("public %s %s(MemoryAccess memoryAccess) {", fieldTypeName, fieldName);
-						out.println("return new %s(base + OFFSET_%s, memoryAccess);", fieldTypeName, fieldConstName);
-						out.println("}");
-					}
+					// can be boolean, enum, bitfield16, bitfield32 or subrange
+					out.println("public %s %s(MemoryAccess memoryAccess) {", fieldTypeName, fieldName);
+					out.println("return new %s(base + OFFSET_%s, memoryAccess);", fieldTypeName, fieldConstName);
+					out.println("}");
 				}
 			}
 
 		}
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
-		switch(type.pointerSize) {
-		case SHORT:
-			getConstructor16(context, out);
-			break;
-		case LONG:
-			getConstructor32(context, out);
-			break;
-		default:
-			throw new UnexpectedException("Unexpected");
-		}
 		// FIXME
+		final String targetTypeName;
+		if (type.targetType != null) {
+			targetTypeName = StringUtil.toJavaName(type.targetType.getRealType().name);
+		} else {
+			targetTypeName = StringUtil.toJavaName(type.name);
+		}
+		getConstructorBase(context, out, String.format("%s.WORD_SIZE", targetTypeName));
 	}
 	
 	private static void genDecl(Context context, AutoIndentPrintWriter out, Constant cons) {
@@ -476,30 +582,17 @@ public class Generate {
 					if (type.container()) {
 						parentClass = "MemoryBase";
 					} else {
-						// special for TypeRecord
-						if (type instanceof TypeRecord) {
-							TypeRecord typeRecord = type.toTypeRecord();
-							if (typeRecord.isBitField16()) {
-								parentClass = "MemoryData16";
-							} else if (typeRecord.isBitField32()) {
-								parentClass = "MemoryData32";
-							} else {
-								logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
-								throw new UnexpectedException("Uneexpected");
-							}
+						if (type.bitSize == 0) {
+							logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
+							throw new UnexpectedException("Uneexpected");
+						} else if (type.bitSize <= 16) {
+							parentClass = "MemoryData16";
+						} else if (type.bitSize <= 32) {
+							parentClass = "MemoryData32";
 						} else {
-							if (type.bitSize == 0) {
-								logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
-								throw new UnexpectedException("Uneexpected");
-							} else if (type.bitSize <= 16) {
-								parentClass = "MemoryData16";
-							} else if (type.bitSize <= 32) {
-								parentClass = "MemoryData32";
-							} else {
-								logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
-								throw new UnexpectedException("Uneexpected");
-							}
-						}						
+							logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
+							throw new UnexpectedException("Uneexpected");
+						}
 					}
 					
 					out.println("public final class %s extends %s {", context.name, parentClass);

@@ -17,16 +17,16 @@ public final class GFTItem extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_GLOBAL_FRAME = 0; // globalFrame (0:0..31): GlobalFrameHandle
-    public static final int OFFSET_CODEBASE     = 2; // codebase    (2:0..31): LONG POINTER TO CodeSegment
-
-    public GlobalFrameHandle globalFrame(MemoryAccess memoryAccess) {
-        return new GlobalFrameHandle(base + OFFSET_GLOBAL_FRAME, memoryAccess);
+    // globalFrame (0:0..31): GlobalFrameHandle
+    private static final int OFFSET_GLOBAL_FRAME = 0;
+    public BLOCK globalFrame() {
+        return new BLOCK(base + OFFSET_GLOBAL_FRAME);
     }
-    // FIXME
-    // public GFTItem#codebase codebase(MemoryAccess memoryAccess) {
-    // return new GFTItem#codebase(base + OFFSET_CODEBASE, memoryAccess);
-    // }
+    // codebase (2:0..31): LONG POINTER TO CodeSegment
+    private static final int OFFSET_CODEBASE = 2;
+    public CodeSegment codebase() {
+        return new CodeSegment(base + OFFSET_CODEBASE);
+    }
 }

@@ -17,27 +17,31 @@ public final class LocalOverhead extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_WORD       = 0; // word       (0:0..15): LocalWord
-    public static final int OFFSET_RETURNLINK = 1; // returnlink (1:0..15): ShortControlLink
-    public static final int OFFSET_GLOBALLINK = 2; // globallink (2:0..15): GFTHandle
-    public static final int OFFSET_PC         = 3; // pc         (3:0..15): CARDINAL
-    public static final int OFFSET_LOCAL      = 4; // local      (4):       LocalVariables
-
+    // word (0:0..15): LocalWord
+    private static final int OFFSET_WORD = 0;
     public LocalWord word(MemoryAccess memoryAccess) {
         return new LocalWord(base + OFFSET_WORD, memoryAccess);
     }
+    // returnlink (1:0..15): ShortControlLink
+    private static final int OFFSET_RETURNLINK = 1;
     public UNSPECIFIED returnlink(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_RETURNLINK, memoryAccess);
     }
+    // globallink (2:0..15): GFTHandle
+    private static final int OFFSET_GLOBALLINK = 2;
     public CARDINAL globallink(MemoryAccess memoryAccess) {
         return new CARDINAL(base + OFFSET_GLOBALLINK, memoryAccess);
     }
+    // pc (3:0..15): CARDINAL
+    private static final int OFFSET_PC = 3;
     public CARDINAL pc(MemoryAccess memoryAccess) {
         return new CARDINAL(base + OFFSET_PC, memoryAccess);
     }
-    public BLOCK local() {
-        return new BLOCK(base + OFFSET_LOCAL);
+    // local (4): LocalVariables
+    private static final int OFFSET_LOCAL = 4;
+    public UNSPECIFIED local(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_LOCAL + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
     }
 }

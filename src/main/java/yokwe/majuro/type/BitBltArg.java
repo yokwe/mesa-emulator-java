@@ -17,38 +17,45 @@ public final class BitBltArg extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_DST      =  0; // dst      (0:0..47):  BitAddress
-    public static final int OFFSET_DST_BPL  =  3; // dstBpl   (3:0..15):  INTEGER
-    public static final int OFFSET_SRC      =  4; // src      (4:0..47):  BitAddress
-    public static final int OFFSET_SRC_BPL  =  7; // srcBpl   (7:0..15):  INTEGER
-    public static final int OFFSET_WIDTH    =  8; // width    (8:0..15):  CARDINAL
-    public static final int OFFSET_HEIGHT   =  9; // height   (9:0..15):  CARDINAL
-    public static final int OFFSET_FLAGS    = 10; // flags    (10:0..15): BitBltFlags
-    public static final int OFFSET_RESERVED = 11; // reserved (11:0..15): UNSPECIFIED
-
+    // dst (0:0..47): BitAddress
+    private static final int OFFSET_DST = 0;
     public BitAddress dst() {
         return new BitAddress(base + OFFSET_DST);
     }
+    // dstBpl (3:0..15): INTEGER
+    private static final int OFFSET_DST_BPL = 3;
     public INTEGER dstBpl(MemoryAccess memoryAccess) {
         return new INTEGER(base + OFFSET_DST_BPL, memoryAccess);
     }
+    // src (4:0..47): BitAddress
+    private static final int OFFSET_SRC = 4;
     public BitAddress src() {
         return new BitAddress(base + OFFSET_SRC);
     }
+    // srcBpl (7:0..15): INTEGER
+    private static final int OFFSET_SRC_BPL = 7;
     public INTEGER srcBpl(MemoryAccess memoryAccess) {
         return new INTEGER(base + OFFSET_SRC_BPL, memoryAccess);
     }
+    // width (8:0..15): CARDINAL
+    private static final int OFFSET_WIDTH = 8;
     public CARDINAL width(MemoryAccess memoryAccess) {
         return new CARDINAL(base + OFFSET_WIDTH, memoryAccess);
     }
+    // height (9:0..15): CARDINAL
+    private static final int OFFSET_HEIGHT = 9;
     public CARDINAL height(MemoryAccess memoryAccess) {
         return new CARDINAL(base + OFFSET_HEIGHT, memoryAccess);
     }
+    // flags (10:0..15): BitBltFlags
+    private static final int OFFSET_FLAGS = 10;
     public BitBltFlags flags(MemoryAccess memoryAccess) {
         return new BitBltFlags(base + OFFSET_FLAGS, memoryAccess);
     }
+    // reserved (11:0..15): UNSPECIFIED
+    private static final int OFFSET_RESERVED = 11;
     public UNSPECIFIED reserved(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_RESERVED, memoryAccess);
     }

@@ -17,16 +17,16 @@ public final class CodeSegment extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_AVAILABLE = 0; // available (0:0..63): ARRAY [0..4) OF UNSPECIFIED
-    public static final int OFFSET_CODE      = 4; // code      (4):       BLOCK
-
-    // FIXME
-    // public CodeSegment#available available() {
-    // return new CodeSegment#available(base + OFFSET_AVAILABLE);
-    // }
-    public BLOCK code() {
-        return new BLOCK(base + OFFSET_CODE);
+    // available (0:0..63): ARRAY [0..4) OF UNSPECIFIED
+    private static final int OFFSET_AVAILABLE = 0;
+    public UNSPECIFIED available(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    }
+    // code (4): BLOCK
+    private static final int OFFSET_CODE = 4;
+    public UNSPECIFIED code(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_CODE + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
     }
 }

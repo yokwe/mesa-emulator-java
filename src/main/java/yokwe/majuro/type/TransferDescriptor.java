@@ -17,18 +17,20 @@ public final class TransferDescriptor extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_SRC      = 0; // src      (0:0..15): ShortControlLink
-    public static final int OFFSET_RESERVED = 1; // reserved (1:0..15): UNSPECIFIED
-    public static final int OFFSET_DST      = 2; // dst      (2:0..31): ControlLink
-
+    // src (0:0..15): ShortControlLink
+    private static final int OFFSET_SRC = 0;
     public UNSPECIFIED src(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_SRC, memoryAccess);
     }
+    // reserved (1:0..15): UNSPECIFIED
+    private static final int OFFSET_RESERVED = 1;
     public UNSPECIFIED reserved(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_RESERVED, memoryAccess);
     }
+    // dst (2:0..31): ControlLink
+    private static final int OFFSET_DST = 2;
     public LONG_UNSPECIFIED dst(MemoryAccess memoryAccess) {
         return new LONG_UNSPECIFIED(base + OFFSET_DST, memoryAccess);
     }

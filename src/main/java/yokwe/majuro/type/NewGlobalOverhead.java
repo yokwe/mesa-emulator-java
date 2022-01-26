@@ -17,19 +17,21 @@ public final class NewGlobalOverhead extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_AVAILABLE = 0; // available (0:0..15): UNSPECIFIED
-    public static final int OFFSET_WORD      = 1; // word      (1:0..15): GlobalWord
-    public static final int OFFSET_GLOBAL    = 2; // global    (2):       GlobalVariables
-
+    // available (0:0..15): UNSPECIFIED
+    private static final int OFFSET_AVAILABLE = 0;
     public UNSPECIFIED available(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_AVAILABLE, memoryAccess);
     }
+    // word (1:0..15): GlobalWord
+    private static final int OFFSET_WORD = 1;
     public GlobalWord word(MemoryAccess memoryAccess) {
         return new GlobalWord(base + OFFSET_WORD, memoryAccess);
     }
-    public BLOCK global() {
-        return new BLOCK(base + OFFSET_GLOBAL);
+    // global (2): GlobalVariables
+    private static final int OFFSET_GLOBAL = 2;
+    public UNSPECIFIED global(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_GLOBAL + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
     }
 }

@@ -17,18 +17,20 @@ public final class Port extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_INPORT  = 0; // inport  (0:0..15): FrameLink
-    public static final int OFFSET_UNUSED  = 1; // unused  (1:0..15): UNSPECIFIED
-    public static final int OFFSET_OUTPORT = 2; // outport (2:0..31): ControlLink
-
-    public LocalFrameHandle inport(MemoryAccess memoryAccess) {
-        return new LocalFrameHandle(base + OFFSET_INPORT, memoryAccess);
+    // inport (0:0..15): FrameLink
+    private static final int OFFSET_INPORT = 0;
+    public BLOCK inport() {
+        return new BLOCK(base + OFFSET_INPORT);
     }
+    // unused (1:0..15): UNSPECIFIED
+    private static final int OFFSET_UNUSED = 1;
     public UNSPECIFIED unused(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_UNUSED, memoryAccess);
     }
+    // outport (2:0..31): ControlLink
+    private static final int OFFSET_OUTPORT = 2;
     public LONG_UNSPECIFIED outport(MemoryAccess memoryAccess) {
         return new LONG_UNSPECIFIED(base + OFFSET_OUTPORT, memoryAccess);
     }

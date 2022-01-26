@@ -17,41 +17,46 @@ public final class ProcessDataArea extends MemoryBase {
     }
 
     //
-    // Constants for field access
+    // Access to Field of Record
     //
-    public static final int OFFSET_READY     =  0; // ready     (0:0..15):   Queue
-    public static final int OFFSET_COUNT     =  1; // count     (1:0..15):   CARDINAL
-    public static final int OFFSET_UNUSED    =  2; // unused    (2:0..15):   UNSPECIFIED
-    public static final int OFFSET_AVAILABLE =  3; // available (3:0..79):   ARRAY [0..4] OF UNSPECIFIED
-    public static final int OFFSET_STATE     =  8; // state     (8:0..127):  StateAllocationTable
-    public static final int OFFSET_INTERRUPT = 16; // interrupt (16:0..511): InterruptVector
-    public static final int OFFSET_FAULT     = 48; // fault     (48:0..255): FaultVector
-    public static final int OFFSET_BLOCK     =  0; // block     (0):         ARRAY PsbIndex OF ProcessStateBlock
-
+    // ready (0:0..15): Queue
+    private static final int OFFSET_READY = 0;
     public Queue ready(MemoryAccess memoryAccess) {
         return new Queue(base + OFFSET_READY, memoryAccess);
     }
+    // count (1:0..15): CARDINAL
+    private static final int OFFSET_COUNT = 1;
     public CARDINAL count(MemoryAccess memoryAccess) {
         return new CARDINAL(base + OFFSET_COUNT, memoryAccess);
     }
+    // unused (2:0..15): UNSPECIFIED
+    private static final int OFFSET_UNUSED = 2;
     public UNSPECIFIED unused(MemoryAccess memoryAccess) {
         return new UNSPECIFIED(base + OFFSET_UNUSED, memoryAccess);
     }
-    // FIXME
-    // public ProcessDataArea#available available() {
-    // return new ProcessDataArea#available(base + OFFSET_AVAILABLE);
-    // }
+    // available (3:0..79): ARRAY [0..4] OF UNSPECIFIED
+    private static final int OFFSET_AVAILABLE = 3;
+    public UNSPECIFIED available(int index, MemoryAccess memoryAccess) {
+        return new UNSPECIFIED(base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    }
+    // state (8:0..127): StateAllocationTable
+    private static final int OFFSET_STATE = 8;
     public StateAllocationTable state() {
         return new StateAllocationTable(base + OFFSET_STATE);
     }
+    // interrupt (16:0..511): InterruptVector
+    private static final int OFFSET_INTERRUPT = 16;
     public InterruptVector interrupt() {
         return new InterruptVector(base + OFFSET_INTERRUPT);
     }
+    // fault (48:0..255): FaultVector
+    private static final int OFFSET_FAULT = 48;
     public FaultVector fault() {
         return new FaultVector(base + OFFSET_FAULT);
     }
-    // FIXME
-    // public ProcessDataArea#block block() {
-    // return new ProcessDataArea#block(base + OFFSET_BLOCK);
-    // }
+    // block (0): ARRAY PsbIndex OF ProcessStateBlock
+    private static final int OFFSET_BLOCK = 0;
+    public ProcessStateBlock block(int index) {
+        return new ProcessStateBlock(base + OFFSET_BLOCK + (ProcessStateBlock.WORD_SIZE * index));
+    }
 }
