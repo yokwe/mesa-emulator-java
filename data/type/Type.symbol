@@ -279,7 +279,7 @@ BEGIN
         timeout  (3:0..15): Ticks,
         mds      (4:0..15): CARDINAL,
         available(5:0..15): UNSPECIFIED,
-        stickty  (6:0..31): LONG UNSPECIFIED];
+        sticky   (6:0..31): LONG UNSPECIFIED];
     
     Priority: TYPE = [0..7];
     
