@@ -32,8 +32,7 @@ public class TypeBoolean extends Type {
 	}
 
 	@Override
-	public String toJavaType() {
-		return "boolean";
+	public boolean container() {
+		return false;
 	}
-
 }

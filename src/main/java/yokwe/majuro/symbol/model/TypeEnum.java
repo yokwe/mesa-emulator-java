@@ -138,8 +138,7 @@ public class TypeEnum extends Type {
 	}
 
 	@Override
-	public String toJavaType() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean container() {
+		return false;
 	}
 }

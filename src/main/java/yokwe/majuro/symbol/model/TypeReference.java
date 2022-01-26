@@ -43,8 +43,7 @@ public class TypeReference extends Type {
 	}
 
 	@Override
-	public String toJavaType() {
-		return realType.toJavaType();
+	public boolean container() {
+		return getRealType().container();
 	}
-
 }

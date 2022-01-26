@@ -106,8 +106,8 @@ public abstract class Type implements Comparable<Type> {
 	public static final Type LONG_CARDINAL    = new TypeSubrange("LONG CARDINAL",    0, 0xFFFF_FFFFL);
 	public static final Type LONG_UNSPECIFIED = new TypeSubrange("LONG UNSPECIFIED", 0, 0xFFFF_FFFFL);
 	
-	public static final Type POINTER          = new TypePointer ("POINTER",      TypePointer.Size.SHORT);
-	public static final Type LONG_POINTER     = new TypePointer ("LONG POINTER", TypePointer.Size.LONG);
+	public static final Type POINTER          = new TypePointer ("POINTER",      TypePointer.PointerSize.SHORT);
+	public static final Type LONG_POINTER     = new TypePointer ("LONG POINTER", TypePointer.PointerSize.LONG);
 
 	
 	public final String name;
@@ -121,7 +121,8 @@ public abstract class Type implements Comparable<Type> {
 	abstract public void fix();
 	
 	abstract public String toMesaType();
-	abstract public String toJavaType();
+	
+	abstract public boolean container(); // if type hold other type object, it is container
 	
 	private static final int NO_VALUE = -1;
 	public int bitSize = NO_VALUE;

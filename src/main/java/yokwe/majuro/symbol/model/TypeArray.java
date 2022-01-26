@@ -40,12 +40,6 @@ public abstract class TypeArray extends Type {
 		public String toMesaType() {
 			return String.format("ARRAY %s OF %s", typeSubrange.toMesaType(), arrayElement.toMesaType());
 		}
-
-		@Override
-		public String toJavaType() {
-			// TODO Auto-generated method stub
-			return null;
-		}
 	}
 	public static class Reference extends TypeArray {
 		public TypeReference typeReference;
@@ -96,12 +90,6 @@ public abstract class TypeArray extends Type {
 		public String toMesaType() {
 			return String.format("ARRAY %s OF %s", typeReference.toMesaType(), arrayElement.toMesaType());
 		}
-
-		@Override
-		public String toJavaType() {
-			// TODO Auto-generated method stub
-			return null;
-		}
 	}
 
 	public final Type arrayElement;
@@ -132,5 +120,10 @@ public abstract class TypeArray extends Type {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 		this.size     = maxValue - minValue + 1;
+	}
+	
+	@Override
+	public boolean container() {
+		return true;
 	}
 }
