@@ -11,18 +11,18 @@ public class TypePointer extends Type {
 		LONG,
 	}
 	public final PointerSize  pointerSize;
-	public final Type  type;
+	public final Type  targetType;
 	
-	public TypePointer(String name, PointerSize pointerSize, Type type) {
+	public TypePointer(String name, PointerSize pointerSize, Type targetType) {
 		super(name, Kind.POINTER);
 		
 		this.pointerSize = pointerSize;
-		this.type        = type;
+		this.targetType  = targetType;
 		
 		fix();
 	}
-	public TypePointer(String name, PointerSize size) {
-		this(name, size, null);
+	public TypePointer(String name, PointerSize pointerSize) {
+		this(name, pointerSize, null);
 	}
 	
 	@Override
@@ -49,11 +49,11 @@ public class TypePointer extends Type {
 	@Override
 	public void fix() {
 		if (needsFix) {
-			if (type == null) {
+			if (targetType == null) {
 				needsFix = false;
 			} else {
-				type.fix();
-				if (!type.needsFix) {
+				targetType.fix();
+				if (!targetType.needsFix) {
 					needsFix = false;
 				}
 			}
@@ -89,15 +89,15 @@ public class TypePointer extends Type {
 			throw new UnexpectedException("Unexpected");
 		}
 		
-		if (type == null) {
+		if (targetType == null) {
 			return baseType;
 		} else {
-			return baseType + " TO " + type.toMesaType();
+			return baseType + " TO " + targetType.toMesaType();
 		}
 	}
 	
 	@Override
 	public boolean container() {
-		return false;
+		return true;
 	}
 }
