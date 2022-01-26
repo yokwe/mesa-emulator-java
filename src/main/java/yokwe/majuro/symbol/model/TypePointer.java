@@ -6,22 +6,22 @@ import yokwe.majuro.util.StringUtil;
 public class TypePointer extends Type {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypePointer.class);
 
-	public enum Size {
+	public enum PointerSize {
 		SHORT,
 		LONG,
 	}
-	public final Size  size;
+	public final PointerSize  pointerSize;
 	public final Type  type;
 	
-	public TypePointer(String name, Size size, Type type) {
+	public TypePointer(String name, PointerSize pointerSize, Type type) {
 		super(name, Kind.POINTER);
 		
-		this.size     = size;
-		this.type     = type;
+		this.pointerSize = pointerSize;
+		this.type        = type;
 		
 		fix();
 	}
-	public TypePointer(String name, Size size) {
+	public TypePointer(String name, PointerSize size) {
 		this(name, size, null);
 	}
 	
@@ -31,7 +31,7 @@ public class TypePointer extends Type {
 	}
 	
 	public void checkValue(long value) {
-		switch(size) {
+		switch(pointerSize) {
 		case SHORT:
 			if (0 <= value && value <= 0x0000_FFFFL) return;
 			break;
@@ -58,7 +58,7 @@ public class TypePointer extends Type {
 				}
 			}
 			
-			switch(size) {
+			switch(pointerSize) {
 			case SHORT:
 				bitSize = 16;
 				break;
@@ -75,9 +75,8 @@ public class TypePointer extends Type {
 	
 	@Override
 	public String toMesaType() {
-		
 		String baseType;
-		switch(size) {
+		switch(pointerSize) {
 		case SHORT:
 			baseType = "POINTER";
 			break;
@@ -96,18 +95,9 @@ public class TypePointer extends Type {
 			return baseType + " TO " + type.toMesaType();
 		}
 	}
+	
 	@Override
-	public String toJavaType() {
-		switch(size) {
-		case SHORT:
-			return "char";
-		case LONG:
-			return "int";
-		default:
-			logger.error("Unexpected");
-			logger.error("  this  {}", this);
-			throw new UnexpectedException("Unexpected");
-		}
+	public boolean container() {
+		return false;
 	}
-
 }
