@@ -165,8 +165,5 @@ public class Constant implements Comparable<Constant> {
 	public String toMesaType() {
 		return String.format("%s: %s = %s", name, type.toMesaType(), valueString);
 	}
-	public String toJavaType() {
-		return null; // FIXME
-	}
 
 }
