@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 // BLOCK: TYPE = ARRAY [0..0) OF UNSPECIFIED;
-public final class BLOCK {
+public final class BLOCK extends MemoryBase {
     public static final String NAME      = "BLOCK";
     public static final int    WORD_SIZE =       0;
     public static final int    BIT_SIZE  =       0;
@@ -11,4 +11,14 @@ public final class BLOCK {
     public static final int ELEMENT_WORD_SIZE =  1;
 
     public static final ContextSubrange context = new ContextSubrange("BLOCK#index", INDEX_MIN_VALUE, INDEX_MAX_VALUE);
+    //
+    // Constructor
+    //
+    public BLOCK(int base) {
+        super(base);
+    }
+    public BLOCK(int base, int index) {
+        super(base + (ELEMENT_WORD_SIZE * index));
+    }
+
 }

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 // EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
-public final class EscTrapTable {
+public final class EscTrapTable extends MemoryBase {
     public static final String NAME      = "EscTrapTable";
     public static final int    WORD_SIZE =            512;
     public static final int    BIT_SIZE  =           8192;
@@ -11,4 +11,14 @@ public final class EscTrapTable {
     public static final int ELEMENT_WORD_SIZE =   2;
 
     public static final ContextSubrange context = new ContextSubrange("EscTrapTable#index", INDEX_MIN_VALUE, INDEX_MAX_VALUE);
+    //
+    // Constructor
+    //
+    public EscTrapTable(int base) {
+        super(base);
+    }
+    public EscTrapTable(int base, int index) {
+        super(base + (ELEMENT_WORD_SIZE * index));
+    }
+
 }

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
-public final class GlobalFrameTable {
+public final class GlobalFrameTable extends MemoryBase {
     public static final String NAME      = "GlobalFrameTable";
     public static final int    WORD_SIZE =              65536;
     public static final int    BIT_SIZE  =            1048576;
@@ -11,4 +11,14 @@ public final class GlobalFrameTable {
     public static final int ELEMENT_WORD_SIZE =     4;
 
     public static final ContextSubrange context = new ContextSubrange("GlobalFrameTable#index", INDEX_MIN_VALUE, INDEX_MAX_VALUE);
+    //
+    // Constructor
+    //
+    public GlobalFrameTable(int base) {
+        super(base);
+    }
+    public GlobalFrameTable(int base, int index) {
+        super(base + (ELEMENT_WORD_SIZE * index));
+    }
+
 }

@@ -17,7 +17,6 @@ import yokwe.majuro.symbol.model.TypeBoolean;
 import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
-import yokwe.majuro.symbol.model.TypeRecord.Align;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
@@ -33,10 +32,13 @@ public class Generate {
 	private static final String PATH_OUTPUT_DIR = String.format("src/main/java/%s", PACKAGE.replace('.', '/'));
 	
 	private static class Context {
-		final String  name;
-		final String  path;
-		final File    ouputFile;
-		final File    tempFile;
+		final String   name;
+		final String   path;
+		final File     ouputFile;
+		final File     tempFile;
+		
+		final Type     type;
+		final Constant cons;		
 		
 		boolean       success;
 
@@ -45,6 +47,16 @@ public class Generate {
 			path      = String.format("%s/%s.java", PATH_OUTPUT_DIR, name);
 			ouputFile = new File(path);
 			tempFile  = new File("tmp/Generate.java");
+			
+			if (decl instanceof DeclType) {
+				type = ((DeclType)decl).value;
+				cons = null;
+			} else if (decl instanceof DeclConstant) {
+				type      = null;
+				cons      = ((DeclConstant)decl).value;
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
 			
 			success   = true;
 		}
@@ -120,6 +132,19 @@ public class Generate {
 		out.println("}");
 	}
 
+	private static void getConstructorBase(Context context, AutoIndentPrintWriter out, String elementSize) {
+		out.println("//");
+		out.println("// Constructor");
+		out.println("//");
+		out.println("public %s(int base) {", context.name);
+		out.println("super(base);");
+		out.println("}");
+		
+		out.println("public %s(int base, int index) {", context.name);
+		out.println("super(base + (%s * index));", elementSize);
+		out.println("}");
+	}
+
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeBoolean type) {
 		//
 		// Generate Constructor
@@ -174,6 +199,10 @@ public class Generate {
 		
 		// FIXME use original Context of index
 		out.println("public static final ContextSubrange context = new ContextSubrange(\"%s#index\", INDEX_MIN_VALUE, INDEX_MAX_VALUE);", type.name);
+		
+		getConstructorBase(context, out, "ELEMENT_WORD_SIZE");
+		out.println();
+		
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeEnum type) {
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
@@ -216,7 +245,7 @@ public class Generate {
 		out.println("}");
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypeRecord type) {
-		if (type.align == Align.BIT_16 && type.bitSize <= 16) {
+		if (type.isBitField16()) {
 			// single word bit field
 			getConstructor16(context, out);
 			out.println();
@@ -275,7 +304,7 @@ public class Generate {
 				out.println("}");
 				out.println();
 			}
-		} else if (type.align == Align.BIT_32 && type.bitSize == 32) {
+		} else if (type.isBitField32()) {
 			// double word bit field
 			getConstructor32(context, out);
 			out.println();
@@ -340,33 +369,27 @@ public class Generate {
 			// multiple word
 			// FIXME
 			
+			getConstructorBase(context, out, "WORD_SIZE");
+			out.println();
+			
 			out.println("//");
 			out.println("// Constants for field access");
 			out.println("//");
 			out.prepareLayout();
-			for(var e: type.fieldList) {
-				String fieldConstName = StringUtil.toJavaConstName(e.name);
+			for(var field: type.fieldList) {
+				String fieldConstName = StringUtil.toJavaConstName(field.name);
 				
-				out.println("public static final int OFFSET_%s = %d;  // %s", fieldConstName, e.offset, e.toMesaType());
+				out.println("public static final int OFFSET_%s = %d;  // %s", fieldConstName, field.offset, field.toMesaType());
 			}
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
 			out.println();
 			
-
-			out.println("//");
-			out.println("// Constructor");
-			out.println("//");
-			out.println("public final int base;");
-			out.println();
-			out.println("public %s(int base) {", context.name);
-			out.println("this.base = base;");
-			out.println("}");
-			out.println("public %s(int base, int index) {", context.name);
-			out.println("this.base = base + (WORD_SIZE * index);");
-			out.println("}");
-			out.println();
-			
 			for(TypeRecord.Field field: type.fieldList) {
+				Type   fieldType      = field.type.getRealType();
+				String fieldConstName = StringUtil.toJavaConstName(field.name);
+				String fieldName      = StringUtil.toJavaName(field.name);
+				String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+
 				if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
 					//
 				} else if (field.startBit == Field.NO_VALUE) {
@@ -379,13 +402,36 @@ public class Generate {
 				}
 				
 				// FIXME
-
+				if (fieldType.container()) {
+					// can be array record of multiple word
+					if (fieldTypeName.contains("#")) {
+						out.println("// FIXME");
+						out.println("// public %s %s() {", fieldTypeName, fieldName);
+						out.println("// return new %s(base + OFFSET_%s);", fieldTypeName, fieldConstName);
+						out.println("// }");
+					} else {
+						out.println("public %s %s() {", fieldTypeName, fieldName);
+						out.println("return new %s(base + OFFSET_%s);", fieldTypeName, fieldConstName);
+						out.println("}");
+					}
+				} else {
+					if (fieldTypeName.contains("#")) {
+						out.println("// FIXME");
+						out.println("// public %s %s(MemoryAccess memoryAccess) {", fieldTypeName, fieldName);
+						out.println("// return new %s(base + OFFSET_%s, memoryAccess);", fieldTypeName, fieldConstName);
+						out.println("// }");
+					} else {
+						out.println("public %s %s(MemoryAccess memoryAccess) {", fieldTypeName, fieldName);
+						out.println("return new %s(base + OFFSET_%s, memoryAccess);", fieldTypeName, fieldConstName);
+						out.println("}");
+					}
+				}
 			}
 
 		}
 	}
 	private static void genDecl(Context context, AutoIndentPrintWriter out, TypePointer type) {
-		switch(type.size) {
+		switch(type.pointerSize) {
 		case SHORT:
 			getConstructor16(context, out);
 			break;
@@ -407,8 +453,8 @@ public class Generate {
 		Context context = new Context(decl);
 
 		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(context.tempFile)) {
-			if (decl instanceof DeclType) {
-				Type type = ((DeclType)decl).value;
+			if (context.type != null) {
+				Type type = context.type;
 				
 //				logger.info("{}: TYPE = {};", type.name, type.toMesaType());
 				
@@ -425,72 +471,51 @@ public class Generate {
 				
 				// output "public final class XXX" line
 				{
-					String parentClass = null;
+					final String parentClass;
 					
-					if (type.bitSize == 0) {
-						// OK
-					} else if (type.bitSize <= 16) {
-						parentClass = "MemoryData16";
-					} else if (type.bitSize <= 32) {
-						parentClass = "MemoryData32";
+					if (type.container()) {
+						parentClass = "MemoryBase";
 					} else {
-						// OK
-					}
-					
-					// special for TypeRecord
-					if (type instanceof TypeRecord) {
-						parentClass = null;
-						
-						TypeRecord typeRecrd = type.toTypeRecord();
-						if (typeRecrd.align == Align.BIT_16) {
-							if (typeRecrd.bitSize <= 16) {
+						// special for TypeRecord
+						if (type instanceof TypeRecord) {
+							TypeRecord typeRecord = type.toTypeRecord();
+							if (typeRecord.isBitField16()) {
 								parentClass = "MemoryData16";
-							} else {
-								// multiple word
-								// OK
-							}
-						} else if (typeRecrd.align == Align.BIT_32)  {
-							if (typeRecrd.bitSize == 32) {
+							} else if (typeRecord.isBitField32()) {
 								parentClass = "MemoryData32";
 							} else {
-								throw new UnexpectedException("Unexpected");
+								logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
+								throw new UnexpectedException("Uneexpected");
 							}
-						}
+						} else {
+							if (type.bitSize == 0) {
+								logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
+								throw new UnexpectedException("Uneexpected");
+							} else if (type.bitSize <= 16) {
+								parentClass = "MemoryData16";
+							} else if (type.bitSize <= 32) {
+								parentClass = "MemoryData32";
+							} else {
+								logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
+								throw new UnexpectedException("Uneexpected");
+							}
+						}						
 					}
 					
-					// special for TypePointer
-					if (type instanceof TypePointer) {
-						TypePointer typePointer = type.toTypePointer();
-						switch(typePointer.size) {
-						case SHORT:
-							parentClass = "MemoryData16";
-							break;
-						case LONG:
-							parentClass = "MemoryData32";
-							break;
-						default:
-							throw new UnexpectedException("Unexpected");
-						}
-					}
-
-					if (parentClass == null) {
-						out.println("public final class %s {", context.name);
-					} else {
-						out.println("public final class %s extends %s {", context.name, parentClass);
-					}
+					out.println("public final class %s extends %s {", context.name, parentClass);
 				}
 				//
 				
 				out.prepareLayout();
 				out.println("public static final String NAME      = \"%s\";", context.name);
 				out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-				out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize);
+				out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
 				out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 				out.println();
 				
 				genDecl(context, out, type);
-			} else if (decl instanceof DeclConstant) {
-				Constant cons = ((DeclConstant)decl).value;
+			} else if (context.cons != null) {
+				Constant cons = context.cons;
 				
 //				logger.info("{}: {} = {};", cons.name, cons.type.toMesaType(), cons.valueString);
 				
