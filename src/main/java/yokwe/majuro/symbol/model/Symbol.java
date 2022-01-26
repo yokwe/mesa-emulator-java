@@ -263,12 +263,12 @@ public class Symbol {
 		if (type instanceof TypePointerShortContext) {
 			TypePointerShortContext typePointerShort = (TypePointerShortContext)type;
 			Type typeRef = getType(name + "#ref", typePointerShort.referenceType());
-			return new TypePointer(name, TypePointer.Size.SHORT, typeRef);
+			return new TypePointer(name, TypePointer.PointerSize.SHORT, typeRef);
 		}
 		if (type instanceof TypePointerLongContext) {
 			TypePointerLongContext typePointerLong = (TypePointerLongContext)type;
 			Type typeRef = getType(name + "#ref", typePointerLong.referenceType());
-			return new TypePointer(name, TypePointer.Size.LONG, typeRef);
+			return new TypePointer(name, TypePointer.PointerSize.LONG, typeRef);
 		}
 		
 		logger.error("Unexpected");
