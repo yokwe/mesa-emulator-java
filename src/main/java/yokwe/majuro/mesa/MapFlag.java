@@ -33,6 +33,9 @@ public final class MapFlag {
 	public boolean isProtect() {
 		return (value & MASK_PROTECT) != 0;
 	}
+	public boolean isReferenced() {
+		return (value & MASK_REFERENCED) != 0;
+	}
 	public boolean isDirty() {
 		return (value & MASK_DIRTY) != 0;
 	}
