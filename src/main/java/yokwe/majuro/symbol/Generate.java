@@ -28,14 +28,17 @@ import yokwe.majuro.util.StringUtil;
 public class Generate {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Generate.class);
 
-	private static final String PACKAGE = "yokwe.majuro.type";
-	private static final String PATH_OUTPUT_DIR = String.format("src/main/java/%s", PACKAGE.replace('.', '/'));
+	public static final String TYPE_RULE_FILE_PATH  = Symbol.PATH_RULE_FILE_TYPE;
+	public static final String TYPE_OUTPUT_DIR_PATH = "src/main/java";
+	public static final String TYPE_PACKAGE_NAME    = "yokwe.majuro.type";
+	
+	public static final String TEST_RULE_FILE_PATH  = Symbol.PATH_RULE_FILE_TYPE;
+	public static final String TEST_OUTPUT_DIR_PATH = "src/test/java";
+	public static final String TEST_PACKAGE_NAME    = "yokwe.majuro.type";
+	
 	
 	private static class Context {
 		final String   name;
-		final String   path;
-		final File     ouputFile;
-		final File     tempFile;
 		
 		final Type     type;
 		final Constant cons;		
@@ -44,9 +47,6 @@ public class Generate {
 
 		public Context(Decl decl) {
 			name      = StringUtil.toJavaName(decl.name);
-			path      = String.format("%s/%s.java", PATH_OUTPUT_DIR, name);
-			ouputFile = new File(path);
-			tempFile  = new File("tmp/Generate.java");
 			
 			if (decl instanceof DeclType) {
 				type = ((DeclType)decl).value;
@@ -59,12 +59,6 @@ public class Generate {
 			}
 			
 			success   = true;
-		}
-		
-		public void moveFile() {
-			if (success) {
-				tempFile.renameTo(ouputFile);
-			}
 		}
 	}
 	
@@ -555,16 +549,21 @@ public class Generate {
 		context.success = false; // FIXME
 	}
 	
-	private static void genDecl(Decl decl) {
+	private static void genDecl(Decl decl, String outputDirPath, String packageName) {
+		String name      = StringUtil.toJavaName(decl.name);
+		String path      = String.format("%s/%s/%s.java", outputDirPath, packageName.replace('.', '/'), name);
+		File   ouputFile = new File(path);
+		File   tempFile  = new File("tmp/Generate.java");
+		
 		Context context = new Context(decl);
 
-		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(context.tempFile)) {
+		try (AutoIndentPrintWriter out = new AutoIndentPrintWriter(tempFile)) {
 			if (context.type != null) {
 				Type type = context.type;
 				
 //				logger.info("{}: TYPE = {};", type.name, type.toMesaType());
 				
-				out.println("package %s;", PACKAGE);
+				out.println("package %s;", packageName);
 				out.println();
 				out.println("import yokwe.majuro.UnexpectedException;");
 				out.println("import yokwe.majuro.mesa.Debug;");
@@ -612,7 +611,7 @@ public class Generate {
 				
 //				logger.info("{}: {} = {};", cons.name, cons.type.toMesaType(), cons.valueString);
 				
-				out.println("package %s;", PACKAGE);
+				out.println("package %s;", packageName);
 				out.println();
 				out.println("import yokwe.majuro.mesa.Debug;");
 				out.println();
@@ -630,7 +629,15 @@ public class Generate {
 			
 			out.println("}"); // end of class
 			
-			context.moveFile();
+			if (context.success) {
+				boolean success = tempFile.renameTo(ouputFile);
+				if (!success) {
+					logger.error("Failed to move file");
+					logger.error("  tempFile  {}", tempFile.getPath());
+					logger.error("  ouputFile {}", ouputFile.getPath());
+					throw new UnexpectedException("Unexpected");
+				}
+			}
 		} catch (IOException e) {
 			String exceptionName = e.getClass().getSimpleName();
 			logger.error("{} {}", exceptionName, e);
@@ -638,16 +645,21 @@ public class Generate {
 		}
 	}
 	
-	public static void main(String[] args) {
-		logger.info("START");
+	public static void process(String ruleFilePath, String outputDirPath, String packageName) {
+		logger.info("ruleFilePath  {}",  ruleFilePath);
+		logger.info("outputDirPath {}", outputDirPath);
+		logger.info("packageName   {}",   packageName);
 		
-		logger.info("path {}", Symbol.PATH_RULE_FILE);
-		Symbol symbol = Symbol.getInstance(Symbol.PATH_RULE_FILE);
-		logger.info("symbol {}", symbol);
+		Symbol symbol = Symbol.getInstance(ruleFilePath);
 		
 		for(var e: symbol.declList) {
-			genDecl(e);
+			genDecl(e, outputDirPath, packageName);
 		}
+	}
+	public static void main(String[] args) {
+		logger.info("START");
+				
+		process(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME);
 		
 		logger.info("STOP");
 	}

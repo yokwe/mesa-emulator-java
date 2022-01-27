@@ -18,7 +18,7 @@
                 	<fileset dir="src/main/java/yokwe/majuro/type">
                                 <exclude name="CheckValue.java"/>
                                 <exclude name="ContextEnum.java"/>
-                                <exclude name="ContextSumbrange.java"/>
+                                <exclude name="ContextSubrange.java"/>
                                 <exclude name="MemoryAccess.java"/>
                                 <exclude name="MemoryBase.java"/>
                                 <exclude name="MemoryData16.java"/>
@@ -44,6 +44,21 @@
                         <sysproperty key="logback.configurationFile" value="${logback.conf}" />
                 </java>
         </target>
+        
+        <!-- GENERATE -->
+        <target name="run-generate">
+                <java module="yokwe.majuro/yokwe.majuro.symbol.Generate" fork="true">
+                        <modulepath refid="build.classpath" />
+                        <modulepath refid="target.jar" />
+                </java>
+        </target>
+        <target name="run-generate-test">
+                <java module="yokwe.majuro/yokwe.majuro.symbol.GenerateTest" fork="true">
+                        <modulepath refid="build.classpath" />
+                        <modulepath refid="target.jar" />
+                </java>
+        </target>
+        
 	
 	
         <!-- ANTLR -->

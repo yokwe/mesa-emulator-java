@@ -18,7 +18,8 @@ import yokwe.majuro.util.StringUtil;
 public class Symbol {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Symbol.class);
 	
-	public static final String  PATH_RULE_FILE = "data/type/Type.symbol";
+	public static final String  PATH_RULE_FILE_TYPE = "data/type/Type.symbol";
+	public static final String  PATH_RULE_FILE_TEST = "data/type/Test.symbol";
 	
 	public static Symbol getInstance(String filePath) {
 		try {
@@ -424,8 +425,11 @@ public class Symbol {
 	public static void main(String[] args) {
 		logger.info("START");
 		
-		logger.info("path {}", PATH_RULE_FILE);
-		Symbol symbol = Symbol.getInstance(PATH_RULE_FILE);
+		String path = PATH_RULE_FILE_TYPE;
+//		String path = PATH_RULE_FILE_TEST;
+		logger.info("path {}", path);
+
+		Symbol symbol = Symbol.getInstance(path);
 		logger.info("symbol {}", symbol);
 		
 		for(var e: Constant.map.values()) {
