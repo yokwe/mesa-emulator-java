@@ -4,7 +4,7 @@ import static yokwe.majuro.mesa.Constant.MAX_REALMEMORY_PAGE_SIZE;
 import static yokwe.majuro.mesa.Constant.PAGE_BITS;
 import static yokwe.majuro.mesa.Constant.PAGE_MASK;
 import static yokwe.majuro.mesa.Constant.PAGE_SIZE;
-import static yokwe.majuro.mesa.Constant.WORD_SIZE;
+import static yokwe.majuro.mesa.Constant.WORD_BITS;
 
 import yokwe.majuro.UnexpectedException;
 
@@ -18,7 +18,11 @@ public final class Memory {
 		private static final int MASK  = SIZE - 1;
 		
 		private static Cache[] getCacheArray() {
-			return new Cache[SIZE];
+			Cache[] cacheArray = new Cache[SIZE];
+			for(int i = 0; i < cacheArray.length; i++) {
+				cacheArray[i] = new Cache();
+			}
+			return cacheArray;
 		}
 		private static Cache getCache(Cache[] cacheArray, int vp) {
 			return cacheArray[((vp >> Cache.N_BIT) ^ vp) & Cache.MASK];
@@ -38,17 +42,24 @@ public final class Memory {
 		}
 	}
 	
-	// use memory based array of int
+	public static final int DEFAULT_VM_SIZE        = 24;
+	public static final int DEFAULT_RM_SIZE        = 20;
+	public static final int DEFAULT_IO_REGION_PAGE = 0x80;
+	
 	public static final int VM_MAX = 24;
 	public static final int RM_MAX = 20;
 	
 	private final int rpSize;
 	private final int vpSize;
+	private final int ioRegionPage;
 	
 	// index of mapFlags and realPages is virtual page
 	// value of realPages contains realPage number of virtual page
 	private final MapFlag[] mapFlags;
 	private final char[]    realPages;
+	
+	// Main Data Space
+	public int mds;
 
 	// index of realMemory is real address up to rpSize * Mesa.PAGE_SIZE
 	private final char[]    realMemory;
@@ -56,9 +67,14 @@ public final class Memory {
 	// array of cache
 	private final Cache[]   cacheArray;
 	
+	public Memory(int vmbits, int rmbits) {
+		this(vmbits, rmbits, DEFAULT_IO_REGION_PAGE);
+	}
 	public Memory(int vmbits, int rmbits, int ioRegionPage) {
-		logger.info("vmbits {}", vmbits);
-		logger.info("rmbits {}", rmbits);
+		logger.info("vmbits       {}", vmbits);
+		logger.info("rmbits       {}", rmbits);
+		logger.info("ioRegionPage {}", String.format("0x%X", ioRegionPage));
+		this.ioRegionPage = ioRegionPage;
 		
 		vpSize = 1 << (vmbits - PAGE_BITS);
 		rpSize = Integer.max(MAX_REALMEMORY_PAGE_SIZE, 1 << (rmbits - PAGE_BITS));
@@ -67,20 +83,34 @@ public final class Memory {
 		
 		realMemory = new char[rpSize * PAGE_SIZE];
 		mapFlags   = new MapFlag[vpSize];
+		for(int i = 0; i < mapFlags.length; i++) {
+			mapFlags[i] = new MapFlag();
+		}
 		realPages  = new char[vpSize];
 		cacheArray = Cache.getCacheArray();
-		
-		// clear realMemory, mapFlags and realPages
+
+		clear();
+	}
+	
+	public void clear() {
+		// clear mds realMemory, mapFlags, realPages and cacheArray
+		mds = 0;
 		for(int i = 0; i < realMemory.length; i++) {
 			realMemory[i] = 0;
 		}
-		for(int i = 0; i < mapFlags.length; i++) {
-			mapFlags[i].clear();
+		for(var e: mapFlags) {
+			e.clear();
 		}
 		for(int i = 0; i < realPages.length; i++) {
 			realPages[i] = 0;
 		}
+		for(var e: cacheArray) {
+			e.clear();
+		}
 		
+		//
+		// initialize mapFlags and realPages
+		//
 		//const int VP_START = pageGerm + countGermVM;
 		char rp = 0;
 		// vp:[ioRegionPage .. 256) <=> rp:[0..256-ioRegionPage)
@@ -106,13 +136,12 @@ public final class Memory {
 		for(int i = rpSize; i < vpSize; i++) {
 			mapFlags[i].setVacant();
 			realPages[i] = 0;
-		}		
+		}
 	}
 	
 	private Cache getCache(int vp) {
 		return Cache.getCache(cacheArray, vp);
 	}
-
 
 	public void clearCache(int vp) {
 		getCache(vp).clear();
@@ -183,7 +212,6 @@ public final class Memory {
 				else Perf.cacheMissConflict++;
 			}
 
-			// FIXME DUPLICATE CODE START
 			MapFlag mapFlag = mapFlags[vp];
 			if (mapFlag.isVacant()) {
 				Mesa.pageFault(va);
@@ -198,7 +226,6 @@ public final class Memory {
 			}
 			ra = realPages[vp] << PAGE_BITS;
 			if (ra == 0) throw new UnexpectedException();
-			// FIXME DUPLICATE CODE STOP
 			
 			cache.vp    = vp;
 			cache.ra    = ra;
@@ -207,8 +234,8 @@ public final class Memory {
 				
 		return ra | (va & PAGE_MASK);
 	}
-	public MapFlag mapFlag(int vp) {
-		return mapFlags[vp];
+	public MapFlag mapFlag(int va) {
+		return mapFlags[va >>> PAGE_BITS];
 	}
 	public char readReal16(int ra) {
 		return realMemory[ra];
@@ -217,11 +244,11 @@ public final class Memory {
 		realMemory[ra] = newValue;
 	}
 	public int readReal32(int ra0, int ra1) {
-		return (realMemory[ra1] << WORD_SIZE) | realMemory[ra0];
+		return (realMemory[ra1] << WORD_BITS) | realMemory[ra0];
 	}
 	public void writeReal32(int ra0, int ra1, int newValue) {
 		realMemory[ra0] = (char)newValue;
-		realMemory[ra1] = (char)(newValue >>> 16);
+		realMemory[ra1] = (char)(newValue >>> WORD_BITS);
 	}
 	
 	
@@ -262,8 +289,6 @@ public final class Memory {
 	//
 	// MDS
 	//
-	public int mds = 0;
-	
 	public int fetchMDS(char va) {
 		return fetch(mds + va);
 	}
@@ -305,6 +330,4 @@ public final class Memory {
 		throw new UnexpectedException("Unexpected");
 	}
 
-	
-	
 }
