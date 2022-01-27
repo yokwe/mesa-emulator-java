@@ -13,20 +13,6 @@
                 <pathelement location="${maven.build.dir}/${maven.build.finalName}.jar" />
         </path>
 	
-	<target name="clean-yokwe-majuro-type">
-		<delete>
-                	<fileset dir="src/main/java/yokwe/majuro/type">
-                                <exclude name="CheckValue.java"/>
-                                <exclude name="ContextEnum.java"/>
-                                <exclude name="ContextSubrange.java"/>
-                                <exclude name="MemoryAccess.java"/>
-                                <exclude name="MemoryBase.java"/>
-                                <exclude name="MemoryData16.java"/>
-                                <exclude name="MemoryData32.java"/>
-                	</fileset>
-                </delete>
-	</target>
-
         <!-- study -->
         <target name="study-T104">
                 <java module="yokwe.majuro/yokwe.majuro.study.T104" fork="true">
@@ -46,19 +32,36 @@
         </target>
         
         <!-- GENERATE -->
-        <target name="run-generate">
+        <target name="prepare-generate">
+                <delete>
+                        <fileset dir="src/main/java/yokwe/majuro/type">
+                                <exclude name="CheckValue.java"/>
+                                <exclude name="ContextEnum.java"/>
+                                <exclude name="ContextSubrange.java"/>
+                                <exclude name="MemoryAccess.java"/>
+                                <exclude name="MemoryBase.java"/>
+                                <exclude name="MemoryData16.java"/>
+                                <exclude name="MemoryData32.java"/>
+                        </fileset>
+                </delete>
+        </target>
+        <target name="run-generate" depends="prepare-generate">
                 <java module="yokwe.majuro/yokwe.majuro.symbol.Generate" fork="true">
                         <modulepath refid="build.classpath" />
                         <modulepath refid="target.jar" />
                 </java>
         </target>
-        <target name="run-generate-test">
+        <target name="prepare-generate-test">
+                <delete>
+                        <fileset dir="src/test/java/yokwe/majuro/type" />
+                </delete>
+        </target>
+       <target name="run-generate-test" depends="prepare-generate-test">
                 <java module="yokwe.majuro/yokwe.majuro.symbol.GenerateTest" fork="true">
                         <modulepath refid="build.classpath" />
                         <modulepath refid="target.jar" />
                 </java>
         </target>
-        
 	
 	
         <!-- ANTLR -->
