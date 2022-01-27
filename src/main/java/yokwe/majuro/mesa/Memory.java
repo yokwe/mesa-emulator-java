@@ -98,14 +98,14 @@ public final class Memory {
 		for(int i = 0; i < realMemory.length; i++) {
 			realMemory[i] = 0;
 		}
-		for(var e: mapFlags) {
-			e.clear();
+		for(int i = 0; i < mapFlags.length; i++) {
+			mapFlags[i].clear();
 		}
 		for(int i = 0; i < realPages.length; i++) {
 			realPages[i] = 0;
 		}
-		for(var e: cacheArray) {
-			e.clear();
+		for(int i = 0; i < cacheArray.length; i++) {
+			cacheArray[i].clear();
 		}
 		
 		//
