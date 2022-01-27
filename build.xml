@@ -47,19 +47,19 @@
 	
 	
         <!-- ANTLR -->
-        <target name="run-antlr-tool">
-                <java module="antlr4/org.antlr.v4.Tool" fork="true">
-                        <modulepath refid="build.classpath" />
-                	
-                        <arg line="-Xexact-output-dir"/>
-                        <arg line="-o tmp/antlr"/>
-                        <arg line="-package yokwe.majuro.symbol.antlr"/>
-                        <arg line="-no-listener"/>
-                        <arg line="-no-visitor"/>
-                        <arg line="data/type/Symbol.g4"/>
+	<target name="run-antlr-tool">
+        	<!-- delete antlr tool output directory -->
+        	<delete dir="tmp/antlr" />
+        	<java module="antlr4/org.antlr.v4.Tool" fork="true">
+        		<modulepath refid="build.classpath" />
+        		<arg line="-Xexact-output-dir"/>
+        		<arg line="-o tmp/antlr"/>
+        		<arg line="-package yokwe.majuro.symbol.antlr"/>
+        		<arg line="-no-listener"/>
+        		<arg line="-no-visitor"/>
+        		<arg line="data/type/Symbol.g4"/>
                 </java>
-        	
-        	<!-- copy generated java files to source directory -->
+        	<!-- copy generated java files from antlr output directory to source directory -->
         	<copy todir="src/main/java/yokwe/majuro/symbol/antlr">
         		<fileset dir="tmp/antlr">
         			<include name="*.java" />
