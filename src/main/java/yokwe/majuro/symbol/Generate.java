@@ -32,7 +32,7 @@ public class Generate {
 	public static final String TYPE_OUTPUT_DIR_PATH = "src/main/java";
 	public static final String TYPE_PACKAGE_NAME    = "yokwe.majuro.type";
 	
-	public static final String TEST_RULE_FILE_PATH  = Symbol.PATH_RULE_FILE_TYPE;
+	public static final String TEST_RULE_FILE_PATH  = Symbol.PATH_RULE_FILE_TEST;
 	public static final String TEST_OUTPUT_DIR_PATH = "src/test/java";
 	public static final String TEST_PACKAGE_NAME    = "yokwe.majuro.type";
 	
