@@ -142,10 +142,15 @@ referenceType
 // POINTER
 //
 pointerType
-    :   POINTER      TO referenceType # TypePointerShort
-    |   LONG POINTER TO referenceType # TypePointerLong
+    :   POINTER      TO pointerRefType # TypePointerShort
+    |   LONG POINTER TO pointerRefType # TypePointerLong
     ;
 
+pointerRefType
+    :    simpleType
+    |    referenceType
+    |    arrayType
+    ;
 
 //
 // SUBRANGE
