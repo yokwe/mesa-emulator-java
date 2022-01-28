@@ -21,6 +21,8 @@ import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
 import yokwe.majuro.symbol.model.TypeSubrange;
+import yokwe.majuro.type.LONG_POINTER;
+import yokwe.majuro.type.POINTER;
 import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 import yokwe.majuro.util.StringUtil;
@@ -199,10 +201,10 @@ public class Generate {
 			TypePointer typePointer = elementType.toTypePointer();
 			switch(typePointer.pointerSize) {
 			case LONG:
-				elementWordSize = "LONG_POINER.WORD_SIZE";
+				elementWordSize = String.format("%s.WORD_SIZE", LONG_POINTER.NAME);
 				break;
 			case SHORT:
-				elementWordSize = "POINTER.WORD_SIZE";
+				elementWordSize = String.format("%s.WORD_SIZE", POINTER.NAME);
 				break;
 			default:
 				throw new UnexpectedException("Unexpected");
