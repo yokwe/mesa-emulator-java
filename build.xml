@@ -67,7 +67,9 @@
         <!-- ANTLR -->
 	<target name="run-antlr-tool">
         	<!-- delete antlr tool output directory -->
-        	<delete dir="tmp/antlr" />
+                <delete>
+                        <fileset dir="tmp/antlr" />
+                </delete>
         	<java module="antlr4/org.antlr.v4.Tool" fork="true">
         		<modulepath refid="build.classpath" />
         		<arg line="-Xexact-output-dir"/>
