@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.DefaultErrorStrategy;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
@@ -31,7 +31,7 @@ public class Symbol {
 			tokens.fill();
 			
 			SymbolParser parser = new SymbolParser(tokens);
-			parser.setErrorHandler(new BailErrorStrategy());
+			parser.setErrorHandler(new DefaultErrorStrategy());
 			
 			SymbolContext tree = parser.symbol();
 			
@@ -168,6 +168,7 @@ public class Symbol {
 		throw new UnexpectedException("Unexpected");
 	}
 	private Constant getConstant(String name, ConstantTypeNumericContext type, String value) {
+		// FIXME
 		if (type instanceof ConstantTypeNumericCARDINALContext) {
 			return new Constant(name, Type.CARDINAL, value);
 		}
@@ -179,6 +180,7 @@ public class Symbol {
 		throw new UnexpectedException("Unexpected");
 	}
 	private Constant getConstant(String name, PointerTypeContext type, String value) {
+		// FIXME
 		Type pointerType = getType(name + "#pointer", type);
 		return new Constant(name, pointerType, value);
 	}
@@ -260,15 +262,30 @@ public class Symbol {
 	//
 	// Pointer
 	//
+	private Type getType(String name, PointerRefTypeContext type) {
+		if (type.simpleType() != null){
+			return getType(name, type.simpleType());
+		}
+		if (type.referenceType() != null) {
+			return getType(name, type.referenceType());
+		}
+		if (type.arrayType() != null){
+			return getType(name, type.arrayType());
+		}
+		logger.error("Unexpected");
+		logger.error("  name  {}", name);
+		logger.error("  type  {}", type.getText());
+		throw new UnexpectedException("Unexpected");
+	}
 	private Type getType(String name, PointerTypeContext type) {
 		if (type instanceof TypePointerShortContext) {
 			TypePointerShortContext typePointerShort = (TypePointerShortContext)type;
-			Type typeRef = getType(name + "#ref", typePointerShort.referenceType());
+			Type typeRef = getType(name + "#ref", typePointerShort.pointerRefType());
 			return new TypePointer(name, TypePointer.PointerSize.SHORT, typeRef);
 		}
 		if (type instanceof TypePointerLongContext) {
 			TypePointerLongContext typePointerLong = (TypePointerLongContext)type;
-			Type typeRef = getType(name + "#ref", typePointerLong.referenceType());
+			Type typeRef = getType(name + "#ref", typePointerLong.pointerRefType());
 			return new TypePointer(name, TypePointer.PointerSize.LONG, typeRef);
 		}
 		
