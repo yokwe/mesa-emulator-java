@@ -10,6 +10,63 @@ BEGIN
     //   POINTER           char
     //   LONG POINTER      int
  
-    BLOCK: TYPE = ARRAY [0..0) OF UNSPECIFIED;
    
+    // subrange
+    Sub:    TYPE = [0..16);
+    NIBBLE: TYPE = [0..16);
+    BYTE:   TYPE = [0..256);
+   
+    // enum
+    Enum: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
+
+    // ARRAY
+    //   variation of index
+    ArraySubOpen:  TYPE = ARRAY [0..0) OF UNSPECIFIED;
+    ArraySubFixed: TYPE = ARRAY [0..8) OF UNSPECIFIED;
+    ArrayRefEnum:  TYPE = ARRAY Enum   OF UNSPECIFIED;
+    ArrayRefSub:   TYPE = ARRAY Sub    OF UNSPECIFIED;
+
+    // variation of element
+    ArrayScalar:         TYPE = ARRAY Sub OF UNSPECIFIED;
+    ArrayRec:            TYPE = ARRAY Sub OF Rec;
+    ArrayRefPtr16Scalar: TYPE = ARRAY Sub OF POINTER TO CARDINAL;
+    ArrayRefPtr16Rec:    TYPE = ARRAY Sub OF POINTER TO Rec;
+    ArrayRefPtr32Scalar: TYPE = ARRAY Sub OF LONG POINTER TO CARDINAL;
+    ArrayRefPtr32Rec:    TYPE = ARRAY Sub OF LONG POINTER TO Rec;
+    
+    // POINTER
+    //   SHORT POINTER
+    Ptr16Scalar:      TYPE = POINTER TO UNSPECIFIED;
+    Ptr16Rec:         TYPE = POINTER TO Rec;
+    Ptr16ArrayScalar: TYPE = POINTER TO ARRAY Sub OF UNSPECIFIED;
+    ptr16ArrayRec:    TYPE = POINTER TO ARRAY Sub OF Rec;
+    
+    //   LONG POINTER
+    Ptr32Scalar:      TYPE = LONG POINTER TO UNSPECIFIED;
+    Ptr32Rec:         TYPE = LONG POINTER TO Rec;
+    Ptr32ArrayScalar: TYPE = LONG POINTER TO ARRAY Sub OF UNSPECIFIED;
+    Ptr32ArrayRec:    TYPE = LONG POINTER TO ARRAY Sub OF Rec;
+    
+    // BIT FIELD 16
+    // single 16 bit field < 16
+    BitField8: TYPE = RECORD[
+        left  (0: 0..3): NIBBLE,
+        right (0: 4..7): NIBBLE];
+
+    // single 16 bit field == 16
+    BitField16: TYPE = RECORD[
+        left  (0: 0.. 7): BYTE,
+        right (0: 8..15): BYTE];
+    
+    // single 32 bit field
+    BitField32: TYPE = RECORD32 [  // RECORD32
+        data (0: 0..13): UNSPECIFIED,
+        tag  (0:14..15): Enum,
+        fill (1: 0..15): UNSPECIFIED];
+
+    // multiple word record
+    Rec: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): CARDINAL];    
+    
 END.
