@@ -97,7 +97,7 @@ public abstract class Type implements Comparable<Type> {
 	//
 	// Define simple type
 	//
-	public static final Type BOOLELAN         = new TypeBoolean ("BOOLEAN");
+	public static final Type BOOLEAN          = new TypeBoolean ("BOOLEAN");
 	public static final Type INTEGER          = new TypeSubrange("INTEGER", Short.MIN_VALUE, Short.MAX_VALUE);
 	
 	public static final Type CARDINAL         = new TypeSubrange("CARDINAL",         0, 0xFFFF);
@@ -130,6 +130,16 @@ public abstract class Type implements Comparable<Type> {
 	@Override
 	public int compareTo(Type that) {
 		return this.name.compareTo(that.name);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Type) {
+			Type that = (Type)o;
+			return compareTo(that) == 0;
+		} else {
+			return false;
+		}
 	}
 
 	// fix for bitSize
@@ -168,6 +178,20 @@ public abstract class Type implements Comparable<Type> {
 		} else {
 			return this;
 		}
+	}
+	
+	public boolean simpleType() {
+		if (this.equals(Type.BOOLEAN))          return true;
+		if (this.equals(Type.INTEGER))          return true;
+		if (this.equals(Type.CARDINAL))         return true;
+		if (this.equals(Type.UNSPECIFIED))      return true;
+		if (this.equals(Type.LONG_CARDINAL))    return true;
+		if (this.equals(Type.LONG_UNSPECIFIED)) return true;
+		
+		if (this.equals(Type.POINTER))          return true;
+		if (this.equals(Type.LONG_POINTER))     return true;
+		
+		return false;
 	}
 	
 	public TypeArray toTypeArray() {

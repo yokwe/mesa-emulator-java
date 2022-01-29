@@ -81,7 +81,7 @@ public class SymbolUtil {
 	//
 	static Type getType(String name, SimpleTypeContext type) {
 		if (type instanceof TypeBooleanContext) {
-			return new TypeReference(name, Type.BOOLELAN.name);
+			return new TypeReference(name, Type.BOOLEAN.name);
 		}
 		if (type instanceof TypeIntegerContext) {
 			return new TypeReference(name, Type.INTEGER.name);

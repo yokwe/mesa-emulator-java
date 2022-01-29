@@ -24,7 +24,7 @@ public class TypeBoolean extends Type {
 
 	@Override
 	public String toMesaType() {
-		if (name.equals(Type.BOOLELAN.name)) return "BOOLEAN";
+		if (name.equals(Type.BOOLEAN.name)) return "BOOLEAN";
 		
 		logger.error("Unexpected");
 		logger.error("  this  {}", this);
