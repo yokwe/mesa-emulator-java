@@ -10,21 +10,31 @@ import java.util.List;
 
 import yokwe.majuro.UnexpectedException;
 
-public class AutoIndentPrintWriter implements AutoCloseable {
+public final class AutoIndentPrintWriter implements AutoCloseable {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AutoIndentPrintWriter.class);
 
 	private static final String INDENT = "    ";
 
 	private final PrintWriter out;
 	private int level = 0;
+	
+	private static PrintWriter getPrintWriter(File file) {
+		try {
+			return new PrintWriter(new FileWriter(file));
+		} catch (IOException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
+	}
 
 	public AutoIndentPrintWriter(PrintWriter out) {
 		this.out = out;
 	}
-	public AutoIndentPrintWriter(File file) throws IOException {
-		this(new PrintWriter(new FileWriter(file)));
+	public AutoIndentPrintWriter(File file) {
+		this(getPrintWriter(file));
 	}
-	public AutoIndentPrintWriter(String path) throws IOException {
+	public AutoIndentPrintWriter(String path) {
 		this(new File(path));
 	}
 	
