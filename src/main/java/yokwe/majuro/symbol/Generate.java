@@ -176,9 +176,9 @@ public class Generate {
 		//
 		// Generate Constructor
 		//
-		if (type.bitSize <= 16) {
+		if (type.bitSize() <= 16) {
 			getConstructor16(context, out);
-		} else if (type.bitSize <= 32) {
+		} else if (type.bitSize() <= 32) {
 			getConstructor32(context, out);
 		} else {
 			logger.error("type {}", type.toMesaType());
@@ -347,11 +347,11 @@ public class Generate {
 			
 			int bits  = stop - start + 1;
 			int pat   = (1 << bits) - 1;
-			int shift = type.bitSize - stop - 1;
+			int shift = type.bitSize() - stop - 1;
 			int mask  = (pat << shift);
 			
 			out.println("private static final int %s_MASK  = %s;",
-				fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+				fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
 			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
 		}
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
@@ -410,10 +410,10 @@ public class Generate {
 			
 			int bits  = stop - start + 1;
 			int pat   = (1 << bits) - 1;
-			int shift = type.bitSize - stop - 1;
+			int shift = type.bitSize() - stop - 1;
 			int mask  = (pat << shift);
 			
-			out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize));
+			out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
 			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
 		}
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
@@ -583,12 +583,12 @@ public class Generate {
 					if (type.container()) {
 						parentClass = "MemoryBase";
 					} else {
-						if (type.bitSize == 0) {
+						if (type.bitSize() == 0) {
 							logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
 							throw new UnexpectedException("Uneexpected");
-						} else if (type.bitSize <= 16) {
+						} else if (type.bitSize() <= 16) {
 							parentClass = "MemoryData16";
-						} else if (type.bitSize <= 32) {
+						} else if (type.bitSize() <= 32) {
 							parentClass = "MemoryData32";
 						} else {
 							logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
