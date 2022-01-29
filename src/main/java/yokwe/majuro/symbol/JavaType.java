@@ -404,59 +404,65 @@ public class JavaType {
 	private void typeArray(TypeArray type) {
 		final var out = javaFile.out;
 
+		if (type instanceof TypeArray.Reference) {
+			var typeRef = type.toReference().typeReference.getRealType();
+		    out.println("public static final void checkIndex(int value) {");
+		    out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(value);", StringUtil.toJavaName(typeRef.name));
+		    out.println("}");
+		} else if (type instanceof TypeArray.Subrange) {
+			// immediate subrange
+			TypeSubrange typeSubrange = type.toSubrange().typeSubrange;
+			
+			out.prepareLayout();
+			out.println("private static final int MIN_INDEX_VALUE   = %s;", StringUtil.toJavaString(typeSubrange.minValue));
+			out.println("private static final int MAX_INDEX_VALUE   = %s;", StringUtil.toJavaString(typeSubrange.maxValue));
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.println();
+			
+		    out.println("private static final ContextSubrange contextIndex = new ContextSubrange(NAME, MIN_INDEX_VALUE, MAX_INDEX_VALUE);");
+		    out.println("public static final void checkIndex(int value) {");
+		    out.println("if (Debug.ENABLE_CHECK_VALUE) contextIndex(value);");
+		    out.println("}");
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+		
 		Type   elementType     = type.arrayElement.getRealType();
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
 		String elementWordSize = Integer.toString(elementType.wordSize());
-		String indexMinValue   = StringUtil.toJavaString(type.minValue);
-		String indexMaxValue   = StringUtil.toJavaString(type.maxValue);
-		
-		if (!elementTypeName.contains("#")) {
-			elementWordSize = String.format("%s.WORD_SIZE", elementTypeName);
-		}
-		if (elementType instanceof TypePointer) {
-			TypePointer typePointer = elementType.toTypePointer();
-			switch(typePointer.pointerSize) {
-			case LONG:
-				elementWordSize = String.format("%s.WORD_SIZE", LONG_POINTER.NAME);
-				break;
-			case SHORT:
-				elementWordSize = String.format("%s.WORD_SIZE", POINTER.NAME);
-				break;
-			default:
-				throw new UnexpectedException("Unexpected");
-			}
-		}
-		if (type instanceof TypeArray.Reference) {
-			Type typeIndex = ((TypeArray.Reference)type).typeReference.getRealType();
-			String typeIndexName = StringUtil.toJavaName(typeIndex.name);
-			if (typeIndex instanceof TypeEnum) {
-				indexMinValue = String.format("%s.MIN_VALUE", typeIndexName);
-				indexMaxValue = String.format("%s.MAX_VALUE", typeIndexName);
-			} else if (typeIndex instanceof TypeSubrange) {
-				indexMinValue = String.format("(int)%s.MIN_VALUE", typeIndexName);
-				indexMaxValue = String.format("(int)%s.MAX_VALUE", typeIndexName);
-			} else {
-				throw new UnexpectedException("Unexpected");
-			}
-		}
-		if (type instanceof TypeArray.Subrange) {
-			TypeSubrange typeSub = ((TypeArray.Subrange)type).typeSubrange;
-			// special for open subrange
-			if (typeSub.isOpenSubrange()) {
-				indexMinValue = "(int)INTEGER.MIN_VALUE";
-				indexMaxValue = "(int)CARDINAL.MAX_VALUE";
-			}
-		}
+//		
+//		if (elementType.container()) {
+//			
+//		} else {
+//			//
+//		}
+//		
+//		
+//		
+//		if (!elementTypeName.contains("#")) {
+//			elementWordSize = String.format("%s.WORD_SIZE", elementTypeName);
+//		}
+//		if (elementType instanceof TypePointer) {
+//			TypePointer typePointer = elementType.toTypePointer();
+//			switch(typePointer.pointerSize) {
+//			case LONG:
+//				elementWordSize = String.format("%s.WORD_SIZE", LONG_POINTER.NAME);
+//				break;
+//			case SHORT:
+//				elementWordSize = String.format("%s.WORD_SIZE", POINTER.NAME);
+//				break;
+//			default:
+//				throw new UnexpectedException("Unexpected");
+//			}
+//		}
 		
 		out.prepareLayout();
-		out.println("public static final int INDEX_MIN_VALUE   = %s;", indexMinValue);
-		out.println("public static final int INDEX_MAX_VALUE   = %s;", indexMaxValue);
 		out.println("public static final int ELEMENT_WORD_SIZE = %s;", elementWordSize);
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
 		
 		// FIXME use original Context of index
-		out.println("public static final ContextSubrange context = new ContextSubrange(\"%s#index\", INDEX_MIN_VALUE, INDEX_MAX_VALUE);", type.name);
+//		out.println("public static final ContextSubrange context = new ContextSubrange(\"%s#index\", INDEX_MIN_VALUE, INDEX_MAX_VALUE);", type.name);
 		
 		constructorBase("ELEMENT_WORD_SIZE");
 		out.println();
