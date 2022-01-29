@@ -21,32 +21,6 @@ public class Symbol {
 	public static final String  PATH_RULE_FILE_TYPE = "data/type/Type.symbol";
 	public static final String  PATH_RULE_FILE_TEST = "data/type/Test.symbol";
 	
-	public static Symbol getInstance(String filePath) {
-		try {
-			CharStream input = CharStreams.fromFileName(filePath);
-			
-			SymbolLexer       lexer   = new SymbolLexer(input);
-			CommonTokenStream tokens  = new CommonTokenStream(lexer);
-			
-			tokens.fill();
-			
-			SymbolParser parser = new SymbolParser(tokens);
-			parser.setErrorHandler(new DefaultErrorStrategy());
-			
-			SymbolContext tree = parser.symbol();
-			
-			Symbol symbol = new Symbol(tree);
-			symbol.build(tree);
-			
-			return symbol;
-		} catch (IOException e) {
-			String exceptionName = e.getClass().getSimpleName();
-			logger.error("{} {}", exceptionName, e);
-			throw new UnexpectedException(exceptionName, e);
-		}
-	}
-
-	
 	public abstract static class Decl {
 		public final String name;
 		
@@ -79,47 +53,55 @@ public class Symbol {
 		}
 	}
 	
-	public final String name;
-	public final List<Decl> declList;
-	
-	private Symbol(SymbolContext tree) {
-		this.name = tree.header().name.getText();
-		this.declList = new ArrayList<>();
-	}
-
-	@Override
-	public String toString() {
-		return StringUtil.toString(this);
-	}
-	
-	public void build(SymbolContext tree) {
-		logger.info("build START");
+	public static Symbol getInstance(String filePath) {
+		final SymbolContext symbolContext;
+		// build symbolContext
+		try {
+			CharStream input = CharStreams.fromFileName(filePath);
+			
+			SymbolLexer       lexer   = new SymbolLexer(input);
+			CommonTokenStream tokens  = new CommonTokenStream(lexer);
+			
+			tokens.fill();
+			SymbolParser parser = new SymbolParser(tokens);
+			// report error while parsing
+			parser.setErrorHandler(new DefaultErrorStrategy());
+			
+			symbolContext = parser.symbol();
+		} catch (IOException e) {
+			String exceptionName = e.getClass().getSimpleName();
+			logger.error("{} {}", exceptionName, e);
+			throw new UnexpectedException(exceptionName, e);
+		}
 		
-		// append builtin types
-		declList.add(new DeclType(Type.BOOLELAN));
-		declList.add(new DeclType(Type.INTEGER));
-		declList.add(new DeclType(Type.CARDINAL));
-		declList.add(new DeclType(Type.LONG_CARDINAL));
-		declList.add(new DeclType(Type.UNSPECIFIED));
-		declList.add(new DeclType(Type.LONG_UNSPECIFIED));
-		declList.add(new DeclType(Type.POINTER));
-		declList.add(new DeclType(Type.LONG_POINTER));
-		
-		logger.info("build constant and type");
-		for(DeclContext e: tree.body().declList().elements) {
-			if (e.declConstant() != null) {
-				Constant value = getConstant(e.declConstant());
-				declList.add(new DeclConstant(value));
+		final List<Decl> declList = new ArrayList<>();
+		// build declList
+		{
+			// add simple type that are defined as static final Type in class Type
+			for(var e: Type.map.values()) {
+				logger.info("add simple type  {}", e.name);
+				declList.add(new DeclType(e));
 			}
-			if (e.declType() != null) {
-				Type value = getType(e.declType());
-				declList.add(new DeclType(value));
+			
+			logger.info("build constant and type");
+			for(DeclContext e: symbolContext.body().declList().elements) {
+				if (e.declConstant() != null) {
+					Constant value = SymbolUtil.getConstant(e.declConstant());
+					declList.add(new DeclConstant(value));
+				}
+				if (e.declType() != null) {
+					Type value = SymbolUtil.getType(e.declType());
+					declList.add(new DeclType(value));
+				}
 			}
 		}
+		
+		Symbol symbol = new Symbol(symbolContext.header().name.getText(), declList);
 		
 		logger.info("cons {}", Constant.map.size());
 		logger.info("type {}", Type.map.keySet().stream().filter(o -> !o.contains("#")).count());
 		
+		// sanity check
 		{
 			int needsFixCountCons = Constant.fixAll();
 			int needsFixCountType = Type.fixAll();
@@ -144,80 +126,21 @@ public class Symbol {
 			}
 		}
 		
-		logger.info("build STOP");
+		return symbol;
 	}
 	
 	
-	//
-	// Constant
-	//
-	private Constant getConstant(DeclConstantContext declConstant) {
-		String name = declConstant.name.getText();
-		String value = String.join(".", declConstant.constantValue().name.stream().map(o -> o.getText()).toArray(String[]::new));
+	public final String     name;
+	public final List<Decl> declList;
+	
+	private Symbol(String name, List<Decl> declList) {
+		this.name     = name;
+		this.declList = declList;
+	}
 
-		ConstantTypeContext type = declConstant.constantType();
-		if (type.constantTypeNumeric() != null) {
-			return getConstant(name, type.constantTypeNumeric(), value);
-		}
-		if (type.pointerType() != null) {
-			return getConstant(name, type.pointerType(), value);			
-		}
-		
-		logger.error("Unexpected");
-		logger.error("  declConstant  {}", declConstant.getText());
-		throw new UnexpectedException("Unexpected");
-	}
-	private Constant getConstant(String name, ConstantTypeNumericContext type, String value) {
-		// FIXME
-		if (type instanceof ConstantTypeNumericCARDINALContext) {
-			return new Constant(name, Type.CARDINAL, value);
-		}
-		
-		logger.error("Unexpected");
-		logger.error("  name  {}", name);
-		logger.error("  type  {}", type);
-		logger.error("  value {}", value);
-		throw new UnexpectedException("Unexpected");
-	}
-	private Constant getConstant(String name, PointerTypeContext type, String value) {
-		// FIXME
-		Type pointerType = SymbolUtil.getType(name + "#pointer", type);
-		return new Constant(name, pointerType, value);
-	}
-	
-	
-	//
-	// Type
-	//
-	private Type getType(DeclTypeContext declType) {
-		String name = declType.name.getText();
-		TypeTypeContext type = declType.typeType();
-		
-		if (type.simpleType() != null) {
-			return SymbolUtil.getType(name, type.simpleType());
-		}
-		if (type.referenceType() != null) {
-			return SymbolUtil.getType(name, type.referenceType());
-		}
-		if (type.pointerType() != null) {
-			return SymbolUtil.getType(name, type.pointerType());
-		}
-		if (type.subrangeType() != null) {
-			return SymbolUtil.getType(name, type.subrangeType());
-		}
-		if (type.enumType() != null) {
-			return SymbolUtil.getType(name, type.enumType());
-		}
-		if (type.arrayType() != null) {
-			return SymbolUtil.getType(name, type.arrayType());
-		}
-		if (type.recordType() != null) {
-			return SymbolUtil.getType(name, type.recordType());
-		}
-
-		logger.error("Unexpected");
-		logger.error("  declType  {}", declType.getText());
-		throw new UnexpectedException("Unexpected");
+	@Override
+	public String toString() {
+		return StringUtil.toString(this);
 	}
 	
 	

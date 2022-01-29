@@ -6,6 +6,11 @@ import java.util.List;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolParser.ArrayElementTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeNumericCARDINALContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeNumericContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.DeclConstantContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.DeclTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.EnumTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.EumElementContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.FieldNameContext;
@@ -32,9 +37,45 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerLongContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerShortContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeRecord16Context;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeRecord32Context;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
 
 public class SymbolUtil {
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SymbolUtil.class);
+
+	//
+	// Type
+	//
+	static Type getType(DeclTypeContext declType) {
+		String name = declType.name.getText();
+		TypeTypeContext type = declType.typeType();
+		
+		if (type.simpleType() != null) {
+			return SymbolUtil.getType(name, type.simpleType());
+		}
+		if (type.referenceType() != null) {
+			return SymbolUtil.getType(name, type.referenceType());
+		}
+		if (type.pointerType() != null) {
+			return SymbolUtil.getType(name, type.pointerType());
+		}
+		if (type.subrangeType() != null) {
+			return SymbolUtil.getType(name, type.subrangeType());
+		}
+		if (type.enumType() != null) {
+			return SymbolUtil.getType(name, type.enumType());
+		}
+		if (type.arrayType() != null) {
+			return SymbolUtil.getType(name, type.arrayType());
+		}
+		if (type.recordType() != null) {
+			return SymbolUtil.getType(name, type.recordType());
+		}
+
+		logger.error("Unexpected");
+		logger.error("  declType  {}", declType.getText());
+		throw new UnexpectedException("Unexpected");
+	}
 	//
 	// Simple
 	//
@@ -241,7 +282,6 @@ public class SymbolUtil {
 		Symbol.logger.error("  type  {}", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
-
 	private static TypeRecord.Field getField(String typeName, RecordFieldContext recordField) {
 		FieldNameContext fieldName = recordField.fieldName();
 		FieldTypeContext fieldType = recordField.fieldType();
@@ -267,5 +307,43 @@ public class SymbolUtil {
 		Symbol.logger.error("Unexpected");
 		Symbol.logger.error("  type  {}", recordField.getText());
 		throw new UnexpectedException("Unexpected");
+	}
+	
+	
+	//
+	// Constant
+	//
+	static Constant getConstant(DeclConstantContext declConstant) {
+		String name = declConstant.name.getText();
+		String value = String.join(".", declConstant.constantValue().name.stream().map(o -> o.getText()).toArray(String[]::new));
+
+		ConstantTypeContext type = declConstant.constantType();
+		if (type.constantTypeNumeric() != null) {
+			return getConstant(name, type.constantTypeNumeric(), value);
+		}
+		if (type.pointerType() != null) {
+			return getConstant(name, type.pointerType(), value);			
+		}
+		
+		logger.error("Unexpected");
+		logger.error("  declConstant  {}", declConstant.getText());
+		throw new UnexpectedException("Unexpected");
+	}
+	private static Constant getConstant(String name, ConstantTypeNumericContext type, String value) {
+		// FIXME
+		if (type instanceof ConstantTypeNumericCARDINALContext) {
+			return new Constant(name, Type.CARDINAL, value);
+		}
+		
+		logger.error("Unexpected");
+		logger.error("  name  {}", name);
+		logger.error("  type  {}", type);
+		logger.error("  value {}", value);
+		throw new UnexpectedException("Unexpected");
+	}
+	private static Constant getConstant(String name, PointerTypeContext type, String value) {
+		// FIXME
+		Type pointerType = SymbolUtil.getType(name + "#pointer", type);
+		return new Constant(name, pointerType, value);
 	}
 }
