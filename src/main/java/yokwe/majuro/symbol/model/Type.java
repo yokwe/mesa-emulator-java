@@ -113,34 +113,6 @@ public abstract class Type implements Comparable<Type> {
 	public final String name;
 	public final Kind   kind;
 	
-	public String getJavaName() {
-		return StringUtil.toJavaName(name);
-	}
-	
-	public boolean needsFix;
-	abstract public void fix();
-	
-	abstract public String toMesaType();
-	
-	abstract public boolean container(); // if type hold other type object, it is container
-	
-	private static final int NO_VALUE = -1;
-	public int bitSize = NO_VALUE;
-	public int bitSize() {
-		if (needsFix) throw new UnexpectedException("Unexpected");
-		if (bitSize == NO_VALUE) {
-			logger.error("bitSize == NO_VALUE");
-			logger.error("name  {}", name);
-			logger.error("type  {}", this);
-			throw new UnexpectedException("Unexpected");
-		}
-		return bitSize;
-	}
-	
-	public int wordSize() {
-		return (bitSize + WORD_BITS - 1) / WORD_BITS;
-	}
-	
 	protected Type(String name, Kind kind) {
 		this.name = name;
 		this.kind = kind;
@@ -160,6 +132,35 @@ public abstract class Type implements Comparable<Type> {
 		return this.name.compareTo(that.name);
 	}
 
+	// fix for bitSize
+	protected boolean needsFix;
+	abstract public void fix();
+
+	// bitSize and wordSIze
+	private static final int NO_VALUE = -1;
+	protected int bitSize = NO_VALUE;
+	public int bitSize() {
+		if (needsFix) throw new UnexpectedException("Unexpected");
+		if (bitSize == NO_VALUE) {
+			logger.error("bitSize == NO_VALUE");
+			logger.error("name  {}", name);
+			logger.error("type  {}", this);
+			throw new UnexpectedException("Unexpected");
+		}
+		return bitSize;
+	}
+	public int wordSize() {
+		return (bitSize() + WORD_BITS - 1) / WORD_BITS;
+	}
+	
+	abstract public String toMesaType();
+	
+	abstract public boolean container(); // if type hold other type object, it is container
+	
+	
+	//
+	// Convenience method
+	//
 	public Type getRealType() {
 		if (needsFix) throw new UnexpectedException("Unexpected");
 		if (kind == Kind.REFERENCE) {
