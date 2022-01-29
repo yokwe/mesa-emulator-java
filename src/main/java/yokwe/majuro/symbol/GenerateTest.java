@@ -6,7 +6,8 @@ public class GenerateTest extends Generate {
 	public static void main(String[] args) {
 		logger.info("START");
 		
-		Generate.process(TEST_RULE_FILE_PATH, TEST_OUTPUT_DIR_PATH, TEST_PACKAGE_NAME);
+//		Generate.process(TEST_RULE_FILE_PATH, TEST_OUTPUT_DIR_PATH, TEST_PACKAGE_NAME);
+		JavaFile.generate(TEST_RULE_FILE_PATH, TEST_OUTPUT_DIR_PATH, TEST_PACKAGE_NAME);
 		
 		logger.info("STOP");
 	}

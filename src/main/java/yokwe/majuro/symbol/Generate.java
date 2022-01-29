@@ -646,7 +646,8 @@ public class Generate {
 	public static void main(String[] args) {
 		logger.info("START");
 				
-		process(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME);
+//		process(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME);
+		JavaFile.generate(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME);
 		
 		logger.info("STOP");
 	}
