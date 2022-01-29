@@ -122,6 +122,21 @@ public abstract class TypeArray extends Type {
 		this.size     = maxValue - minValue + 1;
 	}
 	
+	public TypeArray.Subrange toSubrange() {
+		if (this instanceof TypeArray.Subrange) {
+			return (TypeArray.Subrange)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeArray.Reference toReference() {
+		if (this instanceof TypeArray.Reference) {
+			return (TypeArray.Reference)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	
 	@Override
 	public boolean container() {
 		return true;
