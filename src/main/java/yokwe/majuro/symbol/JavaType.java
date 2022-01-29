@@ -78,7 +78,7 @@ public class JavaType {
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
-			generate(type);
+			generateType(type);
 
 			// end of class
 			out.println("}");
@@ -86,25 +86,25 @@ public class JavaType {
 		javaFile.moveFile();
 	}
 
-	private void generate(Type type) {
+	private void generateType(Type type) {
 		switch(type.kind) {
 		case BOOLEAN:
-			generate(type.toTypeBoolean());
+			typeBoolean(type.toTypeBoolean());
 			break;
 		case SUBRANGE:
-			generate(type.toTypeSubrange());
+			typeSubrange(type.toTypeSubrange());
 			break;
 		case ENUM:
-			generate(type.toTypeEnum());
+			typeEnum(type.toTypeEnum());
 			break;
 		case POINTER:
-			generate(type.toTypePointer());
+			typePointer(type.toTypePointer());
 			break;
 		case ARRAY:
-			generate(type.toTypeArray());
+			typeArray(type.toTypeArray());
 			break;
 		case RECORD:
-			generate(type.toTypeRecord());
+			typeRecord(type.toTypeRecord());
 			break;
 		case REFERENCE:
 			logger.info("genDecl REF {}: TYPE = {}", type.name, type.toMesaType());
@@ -117,7 +117,9 @@ public class JavaType {
 		}
 	}
 	
-	
+	//
+	// common methods
+	//
 	private void constructor16() {
 		final var out = javaFile.out;
 		
@@ -136,7 +138,6 @@ public class JavaType {
 		out.println("super(base + (WORD_SIZE * index), access);");
 		out.println("}");
 	}
-
 	private void constructor32() {
 		final var out = javaFile.out;
 
@@ -155,7 +156,6 @@ public class JavaType {
 		out.println("super(base + (WORD_SIZE * index), access);");
 		out.println("}");
 	}
-
 	private void constructorBase(String elementSize) {
 		final var out = javaFile.out;
 
@@ -173,7 +173,9 @@ public class JavaType {
 		}
 	}
 	
-	
+	//
+	// methods for Record
+	//
 	private void bitField16() {
 		final var out  = javaFile.out;
 		final var type = javaFile.type.toTypeRecord();
@@ -303,10 +305,14 @@ public class JavaType {
 		}
 	}
 	
-	private void generate(TypeBoolean type) {
+	//
+	// methods generate java source for corresponding parameter type
+	//
+	
+	private void typeBoolean(TypeBoolean type) {
 		constructor16();
 	}
-	private void generate(TypeSubrange type) {
+	private void typeSubrange(TypeSubrange type) {
 		final var out = javaFile.out;
 
 		out.prepareLayout();
@@ -344,7 +350,7 @@ public class JavaType {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	private void generate(TypeEnum type) {
+	private void typeEnum(TypeEnum type) {
 		final var out = javaFile.out;
 
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
@@ -386,7 +392,7 @@ public class JavaType {
 		out.println("return context.toString(value);");
 		out.println("}");
 	}
-	private void generate(TypePointer type) {
+	private void typePointer(TypePointer type) {
 		final String targetTypeName;
 		if (type.targetType != null) {
 			targetTypeName = StringUtil.toJavaName(type.targetType.getRealType().name);
@@ -395,7 +401,7 @@ public class JavaType {
 		}
 		constructorBase(String.format("%s.WORD_SIZE", targetTypeName));
 	}
-	private void generate(TypeArray type) {
+	private void typeArray(TypeArray type) {
 		final var out = javaFile.out;
 
 		Type   elementType     = type.arrayElement.getRealType();
@@ -482,7 +488,7 @@ public class JavaType {
 			out.println("}");
 		}
 	}
-	private void generate(TypeRecord type) {
+	private void typeRecord(TypeRecord type) {
 		final var out = javaFile.out;
 
 		if (type.isBitField16()) {
