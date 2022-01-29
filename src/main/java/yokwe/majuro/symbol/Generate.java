@@ -3,7 +3,6 @@ package yokwe.majuro.symbol;
 import static yokwe.majuro.mesa.Constant.WORD_BITS;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,26 +40,16 @@ public class Generate {
 	
 	private static class Context {
 		final String   name;
-		
 		final Type     type;
 		final Constant cons;		
 		
-		boolean       success;
+		boolean        success;
 
 		public Context(Decl decl) {
-			name      = StringUtil.toJavaName(decl.name);
-			
-			if (decl instanceof DeclType) {
-				type = ((DeclType)decl).value;
-				cons = null;
-			} else if (decl instanceof DeclConstant) {
-				type      = null;
-				cons      = ((DeclConstant)decl).value;
-			} else {
-				throw new UnexpectedException("Unexpected");
-			}
-			
-			success   = true;
+			name    = StringUtil.toJavaName(decl.name);
+			type    = (decl instanceof DeclType)     ? ((DeclType)decl).value     : null;
+			cons    = (decl instanceof DeclConstant) ? ((DeclConstant)decl).value : null;
+			success = true;
 		}
 	}
 	
@@ -640,10 +629,6 @@ public class Generate {
 					throw new UnexpectedException("Unexpected");
 				}
 			}
-		} catch (IOException e) {
-			String exceptionName = e.getClass().getSimpleName();
-			logger.error("{} {}", exceptionName, e);
-			throw new UnexpectedException(exceptionName, e);
 		}
 	}
 	
