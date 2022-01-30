@@ -77,23 +77,6 @@ public abstract class Type implements Comparable<Type> {
 		return countNeedsFix;
 	}
 
-	public enum Kind {
-		// boolean
-		BOOLEAN,
-		// [MIN_VALUE .. MAX_VALUE] of CARDINAL, INTEGER
-		SUBRANGE,
-		// array subrange of numeric type
-		ARRAY,
-		// enum list of name-value pair
-		ENUM,
-		// record list of field (name-type pair)
-		RECORD,
-		// long or short pointer to type
-		POINTER,
-		// name of other type
-		REFERENCE,
-	}
-	
 	//
 	// Define simple type
 	//
