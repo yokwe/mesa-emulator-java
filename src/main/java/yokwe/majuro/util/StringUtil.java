@@ -258,6 +258,7 @@ public final class StringUtil {
 				int modifiers = field.getModifiers();
 				// Ignore static
 				if (Modifier.isStatic(modifiers)) continue;
+				field.setAccessible(true); // to access protected and private file, call setAccessble(true) of the field
 				list.add(new FieldInfo(field));
 			}
 
