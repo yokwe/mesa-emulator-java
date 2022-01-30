@@ -29,8 +29,10 @@ BEGIN
     // variation of element
     ArrayScalar:         TYPE = ARRAY Sub OF UNSPECIFIED;
     ArrayRec:            TYPE = ARRAY Sub OF Rec;
+    ArrayRefPtr16:       TYPE = ARRAY Sub OF POINTER;
     ArrayRefPtr16Scalar: TYPE = ARRAY Sub OF POINTER TO CARDINAL;
     ArrayRefPtr16Rec:    TYPE = ARRAY Sub OF POINTER TO Rec;
+    ArrayRefPtr32:       TYPE = ARRAY Sub OF LONG POINTER;
     ArrayRefPtr32Scalar: TYPE = ARRAY Sub OF LONG POINTER TO CARDINAL;
     ArrayRefPtr32Rec:    TYPE = ARRAY Sub OF LONG POINTER TO Rec;
     
