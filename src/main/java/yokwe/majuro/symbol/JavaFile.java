@@ -27,9 +27,16 @@ public class JavaFile {
 	public static void main(String[] args) {
 		logger.info("START");
 				
-		generate(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME);
+		generateType();
 		
 		logger.info("STOP");
+	}
+	
+	public static void generateType() {
+		generate(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME);
+	}
+	public static void generateTest() {
+		generate(TEST_RULE_FILE_PATH, TEST_OUTPUT_DIR_PATH, TEST_PACKAGE_NAME);
 	}
 
 	public static void generate(String ruleFilePath, String outputDirPath, String packageName) {
