@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOLEAN, abort (0:15..15): BOOLEAN];
-public final class PsbFlags extends MemoryData16 {
-    public static final String NAME      = "PsbFlags";
-    public static final int    WORD_SIZE =          1;
-    public static final int    BIT_SIZE  =         16;
+public class PsbFlags extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -40,38 +42,38 @@ public final class PsbFlags extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int available() {
+    public final int available() {
         return (value & AVAILABLE_MASK) >> AVAILABLE_SHIFT;
     }
-    public void available(int newValue) {
+    public final void available(int newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
 
-    public int cleanup() {
+    public final int cleanup() {
         return (value & CLEANUP_MASK) >> CLEANUP_SHIFT;
     }
-    public void cleanup(int newValue) {
+    public final void cleanup(int newValue) {
         value = (value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK);
     }
 
-    public int reserved() {
+    public final int reserved() {
         return (value & RESERVED_MASK) >> RESERVED_SHIFT;
     }
-    public void reserved(int newValue) {
+    public final void reserved(int newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
 
-    public int waiting() {
+    public final int waiting() {
         return (value & WAITING_MASK) >> WAITING_SHIFT;
     }
-    public void waiting(int newValue) {
+    public final void waiting(int newValue) {
         value = (value & ~WAITING_MASK) | ((newValue << WAITING_SHIFT) & WAITING_MASK);
     }
 
-    public int abort() {
+    public final int abort() {
         return (value & ABORT_MASK) >> ABORT_SHIFT;
     }
-    public void abort(int newValue) {
+    public final void abort(int newValue) {
         value = (value & ~ABORT_MASK) | ((newValue << ABORT_SHIFT) & ABORT_MASK);
     }
 

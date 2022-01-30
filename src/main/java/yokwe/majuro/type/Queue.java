@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
-public final class Queue extends MemoryData16 {
-    public static final String NAME      = "Queue";
-    public static final int    WORD_SIZE =       1;
-    public static final int    BIT_SIZE  =      16;
+public class Queue extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -34,24 +36,24 @@ public final class Queue extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int reserved1() {
+    public final int reserved1() {
         return (value & RESERVED_1_MASK) >> RESERVED_1_SHIFT;
     }
-    public void reserved1(int newValue) {
+    public final void reserved1(int newValue) {
         value = (value & ~RESERVED_1_MASK) | ((newValue << RESERVED_1_SHIFT) & RESERVED_1_MASK);
     }
 
-    public int tail() {
+    public final int tail() {
         return (value & TAIL_MASK) >> TAIL_SHIFT;
     }
-    public void tail(int newValue) {
+    public final void tail(int newValue) {
         value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
     }
 
-    public int reserved2() {
+    public final int reserved2() {
         return (value & RESERVED_2_MASK) >> RESERVED_2_SHIFT;
     }
-    public void reserved2(int newValue) {
+    public final void reserved2(int newValue) {
         value = (value & ~RESERVED_2_MASK) | ((newValue << RESERVED_2_SHIFT) & RESERVED_2_MASK);
     }
 

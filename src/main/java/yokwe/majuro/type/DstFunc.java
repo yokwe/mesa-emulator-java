@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // DstFunc: TYPE = {null(0), and(1), or(2), xor(3)};
-public final class DstFunc extends MemoryData16 {
-    public static final String NAME      = "DstFunc";
-    public static final int    WORD_SIZE =         1;
-    public static final int    BIT_SIZE  =         2;
+public class DstFunc extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE = 1;
+    public static final int BIT_SIZE  = 2;
 
     //
     // Enum Value Constants

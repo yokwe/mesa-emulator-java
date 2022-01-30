@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // GFTItem: TYPE = RECORD[globalFrame (0:0..31): GlobalFrameHandle, codebase (2:0..31): LONG POINTER TO CodeSegment];
-public final class GFTItem extends MemoryBase {
-    public static final String NAME      = "GFTItem";
-    public static final int    WORD_SIZE =         4;
-    public static final int    BIT_SIZE  =        64;
+public class GFTItem extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  4;
+    public static final int BIT_SIZE  = 64;
 
     //
     // Constructor

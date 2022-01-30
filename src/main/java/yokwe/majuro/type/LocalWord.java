@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
-public final class LocalWord extends MemoryData16 {
-    public static final String NAME      = "LocalWord";
-    public static final int    WORD_SIZE =           1;
-    public static final int    BIT_SIZE  =          16;
+public class LocalWord extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -31,17 +33,17 @@ public final class LocalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int available() {
+    public final int available() {
         return (value & AVAILABLE_MASK) >> AVAILABLE_SHIFT;
     }
-    public void available(int newValue) {
+    public final void available(int newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
 
-    public int fsi() {
+    public final int fsi() {
         return (value & FSI_MASK) >> FSI_SHIFT;
     }
-    public void fsi(int newValue) {
+    public final void fsi(int newValue) {
         value = (value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK);
     }
 

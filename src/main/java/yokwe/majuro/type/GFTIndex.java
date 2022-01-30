@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // GFTIndex: TYPE = [0..16384);
-public final class GFTIndex extends MemoryData16 {
-    public static final String NAME      = "GFTIndex";
-    public static final int    WORD_SIZE =          1;
-    public static final int    BIT_SIZE  =         14;
+public class GFTIndex extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 14;
 
     public static final long MIN_VALUE  =     0;
     public static final long MAX_VALUE  = 16383;

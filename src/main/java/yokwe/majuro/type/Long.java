@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // Long: TYPE = RECORD32[low (0:0..15): UNSPECIFIED, high (1:0..15): UNSPECIFIED];
-public final class Long extends MemoryData32 {
-    public static final String NAME      = "Long";
-    public static final int    WORD_SIZE =      2;
-    public static final int    BIT_SIZE  =     32;
+public class Long extends MemoryData32 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  2;
+    public static final int BIT_SIZE  = 32;
 
     //
     // Constructor
@@ -31,17 +33,17 @@ public final class Long extends MemoryData32 {
     //
     // Bit Field Access Methods
     //
-    public int low() {
+    public final int low() {
         return (value & LOW_MASK) >> LOW_SHIFT;
     }
-    public void low(int newValue) {
+    public final void low(int newValue) {
         value = (value & ~LOW_MASK) | ((newValue << LOW_SHIFT) & LOW_MASK);
     }
 
-    public int high() {
+    public final int high() {
         return (value & HIGH_MASK) >> HIGH_SHIFT;
     }
-    public void high(int newValue) {
+    public final void high(int newValue) {
         value = (value & ~HIGH_MASK) | ((newValue << HIGH_SHIFT) & HIGH_MASK);
     }
 

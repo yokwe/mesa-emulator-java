@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // NewGlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, global (2): GlobalVariables];
-public final class NewGlobalOverhead extends MemoryBase {
-    public static final String NAME      = "NewGlobalOverhead";
-    public static final int    WORD_SIZE =                   2;
-    public static final int    BIT_SIZE  =                  32;
+public class NewGlobalOverhead extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  2;
+    public static final int BIT_SIZE  = 32;
 
     //
     // Constructor

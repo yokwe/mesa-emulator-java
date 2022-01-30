@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // GrayParm: TYPE = RECORD[reserved (0:0..3): NIBBLE, yOffset (0:4..7): NIBBLE, widthMinusOne (0:8..11): NIBBLE, heightMinusOne (0:12..15): NIBBLE];
-public final class GrayParm extends MemoryData16 {
-    public static final String NAME      = "GrayParm";
-    public static final int    WORD_SIZE =          1;
-    public static final int    BIT_SIZE  =         16;
+public class GrayParm extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -37,31 +39,31 @@ public final class GrayParm extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int reserved() {
+    public final int reserved() {
         return (value & RESERVED_MASK) >> RESERVED_SHIFT;
     }
-    public void reserved(int newValue) {
+    public final void reserved(int newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
 
-    public int yOffset() {
+    public final int yOffset() {
         return (value & Y_OFFSET_MASK) >> Y_OFFSET_SHIFT;
     }
-    public void yOffset(int newValue) {
+    public final void yOffset(int newValue) {
         value = (value & ~Y_OFFSET_MASK) | ((newValue << Y_OFFSET_SHIFT) & Y_OFFSET_MASK);
     }
 
-    public int widthMinusOne() {
+    public final int widthMinusOne() {
         return (value & WIDTH_MINUS_ONE_MASK) >> WIDTH_MINUS_ONE_SHIFT;
     }
-    public void widthMinusOne(int newValue) {
+    public final void widthMinusOne(int newValue) {
         value = (value & ~WIDTH_MINUS_ONE_MASK) | ((newValue << WIDTH_MINUS_ONE_SHIFT) & WIDTH_MINUS_ONE_MASK);
     }
 
-    public int heightMinusOne() {
+    public final int heightMinusOne() {
         return (value & HEIGHT_MINUS_ONE_MASK) >> HEIGHT_MINUS_ONE_SHIFT;
     }
-    public void heightMinusOne(int newValue) {
+    public final void heightMinusOne(int newValue) {
         value = (value & ~HEIGHT_MINUS_ONE_MASK) | ((newValue << HEIGHT_MINUS_ONE_SHIFT) & HEIGHT_MINUS_ONE_MASK);
     }
 

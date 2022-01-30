@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // BitAddress: TYPE = RECORD[word (0:0..31): LONG POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
-public final class BitAddress extends MemoryBase {
-    public static final String NAME      = "BitAddress";
-    public static final int    WORD_SIZE =            3;
-    public static final int    BIT_SIZE  =           48;
+public class BitAddress extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  3;
+    public static final int BIT_SIZE  = 48;
 
     //
     // Constructor

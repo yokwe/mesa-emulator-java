@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // INTEGER: TYPE = [-32768..32767];
-public final class INTEGER extends MemoryData16 {
-    public static final String NAME      = "INTEGER";
-    public static final int    WORD_SIZE =         1;
-    public static final int    BIT_SIZE  =        16;
+public class INTEGER extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     public static final long MIN_VALUE  = Short.MIN_VALUE;
     public static final long MAX_VALUE  = Short.MAX_VALUE;

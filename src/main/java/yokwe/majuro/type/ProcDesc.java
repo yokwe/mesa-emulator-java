@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // ProcDesc: TYPE = RECORD32[taggedGF (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
-public final class ProcDesc extends MemoryData32 {
-    public static final String NAME      = "ProcDesc";
-    public static final int    WORD_SIZE =          2;
-    public static final int    BIT_SIZE  =         32;
+public class ProcDesc extends MemoryData32 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  2;
+    public static final int BIT_SIZE  = 32;
 
     //
     // Constructor
@@ -31,17 +33,17 @@ public final class ProcDesc extends MemoryData32 {
     //
     // Bit Field Access Methods
     //
-    public int taggedGF() {
+    public final int taggedGF() {
         return (value & TAGGED_GF_MASK) >> TAGGED_GF_SHIFT;
     }
-    public void taggedGF(int newValue) {
+    public final void taggedGF(int newValue) {
         value = (value & ~TAGGED_GF_MASK) | ((newValue << TAGGED_GF_SHIFT) & TAGGED_GF_MASK);
     }
 
-    public int pc() {
+    public final int pc() {
         return (value & PC_MASK) >> PC_SHIFT;
     }
-    public void pc(int newValue) {
+    public final void pc(int newValue) {
         value = (value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK);
     }
 

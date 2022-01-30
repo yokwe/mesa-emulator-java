@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): LocalFrameHandle, data (16): BLOCK];
-public final class StateVector extends MemoryBase {
-    public static final String NAME      = "StateVector";
-    public static final int    WORD_SIZE =            16;
-    public static final int    BIT_SIZE  =           256;
+public class StateVector extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  16;
+    public static final int BIT_SIZE  = 256;
 
     //
     // Constructor

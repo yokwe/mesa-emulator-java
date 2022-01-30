@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOLEAN, permanent (0:14..14): BOOLEAN, preempted (0:15..15): BOOLEAN];
-public final class PsbLink extends MemoryData16 {
-    public static final String NAME      = "PsbLink";
-    public static final int    WORD_SIZE =         1;
-    public static final int    BIT_SIZE  =        16;
+public class PsbLink extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -40,38 +42,38 @@ public final class PsbLink extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int priority() {
+    public final int priority() {
         return (value & PRIORITY_MASK) >> PRIORITY_SHIFT;
     }
-    public void priority(int newValue) {
+    public final void priority(int newValue) {
         value = (value & ~PRIORITY_MASK) | ((newValue << PRIORITY_SHIFT) & PRIORITY_MASK);
     }
 
-    public int next() {
+    public final int next() {
         return (value & NEXT_MASK) >> NEXT_SHIFT;
     }
-    public void next(int newValue) {
+    public final void next(int newValue) {
         value = (value & ~NEXT_MASK) | ((newValue << NEXT_SHIFT) & NEXT_MASK);
     }
 
-    public int failed() {
+    public final int failed() {
         return (value & FAILED_MASK) >> FAILED_SHIFT;
     }
-    public void failed(int newValue) {
+    public final void failed(int newValue) {
         value = (value & ~FAILED_MASK) | ((newValue << FAILED_SHIFT) & FAILED_MASK);
     }
 
-    public int permanent() {
+    public final int permanent() {
         return (value & PERMANENT_MASK) >> PERMANENT_SHIFT;
     }
-    public void permanent(int newValue) {
+    public final void permanent(int newValue) {
         value = (value & ~PERMANENT_MASK) | ((newValue << PERMANENT_SHIFT) & PERMANENT_MASK);
     }
 
-    public int preempted() {
+    public final int preempted() {
         return (value & PREEMPTED_MASK) >> PREEMPTED_SHIFT;
     }
-    public void preempted(int newValue) {
+    public final void preempted(int newValue) {
         value = (value & ~PREEMPTED_MASK) | ((newValue << PREEMPTED_SHIFT) & PREEMPTED_MASK);
     }
 

@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
-public final class XferType extends MemoryData16 {
-    public static final String NAME      = "XferType";
-    public static final int    WORD_SIZE =          1;
-    public static final int    BIT_SIZE  =          3;
+public class XferType extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE = 1;
+    public static final int BIT_SIZE  = 3;
 
     //
     // Enum Value Constants

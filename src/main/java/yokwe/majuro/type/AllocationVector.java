@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
-public final class AllocationVector extends MemoryBase {
-    public static final String NAME      = "AllocationVector";
-    public static final int    WORD_SIZE =                256;
-    public static final int    BIT_SIZE  =               4096;
+public class AllocationVector extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  256;
+    public static final int BIT_SIZE  = 4096;
 
     //
     // Check range of index

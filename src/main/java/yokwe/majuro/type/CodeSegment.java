@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY [0..4) OF UNSPECIFIED, code (4): BLOCK];
-public final class CodeSegment extends MemoryBase {
-    public static final String NAME      = "CodeSegment";
-    public static final int    WORD_SIZE =             4;
-    public static final int    BIT_SIZE  =            64;
+public class CodeSegment extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  4;
+    public static final int BIT_SIZE  = 64;
 
     //
     // Constructor

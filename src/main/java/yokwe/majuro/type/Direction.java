@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // Direction: TYPE = {forward(0), backward(1)};
-public final class Direction extends MemoryData16 {
-    public static final String NAME      = "Direction";
-    public static final int    WORD_SIZE =           1;
-    public static final int    BIT_SIZE  =           1;
+public class Direction extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE = 1;
+    public static final int BIT_SIZE  = 1;
 
     //
     // Enum Value Constants

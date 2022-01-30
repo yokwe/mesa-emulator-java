@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // Port: TYPE = RECORD[inport (0:0..15): FrameLink, unused (1:0..15): UNSPECIFIED, outport (2:0..31): ControlLink];
-public final class Port extends MemoryBase {
-    public static final String NAME      = "Port";
-    public static final int    WORD_SIZE =      4;
-    public static final int    BIT_SIZE  =     64;
+public class Port extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  4;
+    public static final int BIT_SIZE  = 64;
 
     //
     // Constructor

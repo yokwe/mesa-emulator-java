@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
-public final class GlobalFrameTable extends MemoryBase {
-    public static final String NAME      = "GlobalFrameTable";
-    public static final int    WORD_SIZE =              65536;
-    public static final int    BIT_SIZE  =            1048576;
+public class GlobalFrameTable extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =   65536;
+    public static final int BIT_SIZE  = 1048576;
 
     //
     // Check range of index

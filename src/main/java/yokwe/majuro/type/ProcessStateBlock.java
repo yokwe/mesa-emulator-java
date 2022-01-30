@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // ProcessStateBlock: TYPE = RECORD[link (0:0..15): PsbLink, flags (1:0..15): PsbFlags, context (2:0..15): POINTER, timeout (3:0..15): Ticks, mds (4:0..15): CARDINAL, available (5:0..15): UNSPECIFIED, sticky (6:0..31): LONG UNSPECIFIED];
-public final class ProcessStateBlock extends MemoryBase {
-    public static final String NAME      = "ProcessStateBlock";
-    public static final int    WORD_SIZE =                   8;
-    public static final int    BIT_SIZE  =                 128;
+public class ProcessStateBlock extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =   8;
+    public static final int BIT_SIZE  = 128;
 
     //
     // Constructor

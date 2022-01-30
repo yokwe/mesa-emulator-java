@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // FieldSpec: TYPE = RECORD[pos (0:0..3): NIBBLE, size (0:4..7): NIBBLE];
-public final class FieldSpec extends MemoryData16 {
-    public static final String NAME      = "FieldSpec";
-    public static final int    WORD_SIZE =           1;
-    public static final int    BIT_SIZE  =           8;
+public class FieldSpec extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE = 1;
+    public static final int BIT_SIZE  = 8;
 
     //
     // Constructor
@@ -31,17 +33,17 @@ public final class FieldSpec extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int pos() {
+    public final int pos() {
         return (value & POS_MASK) >> POS_SHIFT;
     }
-    public void pos(int newValue) {
+    public final void pos(int newValue) {
         value = (value & ~POS_MASK) | ((newValue << POS_SHIFT) & POS_MASK);
     }
 
-    public int size() {
+    public final int size() {
         return (value & SIZE_MASK) >> SIZE_SHIFT;
     }
-    public void size(int newValue) {
+    public final void size(int newValue) {
         value = (value & ~SIZE_MASK) | ((newValue << SIZE_SHIFT) & SIZE_MASK);
     }
 

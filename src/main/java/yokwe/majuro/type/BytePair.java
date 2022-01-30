@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // BytePair: TYPE = RECORD[left (0:0..7): BYTE, right (0:8..15): BYTE];
-public final class BytePair extends MemoryData16 {
-    public static final String NAME      = "BytePair";
-    public static final int    WORD_SIZE =          1;
-    public static final int    BIT_SIZE  =         16;
+public class BytePair extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -31,17 +33,17 @@ public final class BytePair extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int left() {
+    public final int left() {
         return (value & LEFT_MASK) >> LEFT_SHIFT;
     }
-    public void left(int newValue) {
+    public final void left(int newValue) {
         value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
     }
 
-    public int right() {
+    public final int right() {
         return (value & RIGHT_MASK) >> RIGHT_SHIFT;
     }
-    public void right(int newValue) {
+    public final void right(int newValue) {
         value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
     }
 

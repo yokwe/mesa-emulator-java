@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // LocalOverhead: TYPE = RECORD[word (0:0..15): LocalWord, returnlink (1:0..15): ShortControlLink, globallink (2:0..15): GFTHandle, pc (3:0..15): CARDINAL, local (4): LocalVariables];
-public final class LocalOverhead extends MemoryBase {
-    public static final String NAME      = "LocalOverhead";
-    public static final int    WORD_SIZE =               4;
-    public static final int    BIT_SIZE  =              64;
+public class LocalOverhead extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  4;
+    public static final int BIT_SIZE  = 64;
 
     //
     // Constructor

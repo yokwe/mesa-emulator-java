@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
-public final class EscTrapTable extends MemoryBase {
-    public static final String NAME      = "EscTrapTable";
-    public static final int    WORD_SIZE =            512;
-    public static final int    BIT_SIZE  =           8192;
+public class EscTrapTable extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  512;
+    public static final int BIT_SIZE  = 8192;
 
     //
     // Check range of index

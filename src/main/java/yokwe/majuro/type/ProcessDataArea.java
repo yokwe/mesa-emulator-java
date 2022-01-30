@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // ProcessDataArea: TYPE = RECORD[ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector, block (0): ARRAY PsbIndex OF ProcessStateBlock];
-public final class ProcessDataArea extends MemoryBase {
-    public static final String NAME      = "ProcessDataArea";
-    public static final int    WORD_SIZE =                64;
-    public static final int    BIT_SIZE  =              1024;
+public class ProcessDataArea extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =   64;
+    public static final int BIT_SIZE  = 1024;
 
     //
     // Constructor

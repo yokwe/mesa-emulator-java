@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // FieldDesc: TYPE = RECORD[offset (0:0..7): BYTE, field (0:8..15): FieldSpec];
-public final class FieldDesc extends MemoryData16 {
-    public static final String NAME      = "FieldDesc";
-    public static final int    WORD_SIZE =           1;
-    public static final int    BIT_SIZE  =          16;
+public class FieldDesc extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -31,17 +33,17 @@ public final class FieldDesc extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int offset() {
+    public final int offset() {
         return (value & OFFSET_MASK) >> OFFSET_SHIFT;
     }
-    public void offset(int newValue) {
+    public final void offset(int newValue) {
         value = (value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK);
     }
 
-    public int field() {
+    public final int field() {
         return (value & FIELD_MASK) >> FIELD_SHIFT;
     }
-    public void field(int newValue) {
+    public final void field(int newValue) {
         value = (value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK);
     }
 

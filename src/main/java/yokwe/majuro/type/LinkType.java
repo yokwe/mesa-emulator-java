@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
-public final class LinkType extends MemoryData16 {
-    public static final String NAME      = "LinkType";
-    public static final int    WORD_SIZE =          1;
-    public static final int    BIT_SIZE  =          2;
+public class LinkType extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE = 1;
+    public static final int BIT_SIZE  = 2;
 
     //
     // Enum Value Constants

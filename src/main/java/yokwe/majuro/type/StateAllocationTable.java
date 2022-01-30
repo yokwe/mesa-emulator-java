@@ -3,10 +3,12 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 
 // StateAllocationTable: TYPE = ARRAY Priority OF POINTER TO StateVector;
-public final class StateAllocationTable extends MemoryBase {
-    public static final String NAME      = "StateAllocationTable";
-    public static final int    WORD_SIZE =                      8;
-    public static final int    BIT_SIZE  =                    128;
+public class StateAllocationTable extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =   8;
+    public static final int BIT_SIZE  = 128;
 
     //
     // Check range of index

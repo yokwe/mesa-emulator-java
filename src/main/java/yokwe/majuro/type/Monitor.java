@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // Monitor: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..14): UNSPECIFIED, locked (0:15..15): BOOLEAN];
-public final class Monitor extends MemoryData16 {
-    public static final String NAME      = "Monitor";
-    public static final int    WORD_SIZE =         1;
-    public static final int    BIT_SIZE  =        16;
+public class Monitor extends MemoryData16 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  1;
+    public static final int BIT_SIZE  = 16;
 
     //
     // Constructor
@@ -37,31 +39,31 @@ public final class Monitor extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public int reserved() {
+    public final int reserved() {
         return (value & RESERVED_MASK) >> RESERVED_SHIFT;
     }
-    public void reserved(int newValue) {
+    public final void reserved(int newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
 
-    public int tail() {
+    public final int tail() {
         return (value & TAIL_MASK) >> TAIL_SHIFT;
     }
-    public void tail(int newValue) {
+    public final void tail(int newValue) {
         value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
     }
 
-    public int available() {
+    public final int available() {
         return (value & AVAILABLE_MASK) >> AVAILABLE_SHIFT;
     }
-    public void available(int newValue) {
+    public final void available(int newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
 
-    public int locked() {
+    public final int locked() {
         return (value & LOCKED_MASK) >> LOCKED_SHIFT;
     }
-    public void locked(int newValue) {
+    public final void locked(int newValue) {
         value = (value & ~LOCKED_MASK) | ((newValue << LOCKED_SHIFT) & LOCKED_MASK);
     }
 

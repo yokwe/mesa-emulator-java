@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // BitBltArg: TYPE = RECORD[dst (0:0..47): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
-public final class BitBltArg extends MemoryBase {
-    public static final String NAME      = "BitBltArg";
-    public static final int    WORD_SIZE =          12;
-    public static final int    BIT_SIZE  =         192;
+public class BitBltArg extends MemoryBase {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  12;
+    public static final int BIT_SIZE  = 192;
 
     //
     // Constructor

@@ -1,10 +1,12 @@
 package yokwe.majuro.type;
 
 // TaggedControlLink: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
-public final class TaggedControlLink extends MemoryData32 {
-    public static final String NAME      = "TaggedControlLink";
-    public static final int    WORD_SIZE =                   2;
-    public static final int    BIT_SIZE  =                  32;
+public class TaggedControlLink extends MemoryData32 {
+    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
+    public static final String   NAME = SELF.getSimpleName();
+
+    public static final int WORD_SIZE =  2;
+    public static final int BIT_SIZE  = 32;
 
     //
     // Constructor
@@ -34,24 +36,24 @@ public final class TaggedControlLink extends MemoryData32 {
     //
     // Bit Field Access Methods
     //
-    public int data() {
+    public final int data() {
         return (value & DATA_MASK) >> DATA_SHIFT;
     }
-    public void data(int newValue) {
+    public final void data(int newValue) {
         value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
     }
 
-    public int tag() {
+    public final int tag() {
         return (value & TAG_MASK) >> TAG_SHIFT;
     }
-    public void tag(int newValue) {
+    public final void tag(int newValue) {
         value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);
     }
 
-    public int fill() {
+    public final int fill() {
         return (value & FILL_MASK) >> FILL_SHIFT;
     }
-    public void fill(int newValue) {
+    public final void fill(int newValue) {
         value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);
     }
 
