@@ -287,25 +287,33 @@ public final class Memory {
 	
 	
 	//
-	// MDS
+	// MDS and PDA
 	//
+	public int lengthenMDS(char value) {
+		return mds + value;
+	}
+	public int lengthenPDA(char value) {
+		return Constant.mPDA + value;
+	}
+	
+	// convenience methods for MDS data access
 	public int fetchMDS(char va) {
-		return fetch(mds + va);
+		return fetch(lengthenMDS(va));
 	}
 	public int storeMDS(char va) {
-		return store(mds + va);
+		return store(lengthenMDS(va));
 	}
 	public char read16MDS(char va) {
-		return read16(mds + va);
+		return read16(lengthenMDS(va));
 	}
 	public void write16MDS(char va, char newValue) {
-		write16(mds + va, newValue);
+		write16(lengthenMDS(va), newValue);
 	}
 	public int read32MDS(char va) {
-		return read32(mds + va);
+		return read32(lengthenMDS(va));
 	}
 	public void write32MDS(char va, int newValue) {
-		write32(mds + va, newValue);
+		write32(lengthenMDS(va), newValue);
 	}
 	//
 	// prohibit int promotion of above methods
