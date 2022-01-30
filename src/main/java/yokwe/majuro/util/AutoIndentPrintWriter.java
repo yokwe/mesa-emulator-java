@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import yokwe.majuro.UnexpectedException;
@@ -40,9 +39,6 @@ public final class AutoIndentPrintWriter implements AutoCloseable {
 	
 	public void close() {
 		out.close();
-	}
-	public void println() {
-		out.println();
 	}
 	
 	private String stripString(String string) {
@@ -111,6 +107,10 @@ public final class AutoIndentPrintWriter implements AutoCloseable {
 	
 	private boolean layout = false;
 	private List<String> layoutLineList = new ArrayList<>();
+
+	public void println() {
+		println("");
+	}
 
 	public void println(String string) {
 		if (layout) {
@@ -199,16 +199,12 @@ public final class AutoIndentPrintWriter implements AutoCloseable {
 		{
 			for(int i = 0; i < layoutLineList.size(); i++) {
 				String line = layoutLineList.get(i);
-				String[] token = line.split("[ ]+", count);
-				if (token.length != count) {
-					logger.error("Unecpected line");
-					logger.error("  count {}!", count);
-					logger.error("  token {}!", Arrays.asList(token));
-					logger.error("  line  {}!", line);
-					throw new UnexpectedException("Unecpected line");
-				}
+				String[] token = line.split("[ ]+", count);				
 				for(int j = 0; j < token.length; j++) {
 					tokens[i][j] = token[j];
+				}
+				for(int j = token.length; j < count; j++) {
+					tokens[i][j] = "";
 				}
 			}	
 		}
