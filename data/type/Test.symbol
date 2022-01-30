@@ -40,12 +40,16 @@ BEGIN
     //   SHORT POINTER
     Ptr16Scalar:      TYPE = POINTER TO UNSPECIFIED;
     Ptr16Rec:         TYPE = POINTER TO Rec;
+    Ptr16Bit16:       TYPE = POINTER TO BitField16;
+    Ptr16Bit32:       TYPE = POINTER TO BitField32;
     Ptr16ArrayScalar: TYPE = POINTER TO ARRAY Sub OF UNSPECIFIED;
     ptr16ArrayRec:    TYPE = POINTER TO ARRAY Sub OF Rec;
     
     //   LONG POINTER
     Ptr32Scalar:      TYPE = LONG POINTER TO UNSPECIFIED;
     Ptr32Rec:         TYPE = LONG POINTER TO Rec;
+    Ptr32Bit16:       TYPE = LONG POINTER TO BitField16;
+    Ptr32Bit32:       TYPE = LONG POINTER TO BitField32;
     Ptr32ArrayScalar: TYPE = LONG POINTER TO ARRAY Sub OF UNSPECIFIED;
     Ptr32ArrayRec:    TYPE = LONG POINTER TO ARRAY Sub OF Rec;
     
