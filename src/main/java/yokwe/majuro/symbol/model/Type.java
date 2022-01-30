@@ -111,11 +111,9 @@ public abstract class Type implements Comparable<Type> {
 
 	
 	public final String name;
-	public final Kind   kind;
 	
-	protected Type(String name, Kind kind) {
+	protected Type(String name) {
 		this.name = name;
-		this.kind = kind;
 		
 		this.needsFix = true;
 		
@@ -173,8 +171,8 @@ public abstract class Type implements Comparable<Type> {
 	//
 	public Type getRealType() {
 		if (needsFix) throw new UnexpectedException("Unexpected");
-		if (kind == Kind.REFERENCE) {
-			return ((TypeReference)this).realType;
+		if (this instanceof TypeReference) {
+			return toTypeReference().realType;
 		} else {
 			return this;
 		}

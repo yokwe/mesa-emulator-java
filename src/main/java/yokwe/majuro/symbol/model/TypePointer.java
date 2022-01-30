@@ -14,7 +14,7 @@ public class TypePointer extends Type {
 	public final Type  targetType;
 	
 	public TypePointer(String name, PointerSize pointerSize, Type targetType) {
-		super(name, Kind.POINTER);
+		super(name);
 		
 		this.pointerSize = pointerSize;
 		this.targetType  = targetType;

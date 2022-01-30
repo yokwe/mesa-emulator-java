@@ -66,7 +66,7 @@ public class TypeRecord extends Type {
 	public List<Field> fieldList;
 	
 	public TypeRecord(String name, Align align, List<Field> fieldList) {
-		super(name, Kind.RECORD);
+		super(name);
 		this.align     = align;
 		this.fieldList = fieldList;
 		
@@ -213,7 +213,7 @@ public class TypeRecord extends Type {
 						logger.error("found problem");
 						logger.error("  {}", name);
 						for(var e: fieldList) {
-							logger.error("  {}", String.format("%-10s  %-10s  %2d  %2d", e.name, e.type.kind, e.bitSize, e.type.bitSize));
+							logger.error("  {}", String.format("%-10s  %2d  %2d", e.name, e.bitSize, e.type.bitSize));
 						}
 						throw new UnexpectedException("found problem");
 					}

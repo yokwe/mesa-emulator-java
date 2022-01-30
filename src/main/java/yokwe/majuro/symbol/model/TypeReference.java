@@ -8,7 +8,7 @@ public class TypeReference extends Type {
 	public Type realType;
 	
 	public TypeReference(String name, String typeString) {
-		super(name, Kind.REFERENCE);
+		super(name);
 		
 		this.typeString = typeString;
 		this.realType   = null;

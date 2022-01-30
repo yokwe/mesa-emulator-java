@@ -18,7 +18,7 @@ public class TypeSubrange extends Type {
 	public long size;
 
 	public TypeSubrange(String name, String minString, String maxString, String closeChar) {
-		super(name, Kind.SUBRANGE);
+		super(name);
 		
 		this.minString       = minString;
 		this.maxString       = maxString;

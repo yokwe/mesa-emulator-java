@@ -61,16 +61,13 @@ public abstract class TypeArray extends Type {
 					needsFix = false;
 					
 					Type realType = typeReference.realType;
-					switch(realType.kind) {
-					case SUBRANGE:
-						TypeSubrange typeSubrange = (TypeSubrange)realType;
+					if (realType instanceof TypeSubrange) {
+						TypeSubrange typeSubrange = realType.toTypeSubrange();
 						setValue(typeSubrange.minValue, typeSubrange.maxValue);
-						break;
-					case ENUM:
-						TypeEnum typeEnum = (TypeEnum)realType;
+					} else if (realType instanceof TypeEnum) {
+						TypeEnum typeEnum = realType.toTypeEnum();
 						setValue(typeEnum.minValue, typeEnum.maxValue);
-						break;
-					default:
+					} else {
 						logger.error("Unexpected");
 						logger.error("  this  {}", this);
 						throw new UnexpectedException("Unexpected");
@@ -99,7 +96,7 @@ public abstract class TypeArray extends Type {
 	public long size;
 
 	public TypeArray(String name, Type arrayElement) {
-		super(name, Kind.ARRAY);
+		super(name);
 		
 		this.arrayElement = arrayElement;
 		

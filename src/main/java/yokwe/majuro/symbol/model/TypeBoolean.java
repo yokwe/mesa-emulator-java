@@ -7,7 +7,7 @@ public class TypeBoolean extends Type {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeBoolean.class);
 
 	public TypeBoolean(String name) {
-		super(name, Kind.BOOLEAN);
+		super(name);
 		fix();
 	}
 	

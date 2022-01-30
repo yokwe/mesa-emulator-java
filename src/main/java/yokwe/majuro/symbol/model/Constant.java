@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.symbol.model.Type.Kind;
 import yokwe.majuro.util.ClassUtil;
 import yokwe.majuro.util.StringUtil;
 
@@ -122,11 +121,11 @@ public class Constant implements Comparable<Constant> {
 				needsFix = false;
 				
 				// sanity check
-				if (type.kind == Kind.SUBRANGE) {
-					TypeSubrange typeSubrange = (TypeSubrange)type;
+				if (type instanceof TypeSubrange) {
+					TypeSubrange typeSubrange = type.toTypeSubrange();
 					typeSubrange.checkValue(numericValue);
-				} else if (type.kind == Kind.POINTER) {
-					TypePointer typePointer = (TypePointer)type;
+				} else if (type instanceof TypePointer) {
+					TypePointer typePointer = type.toTypePointer();
 					typePointer.checkValue(numericValue);
 				} else {
 					logger.error("Unexpected");

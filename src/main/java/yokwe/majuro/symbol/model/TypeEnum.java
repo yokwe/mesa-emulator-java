@@ -32,7 +32,7 @@ public class TypeEnum extends Type {
 	public final long size;
 	
 	public TypeEnum(String name, List<Item> itemList) {
-		super(name, Kind.ENUM);
+		super(name);
 		this.itemList = itemList;
 		
 		{
