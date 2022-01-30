@@ -13,6 +13,7 @@ import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
+import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.type.LONG_POINTER;
 import yokwe.majuro.type.POINTER;
@@ -34,6 +35,45 @@ public class JavaType {
 		this.javaFile = javaFile;
 	}
 	
+	private static String parentClass(Type type) {
+		Type realType = type.getRealType();
+		int wordSize = realType.wordSize();
+		
+		if (realType instanceof TypeBoolean) {
+			if (wordSize == 1) return "MemoryData16";
+		}
+		if (realType instanceof TypeEnum) {
+			if (wordSize == 1) return "MemoryData16";
+		}
+		if (realType instanceof TypeSubrange) {
+			if (wordSize == 1) return "MemoryData16";
+			if (wordSize == 2) return "MemoryData32";
+		}
+		if (realType instanceof TypeRecord) {
+			TypeRecord typeRecord = realType.toTypeRecord();
+			if (typeRecord.isBitField16()) return "MemoryData16";
+			if (typeRecord.isBitField32()) return "MemoryData32";
+			return "MemoryBase";
+		}
+		if (realType instanceof TypePointer) {
+			TypePointer typePointer = realType.toTypePointer();
+			if (typePointer.targetType instanceof TypeReference) {
+				TypeReference typeReference = typePointer.targetType.toTypeReference();
+				return StringUtil.toJavaName(typeReference.getRealType().name);
+			}
+			
+			if (typePointer.targetType == null) return "MemoryBase";
+			
+			Type targetType = typePointer.targetType.getRealType();
+			if (targetType.container()) return "MemoryBase";
+			return StringUtil.toJavaName(targetType.name);
+		}
+		if (realType instanceof TypeArray) {
+			return "MemoryBase";
+		}
+		throw new UnexpectedException("Uneexpected");
+	}
+	
 	private void generate() {
 		try (AutoIndentPrintWriter out = javaFile.getAutoIndentPrintWriter()) {
 			final Type type = javaFile.type;
@@ -50,29 +90,14 @@ public class JavaType {
 			out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
 			
 			// output "public final class" line
-			final String parentClass;
-			{
-				if (type.container()) {
-					parentClass = "MemoryBase";
-				} else {
-					if (type.bitSize() == 0) {
-						logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
-						throw new UnexpectedException("Uneexpected");
-					} else if (type.bitSize() <= 16) {
-						parentClass = "MemoryData16";
-					} else if (type.bitSize() <= 32) {
-						parentClass = "MemoryData32";
-					} else {
-						logger.error("%s: TYPE = %s;", type.name, type.toMesaType());
-						throw new UnexpectedException("Uneexpected");
-					}
-				}
-			}
+			final String parentClass = parentClass(type);
 			// start of class
-			out.println("public final class %s extends %s {", javaFile.name, parentClass);
+			out.println("public class %s extends %s {", javaFile.name, parentClass);
+			out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
+			out.println("public static final String   NAME = SELF.getSimpleName();");
+			out.println();
 			
 			out.prepareLayout();
-			out.println("public static final String NAME      = \"%s\";", javaFile.name);
 			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
 			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
@@ -87,31 +112,23 @@ public class JavaType {
 	}
 
 	private void generateType(Type type) {
-		switch(type.kind) {
-		case BOOLEAN:
+		if (type instanceof TypeBoolean) {
 			typeBoolean(type.toTypeBoolean());
-			break;
-		case SUBRANGE:
+		} else if (type instanceof TypeSubrange) {
 			typeSubrange(type.toTypeSubrange());
-			break;
-		case ENUM:
+		} else if (type instanceof TypeEnum) {
 			typeEnum(type.toTypeEnum());
-			break;
-		case POINTER:
+		} else if (type instanceof TypePointer) {
 			typePointer(type.toTypePointer());
-			break;
-		case ARRAY:
+		} else if (type instanceof TypeArray) {
 			typeArray(type.toTypeArray());
-			break;
-		case RECORD:
+		} else if (type instanceof TypeRecord) {
 			typeRecord(type.toTypeRecord());
-			break;
-		case REFERENCE:
+		} else if (type instanceof TypeReference) {
 			logger.info("genDecl REF {}: TYPE = {}", type.name, type.toMesaType());
 			javaFile.success = false;
-			break;
-		default:
-			logger.error("type {}  {}", type.name, type.kind);
+		} else {
+			logger.error("type {}", type.name);
 			logger.error("mesa {}", type.toMesaType());
 			throw new UnexpectedException("Unexpected");
 		}
@@ -215,11 +232,11 @@ public class JavaType {
 			String fieldName = StringUtil.toJavaName(e.name);
 			String fieldCons = StringUtil.toJavaConstName(e.name);
 			
-			out.println("public int %s() {", fieldName);
+			out.println("public final int %s() {", fieldName);
 			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
 			out.println("}");
 			
-			out.println("public void %s(int newValue) {", fieldName);
+			out.println("public final void %s(int newValue) {", fieldName);
 			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
 			out.println("}");
 			out.println();
@@ -280,11 +297,11 @@ public class JavaType {
 			String fieldName = StringUtil.toJavaName(e.name);
 			String fieldCons = StringUtil.toJavaConstName(e.name);
 			
-			out.println("public int %s() {", fieldName);
+			out.println("public final int %s() {", fieldName);
 			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
 			out.println("}");
 			
-			out.println("public void %s(int newValue) {", fieldName);
+			out.println("public final void %s(int newValue) {", fieldName);
 			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
 			out.println("}");
 			out.println();
@@ -379,14 +396,34 @@ public class JavaType {
 		out.println("}");
 	}
 	private void typePointer(TypePointer type) {
-		// FIXME pointer to array of X
+		final var out = javaFile.out;
+
+		// FIXME pointer to X should return type X
+		// FIXME pointer to X should return same contents as type X with different name
+		
 		final String targetTypeName;
-		if (type.targetType != null) {
-			targetTypeName = StringUtil.toJavaName(type.targetType.getRealType().name);
+		if (type.targetType == null) {
+			constructorBase();
 		} else {
-			targetTypeName = StringUtil.toJavaName(type.name);
+			Type targetType = type.targetType.getRealType();
+			targetTypeName = StringUtil.toJavaName(type.targetType.getRealType().name);
+			if (targetType.container()) {
+				if (targetType instanceof TypeArray) {
+//					TypeArray typeArray = targetType.toTypeArray();
+					constructorBase();
+				} else if (targetType instanceof TypeRecord) {
+					constructorBase();
+				}
+			} else {
+				if (targetType.bitSize() <= 16) {
+					constructor16();
+				} else if (targetType.bitSize() == 32) {
+					constructor32();
+				} else {
+					throw new UnexpectedException("Unexpected");
+				}
+			}
 		}
-		constructorBase();
 	}
 	private void typeArray(TypeArray type) {
 		final var out = javaFile.out;
