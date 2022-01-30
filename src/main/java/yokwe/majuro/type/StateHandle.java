@@ -12,7 +12,4 @@ public final class StateHandle extends MemoryBase {
     public StateHandle(int base) {
         super(base);
     }
-    public StateHandle(int base, int index) {
-        super(base + (StateVector.WORD_SIZE * index));
-    }
 }

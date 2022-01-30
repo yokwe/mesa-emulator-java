@@ -12,9 +12,6 @@ public final class StateVector extends MemoryBase {
     public StateVector(int base) {
         super(base);
     }
-    public StateVector(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

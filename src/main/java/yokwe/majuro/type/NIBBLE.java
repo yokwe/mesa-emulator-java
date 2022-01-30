@@ -30,7 +30,4 @@ public final class NIBBLE extends MemoryData16 {
     public NIBBLE(int base, MemoryAccess access) {
         super(base, access);
     }
-    public NIBBLE(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

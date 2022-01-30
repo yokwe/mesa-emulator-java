@@ -15,9 +15,6 @@ public final class Long extends MemoryData32 {
     public Long(int base, MemoryAccess access) {
         super(base, access);
     }
-    public Long(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

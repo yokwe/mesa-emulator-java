@@ -15,9 +15,6 @@ public final class BitBltFlags extends MemoryData16 {
     public BitBltFlags(int base, MemoryAccess access) {
         super(base, access);
     }
-    public BitBltFlags(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

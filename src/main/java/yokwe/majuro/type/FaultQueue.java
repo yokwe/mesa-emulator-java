@@ -12,9 +12,6 @@ public final class FaultQueue extends MemoryBase {
     public FaultQueue(int base) {
         super(base);
     }
-    public FaultQueue(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

@@ -30,7 +30,4 @@ public final class BIT extends MemoryData16 {
     public BIT(int base, MemoryAccess access) {
         super(base, access);
     }
-    public BIT(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

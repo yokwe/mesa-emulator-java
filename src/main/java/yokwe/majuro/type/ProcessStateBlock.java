@@ -12,9 +12,6 @@ public final class ProcessStateBlock extends MemoryBase {
     public ProcessStateBlock(int base) {
         super(base);
     }
-    public ProcessStateBlock(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

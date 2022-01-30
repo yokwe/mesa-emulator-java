@@ -15,9 +15,6 @@ public final class PsbLink extends MemoryData16 {
     public PsbLink(int base, MemoryAccess access) {
         super(base, access);
     }
-    public PsbLink(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

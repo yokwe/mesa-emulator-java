@@ -15,9 +15,6 @@ public final class FieldDesc extends MemoryData16 {
     public FieldDesc(int base, MemoryAccess access) {
         super(base, access);
     }
-    public FieldDesc(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

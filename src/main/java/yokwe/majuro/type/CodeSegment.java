@@ -12,9 +12,6 @@ public final class CodeSegment extends MemoryBase {
     public CodeSegment(int base) {
         super(base);
     }
-    public CodeSegment(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

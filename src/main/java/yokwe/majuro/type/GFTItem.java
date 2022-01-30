@@ -12,9 +12,6 @@ public final class GFTItem extends MemoryBase {
     public GFTItem(int base) {
         super(base);
     }
-    public GFTItem(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

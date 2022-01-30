@@ -12,9 +12,6 @@ public final class TransferDescriptor extends MemoryBase {
     public TransferDescriptor(int base) {
         super(base);
     }
-    public TransferDescriptor(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

@@ -30,7 +30,4 @@ public final class FaultIndex extends MemoryData16 {
     public FaultIndex(int base, MemoryAccess access) {
         super(base, access);
     }
-    public FaultIndex(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

@@ -12,7 +12,4 @@ public final class LONG_POINTER extends MemoryBase {
     public LONG_POINTER(int base) {
         super(base);
     }
-    public LONG_POINTER(int base, int index) {
-        super(base + (LONG_POINTER.WORD_SIZE * index));
-    }
 }

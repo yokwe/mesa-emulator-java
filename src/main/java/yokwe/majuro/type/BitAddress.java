@@ -12,9 +12,6 @@ public final class BitAddress extends MemoryBase {
     public BitAddress(int base) {
         super(base);
     }
-    public BitAddress(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

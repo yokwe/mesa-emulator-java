@@ -30,7 +30,4 @@ public final class FSIndex extends MemoryData16 {
     public FSIndex(int base, MemoryAccess access) {
         super(base, access);
     }
-    public FSIndex(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

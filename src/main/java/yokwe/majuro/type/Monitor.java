@@ -15,9 +15,6 @@ public final class Monitor extends MemoryData16 {
     public Monitor(int base, MemoryAccess access) {
         super(base, access);
     }
-    public Monitor(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

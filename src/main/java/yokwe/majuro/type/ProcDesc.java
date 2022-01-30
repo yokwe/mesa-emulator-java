@@ -15,9 +15,6 @@ public final class ProcDesc extends MemoryData32 {
     public ProcDesc(int base, MemoryAccess access) {
         super(base, access);
     }
-    public ProcDesc(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

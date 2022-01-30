@@ -15,9 +15,6 @@ public final class GlobalWord extends MemoryData16 {
     public GlobalWord(int base, MemoryAccess access) {
         super(base, access);
     }
-    public GlobalWord(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

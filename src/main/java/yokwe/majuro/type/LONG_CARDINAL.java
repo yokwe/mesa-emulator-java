@@ -30,7 +30,4 @@ public final class LONG_CARDINAL extends MemoryData32 {
     public LONG_CARDINAL(int base, MemoryAccess access) {
         super(base, access);
     }
-    public LONG_CARDINAL(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

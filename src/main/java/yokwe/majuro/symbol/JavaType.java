@@ -133,10 +133,6 @@ public class JavaType {
 		out.println("public %s(int base, MemoryAccess access) {", javaFile.name);
 		out.println("super(base, access);");
 		out.println("}");
-		
-		out.println("public %s(int base, int index, MemoryAccess access) {", javaFile.name);
-		out.println("super(base + (WORD_SIZE * index), access);");
-		out.println("}");
 	}
 	private void constructor32() {
 		final var out = javaFile.out;
@@ -151,12 +147,8 @@ public class JavaType {
 		out.println("public %s(int base, MemoryAccess access) {", javaFile.name);
 		out.println("super(base, access);");
 		out.println("}");
-		
-		out.println("public %s(int base, int index, MemoryAccess access) {", javaFile.name);
-		out.println("super(base + (WORD_SIZE * index), access);");
-		out.println("}");
 	}
-	private void constructorBase(String elementSize) {
+	private void constructorBase() {
 		final var out = javaFile.out;
 
 		out.println("//");
@@ -165,12 +157,6 @@ public class JavaType {
 		out.println("public %s(int base) {", javaFile.name);
 		out.println("super(base);");
 		out.println("}");
-		
-		if (!elementSize.equals("ELEMENT_WORD_SIZE")) {
-			out.println("public %s(int base, int index) {", javaFile.name);
-			out.println("super(base + (%s * index));", elementSize);
-			out.println("}");
-		}
 	}
 	
 	//
@@ -393,18 +379,23 @@ public class JavaType {
 		out.println("}");
 	}
 	private void typePointer(TypePointer type) {
+		// FIXME pointer to array of X
 		final String targetTypeName;
 		if (type.targetType != null) {
 			targetTypeName = StringUtil.toJavaName(type.targetType.getRealType().name);
 		} else {
 			targetTypeName = StringUtil.toJavaName(type.name);
 		}
-		constructorBase(String.format("%s.WORD_SIZE", targetTypeName));
+		constructorBase();
 	}
 	private void typeArray(TypeArray type) {
 		final var out = javaFile.out;
-
+		
 		if (type instanceof TypeArray.Reference) {
+			out.println("//");
+			out.println("// Check range of index");
+			out.println("//");
+
 			var typeRef = type.toReference().typeReference.getRealType();
 		    out.println("public static final void checkIndex(int value) {");
 		    out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(value);", StringUtil.toJavaName(typeRef.name));
@@ -412,85 +403,70 @@ public class JavaType {
 		} else if (type instanceof TypeArray.Subrange) {
 			// immediate subrange
 			TypeSubrange typeSubrange = type.toSubrange().typeSubrange;
-			
-			out.prepareLayout();
-			out.println("private static final int MIN_INDEX_VALUE   = %s;", StringUtil.toJavaString(typeSubrange.minValue));
-			out.println("private static final int MAX_INDEX_VALUE   = %s;", StringUtil.toJavaString(typeSubrange.maxValue));
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-			out.println();
-			
-		    out.println("private static final ContextSubrange contextIndex = new ContextSubrange(NAME, MIN_INDEX_VALUE, MAX_INDEX_VALUE);");
-		    out.println("public static final void checkIndex(int value) {");
-		    out.println("if (Debug.ENABLE_CHECK_VALUE) contextIndex(value);");
-		    out.println("}");
+			if (!typeSubrange.isOpenSubrange()) {
+				out.println("//");
+				out.println("// Check range of index");
+				out.println("//");
+
+				out.println("private static final ContextSubrange contextIndex = new ContextSubrange(NAME + \"#index\", %s, %s);",
+				    StringUtil.toJavaString(typeSubrange.minValue), StringUtil.toJavaString(typeSubrange.maxValue));
+			    out.println("public static final void checkIndex(long value) {");
+			    out.println("if (Debug.ENABLE_CHECK_VALUE) contextIndex.check(value);");
+			    out.println("}");
+				// if this type is unsigned, ...
+				if (0 <= typeSubrange.minValue) {
+					out.println("public static void checkIndex(int value) {");
+					out.println("if (Debug.ENABLE_CHECK_VALUE) contextIndex.check(Integer.toUnsignedLong(value));");
+					out.println("}");
+				}
+			}
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 		
+		constructorBase();		
+		
+		//
+		// output element access method
+		//
 		Type   elementType     = type.arrayElement.getRealType();
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
-		String elementWordSize = Integer.toString(elementType.wordSize());
-//		
-//		if (elementType.container()) {
-//			
-//		} else {
-//			//
-//		}
-//		
-//		
-//		
-//		if (!elementTypeName.contains("#")) {
-//			elementWordSize = String.format("%s.WORD_SIZE", elementTypeName);
-//		}
-//		if (elementType instanceof TypePointer) {
-//			TypePointer typePointer = elementType.toTypePointer();
-//			switch(typePointer.pointerSize) {
-//			case LONG:
-//				elementWordSize = String.format("%s.WORD_SIZE", LONG_POINTER.NAME);
-//				break;
-//			case SHORT:
-//				elementWordSize = String.format("%s.WORD_SIZE", POINTER.NAME);
-//				break;
-//			default:
-//				throw new UnexpectedException("Unexpected");
-//			}
-//		}
-		
-		out.prepareLayout();
-		out.println("public static final int ELEMENT_WORD_SIZE = %s;", elementWordSize);
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-		out.println();
-		
-		// FIXME use original Context of index
-//		out.println("public static final ContextSubrange context = new ContextSubrange(\"%s#index\", INDEX_MIN_VALUE, INDEX_MAX_VALUE);", type.name);
-		
-		constructorBase("ELEMENT_WORD_SIZE");
-		out.println();
-		
-		
+		String IndexTypeName = elementTypeName;
+
 		out.println("//");
 		out.println("// Access to Element of Array");
 		out.println("//");
 		if (elementType.container()) {
 			if (elementType instanceof TypePointer) {
 				TypePointer typePointer = elementType.toTypePointer();
-				switch (typePointer.pointerSize) {
-				case LONG:
-					elementTypeName = "LONG_POINTER";
-					break;
+				if (typePointer.targetType != null) {
+					elementType     = typePointer.targetType.getRealType();
+					elementTypeName = StringUtil.toJavaName(elementType.name);
+				}
+				switch(typePointer.pointerSize) {
 				case SHORT:
-					elementTypeName = "POINTER";
+					IndexTypeName = POINTER.NAME;
+					break;
+				case LONG:
+					IndexTypeName = LONG_POINTER.NAME;
 					break;
 				default:
 					throw new UnexpectedException("Unexpected");
 				}
+			} else if (elementType instanceof TypeRecord) {
+				//
+			} else {
+				throw new UnexpectedException("Unexpected");
 			}
+		}
+		
+		if (elementType.container()) {
 			out.println("public %s element(int index) {", elementTypeName);
-			out.println("return new %s(base + (ELEMENT_WORD_SIZE * index));", elementTypeName);
+			out.println("return new %s(base + (%s.WORD_SIZE * index));", elementTypeName, IndexTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s element(int index, MemoryAccess memoryAccess) {", elementTypeName);
-			out.println("return new %s(base + (ELEMENT_WORD_SIZE * index), memoryAccess);", elementTypeName);
+			out.println("return new %s(base + (%s.WORD_SIZE * index), memoryAccess);", elementTypeName, IndexTypeName);
 			out.println("}");
 		}
 	}
@@ -505,7 +481,7 @@ public class JavaType {
 			// multiple word
 			// FIXME
 			
-			constructorBase("WORD_SIZE");
+			constructorBase();
 			out.println();
 			
 			out.println("//");

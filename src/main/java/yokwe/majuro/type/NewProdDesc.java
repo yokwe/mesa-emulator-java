@@ -15,9 +15,6 @@ public final class NewProdDesc extends MemoryData32 {
     public NewProdDesc(int base, MemoryAccess access) {
         super(base, access);
     }
-    public NewProdDesc(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

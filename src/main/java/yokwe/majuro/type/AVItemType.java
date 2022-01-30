@@ -37,9 +37,6 @@ public final class AVItemType extends MemoryData16 {
     public AVItemType(int base, MemoryAccess access) {
         super(base, access);
     }
-    public AVItemType(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     @Override
     public String toString() {

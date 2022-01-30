@@ -41,9 +41,6 @@ public final class XferType extends MemoryData16 {
     public XferType(int base, MemoryAccess access) {
         super(base, access);
     }
-    public XferType(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     @Override
     public String toString() {

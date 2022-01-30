@@ -12,7 +12,4 @@ public final class POINTER extends MemoryBase {
     public POINTER(int base) {
         super(base);
     }
-    public POINTER(int base, int index) {
-        super(base + (POINTER.WORD_SIZE * index));
-    }
 }

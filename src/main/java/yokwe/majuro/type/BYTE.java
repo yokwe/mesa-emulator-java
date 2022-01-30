@@ -30,7 +30,4 @@ public final class BYTE extends MemoryData16 {
     public BYTE(int base, MemoryAccess access) {
         super(base, access);
     }
-    public BYTE(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

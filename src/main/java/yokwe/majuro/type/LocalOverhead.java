@@ -12,9 +12,6 @@ public final class LocalOverhead extends MemoryBase {
     public LocalOverhead(int base) {
         super(base);
     }
-    public LocalOverhead(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

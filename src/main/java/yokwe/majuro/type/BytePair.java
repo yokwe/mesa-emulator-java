@@ -15,9 +15,6 @@ public final class BytePair extends MemoryData16 {
     public BytePair(int base, MemoryAccess access) {
         super(base, access);
     }
-    public BytePair(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

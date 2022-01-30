@@ -30,7 +30,4 @@ public final class UNSPECIFIED extends MemoryData16 {
     public UNSPECIFIED(int base, MemoryAccess access) {
         super(base, access);
     }
-    public UNSPECIFIED(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

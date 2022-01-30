@@ -15,9 +15,6 @@ public final class FieldSpec extends MemoryData16 {
     public FieldSpec(int base, MemoryAccess access) {
         super(base, access);
     }
-    public FieldSpec(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

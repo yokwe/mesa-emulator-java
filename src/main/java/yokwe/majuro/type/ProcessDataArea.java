@@ -12,9 +12,6 @@ public final class ProcessDataArea extends MemoryBase {
     public ProcessDataArea(int base) {
         super(base);
     }
-    public ProcessDataArea(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

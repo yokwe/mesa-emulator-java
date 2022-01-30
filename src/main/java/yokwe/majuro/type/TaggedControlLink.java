@@ -15,9 +15,6 @@ public final class TaggedControlLink extends MemoryData32 {
     public TaggedControlLink(int base, MemoryAccess access) {
         super(base, access);
     }
-    public TaggedControlLink(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

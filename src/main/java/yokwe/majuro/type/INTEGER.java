@@ -27,7 +27,4 @@ public final class INTEGER extends MemoryData16 {
     public INTEGER(int base, MemoryAccess access) {
         super(base, access);
     }
-    public INTEGER(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

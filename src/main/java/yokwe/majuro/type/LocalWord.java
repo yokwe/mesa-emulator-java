@@ -15,9 +15,6 @@ public final class LocalWord extends MemoryData16 {
     public LocalWord(int base, MemoryAccess access) {
         super(base, access);
     }
-    public LocalWord(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

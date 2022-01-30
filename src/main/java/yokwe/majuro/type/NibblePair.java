@@ -15,9 +15,6 @@ public final class NibblePair extends MemoryData16 {
     public NibblePair(int base, MemoryAccess access) {
         super(base, access);
     }
-    public NibblePair(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

@@ -30,7 +30,4 @@ public final class GFTIndex extends MemoryData16 {
     public GFTIndex(int base, MemoryAccess access) {
         super(base, access);
     }
-    public GFTIndex(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

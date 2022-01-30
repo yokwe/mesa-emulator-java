@@ -15,9 +15,6 @@ public final class GrayParm extends MemoryData16 {
     public GrayParm(int base, MemoryAccess access) {
         super(base, access);
     }
-    public GrayParm(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

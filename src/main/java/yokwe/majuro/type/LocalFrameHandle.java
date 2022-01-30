@@ -12,7 +12,4 @@ public final class LocalFrameHandle extends MemoryBase {
     public LocalFrameHandle(int base) {
         super(base);
     }
-    public LocalFrameHandle(int base, int index) {
-        super(base + (BLOCK.WORD_SIZE * index));
-    }
 }

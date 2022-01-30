@@ -15,9 +15,6 @@ public final class AVItem extends MemoryData16 {
     public AVItem(int base, MemoryAccess access) {
         super(base, access);
     }
-    public AVItem(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

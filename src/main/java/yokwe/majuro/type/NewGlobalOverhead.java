@@ -12,9 +12,6 @@ public final class NewGlobalOverhead extends MemoryBase {
     public NewGlobalOverhead(int base) {
         super(base);
     }
-    public NewGlobalOverhead(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

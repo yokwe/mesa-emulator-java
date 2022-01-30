@@ -37,9 +37,6 @@ public final class LinkType extends MemoryData16 {
     public LinkType(int base, MemoryAccess access) {
         super(base, access);
     }
-    public LinkType(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     @Override
     public String toString() {

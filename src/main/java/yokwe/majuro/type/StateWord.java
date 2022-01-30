@@ -15,9 +15,6 @@ public final class StateWord extends MemoryData16 {
     public StateWord(int base, MemoryAccess access) {
         super(base, access);
     }
-    public StateWord(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field

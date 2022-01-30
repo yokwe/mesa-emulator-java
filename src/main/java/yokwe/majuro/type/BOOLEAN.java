@@ -15,7 +15,4 @@ public final class BOOLEAN extends MemoryData16 {
     public BOOLEAN(int base, MemoryAccess access) {
         super(base, access);
     }
-    public BOOLEAN(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 }

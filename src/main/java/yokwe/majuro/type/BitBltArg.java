@@ -12,9 +12,6 @@ public final class BitBltArg extends MemoryBase {
     public BitBltArg(int base) {
         super(base);
     }
-    public BitBltArg(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

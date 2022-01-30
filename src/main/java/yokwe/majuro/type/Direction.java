@@ -35,9 +35,6 @@ public final class Direction extends MemoryData16 {
     public Direction(int base, MemoryAccess access) {
         super(base, access);
     }
-    public Direction(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     @Override
     public String toString() {

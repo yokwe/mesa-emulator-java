@@ -12,7 +12,4 @@ public final class GlobalFrameHandle extends MemoryBase {
     public GlobalFrameHandle(int base) {
         super(base);
     }
-    public GlobalFrameHandle(int base, int index) {
-        super(base + (BLOCK.WORD_SIZE * index));
-    }
 }

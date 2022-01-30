@@ -12,9 +12,6 @@ public final class InterruptItem extends MemoryBase {
     public InterruptItem(int base) {
         super(base);
     }
-    public InterruptItem(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

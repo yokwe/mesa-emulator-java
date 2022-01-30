@@ -12,9 +12,6 @@ public final class Port extends MemoryBase {
     public Port(int base) {
         super(base);
     }
-    public Port(int base, int index) {
-        super(base + (WORD_SIZE * index));
-    }
 
     //
     // Access to Field of Record

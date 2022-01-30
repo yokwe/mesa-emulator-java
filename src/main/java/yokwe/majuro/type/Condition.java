@@ -15,9 +15,6 @@ public final class Condition extends MemoryData16 {
     public Condition(int base, MemoryAccess access) {
         super(base, access);
     }
-    public Condition(int base, int index, MemoryAccess access) {
-        super(base + (WORD_SIZE * index), access);
-    }
 
     //
     // Bit Field
