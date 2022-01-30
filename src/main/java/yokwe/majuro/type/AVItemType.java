@@ -6,10 +6,10 @@ import yokwe.majuro.mesa.Debug;
 public class AVItemType extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
-
+    
     public static final int WORD_SIZE = 1;
     public static final int BIT_SIZE  = 2;
-
+    
     //
     // Enum Value Constants
     //
@@ -17,7 +17,7 @@ public class AVItemType extends MemoryData16 {
     public static final char EMPTY    = 1;
     public static final char INDIRECT = 2;
     public static final char UNUSED   = 3;
-
+    
     private static final int[] values = {
         FRAME, EMPTY, INDIRECT, UNUSED
     };
@@ -25,11 +25,11 @@ public class AVItemType extends MemoryData16 {
         "FRAME", "EMPTY", "INDIRECT", "UNUSED"
     };
     private static final ContextEnum context = new ContextEnum(NAME, values, names);
-
+    
     public static final void checkValue(int value) {
         if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
-
+    
     //
     // Constructor
     //
@@ -39,7 +39,7 @@ public class AVItemType extends MemoryData16 {
     public AVItemType(int base, MemoryAccess access) {
         super(base, access);
     }
-
+    
     @Override
     public String toString() {
         return context.toString(value);

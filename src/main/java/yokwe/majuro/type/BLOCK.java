@@ -4,10 +4,10 @@ package yokwe.majuro.type;
 public class BLOCK extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
-
+    
     public static final int WORD_SIZE = 0;
     public static final int BIT_SIZE  = 0;
-
+    
     //
     // Constructor
     //

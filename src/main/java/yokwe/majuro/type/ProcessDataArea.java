@@ -4,17 +4,17 @@ package yokwe.majuro.type;
 public class ProcessDataArea extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
-
+    
     public static final int WORD_SIZE =   64;
     public static final int BIT_SIZE  = 1024;
-
+    
     //
     // Constructor
     //
     public ProcessDataArea(int base) {
         super(base);
     }
-
+    
     //
     // Access to Field of Record
     //

@@ -4,10 +4,10 @@ package yokwe.majuro.type;
 public class BitBltFlags extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
-
+    
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
-
+    
     //
     // Constructor
     //
@@ -17,11 +17,11 @@ public class BitBltFlags extends MemoryData16 {
     public BitBltFlags(int base, MemoryAccess access) {
         super(base, access);
     }
-
+    
     //
     // Bit Field
     //
-
+    
     // direction     (0:0..0):  Direction
     // disjoint      (0:1..1):  BOOLEAN
     // disjointItems (0:2..2):  BOOLEAN
@@ -29,7 +29,7 @@ public class BitBltFlags extends MemoryData16 {
     // srcFunc       (0:4..4):  SrcFunc
     // dstFunc       (0:5..6):  DstFunc
     // reserved      (0:7..15): UNSPECIFIED
-
+    
     private static final int DIRECTION_MASK       = 0b1000_0000_0000_0000;
     private static final int DIRECTION_SHIFT      =                    15;
     private static final int DISJOINT_MASK        = 0b0100_0000_0000_0000;
@@ -44,7 +44,7 @@ public class BitBltFlags extends MemoryData16 {
     private static final int DST_FUNC_SHIFT       =                     9;
     private static final int RESERVED_MASK        = 0b0000_0001_1111_1111;
     private static final int RESERVED_SHIFT       =                     0;
-
+    
     //
     // Bit Field Access Methods
     //
@@ -54,47 +54,47 @@ public class BitBltFlags extends MemoryData16 {
     public final void direction(int newValue) {
         value = (value & ~DIRECTION_MASK) | ((newValue << DIRECTION_SHIFT) & DIRECTION_MASK);
     }
-
+    
     public final int disjoint() {
         return (value & DISJOINT_MASK) >> DISJOINT_SHIFT;
     }
     public final void disjoint(int newValue) {
         value = (value & ~DISJOINT_MASK) | ((newValue << DISJOINT_SHIFT) & DISJOINT_MASK);
     }
-
+    
     public final int disjointItems() {
         return (value & DISJOINT_ITEMS_MASK) >> DISJOINT_ITEMS_SHIFT;
     }
     public final void disjointItems(int newValue) {
         value = (value & ~DISJOINT_ITEMS_MASK) | ((newValue << DISJOINT_ITEMS_SHIFT) & DISJOINT_ITEMS_MASK);
     }
-
+    
     public final int gray() {
         return (value & GRAY_MASK) >> GRAY_SHIFT;
     }
     public final void gray(int newValue) {
         value = (value & ~GRAY_MASK) | ((newValue << GRAY_SHIFT) & GRAY_MASK);
     }
-
+    
     public final int srcFunc() {
         return (value & SRC_FUNC_MASK) >> SRC_FUNC_SHIFT;
     }
     public final void srcFunc(int newValue) {
         value = (value & ~SRC_FUNC_MASK) | ((newValue << SRC_FUNC_SHIFT) & SRC_FUNC_MASK);
     }
-
+    
     public final int dstFunc() {
         return (value & DST_FUNC_MASK) >> DST_FUNC_SHIFT;
     }
     public final void dstFunc(int newValue) {
         value = (value & ~DST_FUNC_MASK) | ((newValue << DST_FUNC_SHIFT) & DST_FUNC_MASK);
     }
-
+    
     public final int reserved() {
         return (value & RESERVED_MASK) >> RESERVED_SHIFT;
     }
     public final void reserved(int newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
-
+    
 }

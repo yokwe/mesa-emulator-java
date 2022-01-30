@@ -6,10 +6,10 @@ import yokwe.majuro.mesa.Debug;
 public class SystemData extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
-
+    
     public static final int WORD_SIZE =  512;
     public static final int BIT_SIZE  = 8192;
-
+    
     //
     // Check range of index
     //
