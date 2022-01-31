@@ -10,8 +10,8 @@ public class TypePointer extends Type {
 		SHORT,
 		LONG,
 	}
-	public final PointerSize  pointerSize;
-	public final Type  targetType;
+	public final PointerSize pointerSize;
+	public final Type        targetType;
 	
 	public TypePointer(String name, PointerSize pointerSize, Type targetType) {
 		super(name);
@@ -31,25 +31,22 @@ public class TypePointer extends Type {
 	}
 	
 	public void checkValue(long value) {
-		switch(pointerSize) {
-		case SHORT:
+		if (shortPointer()) {
 			if (0 <= value && value <= 0x0000_FFFFL) return;
-			break;
-		case LONG:
-			if (0 <= value && value <= 0xFFFF_FFFFL) return;
-			break;
-		default:
-			logger.error("Unexpected");
-			logger.error("  this  {}", this);
-			throw new UnexpectedException("Unexpected");
 		}
+		if (longPointer()) {
+			if (0 <= value && value <= 0xFFFF_FFFFL) return;
+		}
+		logger.error("Unexpected");
+		logger.error("  this  {}", this);
+		throw new UnexpectedException("Unexpected");
 	}
 
 
 	@Override
 	public void fix() {
 		if (needsFix) {
-			if (targetType == null) {
+			if (rawPointer()) {
 				needsFix = false;
 			} else {
 				targetType.fix();
@@ -58,14 +55,11 @@ public class TypePointer extends Type {
 				}
 			}
 			
-			switch(pointerSize) {
-			case SHORT:
+			if (shortPointer()) {
 				bitSize = 16;
-				break;
-			case LONG:
+			} else if (longPointer()) {
 				bitSize = 32;
-				break;
-			default:
+			} else {
 				logger.error("Unexpected");
 				logger.error("  this  {}", this);
 				throw new UnexpectedException("Unexpected");
@@ -76,20 +70,17 @@ public class TypePointer extends Type {
 	@Override
 	public String toMesaType() {
 		String baseType;
-		switch(pointerSize) {
-		case SHORT:
-			baseType = "POINTER";
-			break;
-		case LONG:
-			baseType = "LONG POINTER";
-			break;
-		default:
+		if (shortPointer()) {
+			baseType = POINTER.name;
+		} else if (longPointer()) {
+			baseType = LONG_POINTER.name;
+		} else {
 			logger.error("Unexpected");
 			logger.error("  this  {}", this);
 			throw new UnexpectedException("Unexpected");
 		}
-		
-		if (targetType == null) {
+
+		if (rawPointer()) {
 			return baseType;
 		} else {
 			return baseType + " TO " + targetType.toMesaType();
@@ -99,5 +90,15 @@ public class TypePointer extends Type {
 	@Override
 	public boolean container() {
 		return true;
+	}
+	
+	public boolean rawPointer() {
+		return targetType == null;
+	}
+	public boolean shortPointer() {
+		return pointerSize == PointerSize.SHORT;
+	}
+	public boolean longPointer() {
+		return pointerSize == PointerSize.LONG;
 	}
 }
