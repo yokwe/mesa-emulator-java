@@ -445,6 +445,8 @@ public class JavaType {
 	private void typeArray(TypeArray type) {
 		final var out = javaFile.out;
 		
+		boolean haveCheckIndex = true;
+		
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
@@ -456,14 +458,22 @@ public class JavaType {
 			out.println("// Check range of index");
 			out.println("//");
 
-			var typeRef = type.toReference().typeReference.getRealType();
+			Type typeRef = type.toReference().typeReference.getRealType();
 		    out.println("public static final void checkIndex(int value) {");
 		    out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(value);", StringUtil.toJavaName(typeRef.name));
 		    out.println("}");
+		    
+		    if (typeRef instanceof TypeSubrange) {
+		    	TypeSubrange typeSubrange = typeRef.toTypeSubrange();
+		    	if (typeSubrange.openSubrange()) haveCheckIndex = false;
+		    }
 		} else if (type instanceof TypeArray.Subrange) {
 			// immediate subrange
 			TypeSubrange typeSubrange = type.toSubrange().typeSubrange;
-			if (!typeSubrange.isOpenSubrange()) {
+			if (typeSubrange.openSubrange()) {
+				haveCheckIndex = false;
+			} else {
+				haveCheckIndex = false;
 				out.println("//");
 				out.println("// Check range of index");
 				out.println("//");
@@ -504,9 +514,9 @@ public class JavaType {
 					elementTypeName = StringUtil.toJavaName(elementType.name);
 				}
 				if (typePointer.shortPointer()) {
-					indexTypeName = "POINTER";
+					indexTypeName = StringUtil.toJavaName(Type.POINTER.name);
 				} else if (typePointer.longPointer()) {
-					indexTypeName = "LONG_POINTER";
+					indexTypeName = StringUtil.toJavaName(Type.LONG_POINTER.name);
 				} else {
 					throw new UnexpectedException("Unexpected");
 				}
@@ -520,12 +530,16 @@ public class JavaType {
 		// FIXME distinguish short and long pointer
 		if (elementType.container()) {
 			out.println("public final %s get(int index) {", elementTypeName);
-			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+			if (haveCheckIndex) {
+				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+			}
 			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index));", elementTypeName, indexTypeName);
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
-			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+			if (haveCheckIndex) {
+				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+			}
 			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index), access);", elementTypeName, indexTypeName);
 			out.println("}");
 		}
