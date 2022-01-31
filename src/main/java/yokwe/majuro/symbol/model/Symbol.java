@@ -53,7 +53,7 @@ public class Symbol {
 		}
 	}
 	
-	public static Symbol getInstance(String filePath) {
+	public static Symbol getInstance(String filePath, boolean addSimpleType) {
 		final SymbolContext symbolContext;
 		// build symbolContext
 		try {
@@ -77,10 +77,11 @@ public class Symbol {
 		final List<Decl> declList = new ArrayList<>();
 		// build declList
 		{
-			// add simple type that are defined as static final Type in class Type
-			for(var e: Type.map.values()) {
-				logger.info("add simple type  {}", e.name);
-				declList.add(new DeclType(e));
+			if (addSimpleType) {
+				for(var e: Type.map.values()) {
+					logger.info("add bui type  {}", e.name);
+					declList.add(new DeclType(e));
+				}
 			}
 			
 			logger.info("build constant and type");
@@ -151,7 +152,7 @@ public class Symbol {
 //		String path = PATH_RULE_FILE_TEST;
 		logger.info("path {}", path);
 
-		Symbol symbol = Symbol.getInstance(path);
+		Symbol symbol = Symbol.getInstance(path, true);
 		logger.info("symbol {}", symbol);
 		
 		for(var e: Constant.map.values()) {
