@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // BitAddress: TYPE = RECORD[word (0:0..31): LONG POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
-public class BitAddress extends MemoryBase {
+public final class BitAddress extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class BitAddress extends MemoryBase {
     //
     // Constructor
     //
-    public BitAddress(int base) {
+    public static final BitAddress longPointer(int base) {
+        return new BitAddress(base);
+    }
+    public static final BitAddress pointer(char base) {
+        return new BitAddress(Mesa.lengthenMDS(base));
+    }
+    
+    private BitAddress(int base) {
         super(base);
     }
     
@@ -21,7 +30,7 @@ public class BitAddress extends MemoryBase {
     // word (0:0..31): LONG POINTER
     private static final int OFFSET_WORD = 0;
     public LONG_POINTER word() {
-        return new LONG_POINTER(base + OFFSET_WORD);
+        return LONG_POINTER.longPointer(base + OFFSET_WORD);
     }
     // reserved (2:0..11): UNSPECIFIED
     // FIXME  Field is not aligned

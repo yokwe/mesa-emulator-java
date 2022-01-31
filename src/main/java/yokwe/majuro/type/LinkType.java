@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
-public class LinkType extends MemoryData16 {
+public final class LinkType extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,22 +27,31 @@ public class LinkType extends MemoryData16 {
     };
     private static final ContextEnum context = new ContextEnum(NAME, values, names);
     
-    public static final void checkValue(int value) {
+    public static final void checkValue(char value) {
         if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
     
     //
     // Constructor
     //
-    public LinkType(char value) {
+    public static final LinkType value(char value) {
+        return new LinkType(value);
+    }
+    public static final LinkType longPointer(int base, MemoryAccess access) {
+        return new LinkType(base, access);
+    }
+    public static final LinkType pointer(char base, MemoryAccess access) {
+        return new LinkType(Mesa.lengthenMDS(base), access);
+    }
+    
+    private LinkType(char value) {
         super(value);
     }
-    public LinkType(int base, MemoryAccess access) {
+    private LinkType(int base, MemoryAccess access) {
         super(base, access);
     }
     
-    @Override
-    public String toString() {
+    public final String toString(char value) {
         return context.toString(value);
     }
 }

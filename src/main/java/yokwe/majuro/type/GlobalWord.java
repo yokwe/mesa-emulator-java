@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // GlobalWord: TYPE = RECORD[gfi (0:0..13): GFTIndex, trapxfers (0:14..14): BOOLEAN, codelinks (0:15..15): BOOLEAN];
-public class GlobalWord extends MemoryData16 {
+public final class GlobalWord extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class GlobalWord extends MemoryData16 {
     //
     // Constructor
     //
-    public GlobalWord(char value) {
+    public static final GlobalWord value(char value) {
+        return new GlobalWord(value);
+    }
+    public static final GlobalWord longPointer(int base, MemoryAccess access) {
+        return new GlobalWord(base, access);
+    }
+    public static final GlobalWord pointer(char base, MemoryAccess access) {
+        return new GlobalWord(Mesa.lengthenMDS(base), access);
+    }
+    
+    private GlobalWord(char value) {
         super(value);
     }
-    public GlobalWord(int base, MemoryAccess access) {
+    private GlobalWord(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -36,24 +48,24 @@ public class GlobalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int gfi() {
-        return (value & GFI_MASK) >> GFI_SHIFT;
+    public final char gfi() {
+        return (char)((value & GFI_MASK) >> GFI_SHIFT);
     }
-    public final void gfi(int newValue) {
+    public final void gfi(char newValue) {
         value = (value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK);
     }
     
-    public final int trapxfers() {
-        return (value & TRAPXFERS_MASK) >> TRAPXFERS_SHIFT;
+    public final char trapxfers() {
+        return (char)((value & TRAPXFERS_MASK) >> TRAPXFERS_SHIFT);
     }
-    public final void trapxfers(int newValue) {
+    public final void trapxfers(char newValue) {
         value = (value & ~TRAPXFERS_MASK) | ((newValue << TRAPXFERS_SHIFT) & TRAPXFERS_MASK);
     }
     
-    public final int codelinks() {
-        return (value & CODELINKS_MASK) >> CODELINKS_SHIFT;
+    public final char codelinks() {
+        return (char)((value & CODELINKS_MASK) >> CODELINKS_SHIFT);
     }
-    public final void codelinks(int newValue) {
+    public final void codelinks(char newValue) {
         value = (value & ~CODELINKS_MASK) | ((newValue << CODELINKS_SHIFT) & CODELINKS_MASK);
     }
     

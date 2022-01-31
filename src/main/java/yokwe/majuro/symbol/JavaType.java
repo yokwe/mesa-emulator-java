@@ -15,8 +15,6 @@ import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
 import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
-import yokwe.majuro.type.LONG_POINTER;
-import yokwe.majuro.type.POINTER;
 import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 import yokwe.majuro.util.StringUtil;
@@ -57,16 +55,7 @@ public class JavaType {
 		}
 		if (realType instanceof TypePointer) {
 			TypePointer typePointer = realType.toTypePointer();
-			if (typePointer.targetType instanceof TypeReference) {
-				TypeReference typeReference = typePointer.targetType.toTypeReference();
-				return StringUtil.toJavaName(typeReference.getRealType().name);
-			}
-			
-			if (typePointer.targetType == null) return "MemoryBase";
-			
-			Type targetType = typePointer.targetType.getRealType();
-			if (targetType.container()) return "MemoryBase";
-			return StringUtil.toJavaName(targetType.name);
+			return typePointer.rawPointer() ? "MemoryBase" : null;
 		}
 		if (realType instanceof TypeArray) {
 			return "MemoryBase";
@@ -92,15 +81,13 @@ public class JavaType {
 			// output "public final class" line
 			final String parentClass = parentClass(type);
 			// start of class
-			out.println("public class %s extends %s {", javaFile.name, parentClass);
+			if (parentClass == null) {
+				out.println("public final class %s {", javaFile.name);				
+			} else {
+				out.println("public final class %s extends %s {", javaFile.name, parentClass);
+			}
 			out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
 			out.println("public static final String   NAME = SELF.getSimpleName();");
-			out.println();
-			
-			out.prepareLayout();
-			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 			out.println();
 			
 			generateType(type);
@@ -143,11 +130,22 @@ public class JavaType {
 		out.println("//");
 		out.println("// Constructor");
 		out.println("//");
-		out.println("public %s(char value) {", javaFile.name);
+		
+		out.println("public static final %s value(char value) {", javaFile.name);
+		out.println("return new %s(value);", javaFile.name);
+		out.println("}");
+		out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
+		out.println("return new %s(base, access);", javaFile.name);
+		out.println("}");
+		out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
+		out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
+		out.println("}");
+		out.println();
+		
+		out.println("private %s(char value) {", javaFile.name);
 		out.println("super(value);");
 		out.println("}");
-		
-		out.println("public %s(int base, MemoryAccess access) {", javaFile.name);
+		out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
 		out.println("super(base, access);");
 		out.println("}");
 	}
@@ -157,11 +155,21 @@ public class JavaType {
 		out.println("//");
 		out.println("// Constructor");
 		out.println("//");
-		out.println("public %s(int value) {", javaFile.name);
+		out.println("public static final %s value(int value) {", javaFile.name);
+		out.println("return new %s(value);", javaFile.name);
+		out.println("}");
+		out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
+		out.println("return new %s(base, access);", javaFile.name);
+		out.println("}");
+		out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
+		out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
+		out.println("}");
+		out.println();
+
+		out.println("private %s(int value) {", javaFile.name);
 		out.println("super(value);");
 		out.println("}");
-		
-		out.println("public %s(int base, MemoryAccess access) {", javaFile.name);
+		out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
 		out.println("super(base, access);");
 		out.println("}");
 	}
@@ -171,7 +179,15 @@ public class JavaType {
 		out.println("//");
 		out.println("// Constructor");
 		out.println("//");
-		out.println("public %s(int base) {", javaFile.name);
+		out.println("public static final %s longPointer(int base) {", javaFile.name);
+		out.println("return new %s(base);", javaFile.name);
+		out.println("}");
+		out.println("public static final %s pointer(char base) {", javaFile.name);
+		out.println("return new %s(Mesa.lengthenMDS(base));", javaFile.name);
+		out.println("}");
+		out.println();
+		
+		out.println("private %s(int base) {", javaFile.name);
 		out.println("super(base);");
 		out.println("}");
 	}
@@ -232,11 +248,11 @@ public class JavaType {
 			String fieldName = StringUtil.toJavaName(e.name);
 			String fieldCons = StringUtil.toJavaConstName(e.name);
 			
-			out.println("public final int %s() {", fieldName);
-			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+			out.println("public final char %s() {", fieldName);
+			out.println("return (char)((value & %1$s_MASK) >> %1$s_SHIFT);", fieldCons);
 			out.println("}");
 			
-			out.println("public final void %s(int newValue) {", fieldName);
+			out.println("public final void %s(char newValue) {", fieldName);
 			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
 			out.println("}");
 			out.println();
@@ -313,12 +329,23 @@ public class JavaType {
 	//
 	
 	private void typeBoolean(TypeBoolean type) {
+		final var out = javaFile.out;
+
+		out.prepareLayout();
+		out.println("public static final int WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+		
 		constructor16();
 	}
 	private void typeSubrange(TypeSubrange type) {
 		final var out = javaFile.out;
 
 		out.prepareLayout();
+		out.println("public static final int  WORD_SIZE = %d;",  type.wordSize());
+		out.println("public static final int  BIT_SIZE  = %d;",  type.bitSize());
+		out.println();
 		out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
 		out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
 		out.println("public static final long SIZE_VALUE = %s;", StringUtil.toJavaString(type.maxValue - type.minValue + 1));
@@ -332,7 +359,7 @@ public class JavaType {
 		out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
 		out.println("}");
 		
-		// if this type is unsigned, ...
+		// if this type is unsigned, treat value as unsigned int
 		if (0 <= type.minValue) {
 			out.println("public static void checkValue(int value) {");
 			out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
@@ -355,6 +382,12 @@ public class JavaType {
 	}
 	private void typeEnum(TypeEnum type) {
 		final var out = javaFile.out;
+
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
 
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
 		String valueList = String.join(", ", itemList);
@@ -382,7 +415,7 @@ public class JavaType {
 		out.println("private static final ContextEnum context = new ContextEnum(NAME, values, names);");
 		out.println();
 
-		out.println("public static final void checkValue(int value) {");
+		out.println("public static final void checkValue(char value) {");
 		out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
 		out.println("}");
 		out.println();
@@ -390,44 +423,34 @@ public class JavaType {
 		constructor16();
 		out.println();
 
-		out.println("@Override");
-		out.println("public String toString() {", javaFile.name);
+		out.println("public final String toString(char value) {");
 		out.println("return context.toString(value);");
 		out.println("}");
 	}
 	private void typePointer(TypePointer type) {
 		final var out = javaFile.out;
 
-		// FIXME pointer to X should return type X
-		// FIXME pointer to X should return same contents as type X with different name
-		
-		final String targetTypeName;
-		if (type.targetType == null) {
+		if (type.rawPointer()) {
+			out.prepareLayout();
+			out.println("public static final int WORD_SIZE = %d;",     type.wordSize());
+			out.println("public static final int BIT_SIZE  = %d;",     type.bitSize());
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.println();
+			
 			constructorBase();
 		} else {
-			Type targetType = type.targetType.getRealType();
-			targetTypeName = StringUtil.toJavaName(type.targetType.getRealType().name);
-			if (targetType.container()) {
-				if (targetType instanceof TypeArray) {
-//					TypeArray typeArray = targetType.toTypeArray();
-					constructorBase();
-				} else if (targetType instanceof TypeRecord) {
-					constructorBase();
-				}
-			} else {
-				if (targetType.bitSize() <= 16) {
-					constructor16();
-				} else if (targetType.bitSize() == 32) {
-					constructor32();
-				} else {
-					throw new UnexpectedException("Unexpected");
-				}
-			}
+			javaFile.success = false;
 		}
 	}
 	private void typeArray(TypeArray type) {
 		final var out = javaFile.out;
 		
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+
 		if (type instanceof TypeArray.Reference) {
 			out.println("//");
 			out.println("// Check range of index");
@@ -452,7 +475,7 @@ public class JavaType {
 			    out.println("}");
 				// if this type is unsigned, ...
 				if (0 <= typeSubrange.minValue) {
-					out.println("public static void checkIndex(int value) {");
+					out.println("public static final void checkIndex(int value) {");
 					out.println("if (Debug.ENABLE_CHECK_VALUE) contextIndex.check(Integer.toUnsignedLong(value));");
 					out.println("}");
 				}
@@ -468,7 +491,7 @@ public class JavaType {
 		//
 		Type   elementType     = type.arrayElement.getRealType();
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
-		String IndexTypeName = elementTypeName;
+		String indexTypeName   = elementTypeName;
 
 		out.println("//");
 		out.println("// Access to Element of Array");
@@ -480,14 +503,11 @@ public class JavaType {
 					elementType     = typePointer.targetType.getRealType();
 					elementTypeName = StringUtil.toJavaName(elementType.name);
 				}
-				switch(typePointer.pointerSize) {
-				case SHORT:
-					IndexTypeName = POINTER.NAME;
-					break;
-				case LONG:
-					IndexTypeName = LONG_POINTER.NAME;
-					break;
-				default:
+				if (typePointer.shortPointer()) {
+					indexTypeName = "POINTER";
+				} else if (typePointer.longPointer()) {
+					indexTypeName = "LONG POINTER";
+				} else {
 					throw new UnexpectedException("Unexpected");
 				}
 			} else if (elementType instanceof TypeRecord) {
@@ -497,18 +517,25 @@ public class JavaType {
 			}
 		}
 		
+		// FIXME distinguish short and long pointer
 		if (elementType.container()) {
-			out.println("public %s element(int index) {", elementTypeName);
-			out.println("return new %s(base + (%s.WORD_SIZE * index));", elementTypeName, IndexTypeName);
+			out.println("public final %s get(int index) {", elementTypeName);
+			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index));", elementTypeName, indexTypeName);
 			out.println("}");
 		} else {
-			out.println("public %s element(int index, MemoryAccess memoryAccess) {", elementTypeName);
-			out.println("return new %s(base + (%s.WORD_SIZE * index), memoryAccess);", elementTypeName, IndexTypeName);
+			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
+			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index), access);", elementTypeName, indexTypeName);
 			out.println("}");
 		}
 	}
 	private void typeRecord(TypeRecord type) {
 		final var out = javaFile.out;
+
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
 
 		if (type.isBitField16()) {
 			bitField16();
@@ -531,6 +558,7 @@ public class JavaType {
 				String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
 
 				out.println("// %s", field.toMesaType());
+				// sanity check
 				if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
 					//
 				} else if (field.startBit == Field.NO_VALUE) {
@@ -555,53 +583,65 @@ public class JavaType {
 						if (elementType.container()) {
 							if (fieldTypeName.contains("#")) {
 								out.println("public %s %s(int index) {", elementTypeString, fieldName);
-								out.println("return new %1$s(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
+								out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
 								out.println("}");
 							} else {
 								out.println("public %s %s() {", fieldTypeName, fieldName);
-								out.println("return new %1$s(base + OFFSET_%2$s);", fieldTypeName, fieldConstName);
+								out.println("return %1$s.longPointer(base + OFFSET_%2$s);", fieldTypeName, fieldConstName);
 								out.println("}");
 							}
-							
 						} else {
-							out.println("public %s %s(int index, MemoryAccess memoryAccess) {", elementTypeString, fieldName);
-							out.println("return new %1$s(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), memoryAccess);", elementTypeString, fieldConstName);
+							out.println("public %s %s(int index, MemoryAccess access) {", elementTypeString, fieldName);
+							out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), access);", elementTypeString, fieldConstName);
 							out.println("}");
 						}
 						
 					} else if (fieldType instanceof TypePointer) {
 						TypePointer typePointer = fieldType.toTypePointer();
-						if (typePointer.targetType == null) {
+						if (typePointer.rawPointer()) {
 							// naked POINTER and LONG POINTER
 							String typeTargetName = StringUtil.toJavaName(typePointer.name);
 							out.println("public %s %s() {", typeTargetName, fieldName);
-							out.println("return new %s(base + OFFSET_%s);", typeTargetName, fieldConstName);
+							out.println("return %s.longPointer(base + OFFSET_%s);", typeTargetName, fieldConstName);
 							out.println("}");
 						} else {
 							Type typeTarget = typePointer.targetType.getRealType();
 							String typeTargetName = StringUtil.toJavaName(typeTarget.name);
-							// 
-							if (typeTarget.container()) {
-								out.println("public %s %s() {", typeTargetName, fieldName);
-								out.println("return new %s(base + OFFSET_%s);", typeTargetName, fieldConstName);
-								out.println("}");
+							if (typePointer.longPointer()) {
+								if (typeTarget.container()) {
+									out.println("public %s %s() {", typeTargetName, fieldName);
+									out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s));", typeTargetName, fieldConstName);
+									out.println("}");
+								} else {
+									out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
+									out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
+									out.println("}");
+								}
+							} else if (typePointer.shortPointer()) {
+								if (typeTarget.container()) {
+									out.println("public %s %s() {", typeTargetName, fieldName);
+									out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s));", typeTargetName, fieldConstName);
+									out.println("}");
+								} else {
+									out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
+									out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
+									out.println("}");
+								}
 							} else {
-								out.println("public %s %s(MemoryAccess memoryAccess) {", typeTargetName, fieldName);
-								out.println("return new %s(base + OFFSET_%s, memoryAccess);", typeTargetName, fieldConstName);
-								out.println("}");
+								throw new UnexpectedException("Unexpected");
 							}
 						}
 					} else if (fieldType instanceof TypeRecord) {
 						out.println("public %s %s() {", fieldTypeName, fieldName);
-						out.println("return new %s(base + OFFSET_%s);", fieldTypeName, fieldConstName);
+						out.println("return %s.longPointer(base + OFFSET_%s);", fieldTypeName, fieldConstName);
 						out.println("}");
 					} else {
 						throw new UnexpectedException("Unexpected");
 					}
 				} else {
 					// can be boolean, enum, bitfield16, bitfield32 or subrange
-					out.println("public %s %s(MemoryAccess memoryAccess) {", fieldTypeName, fieldName);
-					out.println("return new %s(base + OFFSET_%s, memoryAccess);", fieldTypeName, fieldConstName);
+					out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
+					out.println("return %s.longPointer(base + OFFSET_%s, access);", fieldTypeName, fieldConstName);
 					out.println("}");
 				}
 			}

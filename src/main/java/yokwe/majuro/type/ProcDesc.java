@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // ProcDesc: TYPE = RECORD32[taggedGF (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
-public class ProcDesc extends MemoryData32 {
+public final class ProcDesc extends MemoryData32 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class ProcDesc extends MemoryData32 {
     //
     // Constructor
     //
-    public ProcDesc(int value) {
+    public static final ProcDesc value(int value) {
+        return new ProcDesc(value);
+    }
+    public static final ProcDesc longPointer(int base, MemoryAccess access) {
+        return new ProcDesc(base, access);
+    }
+    public static final ProcDesc pointer(char base, MemoryAccess access) {
+        return new ProcDesc(Mesa.lengthenMDS(base), access);
+    }
+    
+    private ProcDesc(int value) {
         super(value);
     }
-    public ProcDesc(int base, MemoryAccess access) {
+    private ProcDesc(int base, MemoryAccess access) {
         super(base, access);
     }
     

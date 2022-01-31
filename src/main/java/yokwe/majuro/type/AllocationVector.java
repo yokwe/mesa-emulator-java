@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
-public class AllocationVector extends MemoryBase {
+public final class AllocationVector extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -19,13 +20,20 @@ public class AllocationVector extends MemoryBase {
     //
     // Constructor
     //
-    public AllocationVector(int base) {
+    public static final AllocationVector longPointer(int base) {
+        return new AllocationVector(base);
+    }
+    public static final AllocationVector pointer(char base) {
+        return new AllocationVector(Mesa.lengthenMDS(base));
+    }
+    
+    private AllocationVector(int base) {
         super(base);
     }
     //
     // Access to Element of Array
     //
-    public AVItem element(int index, MemoryAccess memoryAccess) {
-        return new AVItem(base + (AVItem.WORD_SIZE * index), memoryAccess);
+    public final AVItem get(int index, MemoryAccess access) {
+        return AVItem.longPointer(base + (AVItem.WORD_SIZE * index), access);
     }
 }

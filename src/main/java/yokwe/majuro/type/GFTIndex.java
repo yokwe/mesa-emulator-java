@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // GFTIndex: TYPE = [0..16384);
-public class GFTIndex extends MemoryData16 {
+public final class GFTIndex extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class GFTIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public GFTIndex(char value) {
+    public static final GFTIndex value(char value) {
+        return new GFTIndex(value);
+    }
+    public static final GFTIndex longPointer(int base, MemoryAccess access) {
+        return new GFTIndex(base, access);
+    }
+    public static final GFTIndex pointer(char base, MemoryAccess access) {
+        return new GFTIndex(Mesa.lengthenMDS(base), access);
+    }
+    
+    private GFTIndex(char value) {
         super(value);
     }
-    public GFTIndex(int base, MemoryAccess access) {
+    private GFTIndex(int base, MemoryAccess access) {
         super(base, access);
     }
 }

@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // SystemData: TYPE = ARRAY SDIndex OF ControlLink;
-public class SystemData extends MemoryBase {
+public final class SystemData extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -19,13 +20,20 @@ public class SystemData extends MemoryBase {
     //
     // Constructor
     //
-    public SystemData(int base) {
+    public static final SystemData longPointer(int base) {
+        return new SystemData(base);
+    }
+    public static final SystemData pointer(char base) {
+        return new SystemData(Mesa.lengthenMDS(base));
+    }
+    
+    private SystemData(int base) {
         super(base);
     }
     //
     // Access to Element of Array
     //
-    public LONG_UNSPECIFIED element(int index, MemoryAccess memoryAccess) {
-        return new LONG_UNSPECIFIED(base + (LONG_UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    public final LONG_UNSPECIFIED get(int index, MemoryAccess access) {
+        return LONG_UNSPECIFIED.longPointer(base + (LONG_UNSPECIFIED.WORD_SIZE * index), access);
     }
 }

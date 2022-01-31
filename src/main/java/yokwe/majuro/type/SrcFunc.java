@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // SrcFunc: TYPE = {null(0), complement(1)};
-public class SrcFunc extends MemoryData16 {
+public final class SrcFunc extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -24,22 +25,31 @@ public class SrcFunc extends MemoryData16 {
     };
     private static final ContextEnum context = new ContextEnum(NAME, values, names);
     
-    public static final void checkValue(int value) {
+    public static final void checkValue(char value) {
         if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
     
     //
     // Constructor
     //
-    public SrcFunc(char value) {
+    public static final SrcFunc value(char value) {
+        return new SrcFunc(value);
+    }
+    public static final SrcFunc longPointer(int base, MemoryAccess access) {
+        return new SrcFunc(base, access);
+    }
+    public static final SrcFunc pointer(char base, MemoryAccess access) {
+        return new SrcFunc(Mesa.lengthenMDS(base), access);
+    }
+    
+    private SrcFunc(char value) {
         super(value);
     }
-    public SrcFunc(int base, MemoryAccess access) {
+    private SrcFunc(int base, MemoryAccess access) {
         super(base, access);
     }
     
-    @Override
-    public String toString() {
+    public final String toString(char value) {
         return context.toString(value);
     }
 }

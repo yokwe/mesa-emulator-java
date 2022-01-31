@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // FaultIndex: TYPE = [0..8);
-public class FaultIndex extends MemoryData16 {
+public final class FaultIndex extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class FaultIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public FaultIndex(char value) {
+    public static final FaultIndex value(char value) {
+        return new FaultIndex(value);
+    }
+    public static final FaultIndex longPointer(int base, MemoryAccess access) {
+        return new FaultIndex(base, access);
+    }
+    public static final FaultIndex pointer(char base, MemoryAccess access) {
+        return new FaultIndex(Mesa.lengthenMDS(base), access);
+    }
+    
+    private FaultIndex(char value) {
         super(value);
     }
-    public FaultIndex(int base, MemoryAccess access) {
+    private FaultIndex(int base, MemoryAccess access) {
         super(base, access);
     }
 }

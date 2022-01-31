@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // StateAllocationTable: TYPE = ARRAY Priority OF POINTER TO StateVector;
-public class StateAllocationTable extends MemoryBase {
+public final class StateAllocationTable extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -19,13 +20,20 @@ public class StateAllocationTable extends MemoryBase {
     //
     // Constructor
     //
-    public StateAllocationTable(int base) {
+    public static final StateAllocationTable longPointer(int base) {
+        return new StateAllocationTable(base);
+    }
+    public static final StateAllocationTable pointer(char base) {
+        return new StateAllocationTable(Mesa.lengthenMDS(base));
+    }
+    
+    private StateAllocationTable(int base) {
         super(base);
     }
     //
     // Access to Element of Array
     //
-    public StateVector element(int index) {
-        return new StateVector(base + (POINTER.WORD_SIZE * index));
+    public final StateVector get(int index) {
+        return StateVector.longPointer(base + (POINTER.WORD_SIZE * index));
     }
 }

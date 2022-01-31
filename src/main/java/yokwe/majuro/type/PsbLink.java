@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOLEAN, permanent (0:14..14): BOOLEAN, preempted (0:15..15): BOOLEAN];
-public class PsbLink extends MemoryData16 {
+public final class PsbLink extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class PsbLink extends MemoryData16 {
     //
     // Constructor
     //
-    public PsbLink(char value) {
+    public static final PsbLink value(char value) {
+        return new PsbLink(value);
+    }
+    public static final PsbLink longPointer(int base, MemoryAccess access) {
+        return new PsbLink(base, access);
+    }
+    public static final PsbLink pointer(char base, MemoryAccess access) {
+        return new PsbLink(Mesa.lengthenMDS(base), access);
+    }
+    
+    private PsbLink(char value) {
         super(value);
     }
-    public PsbLink(int base, MemoryAccess access) {
+    private PsbLink(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -42,38 +54,38 @@ public class PsbLink extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int priority() {
-        return (value & PRIORITY_MASK) >> PRIORITY_SHIFT;
+    public final char priority() {
+        return (char)((value & PRIORITY_MASK) >> PRIORITY_SHIFT);
     }
-    public final void priority(int newValue) {
+    public final void priority(char newValue) {
         value = (value & ~PRIORITY_MASK) | ((newValue << PRIORITY_SHIFT) & PRIORITY_MASK);
     }
     
-    public final int next() {
-        return (value & NEXT_MASK) >> NEXT_SHIFT;
+    public final char next() {
+        return (char)((value & NEXT_MASK) >> NEXT_SHIFT);
     }
-    public final void next(int newValue) {
+    public final void next(char newValue) {
         value = (value & ~NEXT_MASK) | ((newValue << NEXT_SHIFT) & NEXT_MASK);
     }
     
-    public final int failed() {
-        return (value & FAILED_MASK) >> FAILED_SHIFT;
+    public final char failed() {
+        return (char)((value & FAILED_MASK) >> FAILED_SHIFT);
     }
-    public final void failed(int newValue) {
+    public final void failed(char newValue) {
         value = (value & ~FAILED_MASK) | ((newValue << FAILED_SHIFT) & FAILED_MASK);
     }
     
-    public final int permanent() {
-        return (value & PERMANENT_MASK) >> PERMANENT_SHIFT;
+    public final char permanent() {
+        return (char)((value & PERMANENT_MASK) >> PERMANENT_SHIFT);
     }
-    public final void permanent(int newValue) {
+    public final void permanent(char newValue) {
         value = (value & ~PERMANENT_MASK) | ((newValue << PERMANENT_SHIFT) & PERMANENT_MASK);
     }
     
-    public final int preempted() {
-        return (value & PREEMPTED_MASK) >> PREEMPTED_SHIFT;
+    public final char preempted() {
+        return (char)((value & PREEMPTED_MASK) >> PREEMPTED_SHIFT);
     }
-    public final void preempted(int newValue) {
+    public final void preempted(char newValue) {
         value = (value & ~PREEMPTED_MASK) | ((newValue << PREEMPTED_SHIFT) & PREEMPTED_MASK);
     }
     

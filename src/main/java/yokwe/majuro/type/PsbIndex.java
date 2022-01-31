@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // PsbIndex: TYPE = [0..1024);
-public class PsbIndex extends MemoryData16 {
+public final class PsbIndex extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class PsbIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public PsbIndex(char value) {
+    public static final PsbIndex value(char value) {
+        return new PsbIndex(value);
+    }
+    public static final PsbIndex longPointer(int base, MemoryAccess access) {
+        return new PsbIndex(base, access);
+    }
+    public static final PsbIndex pointer(char base, MemoryAccess access) {
+        return new PsbIndex(Mesa.lengthenMDS(base), access);
+    }
+    
+    private PsbIndex(char value) {
         super(value);
     }
-    public PsbIndex(int base, MemoryAccess access) {
+    private PsbIndex(int base, MemoryAccess access) {
         super(base, access);
     }
 }

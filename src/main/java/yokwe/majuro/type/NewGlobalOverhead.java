@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // NewGlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, global (2): GlobalVariables];
-public class NewGlobalOverhead extends MemoryBase {
+public final class NewGlobalOverhead extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class NewGlobalOverhead extends MemoryBase {
     //
     // Constructor
     //
-    public NewGlobalOverhead(int base) {
+    public static final NewGlobalOverhead longPointer(int base) {
+        return new NewGlobalOverhead(base);
+    }
+    public static final NewGlobalOverhead pointer(char base) {
+        return new NewGlobalOverhead(Mesa.lengthenMDS(base));
+    }
+    
+    private NewGlobalOverhead(int base) {
         super(base);
     }
     
@@ -20,17 +29,17 @@ public class NewGlobalOverhead extends MemoryBase {
     //
     // available (0:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 0;
-    public UNSPECIFIED available(MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_AVAILABLE, memoryAccess);
+    public UNSPECIFIED available(MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE, access);
     }
     // word (1:0..15): GlobalWord
     private static final int OFFSET_WORD = 1;
-    public GlobalWord word(MemoryAccess memoryAccess) {
-        return new GlobalWord(base + OFFSET_WORD, memoryAccess);
+    public GlobalWord word(MemoryAccess access) {
+        return GlobalWord.longPointer(base + OFFSET_WORD, access);
     }
     // global (2): GlobalVariables
     private static final int OFFSET_GLOBAL = 2;
-    public UNSPECIFIED global(int index, MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_GLOBAL + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    public UNSPECIFIED global(int index, MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_GLOBAL + (UNSPECIFIED.WORD_SIZE * index), access);
     }
 }

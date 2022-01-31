@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // DstFunc: TYPE = {null(0), and(1), or(2), xor(3)};
-public class DstFunc extends MemoryData16 {
+public final class DstFunc extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,22 +27,31 @@ public class DstFunc extends MemoryData16 {
     };
     private static final ContextEnum context = new ContextEnum(NAME, values, names);
     
-    public static final void checkValue(int value) {
+    public static final void checkValue(char value) {
         if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
     
     //
     // Constructor
     //
-    public DstFunc(char value) {
+    public static final DstFunc value(char value) {
+        return new DstFunc(value);
+    }
+    public static final DstFunc longPointer(int base, MemoryAccess access) {
+        return new DstFunc(base, access);
+    }
+    public static final DstFunc pointer(char base, MemoryAccess access) {
+        return new DstFunc(Mesa.lengthenMDS(base), access);
+    }
+    
+    private DstFunc(char value) {
         super(value);
     }
-    public DstFunc(int base, MemoryAccess access) {
+    private DstFunc(int base, MemoryAccess access) {
         super(base, access);
     }
     
-    @Override
-    public String toString() {
+    public final String toString(char value) {
         return context.toString(value);
     }
 }

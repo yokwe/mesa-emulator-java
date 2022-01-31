@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // INTEGER: TYPE = [-32768..32767];
-public class INTEGER extends MemoryData16 {
+public final class INTEGER extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -23,10 +24,20 @@ public class INTEGER extends MemoryData16 {
     //
     // Constructor
     //
-    public INTEGER(char value) {
+    public static final INTEGER value(char value) {
+        return new INTEGER(value);
+    }
+    public static final INTEGER longPointer(int base, MemoryAccess access) {
+        return new INTEGER(base, access);
+    }
+    public static final INTEGER pointer(char base, MemoryAccess access) {
+        return new INTEGER(Mesa.lengthenMDS(base), access);
+    }
+    
+    private INTEGER(char value) {
         super(value);
     }
-    public INTEGER(int base, MemoryAccess access) {
+    private INTEGER(int base, MemoryAccess access) {
         super(base, access);
     }
 }

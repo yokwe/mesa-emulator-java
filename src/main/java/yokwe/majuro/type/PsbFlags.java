@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOLEAN, abort (0:15..15): BOOLEAN];
-public class PsbFlags extends MemoryData16 {
+public final class PsbFlags extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class PsbFlags extends MemoryData16 {
     //
     // Constructor
     //
-    public PsbFlags(char value) {
+    public static final PsbFlags value(char value) {
+        return new PsbFlags(value);
+    }
+    public static final PsbFlags longPointer(int base, MemoryAccess access) {
+        return new PsbFlags(base, access);
+    }
+    public static final PsbFlags pointer(char base, MemoryAccess access) {
+        return new PsbFlags(Mesa.lengthenMDS(base), access);
+    }
+    
+    private PsbFlags(char value) {
         super(value);
     }
-    public PsbFlags(int base, MemoryAccess access) {
+    private PsbFlags(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -42,38 +54,38 @@ public class PsbFlags extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int available() {
-        return (value & AVAILABLE_MASK) >> AVAILABLE_SHIFT;
+    public final char available() {
+        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
     }
-    public final void available(int newValue) {
+    public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
-    public final int cleanup() {
-        return (value & CLEANUP_MASK) >> CLEANUP_SHIFT;
+    public final char cleanup() {
+        return (char)((value & CLEANUP_MASK) >> CLEANUP_SHIFT);
     }
-    public final void cleanup(int newValue) {
+    public final void cleanup(char newValue) {
         value = (value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK);
     }
     
-    public final int reserved() {
-        return (value & RESERVED_MASK) >> RESERVED_SHIFT;
+    public final char reserved() {
+        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
     }
-    public final void reserved(int newValue) {
+    public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     
-    public final int waiting() {
-        return (value & WAITING_MASK) >> WAITING_SHIFT;
+    public final char waiting() {
+        return (char)((value & WAITING_MASK) >> WAITING_SHIFT);
     }
-    public final void waiting(int newValue) {
+    public final void waiting(char newValue) {
         value = (value & ~WAITING_MASK) | ((newValue << WAITING_SHIFT) & WAITING_MASK);
     }
     
-    public final int abort() {
-        return (value & ABORT_MASK) >> ABORT_SHIFT;
+    public final char abort() {
+        return (char)((value & ABORT_MASK) >> ABORT_SHIFT);
     }
-    public final void abort(int newValue) {
+    public final void abort(char newValue) {
         value = (value & ~ABORT_MASK) | ((newValue << ABORT_SHIFT) & ABORT_MASK);
     }
     

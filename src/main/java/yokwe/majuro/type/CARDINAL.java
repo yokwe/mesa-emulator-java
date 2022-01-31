@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // CARDINAL: TYPE = [0..65535];
-public class CARDINAL extends MemoryData16 {
+public final class CARDINAL extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class CARDINAL extends MemoryData16 {
     //
     // Constructor
     //
-    public CARDINAL(char value) {
+    public static final CARDINAL value(char value) {
+        return new CARDINAL(value);
+    }
+    public static final CARDINAL longPointer(int base, MemoryAccess access) {
+        return new CARDINAL(base, access);
+    }
+    public static final CARDINAL pointer(char base, MemoryAccess access) {
+        return new CARDINAL(Mesa.lengthenMDS(base), access);
+    }
+    
+    private CARDINAL(char value) {
         super(value);
     }
-    public CARDINAL(int base, MemoryAccess access) {
+    private CARDINAL(int base, MemoryAccess access) {
         super(base, access);
     }
 }

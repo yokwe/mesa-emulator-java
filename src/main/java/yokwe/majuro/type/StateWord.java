@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
-public class StateWord extends MemoryData16 {
+public final class StateWord extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class StateWord extends MemoryData16 {
     //
     // Constructor
     //
-    public StateWord(char value) {
+    public static final StateWord value(char value) {
+        return new StateWord(value);
+    }
+    public static final StateWord longPointer(int base, MemoryAccess access) {
+        return new StateWord(base, access);
+    }
+    public static final StateWord pointer(char base, MemoryAccess access) {
+        return new StateWord(Mesa.lengthenMDS(base), access);
+    }
+    
+    private StateWord(char value) {
         super(value);
     }
-    public StateWord(int base, MemoryAccess access) {
+    private StateWord(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -33,17 +45,17 @@ public class StateWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int instByte() {
-        return (value & INST_BYTE_MASK) >> INST_BYTE_SHIFT;
+    public final char instByte() {
+        return (char)((value & INST_BYTE_MASK) >> INST_BYTE_SHIFT);
     }
-    public final void instByte(int newValue) {
+    public final void instByte(char newValue) {
         value = (value & ~INST_BYTE_MASK) | ((newValue << INST_BYTE_SHIFT) & INST_BYTE_MASK);
     }
     
-    public final int stkPtr() {
-        return (value & STK_PTR_MASK) >> STK_PTR_SHIFT;
+    public final char stkPtr() {
+        return (char)((value & STK_PTR_MASK) >> STK_PTR_SHIFT);
     }
-    public final void stkPtr(int newValue) {
+    public final void stkPtr(char newValue) {
         value = (value & ~STK_PTR_MASK) | ((newValue << STK_PTR_SHIFT) & STK_PTR_MASK);
     }
     

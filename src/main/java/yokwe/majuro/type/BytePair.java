@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // BytePair: TYPE = RECORD[left (0:0..7): BYTE, right (0:8..15): BYTE];
-public class BytePair extends MemoryData16 {
+public final class BytePair extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class BytePair extends MemoryData16 {
     //
     // Constructor
     //
-    public BytePair(char value) {
+    public static final BytePair value(char value) {
+        return new BytePair(value);
+    }
+    public static final BytePair longPointer(int base, MemoryAccess access) {
+        return new BytePair(base, access);
+    }
+    public static final BytePair pointer(char base, MemoryAccess access) {
+        return new BytePair(Mesa.lengthenMDS(base), access);
+    }
+    
+    private BytePair(char value) {
         super(value);
     }
-    public BytePair(int base, MemoryAccess access) {
+    private BytePair(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -33,17 +45,17 @@ public class BytePair extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int left() {
-        return (value & LEFT_MASK) >> LEFT_SHIFT;
+    public final char left() {
+        return (char)((value & LEFT_MASK) >> LEFT_SHIFT);
     }
-    public final void left(int newValue) {
+    public final void left(char newValue) {
         value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
     }
     
-    public final int right() {
-        return (value & RIGHT_MASK) >> RIGHT_SHIFT;
+    public final char right() {
+        return (char)((value & RIGHT_MASK) >> RIGHT_SHIFT);
     }
-    public final void right(int newValue) {
+    public final void right(char newValue) {
         value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
     }
     

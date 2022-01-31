@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
-public class XferType extends MemoryData16 {
+public final class XferType extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -30,22 +31,31 @@ public class XferType extends MemoryData16 {
     };
     private static final ContextEnum context = new ContextEnum(NAME, values, names);
     
-    public static final void checkValue(int value) {
+    public static final void checkValue(char value) {
         if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
     
     //
     // Constructor
     //
-    public XferType(char value) {
+    public static final XferType value(char value) {
+        return new XferType(value);
+    }
+    public static final XferType longPointer(int base, MemoryAccess access) {
+        return new XferType(base, access);
+    }
+    public static final XferType pointer(char base, MemoryAccess access) {
+        return new XferType(Mesa.lengthenMDS(base), access);
+    }
+    
+    private XferType(char value) {
         super(value);
     }
-    public XferType(int base, MemoryAccess access) {
+    private XferType(int base, MemoryAccess access) {
         super(base, access);
     }
     
-    @Override
-    public String toString() {
+    public final String toString(char value) {
         return context.toString(value);
     }
 }

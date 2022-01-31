@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // FaultVector: TYPE = ARRAY FaultIndex OF FaultQueue;
-public class FaultVector extends MemoryBase {
+public final class FaultVector extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -19,13 +20,20 @@ public class FaultVector extends MemoryBase {
     //
     // Constructor
     //
-    public FaultVector(int base) {
+    public static final FaultVector longPointer(int base) {
+        return new FaultVector(base);
+    }
+    public static final FaultVector pointer(char base) {
+        return new FaultVector(Mesa.lengthenMDS(base));
+    }
+    
+    private FaultVector(int base) {
         super(base);
     }
     //
     // Access to Element of Array
     //
-    public FaultQueue element(int index) {
-        return new FaultQueue(base + (FaultQueue.WORD_SIZE * index));
+    public final FaultQueue get(int index) {
+        return FaultQueue.longPointer(base + (FaultQueue.WORD_SIZE * index));
     }
 }

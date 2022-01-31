@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // FieldDesc: TYPE = RECORD[offset (0:0..7): BYTE, field (0:8..15): FieldSpec];
-public class FieldDesc extends MemoryData16 {
+public final class FieldDesc extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class FieldDesc extends MemoryData16 {
     //
     // Constructor
     //
-    public FieldDesc(char value) {
+    public static final FieldDesc value(char value) {
+        return new FieldDesc(value);
+    }
+    public static final FieldDesc longPointer(int base, MemoryAccess access) {
+        return new FieldDesc(base, access);
+    }
+    public static final FieldDesc pointer(char base, MemoryAccess access) {
+        return new FieldDesc(Mesa.lengthenMDS(base), access);
+    }
+    
+    private FieldDesc(char value) {
         super(value);
     }
-    public FieldDesc(int base, MemoryAccess access) {
+    private FieldDesc(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -33,17 +45,17 @@ public class FieldDesc extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int offset() {
-        return (value & OFFSET_MASK) >> OFFSET_SHIFT;
+    public final char offset() {
+        return (char)((value & OFFSET_MASK) >> OFFSET_SHIFT);
     }
-    public final void offset(int newValue) {
+    public final void offset(char newValue) {
         value = (value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK);
     }
     
-    public final int field() {
-        return (value & FIELD_MASK) >> FIELD_SHIFT;
+    public final char field() {
+        return (char)((value & FIELD_MASK) >> FIELD_SHIFT);
     }
-    public final void field(int newValue) {
+    public final void field(char newValue) {
         value = (value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK);
     }
     

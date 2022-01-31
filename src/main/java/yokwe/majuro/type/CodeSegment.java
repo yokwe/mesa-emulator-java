@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY [0..4) OF UNSPECIFIED, code (4): BLOCK];
-public class CodeSegment extends MemoryBase {
+public final class CodeSegment extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class CodeSegment extends MemoryBase {
     //
     // Constructor
     //
-    public CodeSegment(int base) {
+    public static final CodeSegment longPointer(int base) {
+        return new CodeSegment(base);
+    }
+    public static final CodeSegment pointer(char base) {
+        return new CodeSegment(Mesa.lengthenMDS(base));
+    }
+    
+    private CodeSegment(int base) {
         super(base);
     }
     
@@ -20,12 +29,12 @@ public class CodeSegment extends MemoryBase {
     //
     // available (0:0..63): ARRAY [0..4) OF UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 0;
-    public UNSPECIFIED available(int index, MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    public UNSPECIFIED available(int index, MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index), access);
     }
     // code (4): BLOCK
     private static final int OFFSET_CODE = 4;
-    public UNSPECIFIED code(int index, MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_CODE + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    public UNSPECIFIED code(int index, MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_CODE + (UNSPECIFIED.WORD_SIZE * index), access);
     }
 }

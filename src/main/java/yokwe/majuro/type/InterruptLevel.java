@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // InterruptLevel: TYPE = [0..16);
-public class InterruptLevel extends MemoryData16 {
+public final class InterruptLevel extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class InterruptLevel extends MemoryData16 {
     //
     // Constructor
     //
-    public InterruptLevel(char value) {
+    public static final InterruptLevel value(char value) {
+        return new InterruptLevel(value);
+    }
+    public static final InterruptLevel longPointer(int base, MemoryAccess access) {
+        return new InterruptLevel(base, access);
+    }
+    public static final InterruptLevel pointer(char base, MemoryAccess access) {
+        return new InterruptLevel(Mesa.lengthenMDS(base), access);
+    }
+    
+    private InterruptLevel(char value) {
         super(value);
     }
-    public InterruptLevel(int base, MemoryAccess access) {
+    private InterruptLevel(int base, MemoryAccess access) {
         super(base, access);
     }
 }

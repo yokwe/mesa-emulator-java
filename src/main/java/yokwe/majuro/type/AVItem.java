@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType];
-public class AVItem extends MemoryData16 {
+public final class AVItem extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class AVItem extends MemoryData16 {
     //
     // Constructor
     //
-    public AVItem(char value) {
+    public static final AVItem value(char value) {
+        return new AVItem(value);
+    }
+    public static final AVItem longPointer(int base, MemoryAccess access) {
+        return new AVItem(base, access);
+    }
+    public static final AVItem pointer(char base, MemoryAccess access) {
+        return new AVItem(Mesa.lengthenMDS(base), access);
+    }
+    
+    private AVItem(char value) {
         super(value);
     }
-    public AVItem(int base, MemoryAccess access) {
+    private AVItem(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -33,17 +45,17 @@ public class AVItem extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int data() {
-        return (value & DATA_MASK) >> DATA_SHIFT;
+    public final char data() {
+        return (char)((value & DATA_MASK) >> DATA_SHIFT);
     }
-    public final void data(int newValue) {
+    public final void data(char newValue) {
         value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
     }
     
-    public final int tag() {
-        return (value & TAG_MASK) >> TAG_SHIFT;
+    public final char tag() {
+        return (char)((value & TAG_MASK) >> TAG_SHIFT);
     }
-    public final void tag(int newValue) {
+    public final void tag(char newValue) {
         value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);
     }
     

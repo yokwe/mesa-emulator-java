@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // BitBltFlags: TYPE = RECORD[direction (0:0..0): Direction, disjoint (0:1..1): BOOLEAN, disjointItems (0:2..2): BOOLEAN, gray (0:3..3): BOOLEAN, srcFunc (0:4..4): SrcFunc, dstFunc (0:5..6): DstFunc, reserved (0:7..15): UNSPECIFIED];
-public class BitBltFlags extends MemoryData16 {
+public final class BitBltFlags extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class BitBltFlags extends MemoryData16 {
     //
     // Constructor
     //
-    public BitBltFlags(char value) {
+    public static final BitBltFlags value(char value) {
+        return new BitBltFlags(value);
+    }
+    public static final BitBltFlags longPointer(int base, MemoryAccess access) {
+        return new BitBltFlags(base, access);
+    }
+    public static final BitBltFlags pointer(char base, MemoryAccess access) {
+        return new BitBltFlags(Mesa.lengthenMDS(base), access);
+    }
+    
+    private BitBltFlags(char value) {
         super(value);
     }
-    public BitBltFlags(int base, MemoryAccess access) {
+    private BitBltFlags(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -48,52 +60,52 @@ public class BitBltFlags extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int direction() {
-        return (value & DIRECTION_MASK) >> DIRECTION_SHIFT;
+    public final char direction() {
+        return (char)((value & DIRECTION_MASK) >> DIRECTION_SHIFT);
     }
-    public final void direction(int newValue) {
+    public final void direction(char newValue) {
         value = (value & ~DIRECTION_MASK) | ((newValue << DIRECTION_SHIFT) & DIRECTION_MASK);
     }
     
-    public final int disjoint() {
-        return (value & DISJOINT_MASK) >> DISJOINT_SHIFT;
+    public final char disjoint() {
+        return (char)((value & DISJOINT_MASK) >> DISJOINT_SHIFT);
     }
-    public final void disjoint(int newValue) {
+    public final void disjoint(char newValue) {
         value = (value & ~DISJOINT_MASK) | ((newValue << DISJOINT_SHIFT) & DISJOINT_MASK);
     }
     
-    public final int disjointItems() {
-        return (value & DISJOINT_ITEMS_MASK) >> DISJOINT_ITEMS_SHIFT;
+    public final char disjointItems() {
+        return (char)((value & DISJOINT_ITEMS_MASK) >> DISJOINT_ITEMS_SHIFT);
     }
-    public final void disjointItems(int newValue) {
+    public final void disjointItems(char newValue) {
         value = (value & ~DISJOINT_ITEMS_MASK) | ((newValue << DISJOINT_ITEMS_SHIFT) & DISJOINT_ITEMS_MASK);
     }
     
-    public final int gray() {
-        return (value & GRAY_MASK) >> GRAY_SHIFT;
+    public final char gray() {
+        return (char)((value & GRAY_MASK) >> GRAY_SHIFT);
     }
-    public final void gray(int newValue) {
+    public final void gray(char newValue) {
         value = (value & ~GRAY_MASK) | ((newValue << GRAY_SHIFT) & GRAY_MASK);
     }
     
-    public final int srcFunc() {
-        return (value & SRC_FUNC_MASK) >> SRC_FUNC_SHIFT;
+    public final char srcFunc() {
+        return (char)((value & SRC_FUNC_MASK) >> SRC_FUNC_SHIFT);
     }
-    public final void srcFunc(int newValue) {
+    public final void srcFunc(char newValue) {
         value = (value & ~SRC_FUNC_MASK) | ((newValue << SRC_FUNC_SHIFT) & SRC_FUNC_MASK);
     }
     
-    public final int dstFunc() {
-        return (value & DST_FUNC_MASK) >> DST_FUNC_SHIFT;
+    public final char dstFunc() {
+        return (char)((value & DST_FUNC_MASK) >> DST_FUNC_SHIFT);
     }
-    public final void dstFunc(int newValue) {
+    public final void dstFunc(char newValue) {
         value = (value & ~DST_FUNC_MASK) | ((newValue << DST_FUNC_SHIFT) & DST_FUNC_MASK);
     }
     
-    public final int reserved() {
-        return (value & RESERVED_MASK) >> RESERVED_SHIFT;
+    public final char reserved() {
+        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
     }
-    public final void reserved(int newValue) {
+    public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     

@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
-public class InterruptItem extends MemoryBase {
+public final class InterruptItem extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class InterruptItem extends MemoryBase {
     //
     // Constructor
     //
-    public InterruptItem(int base) {
+    public static final InterruptItem longPointer(int base) {
+        return new InterruptItem(base);
+    }
+    public static final InterruptItem pointer(char base) {
+        return new InterruptItem(Mesa.lengthenMDS(base));
+    }
+    
+    private InterruptItem(int base) {
         super(base);
     }
     
@@ -20,12 +29,12 @@ public class InterruptItem extends MemoryBase {
     //
     // condition (0:0..15): Condition
     private static final int OFFSET_CONDITION = 0;
-    public Condition condition(MemoryAccess memoryAccess) {
-        return new Condition(base + OFFSET_CONDITION, memoryAccess);
+    public Condition condition(MemoryAccess access) {
+        return Condition.longPointer(base + OFFSET_CONDITION, access);
     }
     // available (1:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 1;
-    public UNSPECIFIED available(MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_AVAILABLE, memoryAccess);
+    public UNSPECIFIED available(MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE, access);
     }
 }

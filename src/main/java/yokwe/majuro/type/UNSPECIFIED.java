@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // UNSPECIFIED: TYPE = [0..65535];
-public class UNSPECIFIED extends MemoryData16 {
+public final class UNSPECIFIED extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class UNSPECIFIED extends MemoryData16 {
     //
     // Constructor
     //
-    public UNSPECIFIED(char value) {
+    public static final UNSPECIFIED value(char value) {
+        return new UNSPECIFIED(value);
+    }
+    public static final UNSPECIFIED longPointer(int base, MemoryAccess access) {
+        return new UNSPECIFIED(base, access);
+    }
+    public static final UNSPECIFIED pointer(char base, MemoryAccess access) {
+        return new UNSPECIFIED(Mesa.lengthenMDS(base), access);
+    }
+    
+    private UNSPECIFIED(char value) {
         super(value);
     }
-    public UNSPECIFIED(int base, MemoryAccess access) {
+    private UNSPECIFIED(int base, MemoryAccess access) {
         super(base, access);
     }
 }

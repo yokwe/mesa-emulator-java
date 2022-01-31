@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
-public class EscTrapTable extends MemoryBase {
+public final class EscTrapTable extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -19,13 +20,20 @@ public class EscTrapTable extends MemoryBase {
     //
     // Constructor
     //
-    public EscTrapTable(int base) {
+    public static final EscTrapTable longPointer(int base) {
+        return new EscTrapTable(base);
+    }
+    public static final EscTrapTable pointer(char base) {
+        return new EscTrapTable(Mesa.lengthenMDS(base));
+    }
+    
+    private EscTrapTable(int base) {
         super(base);
     }
     //
     // Access to Element of Array
     //
-    public LONG_UNSPECIFIED element(int index, MemoryAccess memoryAccess) {
-        return new LONG_UNSPECIFIED(base + (LONG_UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    public final LONG_UNSPECIFIED get(int index, MemoryAccess access) {
+        return LONG_UNSPECIFIED.longPointer(base + (LONG_UNSPECIFIED.WORD_SIZE * index), access);
     }
 }

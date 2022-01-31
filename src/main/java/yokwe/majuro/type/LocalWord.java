@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
-public class LocalWord extends MemoryData16 {
+public final class LocalWord extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class LocalWord extends MemoryData16 {
     //
     // Constructor
     //
-    public LocalWord(char value) {
+    public static final LocalWord value(char value) {
+        return new LocalWord(value);
+    }
+    public static final LocalWord longPointer(int base, MemoryAccess access) {
+        return new LocalWord(base, access);
+    }
+    public static final LocalWord pointer(char base, MemoryAccess access) {
+        return new LocalWord(Mesa.lengthenMDS(base), access);
+    }
+    
+    private LocalWord(char value) {
         super(value);
     }
-    public LocalWord(int base, MemoryAccess access) {
+    private LocalWord(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -33,17 +45,17 @@ public class LocalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int available() {
-        return (value & AVAILABLE_MASK) >> AVAILABLE_SHIFT;
+    public final char available() {
+        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
     }
-    public final void available(int newValue) {
+    public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
-    public final int fsi() {
-        return (value & FSI_MASK) >> FSI_SHIFT;
+    public final char fsi() {
+        return (char)((value & FSI_MASK) >> FSI_SHIFT);
     }
-    public final void fsi(int newValue) {
+    public final void fsi(char newValue) {
         value = (value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK);
     }
     

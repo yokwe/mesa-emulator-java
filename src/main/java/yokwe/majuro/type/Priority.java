@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // Priority: TYPE = [0..7];
-public class Priority extends MemoryData16 {
+public final class Priority extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class Priority extends MemoryData16 {
     //
     // Constructor
     //
-    public Priority(char value) {
+    public static final Priority value(char value) {
+        return new Priority(value);
+    }
+    public static final Priority longPointer(int base, MemoryAccess access) {
+        return new Priority(base, access);
+    }
+    public static final Priority pointer(char base, MemoryAccess access) {
+        return new Priority(Mesa.lengthenMDS(base), access);
+    }
+    
+    private Priority(char value) {
         super(value);
     }
-    public Priority(int base, MemoryAccess access) {
+    private Priority(int base, MemoryAccess access) {
         super(base, access);
     }
 }

@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // SDIndex: TYPE = [0..256);
-public class SDIndex extends MemoryData16 {
+public final class SDIndex extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class SDIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public SDIndex(char value) {
+    public static final SDIndex value(char value) {
+        return new SDIndex(value);
+    }
+    public static final SDIndex longPointer(int base, MemoryAccess access) {
+        return new SDIndex(base, access);
+    }
+    public static final SDIndex pointer(char base, MemoryAccess access) {
+        return new SDIndex(Mesa.lengthenMDS(base), access);
+    }
+    
+    private SDIndex(char value) {
         super(value);
     }
-    public SDIndex(int base, MemoryAccess access) {
+    private SDIndex(int base, MemoryAccess access) {
         super(base, access);
     }
 }

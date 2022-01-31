@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // POINTER: TYPE = POINTER;
-public class POINTER extends MemoryBase {
+public final class POINTER extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class POINTER extends MemoryBase {
     //
     // Constructor
     //
-    public POINTER(int base) {
+    public static final POINTER longPointer(int base) {
+        return new POINTER(base);
+    }
+    public static final POINTER pointer(char base) {
+        return new POINTER(Mesa.lengthenMDS(base));
+    }
+    
+    private POINTER(int base) {
         super(base);
     }
 }

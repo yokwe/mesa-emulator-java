@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // Monitor: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..14): UNSPECIFIED, locked (0:15..15): BOOLEAN];
-public class Monitor extends MemoryData16 {
+public final class Monitor extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,10 +13,20 @@ public class Monitor extends MemoryData16 {
     //
     // Constructor
     //
-    public Monitor(char value) {
+    public static final Monitor value(char value) {
+        return new Monitor(value);
+    }
+    public static final Monitor longPointer(int base, MemoryAccess access) {
+        return new Monitor(base, access);
+    }
+    public static final Monitor pointer(char base, MemoryAccess access) {
+        return new Monitor(Mesa.lengthenMDS(base), access);
+    }
+    
+    private Monitor(char value) {
         super(value);
     }
-    public Monitor(int base, MemoryAccess access) {
+    private Monitor(int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -39,31 +51,31 @@ public class Monitor extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final int reserved() {
-        return (value & RESERVED_MASK) >> RESERVED_SHIFT;
+    public final char reserved() {
+        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
     }
-    public final void reserved(int newValue) {
+    public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     
-    public final int tail() {
-        return (value & TAIL_MASK) >> TAIL_SHIFT;
+    public final char tail() {
+        return (char)((value & TAIL_MASK) >> TAIL_SHIFT);
     }
-    public final void tail(int newValue) {
+    public final void tail(char newValue) {
         value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
     }
     
-    public final int available() {
-        return (value & AVAILABLE_MASK) >> AVAILABLE_SHIFT;
+    public final char available() {
+        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
     }
-    public final void available(int newValue) {
+    public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
-    public final int locked() {
-        return (value & LOCKED_MASK) >> LOCKED_SHIFT;
+    public final char locked() {
+        return (char)((value & LOCKED_MASK) >> LOCKED_SHIFT);
     }
-    public final void locked(int newValue) {
+    public final void locked(char newValue) {
         value = (value & ~LOCKED_MASK) | ((newValue << LOCKED_SHIFT) & LOCKED_MASK);
     }
     

@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // Port: TYPE = RECORD[inport (0:0..15): FrameLink, unused (1:0..15): UNSPECIFIED, outport (2:0..31): ControlLink];
-public class Port extends MemoryBase {
+public final class Port extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class Port extends MemoryBase {
     //
     // Constructor
     //
-    public Port(int base) {
+    public static final Port longPointer(int base) {
+        return new Port(base);
+    }
+    public static final Port pointer(char base) {
+        return new Port(Mesa.lengthenMDS(base));
+    }
+    
+    private Port(int base) {
         super(base);
     }
     
@@ -21,16 +30,16 @@ public class Port extends MemoryBase {
     // inport (0:0..15): FrameLink
     private static final int OFFSET_INPORT = 0;
     public BLOCK inport() {
-        return new BLOCK(base + OFFSET_INPORT);
+        return BLOCK.pointer(Mesa.read16(base + OFFSET_INPORT));
     }
     // unused (1:0..15): UNSPECIFIED
     private static final int OFFSET_UNUSED = 1;
-    public UNSPECIFIED unused(MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_UNUSED, memoryAccess);
+    public UNSPECIFIED unused(MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_UNUSED, access);
     }
     // outport (2:0..31): ControlLink
     private static final int OFFSET_OUTPORT = 2;
-    public LONG_UNSPECIFIED outport(MemoryAccess memoryAccess) {
-        return new LONG_UNSPECIFIED(base + OFFSET_OUTPORT, memoryAccess);
+    public LONG_UNSPECIFIED outport(MemoryAccess access) {
+        return LONG_UNSPECIFIED.longPointer(base + OFFSET_OUTPORT, access);
     }
 }

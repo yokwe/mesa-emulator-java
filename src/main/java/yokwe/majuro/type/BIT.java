@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // BIT: TYPE = [0..2);
-public class BIT extends MemoryData16 {
+public final class BIT extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class BIT extends MemoryData16 {
     //
     // Constructor
     //
-    public BIT(char value) {
+    public static final BIT value(char value) {
+        return new BIT(value);
+    }
+    public static final BIT longPointer(int base, MemoryAccess access) {
+        return new BIT(base, access);
+    }
+    public static final BIT pointer(char base, MemoryAccess access) {
+        return new BIT(Mesa.lengthenMDS(base), access);
+    }
+    
+    private BIT(char value) {
         super(value);
     }
-    public BIT(int base, MemoryAccess access) {
+    private BIT(int base, MemoryAccess access) {
         super(base, access);
     }
 }

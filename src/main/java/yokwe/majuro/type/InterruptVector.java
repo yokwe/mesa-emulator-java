@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // InterruptVector: TYPE = ARRAY InterruptLevel OF InterruptItem;
-public class InterruptVector extends MemoryBase {
+public final class InterruptVector extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -19,13 +20,20 @@ public class InterruptVector extends MemoryBase {
     //
     // Constructor
     //
-    public InterruptVector(int base) {
+    public static final InterruptVector longPointer(int base) {
+        return new InterruptVector(base);
+    }
+    public static final InterruptVector pointer(char base) {
+        return new InterruptVector(Mesa.lengthenMDS(base));
+    }
+    
+    private InterruptVector(int base) {
         super(base);
     }
     //
     // Access to Element of Array
     //
-    public InterruptItem element(int index) {
-        return new InterruptItem(base + (InterruptItem.WORD_SIZE * index));
+    public final InterruptItem get(int index) {
+        return InterruptItem.longPointer(base + (InterruptItem.WORD_SIZE * index));
     }
 }

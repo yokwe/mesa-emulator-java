@@ -1,9 +1,10 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Mesa;
 
 // NIBBLE: TYPE = [0..16);
-public class NIBBLE extends MemoryData16 {
+public final class NIBBLE extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -26,10 +27,20 @@ public class NIBBLE extends MemoryData16 {
     //
     // Constructor
     //
-    public NIBBLE(char value) {
+    public static final NIBBLE value(char value) {
+        return new NIBBLE(value);
+    }
+    public static final NIBBLE longPointer(int base, MemoryAccess access) {
+        return new NIBBLE(base, access);
+    }
+    public static final NIBBLE pointer(char base, MemoryAccess access) {
+        return new NIBBLE(Mesa.lengthenMDS(base), access);
+    }
+    
+    private NIBBLE(char value) {
         super(value);
     }
-    public NIBBLE(int base, MemoryAccess access) {
+    private NIBBLE(int base, MemoryAccess access) {
         super(base, access);
     }
 }

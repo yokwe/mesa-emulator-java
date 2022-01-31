@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 // LocalOverhead: TYPE = RECORD[word (0:0..15): LocalWord, returnlink (1:0..15): ShortControlLink, globallink (2:0..15): GFTHandle, pc (3:0..15): CARDINAL, local (4): LocalVariables];
-public class LocalOverhead extends MemoryBase {
+public final class LocalOverhead extends MemoryBase {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
     
@@ -11,7 +13,14 @@ public class LocalOverhead extends MemoryBase {
     //
     // Constructor
     //
-    public LocalOverhead(int base) {
+    public static final LocalOverhead longPointer(int base) {
+        return new LocalOverhead(base);
+    }
+    public static final LocalOverhead pointer(char base) {
+        return new LocalOverhead(Mesa.lengthenMDS(base));
+    }
+    
+    private LocalOverhead(int base) {
         super(base);
     }
     
@@ -20,27 +29,27 @@ public class LocalOverhead extends MemoryBase {
     //
     // word (0:0..15): LocalWord
     private static final int OFFSET_WORD = 0;
-    public LocalWord word(MemoryAccess memoryAccess) {
-        return new LocalWord(base + OFFSET_WORD, memoryAccess);
+    public LocalWord word(MemoryAccess access) {
+        return LocalWord.longPointer(base + OFFSET_WORD, access);
     }
     // returnlink (1:0..15): ShortControlLink
     private static final int OFFSET_RETURNLINK = 1;
-    public UNSPECIFIED returnlink(MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_RETURNLINK, memoryAccess);
+    public UNSPECIFIED returnlink(MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_RETURNLINK, access);
     }
     // globallink (2:0..15): GFTHandle
     private static final int OFFSET_GLOBALLINK = 2;
-    public CARDINAL globallink(MemoryAccess memoryAccess) {
-        return new CARDINAL(base + OFFSET_GLOBALLINK, memoryAccess);
+    public CARDINAL globallink(MemoryAccess access) {
+        return CARDINAL.longPointer(base + OFFSET_GLOBALLINK, access);
     }
     // pc (3:0..15): CARDINAL
     private static final int OFFSET_PC = 3;
-    public CARDINAL pc(MemoryAccess memoryAccess) {
-        return new CARDINAL(base + OFFSET_PC, memoryAccess);
+    public CARDINAL pc(MemoryAccess access) {
+        return CARDINAL.longPointer(base + OFFSET_PC, access);
     }
     // local (4): LocalVariables
     private static final int OFFSET_LOCAL = 4;
-    public UNSPECIFIED local(int index, MemoryAccess memoryAccess) {
-        return new UNSPECIFIED(base + OFFSET_LOCAL + (UNSPECIFIED.WORD_SIZE * index), memoryAccess);
+    public UNSPECIFIED local(int index, MemoryAccess access) {
+        return UNSPECIFIED.longPointer(base + OFFSET_LOCAL + (UNSPECIFIED.WORD_SIZE * index), access);
     }
 }
