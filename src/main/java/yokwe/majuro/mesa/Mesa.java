@@ -77,16 +77,24 @@ public final class Mesa {
 	//
 	// MDS
 	//
+	public static int lengthenMDS(char va) {
+		if (Perf.ENABLED) Perf.lengthenMDS++;
+		return memory.lengthenMDS(va);
+	}
 	public static char read16MDS(char va) {
+		if (Perf.ENABLED) Perf.read16MDS++;
 		return memory.read16MDS(va);
 	}
 	public static void write16MDS(char va, char newValue) {
+		if (Perf.ENABLED) Perf.write16MDS++;
 		memory.write16MDS(va, newValue);
 	}
 	public static int read32MDS(char va) {
+		if (Perf.ENABLED) Perf.read32MDS++;
 		return memory.read32MDS(va);
 	}
 	public static void write32MDS(char va, int newValue) {
+		if (Perf.ENABLED) Perf.write32MDS++;
 		memory.write32MDS(va, newValue);
 	}
 	// capture wrong parameter calls

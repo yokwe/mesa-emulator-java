@@ -24,6 +24,7 @@ public final class Perf {
 	public static long fetch       = 0;
 	public static long store       = 0;
 	public static long mapFlag     = 0;
+	
 	public static long readReal16  = 0;
 	public static long writeReal16 = 0;
 	public static long readReal32  = 0;
@@ -32,6 +33,12 @@ public final class Perf {
 	public static long write16     = 0;
 	public static long read32      = 0;
 	public static long write32     = 0;
+	
+	public static long lengthenMDS = 0;
+	public static long read16MDS   = 0;
+	public static long write16MDS  = 0;
+	public static long read32MDS   = 0;
+	public static long write32MDS  = 0;
 	
 	// fault
 	public static long pageFault         = 0;
