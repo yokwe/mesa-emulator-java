@@ -415,7 +415,7 @@ public class JavaType {
 		out.println("private static final ContextEnum context = new ContextEnum(NAME, values, names);");
 		out.println();
 
-		out.println("public static final void checkValue(char value) {");
+		out.println("public static final void checkValue(int value) {");
 		out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
 		out.println("}");
 		out.println();
@@ -423,7 +423,7 @@ public class JavaType {
 		constructor16();
 		out.println();
 
-		out.println("public final String toString(char value) {");
+		out.println("public final String toString(int value) {");
 		out.println("return context.toString(value);");
 		out.println("}");
 	}
@@ -506,7 +506,7 @@ public class JavaType {
 				if (typePointer.shortPointer()) {
 					indexTypeName = "POINTER";
 				} else if (typePointer.longPointer()) {
-					indexTypeName = "LONG POINTER";
+					indexTypeName = "LONG_POINTER";
 				} else {
 					throw new UnexpectedException("Unexpected");
 				}
@@ -520,10 +520,12 @@ public class JavaType {
 		// FIXME distinguish short and long pointer
 		if (elementType.container()) {
 			out.println("public final %s get(int index) {", elementTypeName);
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index));", elementTypeName, indexTypeName);
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index), access);", elementTypeName, indexTypeName);
 			out.println("}");
 		}
