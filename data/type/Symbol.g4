@@ -149,7 +149,7 @@ pointerType
 pointerRefType
     :    simpleType
     |    referenceType
-    |    arrayType
+//  |    arrayType
     ;
 
 //

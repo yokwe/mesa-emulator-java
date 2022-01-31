@@ -130,9 +130,9 @@ public class SymbolUtil {
 		if (type.referenceType() != null) {
 			return getType(name, type.referenceType());
 		}
-		if (type.arrayType() != null){
-			return SymbolUtil.getType(name, type.arrayType());
-		}
+//		if (type.arrayType() != null){
+//			return SymbolUtil.getType(name, type.arrayType());
+//		}
 		Symbol.logger.error("Unexpected");
 		Symbol.logger.error("  name  {}", name);
 		Symbol.logger.error("  type  {}", type.getText());
