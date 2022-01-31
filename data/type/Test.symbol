@@ -12,9 +12,9 @@ BEGIN
  
    
     // subrange
-    Sub:    TYPE = [0..16);
-    NIBBLE: TYPE = [0..16);
-    BYTE:   TYPE = [0..256);
+    Sub:  TYPE = [0..16);
+    BIT4: TYPE = [0..16);
+    BIT8: TYPE = [0..256);
    
     // enum
     Enum: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
@@ -56,13 +56,13 @@ BEGIN
     // BIT FIELD 16
     // single 16 bit field < 16
     BitField8: TYPE = RECORD[
-        left  (0: 0..3): NIBBLE,
-        right (0: 4..7): NIBBLE];
+        left  (0: 0..3): BIT4,
+        right (0: 4..7): BIT4];
 
     // single 16 bit field == 16
     BitField16: TYPE = RECORD[
-        left  (0: 0.. 7): BYTE,
-        right (0: 8..15): BYTE];
+        left  (0: 0.. 7): BIT8,
+        right (0: 8..15): BIT8];
     
     // single 32 bit field
     BitField32: TYPE = RECORD32 [  // RECORD32
