@@ -169,8 +169,15 @@ public abstract class Type implements Comparable<Type> {
 		if (this.equals(Type.LONG_CARDINAL))    return true;
 		if (this.equals(Type.LONG_UNSPECIFIED)) return true;
 		
-		if (this.equals(Type.POINTER))          return true;
-		if (this.equals(Type.LONG_POINTER))     return true;
+		if (this instanceof TypePointer) {
+			TypePointer typePointer = this.toTypePointer();
+			if (typePointer.rawPointer()) return true;
+		}
+		if (this instanceof TypeRecord) {
+			TypeRecord typeRecord = this.toTypeRecord();
+			if (typeRecord.isBitField16()) return true;
+			if (typeRecord.isBitField32()) return true;
+		}
 		
 		return false;
 	}
