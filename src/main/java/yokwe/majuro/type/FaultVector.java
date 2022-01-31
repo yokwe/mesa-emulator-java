@@ -34,6 +34,7 @@ public final class FaultVector extends MemoryBase {
     // Access to Element of Array
     //
     public final FaultQueue get(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
         return FaultQueue.longPointer(base + (FaultQueue.WORD_SIZE * index));
     }
 }

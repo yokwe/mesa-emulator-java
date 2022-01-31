@@ -25,7 +25,7 @@ public final class SrcFunc extends MemoryData16 {
     };
     private static final ContextEnum context = new ContextEnum(NAME, values, names);
     
-    public static final void checkValue(char value) {
+    public static final void checkValue(int value) {
         if (Debug.ENABLE_CHECK_VALUE) context.check(value);
     }
     
@@ -49,7 +49,7 @@ public final class SrcFunc extends MemoryData16 {
         super(base, access);
     }
     
-    public final String toString(char value) {
+    public final String toString(int value) {
         return context.toString(value);
     }
 }

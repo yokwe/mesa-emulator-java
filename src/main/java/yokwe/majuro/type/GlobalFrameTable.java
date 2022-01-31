@@ -34,6 +34,7 @@ public final class GlobalFrameTable extends MemoryBase {
     // Access to Element of Array
     //
     public final GFTItem get(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
         return GFTItem.longPointer(base + (GFTItem.WORD_SIZE * index));
     }
 }

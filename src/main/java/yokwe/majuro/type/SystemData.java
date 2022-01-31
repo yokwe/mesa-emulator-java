@@ -34,6 +34,7 @@ public final class SystemData extends MemoryBase {
     // Access to Element of Array
     //
     public final LONG_UNSPECIFIED get(int index, MemoryAccess access) {
+        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
         return LONG_UNSPECIFIED.longPointer(base + (LONG_UNSPECIFIED.WORD_SIZE * index), access);
     }
 }

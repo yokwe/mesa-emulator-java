@@ -34,6 +34,7 @@ public final class StateAllocationTable extends MemoryBase {
     // Access to Element of Array
     //
     public final StateVector get(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
         return StateVector.longPointer(base + (POINTER.WORD_SIZE * index));
     }
 }

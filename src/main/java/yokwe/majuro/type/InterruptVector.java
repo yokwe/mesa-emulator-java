@@ -34,6 +34,7 @@ public final class InterruptVector extends MemoryBase {
     // Access to Element of Array
     //
     public final InterruptItem get(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
         return InterruptItem.longPointer(base + (InterruptItem.WORD_SIZE * index));
     }
 }
