@@ -48,14 +48,12 @@ public class JavaType {
 			if (wordSize == 2) return "MemoryData32";
 		}
 		if (realType instanceof TypeRecord) {
-			TypeRecord typeRecord = realType.toTypeRecord();
-			if (typeRecord.isBitField16()) return "MemoryData16";
-			if (typeRecord.isBitField32()) return "MemoryData32";
+			if (type.bitField16()) return "MemoryData16";
+			if (type.bitField32()) return "MemoryData32";
 			return "MemoryBase";
 		}
 		if (realType instanceof TypePointer) {
-			TypePointer typePointer = realType.toTypePointer();
-			return typePointer.rawPointer() ? "MemoryBase" : null;
+			return type.rawPointer() ? "MemoryBase" : null;
 		}
 		if (realType instanceof TypeArray) {
 			return "MemoryBase";
@@ -226,6 +224,7 @@ public class JavaType {
 				start  = e.startBit;
 				stop   = e.stopBit;
 			} else {
+				logger.error("field {}", e);
 				throw new UnexpectedException("Unexpected");
 			}
 			
@@ -463,10 +462,7 @@ public class JavaType {
 		    out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(value);", StringUtil.toJavaName(typeRef.name));
 		    out.println("}");
 		    
-		    if (typeRef instanceof TypeSubrange) {
-		    	TypeSubrange typeSubrange = typeRef.toTypeSubrange();
-		    	if (typeSubrange.openSubrange()) haveCheckIndex = false;
-		    }
+		    if (typeRef.openSubrange()) haveCheckIndex = false;
 		} else if (type instanceof TypeArray.Subrange) {
 			// immediate subrange
 			TypeSubrange typeSubrange = type.toSubrange().typeSubrange;
@@ -553,9 +549,9 @@ public class JavaType {
 		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
 		out.println();
 
-		if (type.isBitField16()) {
+		if (type.bitField16()) {
 			bitField16();
-		} else if (type.isBitField32()) {
+		} else if (type.bitField32()) {
 			bitField32();
 		} else {
 			// multiple word
