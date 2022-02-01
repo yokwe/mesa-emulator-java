@@ -12,47 +12,13 @@ BEGIN
  
    
     // subrange
-    Sub:  TYPE = [0..16);
+    Sub:  TYPE = [0..4);
     BIT4: TYPE = [0..16);
     BIT8: TYPE = [0..256);
    
     // enum
     Enum: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
 
-    // ARRAY
-    //   variation of index
-    ArraySubOpen:  TYPE = ARRAY [0..0) OF UNSPECIFIED;
-    ArraySubFixed: TYPE = ARRAY [0..8) OF UNSPECIFIED;
-    ArrayRefEnum:  TYPE = ARRAY Enum   OF UNSPECIFIED;
-    ArrayRefSub:   TYPE = ARRAY Sub    OF UNSPECIFIED;
-
-    // variation of element
-    ArrayScalar:         TYPE = ARRAY Sub OF UNSPECIFIED;
-    ArrayRec:            TYPE = ARRAY Sub OF Rec;
-    ArrayRefPtr16:       TYPE = ARRAY Sub OF POINTER;
-    ArrayRefPtr16Scalar: TYPE = ARRAY Sub OF POINTER TO CARDINAL;
-    ArrayRefPtr16Rec:    TYPE = ARRAY Sub OF POINTER TO Rec;
-    ArrayRefPtr32:       TYPE = ARRAY Sub OF LONG POINTER;
-    ArrayRefPtr32Scalar: TYPE = ARRAY Sub OF LONG POINTER TO CARDINAL;
-    ArrayRefPtr32Rec:    TYPE = ARRAY Sub OF LONG POINTER TO Rec;
-    
-    // POINTER
-    //   SHORT POINTER
-    Ptr16Scalar:      TYPE = POINTER TO UNSPECIFIED;
-    Ptr16Rec:         TYPE = POINTER TO Rec;
-    Ptr16Bit16:       TYPE = POINTER TO BitField16;
-    Ptr16Bit32:       TYPE = POINTER TO BitField32;
-//  Ptr16ArrayScalar: TYPE = POINTER TO ARRAY Sub OF UNSPECIFIED;
-//  ptr16ArrayRec:    TYPE = POINTER TO ARRAY Sub OF Rec;
-    
-    //   LONG POINTER
-    Ptr32Scalar:      TYPE = LONG POINTER TO UNSPECIFIED;
-    Ptr32Rec:         TYPE = LONG POINTER TO Rec;
-    Ptr32Bit16:       TYPE = LONG POINTER TO BitField16;
-    Ptr32Bit32:       TYPE = LONG POINTER TO BitField32;
-//  Ptr32ArrayScalar: TYPE = LONG POINTER TO ARRAY Sub OF UNSPECIFIED;
-//  Ptr32ArrayRec:    TYPE = LONG POINTER TO ARRAY Sub OF Rec;
-    
     // BIT FIELD 16
     // single 16 bit field < 16
     BitField8: TYPE = RECORD[
@@ -69,10 +35,138 @@ BEGIN
         data (0: 0..13): UNSPECIFIED,
         tag  (0:14..15): Enum,
         fill (1: 0..15): UNSPECIFIED];
+    
 
+    // ARRAY
+    //   variation of index
+    ArraySubOpen:  TYPE = ARRAY [0..0) OF UNSPECIFIED;
+    ArraySubFixed: TYPE = ARRAY [0..4) OF UNSPECIFIED;
+    ArrayRefEnum:  TYPE = ARRAY Enum   OF UNSPECIFIED;
+    ArrayRefSub:   TYPE = ARRAY Sub    OF UNSPECIFIED;
+
+    // variation of element
+    ArrayRefSubSub:   TYPE = ARRAY Sub OF Sub;
+    ArrayRefSubEnum:  TYPE = ARRAY Sub OF Enum;
+    ArrayRefSubBit16: TYPE = ARRAY Sub OF BitField16;
+    ArrayRefSubBit32: TYPE = ARRAY Sub OF BitField32;
+    //
+    ArrayRefSubPtr16:      TYPE = ARRAY Sub OF POINTER;
+    ArrayRefSubPtr16Sub:   TYPE = ARRAY Sub OF POINTER TO Sub;
+    ArrayRefSubPtr16Enum:  TYPE = ARRAY Sub OF POINTER TO Enum;
+    ArrayRefSubPtr16Bit16: TYPE = ARRAY Sub OF POINTER TO BitField16;
+    ArrayRefSubPtr16Bit32: TYPE = ARRAY Sub OF POINTER TO BitField32;
+    ArrayRefSubPtr16Rec:   TYPE = ARRAY Sub OF POINTER TO Rec;
+    //
+    ArrayRefSubPtr32:      TYPE = ARRAY Sub OF LONG POINTER;
+    ArrayRefSubPtr32Sub:   TYPE = ARRAY Sub OF LONG POINTER TO Sub;
+    ArrayRefSubPtr32Enum:  TYPE = ARRAY Sub OF LONG POINTER TO Enum;
+    ArrayRefSubPtr32Bit16: TYPE = ARRAY Sub OF LONG POINTER TO BitField16;
+    ArrayRefSubPtr32Bit32: TYPE = ARRAY Sub OF LONG POINTER TO BitField32;
+    ArrayRefSubPtr32Rec:   TYPE = ARRAY Sub OF LONG POINTER TO Rec;
+    
+    // POINTER
+    //   SHORT POINTER
+    Ptr16Sub:   TYPE = POINTER TO Sub;
+    Ptr16Enum:  TYPE = POINTER TO Enum;
+    Ptr16Bit16: TYPE = POINTER TO BitField16;
+    Ptr16Bit32: TYPE = POINTER TO BitField32;
+    Ptr16Rec:   TYPE = POINTER TO Rec;
+    
+    //   LONG POINTER
+    Ptr32Sub:   TYPE = LONG POINTER TO Sub;
+    Ptr32Enum:  TYPE = LONG POINTER TO Enum;
+    Ptr32Bit16: TYPE = LONG POINTER TO BitField16;
+    Ptr32Bit32: TYPE = LONG POINTER TO BitField32;
+    Ptr32Rec:   TYPE = LONG POINTER TO Rec;
+    
     // multiple word record
     Rec: TYPE = RECORD[
         card0(0:0..15): CARDINAL,
-        card1(1:0..15): CARDINAL];    
+        card1(1:0..15): CARDINAL];
+    RecSub: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): Sub];
+    RecEnum: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): Enum];
+    RecBit16: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): BitField16];
+    RecBit32: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): BitField32];
+    RecRec: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): Rec];
+    // pointer variation
+    RecPtr16: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): POINTER];
+    RecPtr16Sub: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): POINTER TO Sub];
+    RecPtr16Enum: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): POINTER TO Enum];
+    RecPtr16Bit16: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): POINTER TO BitField16];
+    RecPtr16Bit32: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): POINTER TO BitField32];
+    RecPtr16Rec: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..15): POINTER TO Rec];
+    // long pointer variation
+    RecPtr32: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): LONG POINTER];
+    RecPtr32Sub: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): LONG POINTER TO Sub];
+    RecPtr32Enum: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): LONG POINTER TO Enum];
+    RecPtr32Bit16: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): LONG POINTER TO BitField16];
+    RecPtr32BIt32: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): LONG POINTER TO BitField32];
+    RecPtr32Rec: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..31): LONG POINTER TO Rec];
+    // array variation
+    RecArraySubOpen: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1): ARRAY [0..0) OF UNSPECIFIED];
+    RecArraySubFixed: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY [0..4) OF UNSPECIFIED];
+    RecArrayRefEnum: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY Enum OF UNSPECIFIED];
+    RecArrayRefSub: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY Sub OF UNSPECIFIED];
+    // variation of element
+    RecArrayRefSubCARDINAL: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY Sub OF CARDINAL]; // 4 x 16
+    RecArrayRefSubSub: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY Sub OF Sub]; // 4 x 16
+    RecArrayRefSubEnum: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY Sub OF Enum];
+    RecArrayRefSubBit16: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..63): ARRAY Sub OF BitField16];
+    RecArrayRefSubBit32: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..127): ARRAY Sub OF BitField32];
+    RecArrayRefSubRec: TYPE = RECORD[
+        card0(0:0..15): CARDINAL,
+        card1(1:0..127): ARRAY Sub OF Rec];
     
 END.
