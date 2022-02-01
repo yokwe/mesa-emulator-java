@@ -161,22 +161,6 @@ public abstract class Type implements Comparable<Type> {
 		}
 	}
 	
-	public boolean simpleType() {
-		if (this.equals(Type.BOOLEAN))          return true;
-		if (this.equals(Type.INTEGER))          return true;
-		if (this.equals(Type.CARDINAL))         return true;
-		if (this.equals(Type.UNSPECIFIED))      return true;
-		if (this.equals(Type.LONG_CARDINAL))    return true;
-		if (this.equals(Type.LONG_UNSPECIFIED)) return true;
-		
-		// special case
-		if (rawPointer()) return true;
-		if (bitField16()) return true;
-		if (bitField32()) return true;
-		
-		return false;
-	}
-	
 	public boolean openSubrange() {
 		if (this instanceof TypeSubrange) {
 			TypeSubrange typeSubrange = toTypeSubrange();
