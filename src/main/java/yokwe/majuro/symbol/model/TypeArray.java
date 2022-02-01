@@ -1,5 +1,6 @@
 package yokwe.majuro.symbol.model;
 
+import static yokwe.majuro.mesa.Constant.*;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
@@ -26,7 +27,9 @@ public abstract class TypeArray extends Type {
 					needsFix = false;
 					setValue(typeSubrange.minValue, typeSubrange.maxValue);
 					
-					bitSize = arrayElement.bitSize() * (int)size;
+					// To calculate bitSize, use arrayElemen.wordSize() * WORD_BITS
+					// Because arrayElement is aligned to WORD.
+					bitSize = arrayElement.wordSize() * WORD_BITS * (int)size;
 				}
 			}
 		}
@@ -73,7 +76,9 @@ public abstract class TypeArray extends Type {
 						throw new UnexpectedException("Unexpected");
 					}
 					
-					bitSize = arrayElement.bitSize() * (int)size;
+					// To calculate bitSize, use arrayElemen.wordSize() * WORD_BITS
+					// Because arrayElement is aligned to WORD.
+					bitSize = arrayElement.wordSize() * WORD_BITS * (int)size;
 				}
 			}
 		}
@@ -95,7 +100,7 @@ public abstract class TypeArray extends Type {
 	public long maxValue;
 	public long size;
 
-	public TypeArray(String name, Type arrayElement) {
+	protected TypeArray(String name, Type arrayElement) {
 		super(name);
 		
 		this.arrayElement = arrayElement;
