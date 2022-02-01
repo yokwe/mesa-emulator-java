@@ -112,12 +112,16 @@ public class Symbol {
 			
 			if (needsFixCountCons != 0) {
 				for(var e: Constant.map.values()) {
-					logger.info("needsFix cons {}", e);
+					if (e.needsFix && e.type instanceof TypeReference) {
+						logger.info("needsFix cons {}", e);
+					}
 				}
 			}
 			if (needsFixCountType != 0) {
 				for(var e: Type.map.values()) {
-					logger.info("needsFix type {}", e);
+					if (e.needsFix && e instanceof TypeReference) {
+						logger.info("needsFix type {}", e);
+					}
 				}
 			}
 			
