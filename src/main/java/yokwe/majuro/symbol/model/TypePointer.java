@@ -91,14 +91,5 @@ public class TypePointer extends Type {
 	public boolean container() {
 		return true;
 	}
-	
-	public boolean rawPointer() {
-		return targetType == null;
-	}
-	public boolean shortPointer() {
-		return pointerSize == PointerSize.SHORT;
-	}
-	public boolean longPointer() {
-		return pointerSize == PointerSize.LONG;
-	}
+    
 }

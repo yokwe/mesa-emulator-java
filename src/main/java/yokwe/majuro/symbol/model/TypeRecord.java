@@ -1,5 +1,7 @@
 package yokwe.majuro.symbol.model;
 
+import static yokwe.majuro.mesa.Constant.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -198,10 +200,17 @@ public class TypeRecord extends Type {
 						Type type = e.type.getRealType();
 						
 						int fieldBitSize = e.bitSize;
-						int typeBitSize  = type.bitSize;
+						
+						int typeBitSize = type.bitSize;
+						if (bitField16() || bitField32()) {
+							typeBitSize  = type.bitSize;
+						} else {
+							typeBitSize = type.wordSize() * WORD_BITS;
+						}
 						
 						if (fieldBitSize == 0) continue;
 						if (fieldBitSize != typeBitSize) {
+							// UNSPECIFIED and CARDINAL can have variable length
 							if (type == Type.UNSPECIFIED) continue;
 							if (type == Type.CARDINAL)    continue;
 							foundProblem = true;
@@ -213,7 +222,7 @@ public class TypeRecord extends Type {
 						logger.error("found problem");
 						logger.error("  {}", name);
 						for(var e: fieldList) {
-							logger.error("  {}", String.format("%-10s  %2d  %2d", e.name, e.bitSize, e.type.bitSize));
+							logger.error("  {}", String.format("%-10s %-10s  field %2d  type %2d", e.name, e.type.getRealType().name, e.bitSize, e.type.bitSize));
 						}
 						throw new UnexpectedException("found problem");
 					}
@@ -240,17 +249,10 @@ public class TypeRecord extends Type {
 		return String.format("%s[%s]", baseType, String.join(", ", list));
 	}
 
-	public boolean isBitField16() {
-		return align == Align.BIT_16 && bitSize <= 16;
-	}
-	public boolean isBitField32() {
-		return align == Align.BIT_32 && bitSize == 32;
-	}
-	
 	@Override
 	public boolean container() {
-		if (isBitField16()) return false;
-		if (isBitField32()) return false;
+		if (bitField16()) return false;
+		if (bitField32()) return false;
 		return true;
 	}
 }

@@ -43,10 +43,6 @@ public class TypeSubrange extends Type {
 		throw new UnexpectedException("Unexpected");
 	}
 	
-	public boolean openSubrange() {
-		return minString.equals(maxString) && closeChar.equals(CLOSE_CHAR_EXCLUSIVE);
-	}
-	
 	@Override
 	public void fix() {
 		if (needsFix) {

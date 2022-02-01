@@ -169,18 +169,79 @@ public abstract class Type implements Comparable<Type> {
 		if (this.equals(Type.LONG_CARDINAL))    return true;
 		if (this.equals(Type.LONG_UNSPECIFIED)) return true;
 		
-		if (this instanceof TypePointer) {
-			TypePointer typePointer = this.toTypePointer();
-			if (typePointer.rawPointer()) return true;
-		}
-		if (this instanceof TypeRecord) {
-			TypeRecord typeRecord = this.toTypeRecord();
-			if (typeRecord.isBitField16()) return true;
-			if (typeRecord.isBitField32()) return true;
-		}
+		// special case
+		if (rawPointer()) return true;
+		if (bitField16()) return true;
+		if (bitField32()) return true;
 		
 		return false;
 	}
+	
+	public boolean openSubrange() {
+		if (this instanceof TypeSubrange) {
+			TypeSubrange typeSubrange = toTypeSubrange();
+			return typeSubrange.minString.equals(typeSubrange.maxString) &&
+				typeSubrange.closeChar.equals(TypeSubrange.CLOSE_CHAR_EXCLUSIVE);
+		} else {
+			return false;
+		}
+	}
+	public boolean openArray() {
+		if (this instanceof TypeArray.Subrange) {
+			TypeArray.Subrange typeArraySubrange = toTypeArray().toSubrange();
+			return typeArraySubrange.typeSubrange.openSubrange();
+		} else {
+			return false;
+		}
+	}
+	public boolean bitField16() {
+		if (this instanceof TypeRecord) {
+			TypeRecord typeRecord = toTypeRecord();
+			if (typeRecord.align == TypeRecord.Align.BIT_16 && typeRecord.bitSize <= 16) {
+				for(var e: typeRecord.fieldList) {
+					if (e.type.getRealType().openArray()) return false;
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	public boolean bitField32() {
+		if (this instanceof TypeRecord) {
+			TypeRecord typeRecord = toTypeRecord();
+			return typeRecord.align == TypeRecord.Align.BIT_32 && typeRecord.bitSize == 32;
+		} else {
+			return false;
+		}
+	}
+	public boolean rawPointer() {
+		if (this instanceof TypePointer) {
+			TypePointer typePointer = toTypePointer();
+			return typePointer.targetType == null;
+		} else {
+			return false;
+		}
+	}
+	public boolean shortPointer() {
+		if (this instanceof TypePointer) {
+			TypePointer typePointer = toTypePointer();
+			return typePointer.pointerSize == TypePointer.PointerSize.SHORT;
+		} else {
+			return false;
+		}
+	}
+	public boolean longPointer() {
+		if (this instanceof TypePointer) {
+			TypePointer typePointer = toTypePointer();
+			return typePointer.pointerSize == TypePointer.PointerSize.LONG;
+		} else {
+			return false;
+		}
+	}
+	
 	
 	public TypeArray toTypeArray() {
 		if (this instanceof TypeArray) {
