@@ -1,6 +1,8 @@
 package yokwe.majuro.symbol;
 
 import static yokwe.majuro.mesa.Constant.WORD_BITS;
+import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.LEFT;
+import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,13 +15,12 @@ import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
+import yokwe.majuro.symbol.model.TypeReference;
+import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.type.MemoryBase;
 import yokwe.majuro.type.MemoryData16;
 import yokwe.majuro.type.MemoryData32;
-import yokwe.majuro.symbol.model.TypeReference;
-import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
-import yokwe.majuro.util.AutoIndentPrintWriter.Layout;
 import yokwe.majuro.util.StringUtil;
 
 public class JavaType {
@@ -65,7 +66,7 @@ public class JavaType {
 	}
 	
 	//
-	// common methods
+	// Constructor related methods methods
 	//
 	private void classPreamble(Class<?> parentClass) {
 		final var out = javaFile.out;
@@ -89,74 +90,65 @@ public class JavaType {
 		out.println("public static final String   NAME = SELF.getSimpleName();");
 		out.println();
 	}
-	private void constructor16() {
-		final var out = javaFile.out;
-		
-		out.println("//");
-		out.println("// Constructor");
-		out.println("//");
-		
-		out.println("public static final %s value(char value) {", javaFile.name);
-		out.println("return new %s(value);", javaFile.name);
-		out.println("}");
-		out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
-		out.println("return new %s(base, access);", javaFile.name);
-		out.println("}");
-		out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
-		out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
-		out.println("}");
-		out.println();
-		
-		out.println("private %s(char value) {", javaFile.name);
-		out.println("super(value);");
-		out.println("}");
-		out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
-		out.println("super(base, access);");
-		out.println("}");
-	}
-	private void constructor32() {
+	private void constructor(Class<?> parentClass) {
 		final var out = javaFile.out;
 
 		out.println("//");
 		out.println("// Constructor");
 		out.println("//");
-		out.println("public static final %s value(int value) {", javaFile.name);
-		out.println("return new %s(value);", javaFile.name);
-		out.println("}");
-		out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
-		out.println("return new %s(base, access);", javaFile.name);
-		out.println("}");
-		out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
-		out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
-		out.println("}");
-		out.println();
-
-		out.println("private %s(int value) {", javaFile.name);
-		out.println("super(value);");
-		out.println("}");
-		out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
-		out.println("super(base, access);");
-		out.println("}");
-	}
-	private void constructorBase() {
-		final var out = javaFile.out;
-
-		out.println("//");
-		out.println("// Constructor");
-		out.println("//");
-		out.println("public static final %s longPointer(int base) {", javaFile.name);
-		out.println("return new %s(base);", javaFile.name);
-		out.println("}");
-		out.println("public static final %s pointer(char base) {", javaFile.name);
-		out.println("return new %s(Mesa.lengthenMDS(base));", javaFile.name);
-		out.println("}");
-		out.println();
 		
-		out.println("private %s(int base) {", javaFile.name);
-		out.println("super(base);");
-		out.println("}");
+		if (parentClass.equals(MemoryData16.class)) {
+			out.println("public static final %s value(char value) {", javaFile.name);
+			out.println("return new %s(value);", javaFile.name);
+			out.println("}");
+			out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
+			out.println("return new %s(base, access);", javaFile.name);
+			out.println("}");
+			out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
+			out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
+			out.println("}");
+			out.println();
+			
+			out.println("private %s(char value) {", javaFile.name);
+			out.println("super(value);");
+			out.println("}");
+			out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
+			out.println("super(base, access);");
+			out.println("}");
+		} else if (parentClass.equals(MemoryData32.class)) {
+			out.println("public static final %s value(int value) {", javaFile.name);
+			out.println("return new %s(value);", javaFile.name);
+			out.println("}");
+			out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
+			out.println("return new %s(base, access);", javaFile.name);
+			out.println("}");
+			out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
+			out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
+			out.println("}");
+			out.println();
+
+			out.println("private %s(int value) {", javaFile.name);
+			out.println("super(value);");
+			out.println("}");
+			out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
+			out.println("super(base, access);");
+			out.println("}");
+		} else if (parentClass.equals(MemoryBase.class)) {
+			out.println("public static final %s longPointer(int base) {", javaFile.name);
+			out.println("return new %s(base);", javaFile.name);
+			out.println("}");
+			out.println("public static final %s pointer(char base) {", javaFile.name);
+			out.println("return new %s(Mesa.lengthenMDS(base));", javaFile.name);
+			out.println("}");
+			out.println();
+			
+			out.println("private %s(int base) {", javaFile.name);
+			out.println("super(base);");
+			out.println("}");
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
 	}
-	
 	
 	//
 	// methods generate java source for corresponding parameter type
@@ -166,17 +158,18 @@ public class JavaType {
 		MemoryData16.class,
 	};
 	private void typeBoolean(TypeBoolean type) {
-		final var out = javaFile.out;
+		final var out         = javaFile.out;
+		final var parentClass = typeBooleanParentClass[type.wordSize() - 1];
 		
-		classPreamble(typeBooleanParentClass[type.wordSize() - 1]);
+		classPreamble(parentClass);
 
 		out.prepareLayout();
 		out.println("public static final int WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 		
-		constructor16();
+		constructor(parentClass);
 		
 		// close class body
 		out.println("}");
@@ -186,9 +179,10 @@ public class JavaType {
 		MemoryData32.class,
 	};
 	private void typeSubrange(TypeSubrange type) {
-		final var out = javaFile.out;
-
-		classPreamble(typeSubrangeParentClass[type.wordSize() - 1]);
+		final var out         = javaFile.out;
+		final var parentClass = typeSubrangeParentClass[type.wordSize() - 1];
+		
+		classPreamble(parentClass);
 
 		out.prepareLayout();
 		out.println("public static final int  WORD_SIZE = %d;",  type.wordSize());
@@ -197,7 +191,7 @@ public class JavaType {
 		out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
 		out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
 		out.println("public static final long SIZE_VALUE = %s;", StringUtil.toJavaString(type.maxValue - type.minValue + 1));
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 		
 		out.println("private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);");
@@ -218,15 +212,7 @@ public class JavaType {
 		//
 		// Generate Constructor
 		//
-		if (type.bitSize() <= 16) {
-			constructor16();
-		} else if (type.bitSize() <= 32) {
-			constructor32();
-		} else {
-			logger.error("type {}", type.toMesaType());
-			logger.error("type {}", type);
-			throw new UnexpectedException("Unexpected");
-		}
+		constructor(parentClass);
 		
 		// close class body
 		out.println("}");
@@ -235,14 +221,15 @@ public class JavaType {
 		MemoryData16.class,
 	};
 	private void typeEnum(TypeEnum type) {
-		final var out = javaFile.out;
-
-		classPreamble(typeEnumParentClass[type.wordSize() - 1]);
+		final var out         = javaFile.out;
+		final var parentClass = typeEnumParentClass[type.wordSize() - 1];
+		
+		classPreamble(parentClass);
 
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 
 		List<String> itemList = type.itemList.stream().map(o -> StringUtil.toJavaConstName(o.name)).collect(Collectors.toList());
@@ -259,7 +246,7 @@ public class JavaType {
 		for(var e: type.itemList) {
 			out.println("public static final char %s = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaString(e.value));
 		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 		
 		out.println("private static final int[] values = {");
@@ -276,7 +263,7 @@ public class JavaType {
 		out.println("}");
 		out.println();
 		
-		constructor16();
+		constructor(parentClass);
 		out.println();
 
 		out.println("public final String toString(int value) {");
@@ -291,19 +278,19 @@ public class JavaType {
 			MemoryBase.class,
 		};
 	private void typePointer(TypePointer type) {
-
 		if (type.rawPointer()) {
-			final var out = javaFile.out;
+			final var out         = javaFile.out;
+			final var parentClass = typePointerParentClass[type.wordSize() - 1];
 
-			classPreamble(typePointerParentClass[type.wordSize() - 1]);
+			classPreamble(parentClass);
 
 			out.prepareLayout();
 			out.println("public static final int WORD_SIZE = %d;",     type.wordSize());
 			out.println("public static final int BIT_SIZE  = %d;",     type.bitSize());
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 			out.println();
 			
-			constructorBase();
+			constructor(parentClass);
 			
 			// close class body
 			out.println("}");
@@ -312,18 +299,19 @@ public class JavaType {
 		}
 	}
 	private void typeArray(TypeArray type) {
-		final var out = javaFile.out;
-		
-		boolean haveCheckIndex = true;
-		
-		classPreamble(MemoryBase.class);
+		final var out         = javaFile.out;
+		final var parentClass = MemoryBase.class;
+
+		classPreamble(parentClass);
 		
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 
+		boolean haveCheckIndex = true;
+		
 		if (type instanceof TypeArray.Reference) {
 			out.println("//");
 			out.println("// Check range of index");
@@ -362,7 +350,7 @@ public class JavaType {
 			throw new UnexpectedException("Unexpected");
 		}
 		
-		constructorBase();		
+		constructor(parentClass);		
 		
 		//
 		// output element access method
@@ -418,19 +406,19 @@ public class JavaType {
 	//
 	// methods for Record
 	//
-	private void bitField16Record() {
-		final var out  = javaFile.out;
-		final var type = javaFile.type.toTypeRecord();
-
-		classPreamble(MemoryData16.class);
+	private void bitField16Record(TypeRecord type) {
+		final var out         = javaFile.out;
+		final var parentClass = MemoryData16.class;
+		
+		classPreamble(parentClass);
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 
 		// single word bit field
-		constructor16();
+		constructor(parentClass);
 		out.println();
 
 		out.println("//");
@@ -442,7 +430,7 @@ public class JavaType {
 		for(var e: type.fieldList) {
 			out.println("// %s", e.toMesaType());
 		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+		out.layout(LEFT, LEFT, LEFT, LEFT);
 		out.println();
 		
 		out.prepareLayout();
@@ -469,7 +457,7 @@ public class JavaType {
 				fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
 			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
 		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 		
 		out.println("//");
@@ -492,19 +480,19 @@ public class JavaType {
 		// close class body
 		out.println("}");
 	}
-	private void bitField32Record() {
-		final var out  = javaFile.out;
-		final var type = javaFile.type.toTypeRecord();
-
-		classPreamble(MemoryData32.class);
+	private void bitField32Record(TypeRecord type) {
+		final var out         = javaFile.out;
+		final var parentClass = MemoryData32.class;
+		
+		classPreamble(parentClass);
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 
 		// double word bit field
-		constructor32();
+		constructor(parentClass);
 		out.println();
 
 		out.println("//");
@@ -516,7 +504,7 @@ public class JavaType {
 		for(var e: type.fieldList) {
 			out.println("// %s", e.toMesaType());
 		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+		out.layout(LEFT, LEFT, LEFT, LEFT);
 		out.println();
 
 		out.prepareLayout();
@@ -544,7 +532,7 @@ public class JavaType {
 			out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
 			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
 		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 		
 		out.println("//");
@@ -568,21 +556,21 @@ public class JavaType {
 		// close class body
 		out.println("}");
 	}
-	private void multiWordRecord() {
-		final var out  = javaFile.out;
-		final var type = javaFile.type.toTypeRecord();
-
-		classPreamble(MemoryBase.class);
+	private void multiWordRecord(TypeRecord type) {
+		final var out         = javaFile.out;
+		final var parentClass = MemoryBase.class;
+		
+		classPreamble(parentClass);
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
 		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 		out.println();
 
 		// multiple word
 		// FIXME
 		
-		constructorBase();
+		constructor(parentClass);
 		out.println();
 		
 		out.println("//");
@@ -688,11 +676,11 @@ public class JavaType {
 	}
 	private void typeRecord(TypeRecord type) {
 		if (type.bitField16()) {
-			bitField16Record();
+			bitField16Record(type);
 		} else if (type.bitField32()) {
-			bitField32Record();
+			bitField32Record(type);
 		} else {
-			multiWordRecord();
+			multiWordRecord(type);
 		}
 	}
 
