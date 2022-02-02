@@ -161,8 +161,4 @@ public class Constant implements Comparable<Constant> {
 		return this.name.compareTo(that.name);
 	}
 	
-	public String toMesaType() {
-		return String.format("%s: %s = %s", name, type.toMesaType(), valueString);
-	}
-
 }
