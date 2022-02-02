@@ -362,6 +362,9 @@ public class JavaType {
 		out.println("//");
 		out.println("// Access to Element of Array");
 		out.println("//");
+		
+		// FIXME StatAllocationVector.get() is wrong. need to read pointer value from memory
+
 		if (elementType.container()) {
 			if (elementType instanceof TypePointer) {
 				TypePointer typePointer = elementType.toTypePointer();
@@ -556,6 +559,71 @@ public class JavaType {
 		// close class body
 		out.println("}");
 	}
+
+	private void fieldData(TypeRecord.Field field) {
+		final var out         = javaFile.out;
+
+		Type   fieldType      = field.type.getRealType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+
+		out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
+		out.println("return %s.longPointer(base + OFFSET_%s, access);", fieldTypeName, fieldConstName);
+		out.println("}");
+	}
+	private void fieldPointer(TypeRecord.Field field) {
+		final var out         = javaFile.out;
+
+		Type   fieldType      = field.type.getRealType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		
+		out.println("public %s %s() {", fieldTypeName, fieldName);
+		out.println("return %s.longPointer(base + OFFSET_%s);", fieldTypeName, fieldConstName);
+		out.println("}");
+	}
+	private void fieldArrayIndexData(TypeRecord.Field field) {
+		final var out            = javaFile.out;
+
+		Type   fieldType         = field.type.getRealType();
+		String fieldConstName    = StringUtil.toJavaConstName(field.name);
+		String fieldName         = StringUtil.toJavaName(field.name);
+
+		Type   elementType       = fieldType.toTypeArray().arrayElement.getRealType();
+		String elementTypeString = StringUtil.toJavaName(elementType.name);
+		
+		out.println("public %s %s(int index, MemoryAccess access) {", elementTypeString, fieldName);
+		out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), access);", elementTypeString, fieldConstName);
+		out.println("}");
+	}
+	private void fieldArrayIndexPointer(TypeRecord.Field field) {
+		final var out            = javaFile.out;
+
+		Type   fieldType         = field.type.getRealType();
+		String fieldConstName    = StringUtil.toJavaConstName(field.name);
+		String fieldName         = StringUtil.toJavaName(field.name);
+
+		Type   elementType       = fieldType.toTypeArray().arrayElement.getRealType();
+		String elementTypeString = StringUtil.toJavaName(elementType.name);
+		
+		out.println("public %s %s(int index) {", elementTypeString, fieldName);
+		out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
+		out.println("}");
+	}
+	private void fieldArrayReference(TypeRecord.Field field) {
+		final var out            = javaFile.out;
+		
+		String fieldConstName    = StringUtil.toJavaConstName(field.name);
+		String fieldName         = StringUtil.toJavaName(field.name);
+
+		String elementTypeString = StringUtil.toJavaName(field.type.getRealType().name);
+		
+		out.println("public %s %s() {", elementTypeString, fieldName);
+		out.println("return %1$s.longPointer(base + OFFSET_%2$s);", elementTypeString, fieldConstName);
+		out.println("}");
+	}
 	private void multiWordRecord(TypeRecord type) {
 		final var out         = javaFile.out;
 		final var parentClass = MemoryBase.class;
@@ -580,9 +648,10 @@ public class JavaType {
 			Type   fieldType      = field.type.getRealType();
 			String fieldConstName = StringUtil.toJavaConstName(field.name);
 			String fieldName      = StringUtil.toJavaName(field.name);
-			String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
 
 			out.println("// %s", field.toMesaType());
+			logger.info("// {}", field.toMesaType());
+			logger.info("//   {}", fieldType.getClass().getSimpleName());
 			// sanity check
 			if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
 				//
@@ -597,77 +666,94 @@ public class JavaType {
 			}
 			
 			out.println("private static final int OFFSET_%s = %d;", fieldConstName, field.offset);
-
-			if (fieldType.container()) {
-				// can be array, pointer or multiple word record
-				if (fieldType instanceof TypeArray) {
-					// index of array can be subrange or reference
-					Type elementType = fieldType.toTypeArray().arrayElement.getRealType();
-					String elementTypeString = StringUtil.toJavaName(elementType.name);
+			
+			if (fieldType instanceof TypeArray) {
+				if (field.type instanceof TypeReference) {
+					fieldArrayReference(field);
+					continue;
+				}
+				
+				// index of array can be subrange or reference
+				Type elementType = fieldType.toTypeArray().arrayElement.getRealType();
+				
+				if (elementType instanceof TypeArray) {
+					throw new UnexpectedException("Unexpected");
+				} else if (elementType instanceof TypeBoolean) {
+					fieldArrayIndexData(field);
+				} else if (elementType instanceof TypeEnum) {
+					fieldArrayIndexData(field);
+				} else if (elementType instanceof TypePointer) {
+					logger.info("field {}", field.toMesaType());
+					Type.dumpReference(field.type);
+					Type.dumpReference(fieldType.toTypeArray().arrayElement);
 					
-					if (elementType.container()) {
-						if (fieldTypeName.contains("#")) {
-							out.println("public %s %s(int index) {", elementTypeString, fieldName);
-							out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
-							out.println("}");
-						} else {
-							out.println("public %s %s() {", fieldTypeName, fieldName);
-							out.println("return %1$s.longPointer(base + OFFSET_%2$s);", fieldTypeName, fieldConstName);
-							out.println("}");
-						}
+					throw new UnexpectedException("Unexpected");
+				} else if (elementType instanceof TypeRecord) {
+					if (elementType.bitField16()) {
+						fieldArrayIndexData(field);
+					} else if (elementType.bitField32()) {
+						fieldArrayIndexData(field);
 					} else {
-						out.println("public %s %s(int index, MemoryAccess access) {", elementTypeString, fieldName);
-						out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), access);", elementTypeString, fieldConstName);
-						out.println("}");
+						fieldArrayIndexPointer(field);
 					}
-					
-				} else if (fieldType instanceof TypePointer) {
-					TypePointer typePointer = fieldType.toTypePointer();
-					if (typePointer.rawPointer()) {
-						// naked POINTER and LONG POINTER
-						String typeTargetName = StringUtil.toJavaName(typePointer.name);
-						out.println("public %s %s() {", typeTargetName, fieldName);
-						out.println("return %s.longPointer(base + OFFSET_%s);", typeTargetName, fieldConstName);
-						out.println("}");
-					} else {
-						Type typeTarget = typePointer.targetType.getRealType();
-						String typeTargetName = StringUtil.toJavaName(typeTarget.name);
-						if (typePointer.longPointer()) {
-							if (typeTarget.container()) {
-								out.println("public %s %s() {", typeTargetName, fieldName);
-								out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s));", typeTargetName, fieldConstName);
-								out.println("}");
-							} else {
-								out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
-								out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
-								out.println("}");
-							}
-						} else if (typePointer.shortPointer()) {
-							if (typeTarget.container()) {
-								out.println("public %s %s() {", typeTargetName, fieldName);
-								out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s));", typeTargetName, fieldConstName);
-								out.println("}");
-							} else {
-								out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
-								out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
-								out.println("}");
-							}
-						} else {
-							throw new UnexpectedException("Unexpected");
-						}
-					}
-				} else if (fieldType instanceof TypeRecord) {
-					out.println("public %s %s() {", fieldTypeName, fieldName);
-					out.println("return %s.longPointer(base + OFFSET_%s);", fieldTypeName, fieldConstName);
-					out.println("}");
+				} else if (elementType instanceof TypeSubrange) {
+					fieldArrayIndexData(field);
 				} else {
 					throw new UnexpectedException("Unexpected");
 				}
+			} else if (fieldType instanceof TypeBoolean) {
+				fieldData(field);
+			} else if (fieldType instanceof TypeEnum) {
+				fieldData(field);
+			} else if (fieldType instanceof TypePointer) {
+				TypePointer typePointer = fieldType.toTypePointer();
+				if (typePointer.rawPointer()) {
+					// naked POINTER and LONG POINTER
+					fieldPointer(field);
+				} else {
+					Type typeTarget = typePointer.targetType.getRealType();
+					String typeTargetName = StringUtil.toJavaName(typeTarget.name);
+					if (typePointer.longPointer()) {
+						if (typeTarget.container()) {
+							out.println("public %s %s() {", typeTargetName, fieldName);
+							out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s));", typeTargetName, fieldConstName);
+							out.println("}");
+						} else {
+							out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
+							out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
+							out.println("}");
+						}
+					} else if (typePointer.shortPointer()) {
+						if (typeTarget.container()) {
+							out.println("public %s %s() {", typeTargetName, fieldName);
+							out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s));", typeTargetName, fieldConstName);
+							out.println("}");
+						} else {
+							out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
+							out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
+							out.println("}");
+						}
+					} else {
+						throw new UnexpectedException("Unexpected");
+					}
+				}
+			} else if (fieldType instanceof TypeRecord) {
+				if (fieldType.bitField16()) {
+					fieldData(field);
+				} else if (fieldType.bitField32()) {
+					fieldData(field);
+				} else {
+					if (field.type instanceof TypeReference) {
+						fieldArrayReference(field);
+						continue;
+					}
+					
+					fieldPointer(field);
+				}
+			} else if (fieldType instanceof TypeSubrange) {
+				fieldData(field);
 			} else {
-				// can be boolean, enum, bitfield16, bitfield32 or subrange
-				out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
-				out.println("return %s.longPointer(base + OFFSET_%s, access);", fieldTypeName, fieldConstName);
-				out.println("}");
+				throw new UnexpectedException("Unexpected");
 			}
 		}
 		
