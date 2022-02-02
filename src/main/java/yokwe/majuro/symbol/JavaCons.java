@@ -19,7 +19,7 @@ public class JavaCons {
 	public void generate() {
 		try (AutoIndentPrintWriter out = javaFile.getAutoIndentPrintWriter()) {
 			final Constant cons = javaFile.cons;
-			logger.info("{}: {} = {};", cons.name, cons.toMesaType(), cons.numericValue);
+			logger.info("{}: {} = {};", cons.name, cons.type.toMesaType(), cons.numericValue);
 			
 			javaFile.success = false;
 		}
