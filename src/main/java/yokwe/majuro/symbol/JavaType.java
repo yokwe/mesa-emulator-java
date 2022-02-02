@@ -13,6 +13,9 @@ import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
+import yokwe.majuro.type.MemoryBase;
+import yokwe.majuro.type.MemoryData16;
+import yokwe.majuro.type.MemoryData32;
 import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.util.AutoIndentPrintWriter;
@@ -33,95 +36,59 @@ public class JavaType {
 		this.javaFile = javaFile;
 	}
 	
-	private static String parentClass(Type type) {
-		Type realType = type.getRealType();
-		int wordSize = realType.wordSize();
-		
-		if (realType instanceof TypeBoolean) {
-			if (wordSize == 1) return "MemoryData16";
-		}
-		if (realType instanceof TypeEnum) {
-			if (wordSize == 1) return "MemoryData16";
-		}
-		if (realType instanceof TypeSubrange) {
-			if (wordSize == 1) return "MemoryData16";
-			if (wordSize == 2) return "MemoryData32";
-		}
-		if (realType instanceof TypeRecord) {
-			if (type.bitField16()) return "MemoryData16";
-			if (type.bitField32()) return "MemoryData32";
-			return "MemoryBase";
-		}
-		if (realType instanceof TypePointer) {
-			return type.rawPointer() ? "MemoryBase" : null;
-		}
-		if (realType instanceof TypeArray) {
-			return "MemoryBase";
-		}
-		throw new UnexpectedException("Uneexpected");
-	}
-	
 	private void generate() {
 		try (AutoIndentPrintWriter out = javaFile.getAutoIndentPrintWriter()) {
 			final Type type = javaFile.type;
-//			logger.info("{}: TYPE = {};", type.name, type.toMesaType());
-
-			out.println("package %s;", javaFile.packageName);
-			out.println();
-			out.println("import yokwe.majuro.UnexpectedException;");
-			out.println("import yokwe.majuro.mesa.Debug;");
-			out.println("import yokwe.majuro.mesa.Memory;");
-			out.println("import yokwe.majuro.mesa.Mesa;");
-			out.println();
 			
-			out.println("// %s: TYPE = %s;", type.name, type.toMesaType());
-			
-			// output "public final class" line
-			final String parentClass = parentClass(type);
-			// start of class
-			if (parentClass == null) {
-				out.println("public final class %s {", javaFile.name);				
+			if (type instanceof TypeBoolean) {
+				typeBoolean(type.toTypeBoolean());
+			} else if (type instanceof TypeSubrange) {
+				typeSubrange(type.toTypeSubrange());
+			} else if (type instanceof TypeEnum) {
+				typeEnum(type.toTypeEnum());
+			} else if (type instanceof TypePointer) {
+				typePointer(type.toTypePointer());
+			} else if (type instanceof TypeArray) {
+				typeArray(type.toTypeArray());
+			} else if (type instanceof TypeRecord) {
+				typeRecord(type.toTypeRecord());
+			} else if (type instanceof TypeReference) {
+				logger.info("genDecl REF {}: TYPE = {}", type.name, type.toMesaType());
+				javaFile.success = false;
 			} else {
-				out.println("public final class %s extends %s {", javaFile.name, parentClass);
+				logger.error("type {}", type.name);
+				logger.error("mesa {}", type.toMesaType());
+				throw new UnexpectedException("Unexpected");
 			}
-			out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
-			out.println("public static final String   NAME = SELF.getSimpleName();");
-			out.println();
-			
-			generateType(type);
-
-			// end of class
-			out.println("}");
 		}
 		javaFile.moveFile();
-	}
-
-	private void generateType(Type type) {
-		if (type instanceof TypeBoolean) {
-			typeBoolean(type.toTypeBoolean());
-		} else if (type instanceof TypeSubrange) {
-			typeSubrange(type.toTypeSubrange());
-		} else if (type instanceof TypeEnum) {
-			typeEnum(type.toTypeEnum());
-		} else if (type instanceof TypePointer) {
-			typePointer(type.toTypePointer());
-		} else if (type instanceof TypeArray) {
-			typeArray(type.toTypeArray());
-		} else if (type instanceof TypeRecord) {
-			typeRecord(type.toTypeRecord());
-		} else if (type instanceof TypeReference) {
-			logger.info("genDecl REF {}: TYPE = {}", type.name, type.toMesaType());
-			javaFile.success = false;
-		} else {
-			logger.error("type {}", type.name);
-			logger.error("mesa {}", type.toMesaType());
-			throw new UnexpectedException("Unexpected");
-		}
 	}
 	
 	//
 	// common methods
 	//
+	private void classPreamble(Class<?> parentClass) {
+		final var out = javaFile.out;
+		
+		if (parentClass == null) {
+			throw new UnexpectedException("Unexpected");
+		}
+
+		out.println("package %s;", javaFile.packageName);
+		out.println();
+		out.println("import yokwe.majuro.UnexpectedException;");
+		out.println("import yokwe.majuro.mesa.Debug;");
+		out.println("import yokwe.majuro.mesa.Memory;");
+		out.println("import yokwe.majuro.mesa.Mesa;");
+		out.println();
+		
+		out.println("// %s: TYPE = %s;", javaFile.type.name, javaFile.type.toMesaType());
+		
+		out.println("public final class %s extends %s {", javaFile.name, parentClass.getSimpleName());
+		out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
+		out.println("public static final String   NAME = SELF.getSimpleName();");
+		out.println();
+	}
 	private void constructor16() {
 		final var out = javaFile.out;
 		
@@ -197,6 +164,13 @@ public class JavaType {
 		final var out  = javaFile.out;
 		final var type = javaFile.type.toTypeRecord();
 
+		classPreamble(MemoryData16.class);
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+
 		// single word bit field
 		constructor16();
 		out.println();
@@ -260,6 +234,13 @@ public class JavaType {
 	private void bitField32() {
 		final var out  = javaFile.out;
 		final var type = javaFile.type.toTypeRecord();
+
+		classPreamble(MemoryData32.class);
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
 
 		// double word bit field
 		constructor32();
@@ -327,8 +308,13 @@ public class JavaType {
 	// methods generate java source for corresponding parameter type
 	//
 	
+	private final static Class<?>[] typeBooleanParentClass = {
+		MemoryData16.class,
+	};
 	private void typeBoolean(TypeBoolean type) {
 		final var out = javaFile.out;
+		
+		classPreamble(typeBooleanParentClass[type.wordSize() - 1]);
 
 		out.prepareLayout();
 		out.println("public static final int WORD_SIZE = %d;",     type.wordSize());
@@ -337,9 +323,18 @@ public class JavaType {
 		out.println();
 		
 		constructor16();
+		
+		// close class body
+		out.println("}");
 	}
+	private final static Class<?>[] typeSubrangeParentClass = {
+		MemoryData16.class,
+		MemoryData32.class,
+	};
 	private void typeSubrange(TypeSubrange type) {
 		final var out = javaFile.out;
+
+		classPreamble(typeSubrangeParentClass[type.wordSize() - 1]);
 
 		out.prepareLayout();
 		out.println("public static final int  WORD_SIZE = %d;",  type.wordSize());
@@ -378,9 +373,17 @@ public class JavaType {
 			logger.error("type {}", type);
 			throw new UnexpectedException("Unexpected");
 		}
+		
+		// close class body
+		out.println("}");
 	}
+	private final static Class<?>[] typeEnumParentClass = {
+		MemoryData16.class,
+	};
 	private void typeEnum(TypeEnum type) {
 		final var out = javaFile.out;
+
+		classPreamble(typeEnumParentClass[type.wordSize() - 1]);
 
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
@@ -425,11 +428,21 @@ public class JavaType {
 		out.println("public final String toString(int value) {");
 		out.println("return context.toString(value);");
 		out.println("}");
+		
+		// close class body
+		out.println("}");
 	}
+	private final static Class<?>[] typePointerParentClass = {
+			MemoryBase.class,
+			MemoryBase.class,
+		};
 	private void typePointer(TypePointer type) {
-		final var out = javaFile.out;
 
 		if (type.rawPointer()) {
+			final var out = javaFile.out;
+
+			classPreamble(typePointerParentClass[type.wordSize() - 1]);
+
 			out.prepareLayout();
 			out.println("public static final int WORD_SIZE = %d;",     type.wordSize());
 			out.println("public static final int BIT_SIZE  = %d;",     type.bitSize());
@@ -437,6 +450,9 @@ public class JavaType {
 			out.println();
 			
 			constructorBase();
+			
+			// close class body
+			out.println("}");
 		} else {
 			javaFile.success = false;
 		}
@@ -445,6 +461,8 @@ public class JavaType {
 		final var out = javaFile.out;
 		
 		boolean haveCheckIndex = true;
+		
+		classPreamble(MemoryBase.class);
 		
 		out.prepareLayout();
 		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
@@ -539,21 +557,25 @@ public class JavaType {
 			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index), access);", elementTypeName, indexTypeName);
 			out.println("}");
 		}
+		
+		// close class body
+		out.println("}");
 	}
 	private void typeRecord(TypeRecord type) {
 		final var out = javaFile.out;
-
-		out.prepareLayout();
-		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-		out.println();
-
+		
 		if (type.bitField16()) {
 			bitField16();
 		} else if (type.bitField32()) {
 			bitField32();
 		} else {
+			classPreamble(MemoryBase.class);
+			out.prepareLayout();
+			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+			out.println();
+
 			// multiple word
 			// FIXME
 			
@@ -658,6 +680,10 @@ public class JavaType {
 				}
 			}
 		}
+		
+		// close class body
+		out.println("}");
+
 	}
 
 }
