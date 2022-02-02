@@ -12,7 +12,8 @@ import org.antlr.v4.runtime.DefaultErrorStrategy;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolLexer;
 import yokwe.majuro.symbol.antlr.SymbolParser;
-import yokwe.majuro.symbol.antlr.SymbolParser.*;
+import yokwe.majuro.symbol.antlr.SymbolParser.DeclContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.util.StringUtil;
 
 public class Symbol {
@@ -37,7 +38,7 @@ public class Symbol {
 		}
 		@Override
 		public String toString() {
-			return value.toMesaType();
+			return String.format("%s: %s = %s;", value.name, value.type.toMesaType(), value.valueString);
 		}
 	}
 	public static class DeclType extends Decl {
