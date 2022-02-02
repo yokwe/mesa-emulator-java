@@ -1,6 +1,7 @@
 package yokwe.majuro.symbol.model;
 
-import static yokwe.majuro.mesa.Constant.*;
+import static yokwe.majuro.mesa.Constant.WORD_BITS;
+
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
