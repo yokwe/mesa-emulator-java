@@ -34,7 +34,7 @@ public final class CodeSegment extends MemoryBase {
     }
     // code (4): BLOCK
     private static final int OFFSET_CODE = 4;
-    public UNSPECIFIED code(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_CODE + (UNSPECIFIED.WORD_SIZE * index), access);
+    public BLOCK code() {
+        return BLOCK.longPointer(base + OFFSET_CODE);
     }
 }

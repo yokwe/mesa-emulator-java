@@ -44,7 +44,7 @@ public final class GlobalOverhead extends MemoryBase {
     }
     // global (4): GlobalVariables
     private static final int OFFSET_GLOBAL = 4;
-    public UNSPECIFIED global(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_GLOBAL + (UNSPECIFIED.WORD_SIZE * index), access);
+    public BLOCK global() {
+        return BLOCK.longPointer(base + OFFSET_GLOBAL);
     }
 }

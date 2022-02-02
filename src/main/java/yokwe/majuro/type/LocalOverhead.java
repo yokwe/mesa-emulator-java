@@ -49,7 +49,7 @@ public final class LocalOverhead extends MemoryBase {
     }
     // local (4): LocalVariables
     private static final int OFFSET_LOCAL = 4;
-    public UNSPECIFIED local(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_LOCAL + (UNSPECIFIED.WORD_SIZE * index), access);
+    public BLOCK local() {
+        return BLOCK.longPointer(base + OFFSET_LOCAL);
     }
 }

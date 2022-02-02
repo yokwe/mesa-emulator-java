@@ -44,7 +44,7 @@ public final class StateVector extends MemoryBase {
     }
     // data (16): BLOCK
     private static final int OFFSET_DATA = 16;
-    public UNSPECIFIED data(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_DATA + (UNSPECIFIED.WORD_SIZE * index), access);
+    public BLOCK data() {
+        return BLOCK.longPointer(base + OFFSET_DATA);
     }
 }
