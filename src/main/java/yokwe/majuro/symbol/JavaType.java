@@ -157,152 +157,6 @@ public class JavaType {
 		out.println("}");
 	}
 	
-	//
-	// methods for Record
-	//
-	private void bitField16() {
-		final var out  = javaFile.out;
-		final var type = javaFile.type.toTypeRecord();
-
-		classPreamble(MemoryData16.class);
-		out.prepareLayout();
-		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-		out.println();
-
-		// single word bit field
-		constructor16();
-		out.println();
-
-		out.println("//");
-		out.println("// Bit Field");
-		out.println("//");
-		out.println();
-		
-		out.prepareLayout();
-		for(var e: type.fieldList) {
-			out.println("// %s", e.toMesaType());
-		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
-		out.println();
-		
-		out.prepareLayout();
-		for(var e: type.fieldList) {
-			String fieldCons = StringUtil.toJavaConstName(e.name);
-
-			final int offset = e.offset;
-			final int start;
-			final int stop;
-			if (offset == 0) {
-				start  = e.startBit;
-				stop   = e.stopBit;
-			} else {
-				logger.error("field {}", e);
-				throw new UnexpectedException("Unexpected");
-			}
-			
-			int bits  = stop - start + 1;
-			int pat   = (1 << bits) - 1;
-			int shift = type.bitSize() - stop - 1;
-			int mask  = (pat << shift);
-			
-			out.println("private static final int %s_MASK  = %s;",
-				fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
-			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-		out.println();
-		
-		out.println("//");
-		out.println("// Bit Field Access Methods");
-		out.println("//");
-		for(var e: type.fieldList) {
-			String fieldName = StringUtil.toJavaName(e.name);
-			String fieldCons = StringUtil.toJavaConstName(e.name);
-			
-			out.println("public final char %s() {", fieldName);
-			out.println("return (char)((value & %1$s_MASK) >> %1$s_SHIFT);", fieldCons);
-			out.println("}");
-			
-			out.println("public final void %s(char newValue) {", fieldName);
-			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
-			out.println("}");
-			out.println();
-		}
-	}
-	private void bitField32() {
-		final var out  = javaFile.out;
-		final var type = javaFile.type.toTypeRecord();
-
-		classPreamble(MemoryData32.class);
-		out.prepareLayout();
-		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-		out.println();
-
-		// double word bit field
-		constructor32();
-		out.println();
-
-		out.println("//");
-		out.println("// Bit Field");
-		out.println("//");
-		out.println();
-		
-		out.prepareLayout();
-		for(var e: type.fieldList) {
-			out.println("// %s", e.toMesaType());
-		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
-		out.println();
-
-		out.prepareLayout();
-		for(var e: type.fieldList) {
-			String fieldCons = StringUtil.toJavaConstName(e.name);
-
-			final int offset = e.offset;
-			final int start;
-			final int stop;
-			if (offset == 0) {
-				start  = 16 + e.startBit;
-				stop   = 16 + e.stopBit;
-			} else if (offset == 1) {
-				start  = e.startBit;
-				stop   = e.stopBit;
-			} else {
-				throw new UnexpectedException("Unexpected");
-			}
-			
-			int bits  = stop - start + 1;
-			int pat   = (1 << bits) - 1;
-			int shift = type.bitSize() - stop - 1;
-			int mask  = (pat << shift);
-			
-			out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
-			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-		}
-		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-		out.println();
-		
-		out.println("//");
-		out.println("// Bit Field Access Methods");
-		out.println("//");
-		for(var e: type.fieldList) {
-			String fieldName = StringUtil.toJavaName(e.name);
-			String fieldCons = StringUtil.toJavaConstName(e.name);
-			
-			out.println("public final int %s() {", fieldName);
-			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
-			out.println("}");
-			
-			out.println("public final void %s(int newValue) {", fieldName);
-			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
-			out.println("}");
-			out.println();
-		}
-	}
 	
 	//
 	// methods generate java source for corresponding parameter type
@@ -561,129 +415,285 @@ public class JavaType {
 		// close class body
 		out.println("}");
 	}
-	private void typeRecord(TypeRecord type) {
-		final var out = javaFile.out;
+	//
+	// methods for Record
+	//
+	private void bitField16Record() {
+		final var out  = javaFile.out;
+		final var type = javaFile.type.toTypeRecord();
+
+		classPreamble(MemoryData16.class);
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+
+		// single word bit field
+		constructor16();
+		out.println();
+
+		out.println("//");
+		out.println("// Bit Field");
+		out.println("//");
+		out.println();
 		
-		if (type.bitField16()) {
-			bitField16();
-		} else if (type.bitField32()) {
-			bitField32();
-		} else {
-			classPreamble(MemoryBase.class);
-			out.prepareLayout();
-			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-			out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
-			out.println();
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			out.println("// %s", e.toMesaType());
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+		out.println();
+		
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			String fieldCons = StringUtil.toJavaConstName(e.name);
 
-			// multiple word
-			// FIXME
+			final int offset = e.offset;
+			final int start;
+			final int stop;
+			if (offset == 0) {
+				start  = e.startBit;
+				stop   = e.stopBit;
+			} else {
+				logger.error("field {}", e);
+				throw new UnexpectedException("Unexpected");
+			}
 			
-			constructorBase();
-			out.println();
+			int bits  = stop - start + 1;
+			int pat   = (1 << bits) - 1;
+			int shift = type.bitSize() - stop - 1;
+			int mask  = (pat << shift);
 			
-			out.println("//");
-			out.println("// Access to Field of Record");
-			out.println("//");			
-			for(TypeRecord.Field field: type.fieldList) {
-				Type   fieldType      = field.type.getRealType();
-				String fieldConstName = StringUtil.toJavaConstName(field.name);
-				String fieldName      = StringUtil.toJavaName(field.name);
-				String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+			out.println("private static final int %s_MASK  = %s;",
+				fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
+			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+		
+		out.println("//");
+		out.println("// Bit Field Access Methods");
+		out.println("//");
+		for(var e: type.fieldList) {
+			String fieldName = StringUtil.toJavaName(e.name);
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+			
+			out.println("public final char %s() {", fieldName);
+			out.println("return (char)((value & %1$s_MASK) >> %1$s_SHIFT);", fieldCons);
+			out.println("}");
+			
+			out.println("public final void %s(char newValue) {", fieldName);
+			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+			out.println("}");
+			out.println();
+		}
+		
+		// close class body
+		out.println("}");
+	}
+	private void bitField32Record() {
+		final var out  = javaFile.out;
+		final var type = javaFile.type.toTypeRecord();
 
-				out.println("// %s", field.toMesaType());
-				// sanity check
-				if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
-					//
-				} else if (field.startBit == Field.NO_VALUE) {
-					//
-				} else {
-					out.println("// FIXME  Field is not aligned");
-					logger.warn("Field is not aligned");
-					logger.warn("  name {}.{}", type.name, field.name);
-					logger.warn("  mesa {}", field.toMesaType());
-					continue;
-				}
-				
-				out.println("private static final int OFFSET_%s = %d;", fieldConstName, field.offset);
+		classPreamble(MemoryData32.class);
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
 
-				if (fieldType.container()) {
-					// can be array, pointer or multiple word record
-					if (fieldType instanceof TypeArray) {
-						// index of array can be subrange or reference
-						Type elementType = fieldType.toTypeArray().arrayElement.getRealType();
-						String elementTypeString = StringUtil.toJavaName(elementType.name);
-						
-						if (elementType.container()) {
-							if (fieldTypeName.contains("#")) {
-								out.println("public %s %s(int index) {", elementTypeString, fieldName);
-								out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
-								out.println("}");
-							} else {
-								out.println("public %s %s() {", fieldTypeName, fieldName);
-								out.println("return %1$s.longPointer(base + OFFSET_%2$s);", fieldTypeName, fieldConstName);
-								out.println("}");
-							}
+		// double word bit field
+		constructor32();
+		out.println();
+
+		out.println("//");
+		out.println("// Bit Field");
+		out.println("//");
+		out.println();
+		
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			out.println("// %s", e.toMesaType());
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT);
+		out.println();
+
+		out.prepareLayout();
+		for(var e: type.fieldList) {
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+
+			final int offset = e.offset;
+			final int start;
+			final int stop;
+			if (offset == 0) {
+				start  = 16 + e.startBit;
+				stop   = 16 + e.stopBit;
+			} else if (offset == 1) {
+				start  = e.startBit;
+				stop   = e.stopBit;
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+			
+			int bits  = stop - start + 1;
+			int pat   = (1 << bits) - 1;
+			int shift = type.bitSize() - stop - 1;
+			int mask  = (pat << shift);
+			
+			out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
+			out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+		}
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+		
+		out.println("//");
+		out.println("// Bit Field Access Methods");
+		out.println("//");
+		for(var e: type.fieldList) {
+			String fieldName = StringUtil.toJavaName(e.name);
+			String fieldCons = StringUtil.toJavaConstName(e.name);
+			
+			out.println("public final int %s() {", fieldName);
+			out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+			out.println("}");
+			
+			out.println("public final void %s(int newValue) {", fieldName);
+			out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+			out.println("}");
+			out.println();
+		}
+		
+		
+		// close class body
+		out.println("}");
+	}
+	private void multiWordRecord() {
+		final var out  = javaFile.out;
+		final var type = javaFile.type.toTypeRecord();
+
+		classPreamble(MemoryBase.class);
+		out.prepareLayout();
+		out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+		out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+		out.layout(Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.LEFT, Layout.RIGHT);
+		out.println();
+
+		// multiple word
+		// FIXME
+		
+		constructorBase();
+		out.println();
+		
+		out.println("//");
+		out.println("// Access to Field of Record");
+		out.println("//");			
+		for(TypeRecord.Field field: type.fieldList) {
+			Type   fieldType      = field.type.getRealType();
+			String fieldConstName = StringUtil.toJavaConstName(field.name);
+			String fieldName      = StringUtil.toJavaName(field.name);
+			String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+
+			out.println("// %s", field.toMesaType());
+			// sanity check
+			if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
+				//
+			} else if (field.startBit == Field.NO_VALUE) {
+				//
+			} else {
+				out.println("// FIXME  Field is not aligned");
+				logger.warn("Field is not aligned");
+				logger.warn("  name {}.{}", type.name, field.name);
+				logger.warn("  mesa {}", field.toMesaType());
+				continue;
+			}
+			
+			out.println("private static final int OFFSET_%s = %d;", fieldConstName, field.offset);
+
+			if (fieldType.container()) {
+				// can be array, pointer or multiple word record
+				if (fieldType instanceof TypeArray) {
+					// index of array can be subrange or reference
+					Type elementType = fieldType.toTypeArray().arrayElement.getRealType();
+					String elementTypeString = StringUtil.toJavaName(elementType.name);
+					
+					if (elementType.container()) {
+						if (fieldTypeName.contains("#")) {
+							out.println("public %s %s(int index) {", elementTypeString, fieldName);
+							out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index));", elementTypeString, fieldConstName);
+							out.println("}");
 						} else {
-							out.println("public %s %s(int index, MemoryAccess access) {", elementTypeString, fieldName);
-							out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), access);", elementTypeString, fieldConstName);
+							out.println("public %s %s() {", fieldTypeName, fieldName);
+							out.println("return %1$s.longPointer(base + OFFSET_%2$s);", fieldTypeName, fieldConstName);
 							out.println("}");
 						}
-						
-					} else if (fieldType instanceof TypePointer) {
-						TypePointer typePointer = fieldType.toTypePointer();
-						if (typePointer.rawPointer()) {
-							// naked POINTER and LONG POINTER
-							String typeTargetName = StringUtil.toJavaName(typePointer.name);
-							out.println("public %s %s() {", typeTargetName, fieldName);
-							out.println("return %s.longPointer(base + OFFSET_%s);", typeTargetName, fieldConstName);
-							out.println("}");
-						} else {
-							Type typeTarget = typePointer.targetType.getRealType();
-							String typeTargetName = StringUtil.toJavaName(typeTarget.name);
-							if (typePointer.longPointer()) {
-								if (typeTarget.container()) {
-									out.println("public %s %s() {", typeTargetName, fieldName);
-									out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s));", typeTargetName, fieldConstName);
-									out.println("}");
-								} else {
-									out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
-									out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
-									out.println("}");
-								}
-							} else if (typePointer.shortPointer()) {
-								if (typeTarget.container()) {
-									out.println("public %s %s() {", typeTargetName, fieldName);
-									out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s));", typeTargetName, fieldConstName);
-									out.println("}");
-								} else {
-									out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
-									out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
-									out.println("}");
-								}
-							} else {
-								throw new UnexpectedException("Unexpected");
-							}
-						}
-					} else if (fieldType instanceof TypeRecord) {
-						out.println("public %s %s() {", fieldTypeName, fieldName);
-						out.println("return %s.longPointer(base + OFFSET_%s);", fieldTypeName, fieldConstName);
+					} else {
+						out.println("public %s %s(int index, MemoryAccess access) {", elementTypeString, fieldName);
+						out.println("return %1$s.longPointer(base + OFFSET_%2$s + (%1$s.WORD_SIZE * index), access);", elementTypeString, fieldConstName);
+						out.println("}");
+					}
+					
+				} else if (fieldType instanceof TypePointer) {
+					TypePointer typePointer = fieldType.toTypePointer();
+					if (typePointer.rawPointer()) {
+						// naked POINTER and LONG POINTER
+						String typeTargetName = StringUtil.toJavaName(typePointer.name);
+						out.println("public %s %s() {", typeTargetName, fieldName);
+						out.println("return %s.longPointer(base + OFFSET_%s);", typeTargetName, fieldConstName);
 						out.println("}");
 					} else {
-						throw new UnexpectedException("Unexpected");
+						Type typeTarget = typePointer.targetType.getRealType();
+						String typeTargetName = StringUtil.toJavaName(typeTarget.name);
+						if (typePointer.longPointer()) {
+							if (typeTarget.container()) {
+								out.println("public %s %s() {", typeTargetName, fieldName);
+								out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s));", typeTargetName, fieldConstName);
+								out.println("}");
+							} else {
+								out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
+								out.println("return %s.longPointer(Mesa.read32(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
+								out.println("}");
+							}
+						} else if (typePointer.shortPointer()) {
+							if (typeTarget.container()) {
+								out.println("public %s %s() {", typeTargetName, fieldName);
+								out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s));", typeTargetName, fieldConstName);
+								out.println("}");
+							} else {
+								out.println("public %s %s(MemoryAccess access) {", typeTargetName, fieldName);
+								out.println("return %s.pointer(Mesa.read16(base + OFFSET_%s), access);", typeTargetName, fieldConstName);
+								out.println("}");
+							}
+						} else {
+							throw new UnexpectedException("Unexpected");
+						}
 					}
-				} else {
-					// can be boolean, enum, bitfield16, bitfield32 or subrange
-					out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
-					out.println("return %s.longPointer(base + OFFSET_%s, access);", fieldTypeName, fieldConstName);
+				} else if (fieldType instanceof TypeRecord) {
+					out.println("public %s %s() {", fieldTypeName, fieldName);
+					out.println("return %s.longPointer(base + OFFSET_%s);", fieldTypeName, fieldConstName);
 					out.println("}");
+				} else {
+					throw new UnexpectedException("Unexpected");
 				}
+			} else {
+				// can be boolean, enum, bitfield16, bitfield32 or subrange
+				out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
+				out.println("return %s.longPointer(base + OFFSET_%s, access);", fieldTypeName, fieldConstName);
+				out.println("}");
 			}
 		}
 		
 		// close class body
 		out.println("}");
-
+	}
+	private void typeRecord(TypeRecord type) {
+		if (type.bitField16()) {
+			bitField16Record();
+		} else if (type.bitField32()) {
+			bitField32Record();
+		} else {
+			multiWordRecord();
+		}
 	}
 
 }
