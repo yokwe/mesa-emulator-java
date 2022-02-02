@@ -77,6 +77,23 @@ public abstract class Type implements Comparable<Type> {
 		return countNeedsFix;
 	}
 
+	public static Type findType(String name) {
+		return map.containsKey(name) ? map.get(name) : null;
+	}
+	public static void dumpReference(Type type) {
+		logger.info("dumpReference START");
+		for(int i = 0; i < 99; i++) {
+			if (type == null) break;
+			logger.info("{} {}: TYPE = {};", i, type.name, type.toMesaType());
+			if (type instanceof TypeReference) {
+				type = findType(type.toTypeReference().typeString);
+				continue;
+			}
+			break;
+		}
+		logger.info("dumpReference STOP");
+	}
+	
 	//
 	// Define simple type
 	//
@@ -225,8 +242,7 @@ public abstract class Type implements Comparable<Type> {
 			return false;
 		}
 	}
-	
-	
+		
 	public TypeArray toTypeArray() {
 		if (this instanceof TypeArray) {
 			return (TypeArray)this;
