@@ -178,45 +178,32 @@ public abstract class Type implements Comparable<Type> {
 		}
 	}
 	
-	public boolean openSubrange() {
-		if (this instanceof TypeSubrange) {
-			TypeSubrange typeSubrange = toTypeSubrange();
-			return typeSubrange.minString.equals(typeSubrange.maxString) &&
-				typeSubrange.closeChar.equals(TypeSubrange.CLOSE_CHAR_EXCLUSIVE);
-		} else {
-			return false;
-		}
+	// check bitSize for empty
+	public boolean empty() {
+		return getRealType().bitSize() == 0;
 	}
-	public boolean openArray() {
-		if (this instanceof TypeArray.Subrange) {
-			TypeArray.Subrange typeArraySubrange = toTypeArray().toSubrange();
-			return typeArraySubrange.typeSubrange.openSubrange();
-		} else {
-			return false;
-		}
-	}
+	
 	public boolean bitField16() {
 		if (this instanceof TypeRecord) {
 			TypeRecord typeRecord = toTypeRecord();
-			if (typeRecord.align == TypeRecord.Align.BIT_16 && typeRecord.bitSize <= 16) {
-				for(var e: typeRecord.fieldList) {
-					if (e.type.getRealType().openArray()) return false;
+			if (typeRecord.align == TypeRecord.Align.BIT_16) {
+				if (typeRecord.bitSize() <= 16) {
+					for(var e: typeRecord.fieldList) {
+						// if record has empty field return false
+						if (e.type.empty()) return false;
+					}
+					return true;
 				}
-				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 	public boolean bitField32() {
 		if (this instanceof TypeRecord) {
 			TypeRecord typeRecord = toTypeRecord();
 			return typeRecord.align == TypeRecord.Align.BIT_32 && typeRecord.bitSize == 32;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	public boolean rawPointer() {
 		if (this instanceof TypePointer) {
