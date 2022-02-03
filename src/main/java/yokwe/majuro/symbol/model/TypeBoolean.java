@@ -30,9 +30,4 @@ public class TypeBoolean extends Type {
 		logger.error("  this  {}", this);
 		throw new UnexpectedException("Unexpected");
 	}
-
-	@Override
-	public boolean container() {
-		return false;
-	}
 }

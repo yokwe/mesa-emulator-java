@@ -80,9 +80,4 @@ public class TypeSubrange extends Type {
 	public String toMesaType() {
 		return String.format("[%s..%s%s", minString, maxString, closeChar);
 	}
-	
-	@Override
-	public boolean container() {
-		return false;
-	}
 }

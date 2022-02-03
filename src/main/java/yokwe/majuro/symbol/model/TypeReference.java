@@ -41,9 +41,4 @@ public class TypeReference extends Type {
 	public String toMesaType() {
 		return typeString;
 	}
-
-	@Override
-	public boolean container() {
-		return getRealType().container();
-	}
 }

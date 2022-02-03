@@ -136,9 +136,4 @@ public class TypeEnum extends Type {
 		List<String> list = itemList.stream().map(o -> String.format("%s(%d)", o.name, o.value)).collect(Collectors.toList());
 		return String.format("{%s}", String.join(", ", list));
 	}
-
-	@Override
-	public boolean container() {
-		return false;
-	}
 }

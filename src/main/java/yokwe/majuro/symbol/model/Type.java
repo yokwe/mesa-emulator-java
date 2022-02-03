@@ -161,10 +161,7 @@ public abstract class Type implements Comparable<Type> {
 		return (bitSize() + WORD_BITS - 1) / WORD_BITS;
 	}
 	
-	abstract public String toMesaType();
-	
-	abstract public boolean container(); // if type hold other type object, it is container
-	
+	abstract public String toMesaType();	
 	
 	//
 	// Convenience method

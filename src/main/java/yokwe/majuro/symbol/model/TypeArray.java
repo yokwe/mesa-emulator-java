@@ -139,9 +139,4 @@ public abstract class TypeArray extends Type {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	
-	@Override
-	public boolean container() {
-		return true;
-	}
 }

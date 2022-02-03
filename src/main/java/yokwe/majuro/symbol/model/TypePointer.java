@@ -85,11 +85,5 @@ public class TypePointer extends Type {
 		} else {
 			return baseType + " TO " + targetType.toMesaType();
 		}
-	}
-	
-	@Override
-	public boolean container() {
-		return true;
-	}
-    
+	}   
 }

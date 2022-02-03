@@ -248,11 +248,4 @@ public class TypeRecord extends Type {
 		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
 		return String.format("%s[%s]", baseType, String.join(", ", list));
 	}
-
-	@Override
-	public boolean container() {
-		if (bitField16()) return false;
-		if (bitField32()) return false;
-		return true;
-	}
 }
