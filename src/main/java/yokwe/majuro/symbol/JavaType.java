@@ -415,9 +415,43 @@ public class JavaType {
 				arrayData(indexType);
 			} else if (elementType instanceof TypePointer) {
 				// ARRAY of POINTER
-				// FIXME
-//				throw new UnexpectedException("Unexpected");
-				out.println("// FIXME ARRAY of POINTER");
+				TypePointer typePointer = elementType.toTypePointer();
+				if (typePointer.rawPointer()) {
+					// ARRAY of RAW POINTER
+					// FIXME
+				} else {
+					Type targetType = typePointer.targetType.getRealType();
+					if (targetType instanceof TypeArray) {
+						// ARRAY of POINTER to ARRAY
+						throw new UnexpectedException("Unexpected");
+					} else if (targetType instanceof TypeBoolean) {
+						// ARRAY of POINTER to BOOLEAN
+						// FIXME
+					} else if (targetType instanceof TypeEnum) {
+						// ARRAY of POINTER to ENUM
+						// FIXME
+					} else if (targetType instanceof TypePointer) {
+						// ARRAY of POINTER to POINTER
+						throw new UnexpectedException("Unexpected");
+					} else if (targetType instanceof TypeRecord) {
+						// ARRAY of POINTER to RECORD
+						if (targetType.bitField16()) {
+							// ARRAY of POINTER to BIT FIELD 16
+							// FIXME
+						} else if (targetType.bitField32()) {
+							// ARRAY of POINTER to BIT FIELD 32
+							// FIXME
+						} else {
+							// ARRAY of POINTER to MULTI WORD RECORD
+							// FIXME
+						}
+					} else if (targetType instanceof TypeSubrange) {
+						// ARRAY of POINTER to SUBRANGE
+						// FIXME
+					} else {
+						throw new UnexpectedException("Unexpected");
+					}
+				}
 			} else if (elementType instanceof TypeRecord) {
 				// ARRAY of RECORD
 				if (elementType.bitField16()) {
