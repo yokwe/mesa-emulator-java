@@ -163,6 +163,10 @@ public abstract class Type implements Comparable<Type> {
 	
 	abstract public String toMesaType();	
 	
+	public String toMesaDecl() {
+		return String.format("%s: TYPE = %s;", name, toMesaType());
+	}
+	
 	//
 	// Convenience method
 	//
