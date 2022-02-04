@@ -52,7 +52,8 @@ public class JavaFile {
 			JavaFile javaFile = new JavaFile(e, outputDirPath, packageName);
 			
 			if (javaFile.type != null) {
-				JavaType.generateFile(javaFile);
+//				JavaType.generateFile(javaFile);
+				ProcessFile.generateFile(javaFile);
 			} else if (javaFile.cons != null) {
 				JavaCons.generateFile(javaFile);
 			} else {
