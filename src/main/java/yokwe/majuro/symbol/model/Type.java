@@ -84,7 +84,7 @@ public abstract class Type implements Comparable<Type> {
 		logger.info("dumpReference START");
 		for(int i = 0; i < 99; i++) {
 			if (type == null) break;
-			logger.info("{} {}: TYPE = {};", i, type.name, type.toMesaType());
+			logger.info("{} {}", i, type.toMesaDecl());
 			if (type instanceof TypeReference) {
 				type = findType(type.toTypeReference().typeString);
 				continue;
@@ -95,7 +95,7 @@ public abstract class Type implements Comparable<Type> {
 	}
 	
 	//
-	// Define simple type
+	// Define predefined type
 	//
 	public static final Type BOOLEAN          = new TypeBoolean ("BOOLEAN");
 	public static final Type INTEGER          = new TypeSubrange("INTEGER", Short.MIN_VALUE, Short.MAX_VALUE);
@@ -108,7 +108,7 @@ public abstract class Type implements Comparable<Type> {
 	
 	public static final Type POINTER          = new TypePointer ("POINTER",      TypePointer.PointerSize.SHORT);
 	public static final Type LONG_POINTER     = new TypePointer ("LONG POINTER", TypePointer.PointerSize.LONG);
-
+	
 	
 	public final String name;
 	
