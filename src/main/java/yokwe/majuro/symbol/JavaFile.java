@@ -15,15 +15,15 @@ import yokwe.majuro.util.StringUtil;
 public class JavaFile {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JavaFile.class);
 	
-	public static final String  TYPE_RULE_FILE_PATH  = Symbol.PATH_RULE_FILE_TYPE;
-	public static final String  TYPE_OUTPUT_DIR_PATH = "src/main/java";
-	public static final String  TYPE_PACKAGE_NAME    = "yokwe.majuro.type";
-	public static final boolean TYPE_ADD_SIMPLE_TYPE = true;
+	public static final String  TYPE_RULE_FILE_PATH      = Symbol.PATH_RULE_FILE_TYPE;
+	public static final String  TYPE_OUTPUT_DIR_PATH     = "src/main/java";
+	public static final String  TYPE_PACKAGE_NAME        = "yokwe.majuro.type";
+	public static final boolean TYPE_ADD_PREDEFINED_TYPE = true;
 	
-	public static final String  TEST_RULE_FILE_PATH  = Symbol.PATH_RULE_FILE_TEST;
-	public static final String  TEST_OUTPUT_DIR_PATH = "src/test/java";
-	public static final String  TEST_PACKAGE_NAME    = "yokwe.majuro.type";
-	public static final boolean TEST_ADD_SIMPLE_TYPE = false;
+	public static final String  TEST_RULE_FILE_PATH     = Symbol.PATH_RULE_FILE_TEST;
+	public static final String  TEST_OUTPUT_DIR_PATH    = "src/test/java";
+	public static final String  TEST_PACKAGE_NAME       = "yokwe.majuro.type";
+	public static final boolean TEST_ADD_PREDEFINED_TYPE = false;
 
 	
 	public static void main(String[] args) {
@@ -35,18 +35,18 @@ public class JavaFile {
 	}
 	
 	public static void generateType() {
-		generate(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME, TYPE_ADD_SIMPLE_TYPE);
+		generate(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME, TYPE_ADD_PREDEFINED_TYPE);
 	}
 	public static void generateTest() {
-		generate(TEST_RULE_FILE_PATH, TEST_OUTPUT_DIR_PATH, TEST_PACKAGE_NAME, TEST_ADD_SIMPLE_TYPE);
+		generate(TEST_RULE_FILE_PATH, TEST_OUTPUT_DIR_PATH, TEST_PACKAGE_NAME, TEST_ADD_PREDEFINED_TYPE);
 	}
 
-	public static void generate(String ruleFilePath, String outputDirPath, String packageName, boolean addBuiltinType) {
+	public static void generate(String ruleFilePath, String outputDirPath, String packageName, boolean addPredefinedType) {
 		logger.info("ruleFilePath  {}",  ruleFilePath);
 		logger.info("outputDirPath {}", outputDirPath);
 		logger.info("packageName   {}",   packageName);
 		
-		Symbol symbol = Symbol.getInstance(ruleFilePath, addBuiltinType);
+		Symbol symbol = Symbol.getInstance(ruleFilePath, addPredefinedType);
 		
 		for(var e: symbol.declList) {
 			JavaFile javaFile = new JavaFile(e, outputDirPath, packageName);

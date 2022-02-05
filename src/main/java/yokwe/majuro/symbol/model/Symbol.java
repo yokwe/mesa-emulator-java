@@ -54,7 +54,7 @@ public class Symbol {
 		}
 	}
 	
-	public static Symbol getInstance(String filePath, boolean addSimpleType) {
+	public static Symbol getInstance(String filePath, boolean addPredefinedType) {
 		final SymbolContext symbolContext;
 		// build symbolContext
 		try {
@@ -78,9 +78,9 @@ public class Symbol {
 		final List<Decl> declList = new ArrayList<>();
 		// build declList
 		{
-			if (addSimpleType) {
+			if (addPredefinedType) {
 				for(var e: Type.map.values()) {
-					logger.info("add bui type  {}", e.name);
+					logger.info("add predefined type  {}", e.name);
 					declList.add(new DeclType(e));
 				}
 			}
