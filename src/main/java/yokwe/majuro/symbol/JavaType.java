@@ -54,7 +54,7 @@ public class JavaType {
 			} else if (type instanceof TypeRecord) {
 				typeRecord(type.toTypeRecord());
 			} else if (type instanceof TypeReference) {
-				logger.info("genDecl REF {}: TYPE = {}", type.name, type.toMesaType());
+				logger.info("genDecl REF {}", type.toMesaDecl());
 				javaFile.success = false;
 			} else {
 				logger.error("type {}", type.name);
@@ -83,7 +83,7 @@ public class JavaType {
 		out.println("import yokwe.majuro.mesa.Mesa;");
 		out.println();
 		
-		out.println("// %s: TYPE = %s;", javaFile.type.name, javaFile.type.toMesaType());
+		out.println("// %s", javaFile.type.toMesaDecl());
 		
 		out.println("public final class %s extends %s {", javaFile.name, parentClass.getSimpleName());
 		out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
