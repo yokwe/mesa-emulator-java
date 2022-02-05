@@ -55,26 +55,34 @@ public class JavaFile {
 	}
 
 	final String   packageName;
-	final String   name;
+	final Constant cons;
 	final Type     type;
-	final Constant cons;		
+	final String   name;
 	
-	final File   ouputFile;
-	final File   tempFile;
+	final File     ouputFile;
+	final File     tempFile;
 	
 	boolean               success;
 	AutoIndentPrintWriter out;
 
 	public JavaFile(Decl decl, String outputDirPath, String packageName_) {
 		packageName = packageName_;
-		name        = StringUtil.toJavaName(decl.name);
-		type        = (decl instanceof DeclType)     ? ((DeclType)decl).value     : null;
-		cons        = (decl instanceof DeclConstant) ? ((DeclConstant)decl).value : null;
+		if (decl instanceof DeclConstant) {
+			cons = decl.toCons();
+			type = null;
+			name = StringUtil.toJavaName(cons.name);
+		} else if (decl instanceof DeclType) {
+			cons = null;
+			type = decl.toType();
+			name = StringUtil.toJavaName(type.name);
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
 		success     = true;
 		out         = null;
 		
-		String name      = StringUtil.toJavaName(decl.name);
-		String path      = String.format("%s/%s/%s.java", outputDirPath, packageName.replace('.', '/'), name);
+		String path = String.format("%s/%s/%s.java", outputDirPath, packageName.replace('.', '/'), name);
+		
 		ouputFile = new File(path);
 		tempFile  = new File("tmp/Generate.java");
 	}

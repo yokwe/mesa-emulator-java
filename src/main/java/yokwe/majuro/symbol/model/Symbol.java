@@ -23,34 +23,41 @@ public class Symbol {
 	public static final String  PATH_RULE_FILE_TEST = "data/type/Test.symbol";
 	
 	public abstract static class Decl {
-		public final String name;
-		
-		public Decl(String name) {
-			this.name = name;
+		public Constant toCons() {
+			if (this instanceof DeclConstant) {
+				return ((DeclConstant)this).value;
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+		}
+		public Type toType() {
+			if (this instanceof DeclType) {
+				return ((DeclType)this).value;
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
 		}
 	}
 	public static class DeclConstant extends Decl {
 		public final Constant value;
 		
 		public DeclConstant(Constant value) {
-			super(value.name);
 			this.value = value;
 		}
 		@Override
 		public String toString() {
-			return String.format("%s: %s = %s;", value.name, value.type.toMesaType(), value.valueString);
+			return value.toMesaDecl();
 		}
 	}
 	public static class DeclType extends Decl {
 		public final Type value;
 		
 		public DeclType(Type value) {
-			super(value.name);
 			this.value = value;
 		}
 		@Override
 		public String toString() {
-			return value.toMesaType();
+			return value.toMesaDecl();
 		}
 	}
 	
