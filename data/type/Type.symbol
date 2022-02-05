@@ -70,7 +70,7 @@ BEGIN
     // changed chapter
     //9.1.4.1 Global frame table
     // GFT: LONG POINTER TO GlobalFrameTable = LOOPHOLE[mGFT];
-    GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constant.mGFT;
+    GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constants.mGFT;
     // GlobalFrameTable: TYPE = LONG BASE POINTER TO ARRAY GFTIndex OF GFTItem;
     GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
     // GFTHandle: TYPE = GlobalFrameTable RELATIVE POINTER TO GFTItem;
@@ -179,7 +179,7 @@ BEGIN
 
     // 9.2.1 Frame Allocation Vector
     // AV: POINTER TO AllocationVector = LOOPHOLsE[mAV];
-    AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constant.mAV;
+    AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constants.mAV;
     AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
     FSIndex: TYPE = [0..256);
     AVItem: TYPE = RECORD [
@@ -200,11 +200,11 @@ BEGIN
 
     // 9.5.1 Trap Routines
     // SD: POINTER TO SystemData = LOOPHOLE[mSD];
-    SD: POINTER TO SystemData = yokwe.majuro.mesa.Constant.mSD;
+    SD: POINTER TO SystemData = yokwe.majuro.mesa.Constants.mSD;
     SystemData: TYPE = ARRAY SDIndex OF ControlLink;
     SDIndex: TYPE = [0..256);
     // ETT: POINTER TO EscTrapTable = LOOPHOLE[mETT];
-    ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constant.mETT;
+    ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constants.mETT;
     EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
 
     // 9.5.3 Trap Handlers
@@ -214,7 +214,7 @@ BEGIN
         instByte(0: 0.. 7): BYTE,
         stkPtr  (0: 8..15): BYTE];
 
-    StackDepth: CARDINAL = yokwe.majuro.mesa.Constant.cSS;
+    StackDepth: CARDINAL = yokwe.majuro.mesa.Constants.cSS;
     StateVector: TYPE = RECORD [
         stack( 0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, // StackDepth = 14
         word (14:0.. 15): StateWord,
@@ -256,7 +256,7 @@ BEGIN
 //        ENDCASE];
 
     // PDA: LONG POINTER TO ProcessDataArea = LOOPHOLE[mPDA];
-    PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constant.mPDA;
+    PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constants.mPDA;
     ProcessDataArea: TYPE = RECORD [
         // equivalent of header arm of SELECT OVERLAID of ProcessDataArea
         ready     ( 0:0.. 15): Queue,
