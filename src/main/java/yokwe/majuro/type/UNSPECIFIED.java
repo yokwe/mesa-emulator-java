@@ -3,7 +3,7 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Mesa;
 
-// UNSPECIFIED: TYPE = [0..65535];
+// UNSPECIFIED: TYPE = UNSPECIFIED;
 public final class UNSPECIFIED extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();

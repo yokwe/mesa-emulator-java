@@ -3,7 +3,7 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Mesa;
 
-// INTEGER: TYPE = [-32768..32767];
+// INTEGER: TYPE = INTEGER;
 public final class INTEGER extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();

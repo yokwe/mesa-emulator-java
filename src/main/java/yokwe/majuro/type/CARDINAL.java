@@ -3,7 +3,7 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Mesa;
 
-// CARDINAL: TYPE = [0..65535];
+// CARDINAL: TYPE = CARDINAL;
 public final class CARDINAL extends MemoryData16 {
     public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
     public static final String   NAME = SELF.getSimpleName();
