@@ -9,7 +9,7 @@ public class T105 {
 		logger.info("START");
 		
 		{
-			String string = "yokwe.majuro.mesa.Constant.cSS";
+			String string = "yokwe.majuro.mesa.Constants.cSS";
 			long value = Constant.getNumericValue(string);
 			logger.info("{} {}", string, value);
 		}
