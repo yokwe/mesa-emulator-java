@@ -110,6 +110,62 @@ public class ProcessFile {
 		}
 	}
 
+	private static void arrayData(JavaFile javaFile, Type indexType) {
+		final var out          = javaFile.out;
+		final TypeArray type = javaFile.type.toTypeArray();
+				
+		Type   elementType     = type.arrayElement.getRealType();
+		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		
+		out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
+		if (!indexType.empty()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+		}
+		out.println("return %s.longPointer(base + (%s.WORD_SIZE * index), access);", elementTypeName, elementTypeName);
+		out.println("}");
+	}
+	private static void arrayPointer(JavaFile javaFile, Type indexType) {
+		final var out          = javaFile.out;
+		final TypeArray type = javaFile.type.toTypeArray();
+		
+		Type   elementType     = type.arrayElement.getRealType();
+		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		
+		out.println("public final %s get(int index) {", elementTypeName);
+		if (!indexType.empty()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+		}
+		out.println("return %s.longPointer(base + (%s.WORD_SIZE * index));", elementTypeName, elementTypeName);
+		out.println("}");
+	}
+
+	private static void fieldData(JavaFile javaFile, TypeRecord.Field field) {
+		final var out         = javaFile.out;
+
+		Type   fieldType      = field.type.getRealType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+
+		out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
+		out.println("return %s.longPointer(base + OFFSET_%s, access);", fieldTypeName, fieldConstName);
+		out.println("}");
+	}
+	private static void fieldPointer(JavaFile javaFile, TypeRecord.Field field) {
+		final var out         = javaFile.out;
+
+		Type   fieldType      = field.type.getRealType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		
+		out.println("public %s %s() {", fieldTypeName, fieldName);
+		out.println("return %s.longPointer(base + OFFSET_%s);", fieldTypeName, fieldConstName);
+		out.println("}");
+	}
+
+
+
 
 	public static void generateFile(JavaFile javaFile) {
 		if (javaFile.type != null) {
@@ -403,7 +459,7 @@ public class ProcessFile {
 		// RECORD
 		@Override
 		protected void processTypeBitField16(TypeRecord type) {
-			// RECORD FIELD BIT FIELD 16
+			// RECORD FIELD is BIT FIELD 16
 			final var out         = javaFile.out;
 			final var parentClass = MemoryData16.class;
 			
@@ -479,7 +535,7 @@ public class ProcessFile {
 		}
 		@Override
 		protected void processTypeBitField32(TypeRecord type) {
-			// RECORD FIELD BIT FIELD 16
+			// RECORD FIELD is BIT FIELD 16
 			final var out         = javaFile.out;
 			final var parentClass = MemoryData32.class;
 			
@@ -576,36 +632,6 @@ public class ProcessFile {
 		ProcessTypeArray(JavaFile javaFile) {
 			super(javaFile);
 		}
-
-		private void arrayData(Type indexType) {
-			final var out          = javaFile.out;
-			final TypeArray type = javaFile.type.toTypeArray();
-					
-			Type   elementType     = type.arrayElement.getRealType();
-			String elementTypeName = StringUtil.toJavaName(elementType.name);
-			
-			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
-			if (!indexType.empty()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
-			}
-			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index), access);", elementTypeName, elementTypeName);
-			out.println("}");
-		}
-		private void arrayPointer(Type indexType) {
-			final var out          = javaFile.out;
-			final TypeArray type = javaFile.type.toTypeArray();
-			
-			Type   elementType     = type.arrayElement.getRealType();
-			String elementTypeName = StringUtil.toJavaName(elementType.name);
-			
-			out.println("public final %s get(int index) {", elementTypeName);
-			if (!indexType.empty()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
-			}
-			out.println("return %s.longPointer(base + (%s.WORD_SIZE * index));", elementTypeName, elementTypeName);
-			out.println("}");
-		}
-
 		
 		//
 		// Entry Point
@@ -692,19 +718,19 @@ public class ProcessFile {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// ARRAY of BOOLEAN
-			arrayData(indexType);
+			arrayData(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// ARRAY of ENUM
-			arrayData(indexType);
+			arrayData(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// ARRAY of SUBRANGE
-			arrayData(indexType);
+			arrayData(javaFile, indexType);
 		}
 
 		@Override
@@ -744,19 +770,19 @@ public class ProcessFile {
 		@Override
 		protected void processTypeBitField16(TypeRecord type) {
 			// ARRAY of BIT FIELD 16
-			arrayData(indexType);
+			arrayData(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeRecord type) {
 			// ARRAY of BIT FIELD 32
-			arrayData(indexType);
+			arrayData(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeRecord type) {
 			// ARRAY of MULTI WORD RECORD
-			arrayPointer(indexType);
+			arrayPointer(javaFile, indexType);
 		}
 
 		@Override
@@ -766,6 +792,7 @@ public class ProcessFile {
 		}
 	}
 	
+	
 	//
 	// ProcessTypeRecord -- MULTI WORD RECORD
 	//
@@ -773,7 +800,7 @@ public class ProcessFile {
 		ProcessTypeRecord(JavaFile javaFile) {
 			super(javaFile);
 		}
-
+		
 		//
 		// Entry Point
 		//
@@ -823,65 +850,75 @@ public class ProcessFile {
 			out.println("}");
 		}
 
+		@Override
+		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
+			// RECORD FIELD is BOOLEAN
+			fieldData(javaFile, field);
+		}
 
 		@Override
-		protected void processTypeBoolean(Field field) {
-			// RECORD FIELD BOOLEAN
+		protected void processTypeEnum(Field field, TypeEnum fieldType) {
+			// RECORD FIELD is ENUM
+			fieldData(javaFile, field);
+		}
+
+		@Override
+		protected void processTypeSubrange(Field field, TypeSubrange fieldType) {
+			// RECORD FIELD is SUBRANGE
+			fieldData(javaFile, field);
+		}
+
+		@Override
+		protected void processTypeArrayReference(Field field, TypeArray.Reference fieldType) {
+			// RECORD FIELD is ARRAY-REFERENCE
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypeEnum(Field field) {
-			// RECORD FIELD ENUM
+		protected void processTypeArraySubrange(Field field, TypeArray.Subrange fieldType) {
+			// RECORD FIELD is ARRAY-SUBRANGE
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypeSubrange(Field field) {
-			// RECORD FIELD SUBRANGE
-			// TODO Auto-generated method stub
+		protected void processTypePointeShort(Field field, TypePointer fieldType) {
+			// RECORD FIELD is SHORT POINTER
+			if (fieldType.rawPointer()) {
+				// RECORD FIELD is RAW POINTER (POINTER or LONG POINTER)
+				fieldPointer(javaFile, field);
+			} else {
+				// TODO Auto-generated method stub				
+			}
 		}
 
 		@Override
-		protected void processTypeArrayReference(Field field) {
-			// RECORD FIELD ARRAY-REFERENCE
-			// TODO Auto-generated method stub
+		protected void processTypePointeLong(Field field, TypePointer fieldType) {
+			// RECORD FIELD is LONG POINTER
+			if (fieldType.rawPointer()) {
+				// RECORD FIELD is RAW POINTER (POINTER or LONG POINTER)
+				fieldPointer(javaFile, field);
+			} else {
+				// TODO Auto-generated method stub				
+			}
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Field field) {
-			// RECORD FIELD ARRAY-SUBRANGE
-			// TODO Auto-generated method stub
+		protected void processTypeBitField16(Field field, TypeRecord fieldType) {
+			// RECORD FIELD is BIT FIELD 16
+			fieldData(javaFile, field);
 		}
 
 		@Override
-		protected void processTypePointeShort(Field field) {
-			// RECORD FIELD SHORT POINTER
-			// TODO Auto-generated method stub
+		protected void processTypeBitField32(Field field, TypeRecord fieldType) {
+			// RECORD FIELD is BIT FIELD 32
+			fieldData(javaFile, field);
 		}
 
 		@Override
-		protected void processTypePointeLong(Field field) {
-			// RECORD FIELD LONG POINTER
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		protected void processTypeBitField16(Field field) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		protected void processTypeBitField32(Field field) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		protected void processTypeMultiWord(Field field) {
-			// TODO Auto-generated method stub
-			
+		protected void processTypeMultiWord(Field field, TypeRecord fieldType) {
+			// RECORD FIELD is MULTI WORD RECORD
+			// TODO Auto-generated method stu
 		}
 	}
+
 }
