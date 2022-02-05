@@ -43,7 +43,7 @@ public class ProcessFile {
 		out.println("import yokwe.majuro.mesa.Mesa;");
 		out.println();
 		
-		out.println("// %s: TYPE = %s;", javaFile.type.name, javaFile.type.toMesaType());
+		out.println("// %s", javaFile.type.toMesaDecl());
 		
 		out.println("public final class %s extends %s {", javaFile.name, parentClass.getSimpleName());
 		out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
@@ -112,27 +112,100 @@ public class ProcessFile {
 
 
 	public static void generateFile(JavaFile javaFile) {
-		ProcessFile processType = new ProcessFile(javaFile);
-		processType.process();
-	}
-	
-	private final JavaFile javaFile;
-	
-	private ProcessFile(JavaFile javaFile) {
-		this.javaFile = javaFile;
-	}
-	
-	private void process() {
-		ProcessTop processTop = new ProcessTop(javaFile);
-		processTop.process();
+		if (javaFile.type != null) {
+			ProcessTypeTop processTypeTop = new ProcessTypeTop(javaFile);
+			processTypeTop.process();
+		}
+		if (javaFile.cons != null) {
+			logger.info("CONSTANT {}", javaFile.cons.toMesaDecl());
+			
+			ProcessConsTop processConsTop = new ProcessConsTop(javaFile);
+			processConsTop.process();
+		}
+		
 	}
 	
 	
 	//
-	// ProcessTop
+	// ProcessConsTop
 	//
-	private static class ProcessTop extends ProcessType {
-		ProcessTop(JavaFile javaFile) {
+	private static class ProcessConsTop extends ProcessType {
+		protected ProcessConsTop(JavaFile javaFile) {
+			super(javaFile);
+		}
+
+		@Override
+		public void process() {
+			try (AutoIndentPrintWriter out = javaFile.getAutoIndentPrintWriter()) {
+				// FIXME
+				javaFile.success = false;
+			}
+			javaFile.moveFile();
+		}
+
+		@Override
+		protected void processTypeBoolean(TypeBoolean type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeEnum(TypeEnum type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeSubrange(TypeSubrange type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeArrayReference(Reference type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeArraySubrange(Subrange type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypePointeShort(TypePointer type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypePointeLong(TypePointer type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeBitField16(TypeRecord type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeBitField32(TypeRecord type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeMultiWord(TypeRecord type) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected void processTypeReference(TypeReference type) {
+			// TODO Auto-generated method stub
+		}
+		
+	}
+	
+	
+	//
+	// ProcessTypeTop
+	//
+	private static class ProcessTypeTop extends ProcessType {
+		ProcessTypeTop(JavaFile javaFile) {
 			super(javaFile);
 		}
 		
@@ -283,7 +356,7 @@ public class ProcessFile {
 		// complex type
 		// ARRAY
 		private void process(TypeArray type) {
-			ProcessArray processArray = new ProcessArray(javaFile);
+			ProcessTypeArray processArray = new ProcessTypeArray(javaFile);
 			processArray.process();
 		}
 		@Override
@@ -482,7 +555,7 @@ public class ProcessFile {
 		}
 		@Override
 		protected void processTypeMultiWord(TypeRecord type) {
-			ProcessRecord processRecord = new ProcessRecord(javaFile);
+			ProcessTypeRecord processRecord = new ProcessTypeRecord(javaFile);
 			processRecord.process();
 		}
 
@@ -490,20 +563,16 @@ public class ProcessFile {
 		// REFERENCE
 		@Override
 		protected void processTypeReference(TypeReference type) {
-			Type realType = type.getRealType();
-			logger.info("type       {}", type.toMesaDecl());
-			logger.info("  realType {}", realType.toMesaDecl());
-
 			javaFile.success = false;
 		}
 	}
 	
 	
 	//
-	// ProcessArray
+	// ProcessTypeArray
 	//
-	private static class ProcessArray extends ProcessType {
-		ProcessArray(JavaFile javaFile) {
+	private static class ProcessTypeArray extends ProcessType {
+		ProcessTypeArray(JavaFile javaFile) {
 			super(javaFile);
 		}
 
@@ -697,10 +766,10 @@ public class ProcessFile {
 	}
 	
 	//
-	// ProcessRecord -- MULTI WORD RECORD
+	// ProcessTypeRecord -- MULTI WORD RECORD
 	//
-	private static class ProcessRecord extends ProcessField {
-		ProcessRecord(JavaFile javaFile) {
+	private static class ProcessTypeRecord extends ProcessField {
+		ProcessTypeRecord(JavaFile javaFile) {
 			super(javaFile);
 		}
 

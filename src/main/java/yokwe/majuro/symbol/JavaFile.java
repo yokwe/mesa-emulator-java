@@ -50,15 +50,7 @@ public class JavaFile {
 		
 		for(var e: symbol.declList) {
 			JavaFile javaFile = new JavaFile(e, outputDirPath, packageName);
-			
-			if (javaFile.type != null) {
-//				JavaType.generateFile(javaFile);
-				ProcessFile.generateFile(javaFile);
-			} else if (javaFile.cons != null) {
-				JavaCons.generateFile(javaFile);
-			} else {
-				throw new UnexpectedException("Unexpected");
-			}
+			ProcessFile.generateFile(javaFile);
 		}
 	}
 
