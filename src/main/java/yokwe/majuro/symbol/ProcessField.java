@@ -14,7 +14,7 @@ public abstract class ProcessField {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProcessField.class);
 
 	public static void unexpetected(Field field) {
-		logger.error("field ", field.toMesaType());
+		logger.error("field {}", field.toMesaType());
 		throw new UnexpectedException("Unexpected");
 	}
 	

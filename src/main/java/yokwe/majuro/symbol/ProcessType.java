@@ -14,7 +14,7 @@ public abstract class ProcessType {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProcessType.class);
 
 	public static void unexpected(Type type) {
-		logger.error("type ", type.name, type.toMesaDecl());
+		logger.error("type {}", type.toMesaDecl());
 		throw new UnexpectedException("Unexpected");
 	}
 	
