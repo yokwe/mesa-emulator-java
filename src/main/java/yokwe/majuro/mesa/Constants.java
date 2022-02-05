@@ -1,6 +1,6 @@
 package yokwe.majuro.mesa;
 
-public final class Constant {
+public final class Constants {
 	//
 	// MESA language related constant
 	//

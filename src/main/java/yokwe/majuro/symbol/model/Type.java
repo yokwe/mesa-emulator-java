@@ -1,6 +1,6 @@
 package yokwe.majuro.symbol.model;
 
-import static yokwe.majuro.mesa.Constant.WORD_BITS;
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
 
 import java.util.Map;
 import java.util.TreeMap;

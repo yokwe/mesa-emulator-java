@@ -1,10 +1,10 @@
 package yokwe.majuro.mesa;
 
-import static yokwe.majuro.mesa.Constant.MAX_REALMEMORY_PAGE_SIZE;
-import static yokwe.majuro.mesa.Constant.PAGE_BITS;
-import static yokwe.majuro.mesa.Constant.PAGE_MASK;
-import static yokwe.majuro.mesa.Constant.PAGE_SIZE;
-import static yokwe.majuro.mesa.Constant.WORD_BITS;
+import static yokwe.majuro.mesa.Constants.MAX_REALMEMORY_PAGE_SIZE;
+import static yokwe.majuro.mesa.Constants.PAGE_BITS;
+import static yokwe.majuro.mesa.Constants.PAGE_MASK;
+import static yokwe.majuro.mesa.Constants.PAGE_SIZE;
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
 
 import yokwe.majuro.UnexpectedException;
 
@@ -293,7 +293,7 @@ public final class Memory {
 		return mds + value;
 	}
 	public int lengthenPDA(char value) {
-		return Constant.mPDA + value;
+		return Constants.mPDA + value;
 	}
 	
 	// convenience methods for MDS data access

@@ -1,6 +1,6 @@
 package yokwe.majuro.symbol;
 
-import static yokwe.majuro.mesa.Constant.WORD_BITS;
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.LEFT;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 
@@ -115,12 +115,13 @@ public class ProcessFile {
 		if (javaFile.type != null) {
 			ProcessTypeTop processTypeTop = new ProcessTypeTop(javaFile);
 			processTypeTop.process();
-		}
-		if (javaFile.cons != null) {
+		} else if (javaFile.cons != null) {
 			logger.info("CONSTANT {}", javaFile.cons.toMesaDecl());
 			
 			ProcessConsTop processConsTop = new ProcessConsTop(javaFile);
 			processConsTop.process();
+		} else {
+			throw new UnexpectedException("Unexpected");
 		}
 		
 	}

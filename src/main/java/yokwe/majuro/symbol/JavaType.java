@@ -1,6 +1,6 @@
 package yokwe.majuro.symbol;
 
-import static yokwe.majuro.mesa.Constant.WORD_BITS;
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.LEFT;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 
@@ -83,7 +83,7 @@ public class JavaType {
 		out.println("import yokwe.majuro.mesa.Mesa;");
 		out.println();
 		
-		out.println("// %s", javaFile.type.toMesaDecl());
+		out.println("// %s: TYPE = %s;", javaFile.type.name, javaFile.type.toMesaType());
 		
 		out.println("public final class %s extends %s {", javaFile.name, parentClass.getSimpleName());
 		out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
