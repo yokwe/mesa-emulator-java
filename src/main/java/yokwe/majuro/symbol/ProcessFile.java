@@ -750,10 +750,11 @@ public class ProcessFile {
 			// ARRAY of SHORT POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW SHORT POINTER
+				javaFile.out.println("// FIXME ARRAY of RAW SHORT POINTER"); // FIXME
 			} else {
 				// ARRAY of SHORT POINTER
-			}
-			// TODO Auto-generated method stub
+				javaFile.out.println("// FIXME ARRAY of SHORT POINTER"); // FIXME
+			}			
 		}
 
 		@Override
@@ -761,10 +762,11 @@ public class ProcessFile {
 			// ARRAY of LONG POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW LONG POINTER
+				javaFile.out.println("// FIXME ARRAY of RAW LONG POINTER"); // FIXME
 			} else {
 				// ARRAY of LONG POINTER
+				javaFile.out.println("// FIXME ARRAY of LONG POINTER"); // FIXME
 			}
-			// TODO Auto-generated method stub
 		}
 
 		@Override
@@ -841,8 +843,6 @@ public class ProcessFile {
 				}
 				
 				out.println("private static final int OFFSET_%s = %d;", fieldConstName, field.offset);
-				
-				// FIXME generate code for field type
 				accept(field);
 			}
 			
@@ -871,23 +871,36 @@ public class ProcessFile {
 		@Override
 		protected void processTypeArrayReference(Field field, TypeArray.Reference fieldType) {
 			// RECORD FIELD is ARRAY-REFERENCE
-			// TODO Auto-generated method stub
+			if (field.type instanceof TypeReference) {
+				// RECORD FIELD is REFERENCE of ARRAY-REFERENCE
+				fieldPointer(javaFile, field);
+			} else {
+				// RECORD FIELD is IMMEDIATE ARRAY-REFERENCE
+				javaFile.out.println("// FIXME RECORD FIELD is IMMEDIATE ARRAY-REFERENCE"); // FIXME
+			}
 		}
 
 		@Override
 		protected void processTypeArraySubrange(Field field, TypeArray.Subrange fieldType) {
 			// RECORD FIELD is ARRAY-SUBRANGE
-			// TODO Auto-generated method stub
+			if (field.type instanceof TypeReference) {
+				// RECORD FIELD is REFERENCE of ARRAY-SUBRANGE
+				fieldPointer(javaFile, field);
+			} else {
+				// RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE
+				javaFile.out.println("// FIXME RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE"); // FIXME
+			}
 		}
 
 		@Override
 		protected void processTypePointeShort(Field field, TypePointer fieldType) {
 			// RECORD FIELD is SHORT POINTER
 			if (fieldType.rawPointer()) {
-				// RECORD FIELD is RAW POINTER (POINTER or LONG POINTER)
+				// RECORD FIELD is RAW SHORT POINTER
 				fieldPointer(javaFile, field);
 			} else {
-				// TODO Auto-generated method stub				
+				// RECORD FIELD is SHORT POINTER
+				javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER"); // FIXME
 			}
 		}
 
@@ -895,29 +908,48 @@ public class ProcessFile {
 		protected void processTypePointeLong(Field field, TypePointer fieldType) {
 			// RECORD FIELD is LONG POINTER
 			if (fieldType.rawPointer()) {
-				// RECORD FIELD is RAW POINTER (POINTER or LONG POINTER)
+				// RECORD FIELD is RAW LONG POINTER
 				fieldPointer(javaFile, field);
 			} else {
-				// TODO Auto-generated method stub				
+				// RECORD FIELD is LONG POINTER
+				javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER"); // FIXME
 			}
 		}
 
 		@Override
 		protected void processTypeBitField16(Field field, TypeRecord fieldType) {
 			// RECORD FIELD is BIT FIELD 16
-			fieldData(javaFile, field);
+			if (field.type instanceof TypeReference) {
+				// RECORD FIELD is REFERENCE of BIT FIELD 16
+				fieldData(javaFile, field);
+			} else {
+				// RECORD FIELD is IMMEDIATE BIT FIELD 16
+				throw new UnexpectedException("unexpected");
+			}
 		}
 
 		@Override
 		protected void processTypeBitField32(Field field, TypeRecord fieldType) {
 			// RECORD FIELD is BIT FIELD 32
-			fieldData(javaFile, field);
+			if (field.type instanceof TypeReference) {
+				// RECORD FIELD is REFERENCE of BIT FIELD 32
+				fieldData(javaFile, field);
+			} else {
+				// RECORD FIELD is IMMEDIATE BIT FIELD 32
+				throw new UnexpectedException("unexpected");
+			}
 		}
 
 		@Override
 		protected void processTypeMultiWord(Field field, TypeRecord fieldType) {
 			// RECORD FIELD is MULTI WORD RECORD
-			// TODO Auto-generated method stu
+			if (field.type instanceof TypeReference) {
+				// RECORD FIELD is REFERENCE of MULTI WORD RECORD
+				fieldPointer(javaFile, field);
+			} else {
+				// RECORD FIELD is IMMEDIATE MULTI WORD RECORD
+				throw new UnexpectedException("unexpected");
+			}
 		}
 	}
 
