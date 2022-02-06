@@ -1137,6 +1137,7 @@ public class ProcessDecl {
 			} else {
 				// RECORD FIELD is IMMEDIATE ARRAY-REFERENCE
 				javaFile.out.println("// FIXME RECORD FIELD is IMMEDIATE ARRAY-REFERENCE"); // FIXME
+				// FIXME use existing check method for check index value
 			}
 		}
 
@@ -1149,6 +1150,7 @@ public class ProcessDecl {
 			} else {
 				// RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE
 				javaFile.out.println("// FIXME RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE"); // FIXME
+				// FIXME add ContextSubrange and use it for check index value
 			}
 		}
 
@@ -1161,7 +1163,8 @@ public class ProcessDecl {
 			} else {
 				// RECORD FIELD is SHORT POINTER
 				var processType = new ProcessTypeRecordShortPointer(javaFile);
-				processType.accept(fieldType);
+				TypePointer typePointer = fieldType.toTypePointer();
+				processType.accept(typePointer.targetType.realType());
 			}
 		}
 
@@ -1174,7 +1177,8 @@ public class ProcessDecl {
 			} else {
 				// RECORD FIELD is LONG POINTER
 				var processType = new ProcessTypeRecordLongPointer(javaFile);
-				processType.accept(fieldType);
+				TypePointer typePointer = fieldType.toTypePointer();
+				processType.accept(typePointer.targetType.realType());
 			}
 		}
 
