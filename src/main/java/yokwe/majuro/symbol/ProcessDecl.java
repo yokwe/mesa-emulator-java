@@ -138,6 +138,36 @@ public class ProcessDecl {
 		out.println("return %s.longPointer(base + (%s.WORD_SIZE * index));", elementTypeName, elementTypeName);
 		out.println("}");
 	}
+	private static void arrayPointerShort(JavaFile javaFile, Type indexType) {
+		final var out          = javaFile.out;
+		final TypeArray type = javaFile.type.toTypeArray();
+		
+		Type   elementType     = type.arrayElement.realType();
+		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		
+		out.println("public final %s get(int index) {", elementTypeName);
+		if (!indexType.empty()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+		}
+		out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+		out.println("return %s.pointer(pointer);", elementTypeName);
+		out.println("}");
+	}
+	private static void arrayPointerLong(JavaFile javaFile, Type indexType) {
+		final var out          = javaFile.out;
+		final TypeArray type = javaFile.type.toTypeArray();
+		
+		Type   elementType     = type.arrayElement.realType();
+		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		
+		out.println("public final %s get(int index) {", elementTypeName);
+		if (!indexType.empty()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
+		}
+		out.println("int pointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
+		out.println("return %s.longPointer(pointer);", elementTypeName);
+		out.println("}");
+	}
 
 	private static void fieldData(JavaFile javaFile, TypeRecord.Field field) {
 		final var out         = javaFile.out;
@@ -748,7 +778,7 @@ public class ProcessDecl {
 			// ARRAY of SHORT POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW SHORT POINTER
-				javaFile.out.println("// FIXME ARRAY of RAW SHORT POINTER"); // FIXME
+				arrayPointerShort(javaFile, type);
 			} else {
 				// ARRAY of SHORT POINTER
 				ProcessTypeArrayPointerShort processArrayPointerShort = new ProcessTypeArrayPointerShort(javaFile);
@@ -761,7 +791,7 @@ public class ProcessDecl {
 			// ARRAY of LONG POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW LONG POINTER
-				javaFile.out.println("// FIXME ARRAY of RAW LONG POINTER"); // FIXME
+				arrayPointerLong(javaFile, type);
 			} else {
 				// ARRAY of LONG POINTER
 				ProcessTypeArrayPointerLong processArrayPointerLong = new ProcessTypeArrayPointerLong(javaFile);
@@ -1056,7 +1086,8 @@ public class ProcessDecl {
 				fieldPointer(javaFile, field);
 			} else {
 				// RECORD FIELD is SHORT POINTER
-				javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER"); // FIXME
+				ProcessTypeRecordPointerShort processTypeRecordPointerShort = new ProcessTypeRecordPointerShort(javaFile);
+				processTypeRecordPointerShort.accept(fieldType);
 			}
 		}
 
@@ -1068,7 +1099,8 @@ public class ProcessDecl {
 				fieldPointer(javaFile, field);
 			} else {
 				// RECORD FIELD is LONG POINTER
-				javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER"); // FIXME
+				ProcessTypeRecordPointerLong processTypeRecordPointerLong = new ProcessTypeRecordPointerLong(javaFile);
+				processTypeRecordPointerLong.accept(fieldType);
 			}
 		}
 
@@ -1106,6 +1138,160 @@ public class ProcessDecl {
 				// RECORD FIELD is IMMEDIATE MULTI WORD RECORD
 				throw new UnexpectedException("unexpected");
 			}
+		}
+	}
+
+	private static class ProcessTypeRecordPointerShort extends ProcessType {
+		protected ProcessTypeRecordPointerShort(JavaFile javaFile) {
+			super(javaFile);
+		}
+
+		@Override
+		public void process() {
+			throw new UnexpectedException("Unexpected");
+		}
+
+		@Override
+		protected void processTypeBoolean(TypeBoolean type) {
+			// RECORD FIELD is LONG POINTRE to BOOLEAN
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to BOOLEAN"); // FIXME
+		}
+
+		@Override
+		protected void processTypeEnum(TypeEnum type) {
+			// RECORD FIELD is LONG POINTRE to ENUM
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to ENUM"); // FIXME
+		}
+
+		@Override
+		protected void processTypeSubrange(TypeSubrange type) {
+			// RECORD FIELD is LONG POINTRE to SUBRANGE
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to SUBRANGE"); // FIXME
+		}
+
+		@Override
+		protected void processTypeArrayReference(Reference type) {
+			// RECORD FIELD is LONG POINTRE to ARRAY-REFERENCE
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to ARRAY-REFERENCE"); // FIXME
+		}
+
+		@Override
+		protected void processTypeArraySubrange(Subrange type) {
+			// RECORD FIELD is LONG POINTRE to ARRAY-SUBRANGE
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to ARRAY-SUBRANGE"); // FIXME
+		}
+
+		@Override
+		protected void processTypePointeShort(TypePointer type) {
+			// RECORD FIELD is LONG POINTRE to SHORT POINTER
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to SHORT POINTER"); // FIXME
+		}
+
+		@Override
+		protected void processTypePointeLong(TypePointer type) {
+			// RECORD FIELD is LONG POINTRE to LONG POINTER
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to LONG POINTER"); // FIXME
+		}
+
+		@Override
+		protected void processTypeBitField16(TypeRecord type) {
+			// RECORD FIELD is LONG POINTRE to BIT FIELD 16
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to BIT FIELD 16"); // FIXME
+		}
+
+		@Override
+		protected void processTypeBitField32(TypeRecord type) {
+			// RECORD FIELD is LONG POINTRE to BIT FIELD 32
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to BIT FIELD 32"); // FIXME
+		}
+
+		@Override
+		protected void processTypeMultiWord(TypeRecord type) {
+			// RECORD FIELD is LONG POINTRE to MULTI WORD RECORD
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to MULTI WORD RECORD"); // FIXME
+		}
+
+		@Override
+		protected void processTypeReference(TypeReference type) {
+			// RECORD FIELD is LONG POINTRE to REFERENCE
+			unexpected(type);
+		}
+	}
+	
+	private static class ProcessTypeRecordPointerLong extends ProcessType {
+		protected ProcessTypeRecordPointerLong(JavaFile javaFile) {
+			super(javaFile);
+		}
+
+		@Override
+		public void process() {
+			throw new UnexpectedException("Unexpected");
+		}
+
+		@Override
+		protected void processTypeBoolean(TypeBoolean type) {
+			// RECORD FIELD is LONG POINTRE to BOOLEAN
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to BOOLEAN"); // FIXME
+		}
+
+		@Override
+		protected void processTypeEnum(TypeEnum type) {
+			// RECORD FIELD is LONG POINTRE to ENUM
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to ENUM"); // FIXME
+		}
+
+		@Override
+		protected void processTypeSubrange(TypeSubrange type) {
+			// RECORD FIELD is LONG POINTRE to SUBRANGE
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to SUBRANGE"); // FIXME
+		}
+
+		@Override
+		protected void processTypeArrayReference(Reference type) {
+			// RECORD FIELD is LONG POINTRE to ARRAY-REFERENCE
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to ARRAY-REFERENCE"); // FIXME
+		}
+
+		@Override
+		protected void processTypeArraySubrange(Subrange type) {
+			// RECORD FIELD is LONG POINTRE to ARRAY-SUBRANGE
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to ARRAY-SUBRANGE"); // FIXME
+		}
+
+		@Override
+		protected void processTypePointeShort(TypePointer type) {
+			// RECORD FIELD is LONG POINTRE to SHORT POINTER
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to SHORT POINER"); // FIXME
+		}
+
+		@Override
+		protected void processTypePointeLong(TypePointer type) {
+			// RECORD FIELD is LONG POINTRE to LONG POINTER
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to LONG POINER"); // FIXME
+		}
+
+		@Override
+		protected void processTypeBitField16(TypeRecord type) {
+			// RECORD FIELD is LONG POINTRE to BIT FIELD 16
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to BIT FIELD 16"); // FIXME
+		}
+
+		@Override
+		protected void processTypeBitField32(TypeRecord type) {
+			// RECORD FIELD is LONG POINTRE to BIT FIELD 32
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to BIT FIELD 32"); // FIXME
+		}
+
+		@Override
+		protected void processTypeMultiWord(TypeRecord type) {
+			// RECORD FIELD is LONG POINTRE to MULTI WORD RECORD
+			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTRE to MULTI WORD RECORD"); // FIXME
+		}
+
+		@Override
+		protected void processTypeReference(TypeReference type) {
+			// RECORD FIELD is LONG POINTRE to REFERENCE
+			unexpected(type);
 		}
 	}
 
