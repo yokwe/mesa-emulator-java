@@ -197,7 +197,7 @@ public class TypeRecord extends Type {
 					boolean foundProblem = false;
 					
 					for(var e: fieldList) {
-						Type type = e.type.getRealType();
+						Type type = e.type.realType();
 						
 						int fieldBitSize = e.bitSize;
 						
@@ -222,7 +222,7 @@ public class TypeRecord extends Type {
 						logger.error("found problem");
 						logger.error("  {}", name);
 						for(var e: fieldList) {
-							logger.error("  {}", String.format("%-10s %-10s  field %2d  type %2d", e.name, e.type.getRealType().name, e.bitSize, e.type.bitSize));
+							logger.error("  {}", String.format("%-10s %-10s  field %2d  type %2d", e.name, e.type.realType().name, e.bitSize, e.type.bitSize));
 						}
 						throw new UnexpectedException("found problem");
 					}

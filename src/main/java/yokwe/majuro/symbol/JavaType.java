@@ -303,7 +303,7 @@ public class JavaType {
 		final var out          = javaFile.out;
 		final TypeArray type = javaFile.type.toTypeArray();
 				
-		Type   elementType     = type.arrayElement.getRealType();
+		Type   elementType     = type.arrayElement.realType();
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
 		
 		out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
@@ -317,7 +317,7 @@ public class JavaType {
 		final var out          = javaFile.out;
 		final TypeArray type = javaFile.type.toTypeArray();
 		
-		Type   elementType     = type.arrayElement.getRealType();
+		Type   elementType     = type.arrayElement.realType();
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
 		
 		out.println("public final %s get(int index) {", elementTypeName);
@@ -347,7 +347,7 @@ public class JavaType {
 				indexType = type.toSubrange().typeSubrange;
 				immediateSubrange = true;
 			} else if (type instanceof TypeArray.Reference) {
-				Type realType = type.toReference().typeReference.getRealType();
+				Type realType = type.toReference().typeReference.realType();
 				if (realType instanceof TypeSubrange) {
 					// INDEX is REFERENCE of SUBRANGE
 					indexType = realType.toTypeSubrange();
@@ -402,7 +402,7 @@ public class JavaType {
 //			arrayPointer(indexType);
 //		} else 
 		{
-			Type elementType = type.arrayElement.getRealType();
+			Type elementType = type.arrayElement.realType();
 
 			if (elementType instanceof TypeArray) {
 				// ARRAY of ARRAY
@@ -420,7 +420,7 @@ public class JavaType {
 					// ARRAY of RAW POINTER
 					// FIXME
 				} else {
-					Type targetType = typePointer.targetType.getRealType();
+					Type targetType = typePointer.targetType.realType();
 					if (targetType instanceof TypeArray) {
 						// ARRAY of POINTER to ARRAY
 						throw new UnexpectedException("Unexpected");
@@ -632,7 +632,7 @@ public class JavaType {
 	private void fieldData(TypeRecord.Field field) {
 		final var out         = javaFile.out;
 
-		Type   fieldType      = field.type.getRealType();
+		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
 		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
@@ -644,7 +644,7 @@ public class JavaType {
 	private void fieldPointer(TypeRecord.Field field) {
 		final var out         = javaFile.out;
 
-		Type   fieldType      = field.type.getRealType();
+		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
 		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
@@ -656,11 +656,11 @@ public class JavaType {
 	private void fieldArrayIndexData(TypeRecord.Field field) {
 		final var out            = javaFile.out;
 
-		Type   fieldType         = field.type.getRealType();
+		Type   fieldType         = field.type.realType();
 		String fieldConstName    = StringUtil.toJavaConstName(field.name);
 		String fieldName         = StringUtil.toJavaName(field.name);
 
-		Type   elementType       = fieldType.toTypeArray().arrayElement.getRealType();
+		Type   elementType       = fieldType.toTypeArray().arrayElement.realType();
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
 		
 		// FIXME add index range check
@@ -671,11 +671,11 @@ public class JavaType {
 	private void fieldArrayIndexPointer(TypeRecord.Field field) {
 		final var out            = javaFile.out;
 
-		Type   fieldType         = field.type.getRealType();
+		Type   fieldType         = field.type.realType();
 		String fieldConstName    = StringUtil.toJavaConstName(field.name);
 		String fieldName         = StringUtil.toJavaName(field.name);
 
-		Type   elementType       = fieldType.toTypeArray().arrayElement.getRealType();
+		Type   elementType       = fieldType.toTypeArray().arrayElement.realType();
 		String elementTypeString = StringUtil.toJavaName(elementType.name);
 		
 		// FIXME add index range check
@@ -686,11 +686,11 @@ public class JavaType {
 	private void fieldLongPointerData(TypeRecord.Field field) {
 		final var out         = javaFile.out;
 		
-		Type   fieldType      = field.type.getRealType();
+		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
 		
-		Type   targetType     = fieldType.toTypePointer().targetType.getRealType();
+		Type   targetType     = fieldType.toTypePointer().targetType.realType();
 		String taregTypeName  = StringUtil.toJavaName(targetType.name);
 
 		out.println("public %s %s(MemoryAccess access) {", taregTypeName, fieldName);
@@ -700,11 +700,11 @@ public class JavaType {
 	private void fieldLongPointerPointer(TypeRecord.Field field) {
 		final var out            = javaFile.out;
 		
-		Type   fieldType         = field.type.getRealType();
+		Type   fieldType         = field.type.realType();
 		String fieldConstName    = StringUtil.toJavaConstName(field.name);
 		String fieldName         = StringUtil.toJavaName(field.name);
 		
-		Type   targetType        = fieldType.toTypePointer().targetType.getRealType();
+		Type   targetType        = fieldType.toTypePointer().targetType.realType();
 		String taregTypeName   = StringUtil.toJavaName(targetType.name);
 
 		out.println("public %s %s() {", taregTypeName, fieldName);
@@ -714,11 +714,11 @@ public class JavaType {
 	private void fieldPointerData(TypeRecord.Field field) {
 		final var out         = javaFile.out;
 		
-		Type   fieldType      = field.type.getRealType();
+		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
 		
-		Type   targetType     = fieldType.toTypePointer().targetType.getRealType();
+		Type   targetType     = fieldType.toTypePointer().targetType.realType();
 		String taregTypeName  = StringUtil.toJavaName(targetType.name);
 
 		out.println("public %s %s(MemoryAccess access) {", taregTypeName, fieldName);
@@ -728,11 +728,11 @@ public class JavaType {
 	private void fieldPointerPointer(TypeRecord.Field field) {
 		final var out            = javaFile.out;
 		
-		Type   fieldType         = field.type.getRealType();
+		Type   fieldType         = field.type.realType();
 		String fieldConstName    = StringUtil.toJavaConstName(field.name);
 		String fieldName         = StringUtil.toJavaName(field.name);
 		
-		Type   targetType        = fieldType.toTypePointer().targetType.getRealType();
+		Type   targetType        = fieldType.toTypePointer().targetType.realType();
 		String taregTypeName   = StringUtil.toJavaName(targetType.name);
 
 		out.println("public %s %s() {", taregTypeName, fieldName);
@@ -758,7 +758,7 @@ public class JavaType {
 		out.println("// Access to Field of Record");
 		out.println("//");			
 		for(TypeRecord.Field field: type.fieldList) {
-			Type   fieldType      = field.type.getRealType();
+			Type   fieldType      = field.type.realType();
 			String fieldConstName = StringUtil.toJavaConstName(field.name);
 
 			out.println("// %s", field.toMesaType());
@@ -788,7 +788,7 @@ public class JavaType {
 				} else {
 					// FIELD is IMMEDIATE ARRAY
 					// index of array can be subrange or reference
-					Type elementType = fieldType.toTypeArray().arrayElement.getRealType();
+					Type elementType = fieldType.toTypeArray().arrayElement.realType();
 					
 					if (elementType instanceof TypeArray) {
 						// FIELD is ARRAY of ARRAY
@@ -834,7 +834,7 @@ public class JavaType {
 					// FIELD is RAW POINTER (POINTER or LONG POINTER)
 					fieldPointer(field);
 				} else {
-					Type targetType = typePointer.targetType.getRealType();
+					Type targetType = typePointer.targetType.realType();
 					if (typePointer.longPointer()) {
 						// FIELD is LONG POINTER
 						if (targetType instanceof TypeArray) {

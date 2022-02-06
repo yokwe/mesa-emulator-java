@@ -170,7 +170,7 @@ public abstract class Type implements Comparable<Type> {
 	//
 	// Convenience method
 	//
-	public Type getRealType() {
+	public Type realType() {
 		if (needsFix) throw new UnexpectedException("Unexpected");
 		if (this instanceof TypeReference) {
 			return toTypeReference().realType;
@@ -181,7 +181,7 @@ public abstract class Type implements Comparable<Type> {
 	
 	// check bitSize for empty
 	public boolean empty() {
-		return getRealType().bitSize() == 0;
+		return realType().bitSize() == 0;
 	}
 	
 	public boolean bitField16() {

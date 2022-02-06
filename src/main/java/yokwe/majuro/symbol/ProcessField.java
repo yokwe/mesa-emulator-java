@@ -33,7 +33,7 @@ public abstract class ProcessField {
 	// call processTypeXXX depends on type of argument
 	//
 	public void accept(Field field) {
-		Type fieldType = field.type.getRealType();
+		Type fieldType = field.type.realType();
 		
 		if (fieldType instanceof TypeBoolean) {
 			processTypeBoolean(field, fieldType.toTypeBoolean());
