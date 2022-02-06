@@ -229,13 +229,55 @@ public class ProcessDecl {
 
 		if (javaDataClass(fieldType)) {
 			out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
-			out.println("int pointer = base + OFFSET_%s;", fieldConstName);
-			out.println("return %s.longPointer(pointer, access);", fieldTypeName);
+			out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
+			out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", fieldTypeName, fieldName);
-			out.println("int pointer = base + OFFSET_%s;", fieldConstName);
-			out.println("return %s.longPointer(pointer);", fieldTypeName);
+			out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
+			out.println("return %s.longPointer(longPointer);", fieldTypeName);
+			out.println("}");
+		}
+	}
+	private static void recordFieldIndirectLong(JavaFile javaFile, TypeRecord.Field field) {
+		final var out = javaFile.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		Type   targetType     = fieldType.toTypePointer().targetType.realType();
+		String targetTypeName = StringUtil.toJavaName(targetType.name);
+
+		if (javaDataClass(targetType)) {
+			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
+			out.println("int longPointer = Mesa.read32(base + OFFSET_%s);", fieldConstName);
+			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
+			out.println("}");
+		} else {
+			out.println("public %s %s() {", targetTypeName, fieldName);
+			out.println("int longPointer = Mesa.read32(base + OFFSET_%s);", fieldConstName);
+			out.println("return %s.longPointer(longPointer);", targetTypeName);
+			out.println("}");
+		}
+	}
+	private static void recordFieldIndirectShort(JavaFile javaFile, TypeRecord.Field field) {
+		final var out = javaFile.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		Type   targetType     = fieldType.toTypePointer().targetType.realType();
+		String targetTypeName = StringUtil.toJavaName(targetType.name);
+
+		if (javaDataClass(targetType)) {
+			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
+			out.println("char pointer = Mesa.read16(base + OFFSET_%s);", fieldConstName);
+			out.println("return %s.pointer(pointer, access);", targetTypeName);
+			out.println("}");
+		} else {
+			out.println("public %s %s() {", targetTypeName, fieldName);
+			out.println("char pointer = Mesa.read16(base + OFFSET_%s);", fieldConstName);
+			out.println("return %s.pointer(pointer);", targetTypeName);
 			out.println("}");
 		}
 	}
@@ -1162,7 +1204,7 @@ public class ProcessDecl {
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is SHORT POINTER
-				var processType = new ProcessTypeRecordShortPointer(javaFile);
+				var processType = new ProcessTypeRecordShortPointer(javaFile, field);
 				TypePointer typePointer = fieldType.toTypePointer();
 				processType.accept(typePointer.targetType.realType());
 			}
@@ -1176,7 +1218,7 @@ public class ProcessDecl {
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is LONG POINTER
-				var processType = new ProcessTypeRecordLongPointer(javaFile);
+				var processType = new ProcessTypeRecordLongPointer(javaFile, field);
 				TypePointer typePointer = fieldType.toTypePointer();
 				processType.accept(typePointer.targetType.realType());
 			}
@@ -1220,8 +1262,11 @@ public class ProcessDecl {
 	}
 
 	private static class ProcessTypeRecordShortPointer extends ProcessType {
-		protected ProcessTypeRecordShortPointer(JavaFile javaFile) {
+		private final Field field;
+		
+		protected ProcessTypeRecordShortPointer(JavaFile javaFile, Field field) {
 			super(javaFile);
+			this.field = field;
 		}
 
 		@Override
@@ -1232,19 +1277,19 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// RECORD FIELD is SHORT POINTER to BOOLEAN
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to BOOLEAN"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// RECORD FIELD is SHORT POINTER to ENUM
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ENUM"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// RECORD FIELD is SHORT POINTER to SUBRANGE
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to SUBRANGE"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
@@ -1262,31 +1307,31 @@ public class ProcessDecl {
 		@Override
 		protected void processTypePointeShort(TypePointer type) {
 			// RECORD FIELD is SHORT POINTER to SHORT POINTER
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to SHORT POINTER"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointer type) {
 			// RECORD FIELD is SHORT POINTER to LONG POINTER
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to LONG POINTER"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeRecord type) {
 			// RECORD FIELD is SHORT POINTER to BIT FIELD 16
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to BIT FIELD 16"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeRecord type) {
 			// RECORD FIELD is SHORT POINTER to BIT FIELD 32
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to BIT FIELD 32"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeRecord type) {
 			// RECORD FIELD is SHORT POINTER to MULTI WORD RECORD
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to MULTI WORD RECORD"); // FIXME
+			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
@@ -1297,8 +1342,11 @@ public class ProcessDecl {
 	}
 	
 	private static class ProcessTypeRecordLongPointer extends ProcessType {
-		protected ProcessTypeRecordLongPointer(JavaFile javaFile) {
+		private final Field field;
+		
+		protected ProcessTypeRecordLongPointer(JavaFile javaFile, Field field) {
 			super(javaFile);
+			this.field = field;
 		}
 
 		@Override
@@ -1309,19 +1357,19 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// RECORD FIELD is LONG POINTER to BOOLEAN
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to BOOLEAN"); // FIXME
+			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// RECORD FIELD is LONG POINTER to ENUM
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ENUM"); // FIXME
+			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// RECORD FIELD is LONG POINTER to SUBRANGE
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to SUBRANGE"); // FIXME
+			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
@@ -1339,31 +1387,31 @@ public class ProcessDecl {
 		@Override
 		protected void processTypePointeShort(TypePointer type) {
 			// RECORD FIELD is LONG POINTER to SHORT POINTER
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to SHORT POINER"); // FIXME
+			unexpected(type);
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointer type) {
 			// RECORD FIELD is LONG POINTER to LONG POINTER
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to LONG POINER"); // FIXME
+			unexpected(type);
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeRecord type) {
 			// RECORD FIELD is LONG POINTER to BIT FIELD 16
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to BIT FIELD 16"); // FIXME
+			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeRecord type) {
 			// RECORD FIELD is LONG POINTER to BIT FIELD 32
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to BIT FIELD 32"); // FIXME
+			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeRecord type) {
 			// RECORD FIELD is LONG POINTER to MULTI WORD RECORD
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to MULTI WORD RECORD"); // FIXME
+			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
