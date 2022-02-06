@@ -50,7 +50,7 @@ public class JavaFile {
 		
 		for(var e: symbol.declList) {
 			JavaFile javaFile = new JavaFile(e, outputDirPath, packageName);
-			ProcessFile.generateFile(javaFile);
+			ProcessDecl.generateFile(javaFile);
 		}
 	}
 
