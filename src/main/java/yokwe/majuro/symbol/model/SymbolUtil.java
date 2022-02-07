@@ -245,7 +245,17 @@ public class SymbolUtil {
 				list.add(getField(name, e));
 			}
 			
-			return new TypeRecord(name, TypeRecord.Align.BIT_16, list);
+			boolean bitField16 = true;
+			for(var e: list) {
+				if (e.offset != 0)   bitField16 = false;
+				if (16 <= e.stopBit) bitField16 = false;
+// FIXME				if (e.type.empty())  bitField16 = false;
+			}
+			if (bitField16) {
+				return new TypeRecord.BitField16(name, list);
+			} else {
+				return new TypeRecord.MultiWord(name, list);
+			}
 		}
 		if (type instanceof TypeRecord32Context) {
 			TypeRecord32Context typeRecord = (TypeRecord32Context)type;
@@ -255,7 +265,7 @@ public class SymbolUtil {
 				list.add(getField(name, e));
 			}
 			
-			return new TypeRecord(name, TypeRecord.Align.BIT_32, list);
+			return new TypeRecord.BitField32(name, list);
 		}
 		
 		Symbol.logger.error("Unexpected");

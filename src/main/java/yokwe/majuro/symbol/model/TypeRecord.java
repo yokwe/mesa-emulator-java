@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
-public class TypeRecord extends Type {
+public abstract class TypeRecord extends Type {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeRecord.class);
 
 	public static class Field {
@@ -59,17 +59,13 @@ public class TypeRecord extends Type {
 		}
 	}
 
-	public enum Align {
-		BIT_16,
-		BIT_32,
-	}
-	public final Align align;
+	public final String      typeName;
+	public final List<Field> fieldList;
 	
-	public List<Field> fieldList;
-	
-	public TypeRecord(String name, Align align, List<Field> fieldList) {
+	protected TypeRecord(String name, String typeName, List<Field> fieldList) {
 		super(name);
-		this.align     = align;
+		
+		this.typeName  = typeName;
 		this.fieldList = fieldList;
 		
 		{
@@ -84,7 +80,7 @@ public class TypeRecord extends Type {
 		{
 			boolean foundProblem = false;
 			
-			if (align == Align.BIT_32 && bitSize != 32) {
+			if (this instanceof BitField32 && bitSize != 32) {
 				foundProblem = true;
 				logger.error("bitSize is not 32 for RECORD32");
 			}
@@ -233,19 +229,24 @@ public class TypeRecord extends Type {
 
 	@Override
 	public String toMesaType() {
-		String baseType;
-		switch(align) {
-		case BIT_16:
-			baseType = "RECORD";
-			break;
-		case BIT_32:
-			baseType = "RECORD32";
-			break;
-		default:
-			throw new UnexpectedException("Unexpected");
-		}
-		
 		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
-		return String.format("%s[%s]", baseType, String.join(", ", list));
+		return String.format("%s[%s]", typeName, String.join(", ", list));
+	}
+	
+	
+	public static final class BitField16 extends TypeRecord {
+		public BitField16(String name, List<Field> fieldList) {
+			super(name, "RECORD", fieldList);
+		}
+	}
+	public static final class BitField32 extends TypeRecord {
+		public BitField32(String name, List<Field> fieldList) {
+			super(name, "RECORD32", fieldList);
+		}
+	}
+	public static final class MultiWord extends TypeRecord {
+		public MultiWord(String name, List<Field> fieldList) {
+			super(name, "RECORD", fieldList);
+		}
 	}
 }

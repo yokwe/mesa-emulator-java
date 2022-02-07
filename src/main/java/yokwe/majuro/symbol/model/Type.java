@@ -185,26 +185,10 @@ public abstract class Type implements Comparable<Type> {
 	}
 	
 	public boolean bitField16() {
-		if (this instanceof TypeRecord) {
-			TypeRecord typeRecord = toTypeRecord();
-			if (typeRecord.align == TypeRecord.Align.BIT_16) {
-				if (typeRecord.bitSize() <= 16) {
-					for(var e: typeRecord.fieldList) {
-						// if record has empty field return false
-						if (e.type.empty()) return false;
-					}
-					return true;
-				}
-			}
-		}
-		return false;
+		return this instanceof TypeRecord.BitField16;
 	}
 	public boolean bitField32() {
-		if (this instanceof TypeRecord) {
-			TypeRecord typeRecord = toTypeRecord();
-			return typeRecord.align == TypeRecord.Align.BIT_32 && typeRecord.bitSize == 32;
-		}
-		return false;
+		return this instanceof TypeRecord.BitField32;
 	}
 	public boolean rawPointer() {
 		if (this instanceof TypePointer) {
@@ -283,6 +267,31 @@ public abstract class Type implements Comparable<Type> {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
+	public TypeRecord.BitField16 toTypeRecordBitField16() {
+		if (this instanceof TypeRecord.BitField16) {
+			return (TypeRecord.BitField16)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeRecord.BitField32 toTypeRecordBitField32() {
+		if (this instanceof TypeRecord.BitField32) {
+			return (TypeRecord.BitField32)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeRecord.MultiWord toTypeRecordMultiWord() {
+		if (this instanceof TypeRecord.MultiWord) {
+			return (TypeRecord.MultiWord)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+
+
+	
+	
 	public TypeReference toTypeReference() {
 		if (this instanceof TypeReference) {
 			return (TypeReference)this;
