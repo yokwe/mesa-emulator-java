@@ -39,23 +39,14 @@ public abstract class ProcessType {
 			processTypeEnum(type.toTypeEnum());
 		} else if (type instanceof TypeSubrange) {
 			processTypeSubrange(type.toTypeSubrange());
-		} else if (type instanceof TypeArray) {
-			if (type instanceof TypeArray.Reference) {
-				processTypeArrayReference(type.toTypeArray().toReference());
-			} else if (type instanceof TypeArray.Subrange) {
-				processTypeArraySubrange(type.toTypeArray().toSubrange());
-			} else {
-				unexpected(type);
-			}
-		} else if (type instanceof TypePointer) {
-			TypePointer typePointer = type.toTypePointer();
-			if (typePointer.pointerSize == TypePointer.PointerSize.SHORT) {
-				processTypePointeShort(typePointer);
-			} else if (typePointer.pointerSize == TypePointer.PointerSize.LONG) {
-				processTypePointeLong(typePointer);
-			} else {
-				unexpected(type);
-			}
+		} else if (type instanceof TypeArray.Reference) {
+			processTypeArrayReference(type.toTypeArray().toReference());
+		} else if (type instanceof TypeArray.Subrange) {
+			processTypeArraySubrange(type.toTypeArray().toSubrange());
+		} else if (type instanceof TypePointer.Short) {
+			processTypePointeShort(type.toTypePointerShort());
+		} else if (type instanceof TypePointer.Long) {
+			processTypePointeLong(type.toTypePointerLong());
 		} else if (type instanceof TypeRecord) {
 			TypeRecord typeRecord = type.toTypeRecord();
 			if (type.bitField16()) {

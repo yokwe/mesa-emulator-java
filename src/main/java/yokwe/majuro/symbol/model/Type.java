@@ -106,8 +106,8 @@ public abstract class Type implements Comparable<Type> {
 	public static final Type LONG_CARDINAL    = new TypeSubrange("LONG CARDINAL",    0, 0xFFFF_FFFFL);
 	public static final Type LONG_UNSPECIFIED = new TypeSubrange("LONG UNSPECIFIED", 0, 0xFFFF_FFFFL);
 	
-	public static final Type POINTER          = new TypePointer ("POINTER",      TypePointer.PointerSize.SHORT);
-	public static final Type LONG_POINTER     = new TypePointer ("LONG POINTER", TypePointer.PointerSize.LONG);
+	public static final Type POINTER          = new TypePointer.Short (TypePointer.Short.NAME);
+	public static final Type LONG_POINTER     = new TypePointer.Long  (TypePointer.Long.NAME);
 	
 	
 	public final String name;
@@ -208,32 +208,35 @@ public abstract class Type implements Comparable<Type> {
 	}
 	public boolean rawPointer() {
 		if (this instanceof TypePointer) {
-			TypePointer typePointer = toTypePointer();
-			return typePointer.targetType == null;
+			return toTypePointer().targetType == null;
 		} else {
 			return false;
 		}
 	}
 	public boolean shortPointer() {
-		if (this instanceof TypePointer) {
-			TypePointer typePointer = toTypePointer();
-			return typePointer.pointerSize == TypePointer.PointerSize.SHORT;
-		} else {
-			return false;
-		}
+		return this instanceof TypePointer.Short;
 	}
 	public boolean longPointer() {
-		if (this instanceof TypePointer) {
-			TypePointer typePointer = toTypePointer();
-			return typePointer.pointerSize == TypePointer.PointerSize.LONG;
-		} else {
-			return false;
-		}
+		return this instanceof TypePointer.Long;
 	}
 		
 	public TypeArray toTypeArray() {
 		if (this instanceof TypeArray) {
 			return (TypeArray)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeArray.Reference toTypeArrayReference() {
+		if (this instanceof TypeArray.Reference) {
+			return (TypeArray.Reference)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypeArray.Subrange toTypeArraySubrange() {
+		if (this instanceof TypeArray.Subrange) {
+			return (TypeArray.Subrange)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
@@ -255,6 +258,20 @@ public abstract class Type implements Comparable<Type> {
 	public TypePointer toTypePointer() {
 		if (this instanceof TypePointer) {
 			return (TypePointer)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypePointer.Short toTypePointerShort() {
+		if (this instanceof TypePointer.Short) {
+			return (TypePointer.Short)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
+	public TypePointer.Long toTypePointerLong() {
+		if (this instanceof TypePointer.Long) {
+			return (TypePointer.Long)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}

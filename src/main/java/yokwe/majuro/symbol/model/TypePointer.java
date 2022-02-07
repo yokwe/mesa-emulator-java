@@ -3,26 +3,26 @@ package yokwe.majuro.symbol.model;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
-public class TypePointer extends Type {
+public abstract class TypePointer extends Type {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypePointer.class);
 
-	public enum PointerSize {
-		SHORT,
-		LONG,
-	}
-	public final PointerSize pointerSize;
-	public final Type        targetType;
+	private final int    bits;
+	private final long   maxValue;
+	private final String typeName;
 	
-	public TypePointer(String name, PointerSize pointerSize, Type targetType) {
+	public final Type   targetType;
+	
+	protected TypePointer(String name, int bits, String typeName, Type targetType) {
 		super(name);
 		
-		this.pointerSize = pointerSize;
-		this.targetType  = targetType;
-		
+		this.bits       = bits;
+		this.maxValue   = (1L << bits) - 1;
+		this.typeName   = typeName;		
+		this.targetType = targetType;
 		fix();
 	}
-	public TypePointer(String name, PointerSize pointerSize) {
-		this(name, pointerSize, null);
+	protected TypePointer(String name, int bits, String typeName) {
+		this(name, bits, typeName, null);
 	}
 	
 	@Override
@@ -31,12 +31,7 @@ public class TypePointer extends Type {
 	}
 	
 	public void checkValue(long value) {
-		if (shortPointer()) {
-			if (0 <= value && value <= 0x0000_FFFFL) return;
-		}
-		if (longPointer()) {
-			if (0 <= value && value <= 0xFFFF_FFFFL) return;
-		}
+		if (0 <= value && value <= maxValue) return;
 		logger.error("Unexpected");
 		logger.error("  this  {}", this);
 		throw new UnexpectedException("Unexpected");
@@ -55,35 +50,40 @@ public class TypePointer extends Type {
 				}
 			}
 			
-			if (shortPointer()) {
-				bitSize = 16;
-			} else if (longPointer()) {
-				bitSize = 32;
-			} else {
-				logger.error("Unexpected");
-				logger.error("  this  {}", this);
-				throw new UnexpectedException("Unexpected");
-			}
+			bitSize = bits;
 		}
 	}
 	
 	@Override
 	public String toMesaType() {
-		String baseType;
-		if (shortPointer()) {
-			baseType = POINTER.name;
-		} else if (longPointer()) {
-			baseType = LONG_POINTER.name;
-		} else {
-			logger.error("Unexpected");
-			logger.error("  this  {}", this);
-			throw new UnexpectedException("Unexpected");
-		}
-
 		if (rawPointer()) {
-			return baseType;
+			return typeName;
 		} else {
-			return baseType + " TO " + targetType.toMesaType();
+			return typeName + " TO " + targetType.toMesaType();
 		}
-	}   
+	}
+	
+	public static final class Long extends TypePointer {
+		public static final int    BITS = 32;
+		public static final String NAME = "LONG POINTER";
+		
+		public Long(String name, Type targetType) {
+			super(name, BITS, NAME, targetType);
+		}
+		public Long(String name) {
+			this(name, null);
+		}
+	}
+	
+	public static final class Short extends TypePointer {
+		public static final int    BITS = 16;
+		public static final String NAME = "POINTER";
+		
+		public Short(String name, Type targetType) {
+			super(name, BITS, NAME, targetType);
+		}
+		public Short(String name) {
+			this(name, null);
+		}
+	}
 }
