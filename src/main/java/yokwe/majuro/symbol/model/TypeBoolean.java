@@ -6,6 +6,8 @@ import yokwe.majuro.util.StringUtil;
 public class TypeBoolean extends Type {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeBoolean.class);
 
+	public static final String NAME = "BOOLEAN";
+
 	public TypeBoolean(String name) {
 		super(name);
 		fix();

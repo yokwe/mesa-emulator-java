@@ -6,9 +6,18 @@ import yokwe.majuro.util.StringUtil;
 public class TypeSubrange extends Type {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeSubrange.class);
 	
+	public static final String NAME_INTEGER          = "INTEGER";
+	
+	public static final String NAME_CARDINAL         = "CARDINAL";
+	public static final String NAME_LONG_CARDINAL    = "LONG CARDINAL";
+	
+	public static final String NAME_UNSPECIFIED      = "UNSPECIFIED";
+	public static final String NAME_LONG_UNSPECIFIED = "LONG UNSPECIFIED";
+	
+
 	public static final String CLOSE_CHAR_INCLUSIVE = "]";
 	public static final String CLOSE_CHAR_EXCLUSIVE = ")";
-	
+		
 	public final String  minString;
 	public final String  maxString;
 	public final String  closeChar;

@@ -97,17 +97,17 @@ public abstract class Type implements Comparable<Type> {
 	//
 	// Define predefined type
 	//
-	public static final Type BOOLEAN          = new TypeBoolean ("BOOLEAN");
-	public static final Type INTEGER          = new TypeSubrange("INTEGER", Short.MIN_VALUE, Short.MAX_VALUE);
+	public static final Type BOOLEAN          = new TypeBoolean (TypeBoolean.NAME);
+	public static final Type INTEGER          = new TypeSubrange(TypeSubrange.NAME_INTEGER, Short.MIN_VALUE, Short.MAX_VALUE);
 	
-	public static final Type CARDINAL         = new TypeSubrange("CARDINAL",         0, 0xFFFF);
-	public static final Type UNSPECIFIED      = new TypeSubrange("UNSPECIFIED",      0, 0xFFFF);
+	public static final Type CARDINAL         = new TypeSubrange(TypeSubrange.NAME_CARDINAL,         0, 0xFFFF);
+	public static final Type UNSPECIFIED      = new TypeSubrange(TypeSubrange.NAME_UNSPECIFIED,      0, 0xFFFF);
 	
-	public static final Type LONG_CARDINAL    = new TypeSubrange("LONG CARDINAL",    0, 0xFFFF_FFFFL);
-	public static final Type LONG_UNSPECIFIED = new TypeSubrange("LONG UNSPECIFIED", 0, 0xFFFF_FFFFL);
+	public static final Type LONG_CARDINAL    = new TypeSubrange(TypeSubrange.NAME_LONG_CARDINAL,    0, 0xFFFF_FFFFL);
+	public static final Type LONG_UNSPECIFIED = new TypeSubrange(TypeSubrange.NAME_LONG_UNSPECIFIED, 0, 0xFFFF_FFFFL);
 	
-	public static final Type POINTER          = new TypePointer.Short (TypePointer.Short.NAME);
-	public static final Type LONG_POINTER     = new TypePointer.Long  (TypePointer.Long.NAME);
+	public static final Type POINTER          = new TypePointer.Short(TypePointer.Short.NAME);
+	public static final Type LONG_POINTER     = new TypePointer.Long (TypePointer.Long.NAME);
 	
 	
 	public final String name;
