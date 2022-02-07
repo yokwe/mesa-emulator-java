@@ -10,14 +10,19 @@ import java.util.stream.Collectors;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.model.Type;
 import yokwe.majuro.symbol.model.TypeArray;
-import yokwe.majuro.symbol.model.TypeArray.Reference;
-import yokwe.majuro.symbol.model.TypeArray.Subrange;
+import yokwe.majuro.symbol.model.TypeArrayRef;
+import yokwe.majuro.symbol.model.TypeArraySub;
+import yokwe.majuro.symbol.model.TypeBitField16;
+import yokwe.majuro.symbol.model.TypeBitField32;
 import yokwe.majuro.symbol.model.TypeBoolean;
 import yokwe.majuro.symbol.model.TypeEnum;
+import yokwe.majuro.symbol.model.TypePointerLong;
+import yokwe.majuro.symbol.model.TypeMultiWord;
 import yokwe.majuro.symbol.model.TypePointer;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
 import yokwe.majuro.symbol.model.TypeReference;
+import yokwe.majuro.symbol.model.TypePointerShort;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.type.MemoryBase;
 import yokwe.majuro.type.MemoryData16;
@@ -30,11 +35,11 @@ public class ProcessDecl {
 
 	// for java code generation
 	private static boolean javaDataClass(Type type) {
-		if (type instanceof TypeBoolean)  return true;
-		if (type instanceof TypeEnum)     return true;
-		if (type instanceof TypeSubrange) return true;
-		if (type.bitField16())            return true;
-		if (type.bitField32())            return true;
+		if (type instanceof TypeBoolean)    return true;
+		if (type instanceof TypeEnum)       return true;
+		if (type instanceof TypeSubrange)   return true;
+		if (type instanceof TypeBitField16) return true;
+		if (type instanceof TypeBitField32) return true;
 		return false;
 	}
 
@@ -128,7 +133,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(elementType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
-			if (!indexType.empty()) {
+			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			}
 			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
@@ -136,7 +141,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index) {", elementTypeName);
-			if (!indexType.empty()) {
+			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			}
 			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
@@ -145,7 +150,7 @@ public class ProcessDecl {
 		}
 	}	
 	private static void arrayElement(JavaFile javaFile, Type indexType) {
-		Type elementType = javaFile.type.toTypeArray().arrayElement.realType();
+		Type elementType = javaFile.type.toArrayElement().realType();
 		arrayElement(javaFile, indexType, elementType);
 	}
 	// array of short pointer
@@ -157,7 +162,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(targetType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", targetTypeName);
-			if (!indexType.empty()) {
+			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			}
 			out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -165,7 +170,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index) {", targetTypeName);
-			if (!indexType.empty()) {
+			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			}
 			out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -177,10 +182,9 @@ public class ProcessDecl {
 		arrayIndirectShort(javaFile, indexType, Type.POINTER);
 	}
 	private static void arrayIndirectShort(JavaFile javaFile, Type indexType) {
-		TypeArray   typeArray   = javaFile.type.toTypeArray();
-		TypePointer typePointer = typeArray.arrayElement.realType().toTypePointer();
-		Type        targetType  = typePointer.targetType.realType();
-		
+		Type elementType = javaFile.type.toArrayElement().realType();
+		Type targetType  = elementType.toPointerTarget().realType();
+				
 		arrayIndirectShort(javaFile, indexType, targetType);
 	}
 	// array of long pointer
@@ -192,7 +196,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(targetType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", targetTypeName);
-			if (!indexType.empty()) {
+			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			}
 			out.println("int longPointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -200,7 +204,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index) {", targetTypeName);
-			if (!indexType.empty()) {
+			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);");
 			}
 			out.println("int longPointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -212,9 +216,8 @@ public class ProcessDecl {
 		arrayIndirectLong(javaFile, indexType, Type.LONG_POINTER);
 	}
 	private static void arrayIndirectLong(JavaFile javaFile, Type indexType) {
-		TypeArray   typeArray   = javaFile.type.toTypeArray();
-		TypePointer typePointer = typeArray.arrayElement.realType().toTypePointer();
-		Type        targetType  = typePointer.targetType.realType();
+		Type elementType = javaFile.type.toArrayElement().realType();
+		Type targetType  = elementType.toPointerTarget().realType();
 		
 		arrayIndirectLong(javaFile, indexType, targetType);
 	}
@@ -242,10 +245,9 @@ public class ProcessDecl {
 	private static void recordFieldIndirectLong(JavaFile javaFile, TypeRecord.Field field) {
 		final var out = javaFile.out;
 
-		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		Type   targetType     = fieldType.toTypePointer().targetType.realType();
+		Type   targetType     = field.type.realType().toPointerTarget().realType();
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
 		if (javaDataClass(targetType)) {
@@ -263,10 +265,9 @@ public class ProcessDecl {
 	private static void recordFieldIndirectShort(JavaFile javaFile, TypeRecord.Field field) {
 		final var out = javaFile.out;
 
-		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		Type   targetType     = fieldType.toTypePointer().targetType.realType();
+		Type   targetType     = field.type.realType().toPointerTarget().realType();
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
 		if (javaDataClass(targetType)) {
@@ -333,37 +334,37 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
+		protected void processTypeMultiWord(TypeMultiWord type) {
 			// TODO Auto-generated method stub
 		}
 
@@ -534,11 +535,11 @@ public class ProcessDecl {
 			processType.process();
 		}
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			process(type);
 		}
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			process(type);
 		}
 
@@ -565,17 +566,17 @@ public class ProcessDecl {
 			}
 		}
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			process(type);
 		}
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			process(type);
 		}
 		
 		// RECORD
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is BIT FIELD 16
 			final var out         = javaFile.out;
 			final var parentClass = MemoryData16.class;
@@ -651,7 +652,7 @@ public class ProcessDecl {
 			out.println("}");
 		}
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is BIT FIELD 16
 			final var out         = javaFile.out;
 			final var parentClass = MemoryData32.class;
@@ -728,8 +729,8 @@ public class ProcessDecl {
 			out.println("}");
 		}
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
-			var processType = new ProcessTypeRecord(javaFile);
+		protected void processTypeMultiWord(TypeMultiWord type) {
+			var processType = new ProcessTypeMultiWord(javaFile);
 			processType.process();
 		}
 
@@ -757,7 +758,7 @@ public class ProcessDecl {
 		//
 		@Override
 		public void process() {
-			final var type        = javaFile.type.toTypeArray();
+			final var type        = javaFile.type;
 			final var out         = javaFile.out;
 			final var parentClass = MemoryBase.class;
 
@@ -771,12 +772,12 @@ public class ProcessDecl {
 			
 			{
 				boolean immediateSubrange = false;
-				if (type instanceof TypeArray.Subrange) {
+				if (type instanceof TypeArraySub) {
 					// INDEX is IMMEDIATE SUBRANGE
-					indexType = type.toSubrange().typeSubrange;
+					indexType = type.toTypeArraySub().typeSubrange;
 					immediateSubrange = true;
-				} else if (type instanceof TypeArray.Reference) {
-					Type realType = type.toReference().typeReference.realType();
+				} else if (type instanceof TypeArrayRef) {
+					Type realType = type.toTypeArrayRef().typeReference.realType();
 					if (realType instanceof TypeSubrange) {
 						// INDEX is REFERENCE of SUBRANGE
 						indexType = realType.toTypeSubrange();
@@ -790,7 +791,7 @@ public class ProcessDecl {
 					throw new UnexpectedException("Unexpected");
 				}
 				
-				if (!indexType.empty()) {
+				if (indexType.bitSize() != 0) {
 					out.println("//");
 					out.println("// Check range of index");
 					out.println("//");
@@ -824,7 +825,7 @@ public class ProcessDecl {
 			out.println("// Access to Element of Array");
 			out.println("//");
 			
-			accept(type.arrayElement.realType());
+			accept(type.toArrayElement().realType());
 			
 			// close class body
 			out.println("}");
@@ -849,19 +850,19 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			// ARRAY of ARRAY-REFERENCE
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			// ARRAY of ARRAY-SUBRANGE
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			// ARRAY of SHORT POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW SHORT POINTER
@@ -869,12 +870,12 @@ public class ProcessDecl {
 			} else {
 				// ARRAY of SHORT POINTER
 				var processType = new ProcessTypeArrayShortPointer(javaFile, indexType);
-				processType.accept(type.targetType.realType());
+				processType.accept(type.pointerTarget.realType());
 			}			
 		}
 
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			// ARRAY of LONG POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW LONG POINTER
@@ -882,24 +883,24 @@ public class ProcessDecl {
 			} else {
 				// ARRAY of LONG POINTER
 				var processType = new ProcessTypeArrayLongPointer(javaFile, indexType);
-				processType.accept(type.targetType.realType());
+				processType.accept(type.pointerTarget.realType());
 			}
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// ARRAY of BIT FIELD 16
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// ARRAY of BIT FIELD 32
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
+		protected void processTypeMultiWord(TypeMultiWord type) {
 			// ARRAY of MULTI WORD RECORD
 			arrayElement(javaFile, indexType);
 		}
@@ -955,43 +956,43 @@ public class ProcessDecl {
 			}
 		}
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			// ARRAY of SHORT POINTER to ARRAY-REFERENCE
 			process(type);
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			// ARRAY of SHORT POINTER to ARRAY-SUBRANGE
 			process(type);
 		}
 
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			// ARRAY of SHORT POINTER to SHORT POINTER
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			// ARRAY of SHORT POINTER to SHORT POINTER
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// ARRAY of SHORT POINTER to BIT FIELD 16
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// ARRAY of SHORT POINTER to BIT FIELD 32
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
+		protected void processTypeMultiWord(TypeMultiWord type) {
 			// ARRAY of SHORT POINTER to MULTI WORD RECORD
 			arrayIndirectShort(javaFile, indexType);
 		}
@@ -1048,43 +1049,43 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			// ARRAY of LONG POINTER to ARRAY-REFERENCE
 			process(type);
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			// ARRAY of LONG POINTER to ARRAY-SUBRANGE
 			process(type);
 		}
 
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			// ARRAY of LONG POINTER to SHORT POINTER
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			// ARRAY of LONG POINTER to LONG POINTER
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// ARRAY of LONG POINTER to BIT FIELD 16
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// ARRAY of LONG POINTER to BIT FIELD 32
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
+		protected void processTypeMultiWord(TypeMultiWord type) {
 			// ARRAY of LONG POINTER to MULTI WORD RECORD
 			arrayIndirectLong(javaFile, indexType);
 		}
@@ -1098,10 +1099,10 @@ public class ProcessDecl {
 
 	
 	//
-	// ProcessTypeRecord -- MULTI WORD RECORD
+	// ProcessTypeMultiWord
 	//
-	private static class ProcessTypeRecord extends ProcessField {
-		ProcessTypeRecord(JavaFile javaFile) {
+	private static class ProcessTypeMultiWord extends ProcessField {
+		ProcessTypeMultiWord(JavaFile javaFile) {
 			super(javaFile);
 		}
 		
@@ -1110,7 +1111,7 @@ public class ProcessDecl {
 		//
 		@Override
 		public void process() {
-			final var type        = javaFile.type.toTypeRecord();
+			final var type        = javaFile.type.toTypeMultiWord();
 			final var out         = javaFile.out;
 			final var parentClass = MemoryBase.class;
 			
@@ -1171,7 +1172,7 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArrayReference(Field field, TypeArray.Reference fieldType) {
+		protected void processTypeArrayReference(Field field, TypeArrayRef fieldType) {
 			// RECORD FIELD is ARRAY-REFERENCE
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of ARRAY-REFERENCE
@@ -1184,7 +1185,7 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Field field, TypeArray.Subrange fieldType) {
+		protected void processTypeArraySubrange(Field field, TypeArraySub fieldType) {
 			// RECORD FIELD is ARRAY-SUBRANGE
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of ARRAY-SUBRANGE
@@ -1197,35 +1198,35 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypePointeShort(Field field, TypePointer fieldType) {
+		protected void processTypePointeShort(Field field, TypePointerShort fieldType) {
 			// RECORD FIELD is SHORT POINTER
 			if (fieldType.rawPointer()) {
 				// RECORD FIELD is RAW SHORT POINTER
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is SHORT POINTER
+				var targetType  = fieldType.realType().toPointerTarget().realType();
 				var processType = new ProcessTypeRecordShortPointer(javaFile, field);
-				TypePointer typePointer = fieldType.toTypePointer();
-				processType.accept(typePointer.targetType.realType());
+				processType.accept(targetType);
 			}
 		}
 
 		@Override
-		protected void processTypePointeLong(Field field, TypePointer fieldType) {
+		protected void processTypePointeLong(Field field, TypePointerLong fieldType) {
 			// RECORD FIELD is LONG POINTER
 			if (fieldType.rawPointer()) {
 				// RECORD FIELD is RAW LONG POINTER
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is LONG POINTER
+				var targetType  = fieldType.realType().toPointerTarget().realType();
 				var processType = new ProcessTypeRecordLongPointer(javaFile, field);
-				TypePointer typePointer = fieldType.toTypePointer();
-				processType.accept(typePointer.targetType.realType());
+				processType.accept(targetType);
 			}
 		}
 
 		@Override
-		protected void processTypeBitField16(Field field, TypeRecord fieldType) {
+		protected void processTypeBitField16(Field field, TypeBitField16 fieldType) {
 			// RECORD FIELD is BIT FIELD 16
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of BIT FIELD 16
@@ -1237,7 +1238,7 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeBitField32(Field field, TypeRecord fieldType) {
+		protected void processTypeBitField32(Field field, TypeBitField32 fieldType) {
 			// RECORD FIELD is BIT FIELD 32
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of BIT FIELD 32
@@ -1249,7 +1250,7 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeMultiWord(Field field, TypeRecord fieldType) {
+		protected void processTypeMultiWord(Field field, TypeMultiWord fieldType) {
 			// RECORD FIELD is MULTI WORD RECORD
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of MULTI WORD RECORD
@@ -1293,43 +1294,43 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE
 			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE"); // FIXME
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE
 			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE"); // FIXME
 		}
 
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			// RECORD FIELD is SHORT POINTER to SHORT POINTER
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			// RECORD FIELD is SHORT POINTER to LONG POINTER
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is SHORT POINTER to BIT FIELD 16
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is SHORT POINTER to BIT FIELD 32
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
+		protected void processTypeMultiWord(TypeMultiWord type) {
 			// RECORD FIELD is SHORT POINTER to MULTI WORD RECORD
 			recordFieldIndirectShort(javaFile, field);
 		}
@@ -1373,43 +1374,43 @@ public class ProcessDecl {
 		}
 
 		@Override
-		protected void processTypeArrayReference(Reference type) {
+		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is LONG POINTER to ARRAY-REFERENCE
 			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ARRAY-REFERENCE"); // FIXME
 		}
 
 		@Override
-		protected void processTypeArraySubrange(Subrange type) {
+		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE
 			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE"); // FIXME
 		}
 
 		@Override
-		protected void processTypePointeShort(TypePointer.Short type) {
+		protected void processTypePointeShort(TypePointerShort type) {
 			// RECORD FIELD is LONG POINTER to SHORT POINTER
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypePointeLong(TypePointer.Long type) {
+		protected void processTypePointeLong(TypePointerLong type) {
 			// RECORD FIELD is LONG POINTER to LONG POINTER
 			unexpected(type);
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeRecord.BitField16 type) {
+		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is LONG POINTER to BIT FIELD 16
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
-		protected void processTypeBitField32(TypeRecord.BitField32 type) {
+		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is LONG POINTER to BIT FIELD 32
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
-		protected void processTypeMultiWord(TypeRecord.MultiWord type) {
+		protected void processTypeMultiWord(TypeMultiWord type) {
 			// RECORD FIELD is LONG POINTER to MULTI WORD RECORD
 			recordFieldIndirectLong(javaFile, field);
 		}

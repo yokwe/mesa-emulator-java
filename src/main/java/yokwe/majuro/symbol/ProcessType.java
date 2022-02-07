@@ -2,12 +2,16 @@ package yokwe.majuro.symbol;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.model.Type;
-import yokwe.majuro.symbol.model.TypeArray;
+import yokwe.majuro.symbol.model.TypeArrayRef;
+import yokwe.majuro.symbol.model.TypeArraySub;
+import yokwe.majuro.symbol.model.TypeBitField16;
+import yokwe.majuro.symbol.model.TypeBitField32;
 import yokwe.majuro.symbol.model.TypeBoolean;
 import yokwe.majuro.symbol.model.TypeEnum;
-import yokwe.majuro.symbol.model.TypePointer;
-import yokwe.majuro.symbol.model.TypeRecord;
+import yokwe.majuro.symbol.model.TypePointerLong;
+import yokwe.majuro.symbol.model.TypeMultiWord;
 import yokwe.majuro.symbol.model.TypeReference;
+import yokwe.majuro.symbol.model.TypePointerShort;
 import yokwe.majuro.symbol.model.TypeSubrange;
 
 public abstract class ProcessType {
@@ -39,20 +43,20 @@ public abstract class ProcessType {
 			processTypeEnum(type.toTypeEnum());
 		} else if (type instanceof TypeSubrange) {
 			processTypeSubrange(type.toTypeSubrange());
-		} else if (type instanceof TypeArray.Reference) {
-			processTypeArrayReference(type.toTypeArrayReference());
-		} else if (type instanceof TypeArray.Subrange) {
-			processTypeArraySubrange(type.toTypeArraySubrange());
-		} else if (type instanceof TypePointer.Short) {
+		} else if (type instanceof TypeArrayRef) {
+			processTypeArrayReference(type.toTypeArrayRef());
+		} else if (type instanceof TypeArraySub) {
+			processTypeArraySubrange(type.toTypeArraySub());
+		} else if (type instanceof TypePointerShort) {
 			processTypePointeShort(type.toTypePointerShort());
-		} else if (type instanceof TypePointer.Long) {
+		} else if (type instanceof TypePointerLong) {
 			processTypePointeLong(type.toTypePointerLong());
-		} else if (type instanceof TypeRecord.BitField16) {
-			processTypeBitField16(type.toTypeRecordBitField16());
-		} else if (type instanceof TypeRecord.BitField32) {
-			processTypeBitField32(type.toTypeRecordBitField32());
-		} else if (type instanceof TypeRecord.MultiWord) {
-			processTypeMultiWord(type.toTypeRecordMultiWord());
+		} else if (type instanceof TypeBitField16) {
+			processTypeBitField16(type.toTypeBitField16());
+		} else if (type instanceof TypeBitField32) {
+			processTypeBitField32(type.toTypeBitField32());
+		} else if (type instanceof TypeMultiWord) {
+			processTypeMultiWord(type.toTypeMultiWord());
 		} else if (type instanceof TypeReference) {
 			processTypeReference(type.toTypeReference());
 		} else {
@@ -66,15 +70,15 @@ public abstract class ProcessType {
 	protected abstract void processTypeSubrange      (TypeSubrange type);
 	
 	// complex type
-	protected abstract void processTypeArrayReference(TypeArray.Reference type);
-	protected abstract void processTypeArraySubrange (TypeArray.Subrange  type);
+	protected abstract void processTypeArrayReference(TypeArrayRef type);
+	protected abstract void processTypeArraySubrange (TypeArraySub  type);
 	
-	protected abstract void processTypePointeShort   (TypePointer.Short type);
-	protected abstract void processTypePointeLong    (TypePointer.Long  type);
+	protected abstract void processTypePointeShort   (TypePointerShort type);
+	protected abstract void processTypePointeLong    (TypePointerLong  type);
 	
-	protected abstract void processTypeBitField16    (TypeRecord.BitField16 type);
-	protected abstract void processTypeBitField32    (TypeRecord.BitField32 type);
-	protected abstract void processTypeMultiWord     (TypeRecord.MultiWord  type);
+	protected abstract void processTypeBitField16    (TypeBitField16 type);
+	protected abstract void processTypeBitField32    (TypeBitField32 type);
+	protected abstract void processTypeMultiWord     (TypeMultiWord  type);
 
 	// misc type
 	protected abstract void processTypeReference     (TypeReference type);

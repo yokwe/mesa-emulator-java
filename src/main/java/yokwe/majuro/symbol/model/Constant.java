@@ -124,9 +124,12 @@ public class Constant implements Comparable<Constant> {
 				if (type instanceof TypeSubrange) {
 					TypeSubrange typeSubrange = type.toTypeSubrange();
 					typeSubrange.checkValue(numericValue);
-				} else if (type instanceof TypePointer) {
-					TypePointer typePointer = type.toTypePointer();
-					typePointer.checkValue(numericValue);
+				} else if (type instanceof TypePointerShort) {
+					TypePointerShort typePointerShort = type.toTypePointerShort();
+					typePointerShort.checkValue(numericValue);
+				} else if (type instanceof TypePointerLong) {
+					TypePointerLong typePointerLong = type.toTypePointerLong();
+					typePointerLong.checkValue(numericValue);
 				} else {
 					logger.error("Unexpected");
 					logger.error("  this  {}", this);

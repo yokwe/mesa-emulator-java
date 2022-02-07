@@ -10,15 +10,15 @@ public abstract class TypePointer extends Type {
 	private final long   maxValue;
 	private final String typeName;
 	
-	public final Type   targetType;
+	public final Type   pointerTarget;
 	
-	protected TypePointer(String name, int bits, String typeName, Type targetType) {
+	protected TypePointer(String name, int bits, String typeName, Type pointerTarget) {
 		super(name);
 		
-		this.bits       = bits;
-		this.maxValue   = (1L << bits) - 1;
-		this.typeName   = typeName;		
-		this.targetType = targetType;
+		this.bits          = bits;
+		this.maxValue      = (1L << bits) - 1;
+		this.typeName      = typeName;		
+		this.pointerTarget = pointerTarget;
 		fix();
 	}
 	protected TypePointer(String name, int bits, String typeName) {
@@ -44,8 +44,8 @@ public abstract class TypePointer extends Type {
 			if (rawPointer()) {
 				needsFix = false;
 			} else {
-				targetType.fix();
-				if (!targetType.needsFix) {
+				pointerTarget.fix();
+				if (!pointerTarget.needsFix) {
 					needsFix = false;
 				}
 			}
@@ -59,31 +59,7 @@ public abstract class TypePointer extends Type {
 		if (rawPointer()) {
 			return typeName;
 		} else {
-			return typeName + " TO " + targetType.toMesaType();
-		}
-	}
-	
-	public static final class Long extends TypePointer {
-		public static final int    BITS = 32;
-		public static final String NAME = "LONG POINTER";
-		
-		public Long(String name, Type targetType) {
-			super(name, BITS, NAME, targetType);
-		}
-		public Long(String name) {
-			this(name, null);
-		}
-	}
-	
-	public static final class Short extends TypePointer {
-		public static final int    BITS = 16;
-		public static final String NAME = "POINTER";
-		
-		public Short(String name, Type targetType) {
-			super(name, BITS, NAME, targetType);
-		}
-		public Short(String name) {
-			this(name, null);
+			return typeName + " TO " + pointerTarget.toMesaType();
 		}
 	}
 }

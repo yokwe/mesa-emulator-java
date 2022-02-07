@@ -80,7 +80,7 @@ public abstract class TypeRecord extends Type {
 		{
 			boolean foundProblem = false;
 			
-			if (this instanceof BitField32 && bitSize != 32) {
+			if (this instanceof TypeBitField32 && bitSize != 32) {
 				foundProblem = true;
 				logger.error("bitSize is not 32 for RECORD32");
 			}
@@ -197,12 +197,11 @@ public abstract class TypeRecord extends Type {
 						
 						int fieldBitSize = e.bitSize;
 						
-						int typeBitSize = type.bitSize;
-						if (bitField16() || bitField32()) {
-							typeBitSize  = type.bitSize;
-						} else {
-							typeBitSize = type.wordSize() * WORD_BITS;
-						}
+						int typeBitSize = -1;
+						if (this instanceof TypeBitField16) typeBitSize = type.bitSize;
+						else if (this instanceof TypeBitField32) typeBitSize = type.bitSize;
+						else if (this instanceof TypeMultiWord)  typeBitSize = type.wordSize() * WORD_BITS;
+						else throw new UnexpectedException("found problem");
 						
 						if (fieldBitSize == 0) continue;
 						if (fieldBitSize != typeBitSize) {
@@ -231,22 +230,5 @@ public abstract class TypeRecord extends Type {
 	public String toMesaType() {
 		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
 		return String.format("%s[%s]", typeName, String.join(", ", list));
-	}
-	
-	
-	public static final class BitField16 extends TypeRecord {
-		public BitField16(String name, List<Field> fieldList) {
-			super(name, "RECORD", fieldList);
-		}
-	}
-	public static final class BitField32 extends TypeRecord {
-		public BitField32(String name, List<Field> fieldList) {
-			super(name, "RECORD32", fieldList);
-		}
-	}
-	public static final class MultiWord extends TypeRecord {
-		public MultiWord(String name, List<Field> fieldList) {
-			super(name, "RECORD", fieldList);
-		}
 	}
 }

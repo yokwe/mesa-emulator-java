@@ -143,12 +143,12 @@ public class SymbolUtil {
 		if (type instanceof TypePointerShortContext) {
 			TypePointerShortContext typePointerShort = (TypePointerShortContext)type;
 			Type typeRef = getType(name + "#ref", typePointerShort.pointerRefType());
-			return new TypePointer.Short(name, typeRef);
+			return new TypePointerShort(name, typeRef);
 		}
 		if (type instanceof TypePointerLongContext) {
 			TypePointerLongContext typePointerLong = (TypePointerLongContext)type;
 			Type typeRef = getType(name + "#ref", typePointerLong.pointerRefType());
-			return new TypePointer.Long(name, typeRef);
+			return new TypePointerLong(name, typeRef);
 		}
 		
 		Symbol.logger.error("Unexpected");
@@ -205,14 +205,14 @@ public class SymbolUtil {
 		TypeReference typeReference = getType(name + "#index", type.referenceType());
 		Type arrayElement = SymbolUtil.getType(name + "#element", type.arrayElementType());
 	
-		return new TypeArray.Reference(name, typeReference, arrayElement);
+		return new TypeArrayRef(name, typeReference, arrayElement);
 	}
 
 	private static Type getType(String name, TypeArraySubrangeContext type) {
 		TypeSubrange typeSubrange = getType(name + "#index", type.subrangeType());
 		Type arrayElement = SymbolUtil.getType(name + "#element", type.arrayElementType());
 		
-		return new TypeArray.Subrange(name, typeSubrange, arrayElement);
+		return new TypeArraySub(name, typeSubrange, arrayElement);
 	}
 
 	private static Type getType(String name, ArrayElementTypeContext type) {
@@ -249,12 +249,11 @@ public class SymbolUtil {
 			for(var e: list) {
 				if (e.offset != 0)   bitField16 = false;
 				if (16 <= e.stopBit) bitField16 = false;
-// FIXME				if (e.type.empty())  bitField16 = false;
 			}
 			if (bitField16) {
-				return new TypeRecord.BitField16(name, list);
+				return new TypeBitField16(name, list);
 			} else {
-				return new TypeRecord.MultiWord(name, list);
+				return new TypeMultiWord(name, list);
 			}
 		}
 		if (type instanceof TypeRecord32Context) {
@@ -265,7 +264,7 @@ public class SymbolUtil {
 				list.add(getField(name, e));
 			}
 			
-			return new TypeRecord.BitField32(name, list);
+			return new TypeBitField32(name, list);
 		}
 		
 		Symbol.logger.error("Unexpected");

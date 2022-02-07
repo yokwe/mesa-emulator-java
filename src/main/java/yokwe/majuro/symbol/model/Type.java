@@ -106,8 +106,8 @@ public abstract class Type implements Comparable<Type> {
 	public static final Type LONG_CARDINAL    = new TypeSubrange(TypeSubrange.NAME_LONG_CARDINAL,    0, 0xFFFF_FFFFL);
 	public static final Type LONG_UNSPECIFIED = new TypeSubrange(TypeSubrange.NAME_LONG_UNSPECIFIED, 0, 0xFFFF_FFFFL);
 	
-	public static final Type POINTER          = new TypePointer.Short(TypePointer.Short.NAME);
-	public static final Type LONG_POINTER     = new TypePointer.Long (TypePointer.Long.NAME);
+	public static final Type POINTER          = new TypePointerShort(TypePointerShort.NAME);
+	public static final Type LONG_POINTER     = new TypePointerLong (TypePointerLong.NAME);
 	
 	
 	public final String name;
@@ -179,48 +179,47 @@ public abstract class Type implements Comparable<Type> {
 		}
 	}
 	
-	// check bitSize for empty
-	public boolean empty() {
-		return realType().bitSize() == 0;
-	}
-	
-	public boolean bitField16() {
-		return this instanceof TypeRecord.BitField16;
-	}
-	public boolean bitField32() {
-		return this instanceof TypeRecord.BitField32;
-	}
 	public boolean rawPointer() {
-		if (this instanceof TypePointer) {
-			return toTypePointer().targetType == null;
+		if (this instanceof TypePointerLong) {
+			return toTypePointerLong().pointerTarget == null;
+		} else if (this instanceof TypePointerShort) {
+			return toTypePointerShort().pointerTarget == null;
 		} else {
 			return false;
 		}
 	}
-	public boolean shortPointer() {
-		return this instanceof TypePointer.Short;
+	
+	// field access
+	public Type toPointerTarget() {
+		if (this instanceof TypePointerShort) {
+			return toTypePointerShort().pointerTarget;
+		}
+		if (this instanceof TypePointerLong) {
+			return toTypePointerLong().pointerTarget;
+		}
+		throw new UnexpectedException("Unexpected");	
 	}
-	public boolean longPointer() {
-		return this instanceof TypePointer.Long;
+	public Type toArrayElement() {
+		if (this instanceof TypeArrayRef) {
+			return toTypeArrayRef().arrayElement;
+		}
+		if (this instanceof TypeArraySub) {
+			return toTypeArraySub().arrayElement;
+		}
+		throw new UnexpectedException("Unexpected");	
 	}
-		
-	public TypeArray toTypeArray() {
-		if (this instanceof TypeArray) {
-			return (TypeArray)this;
+
+	// type cast
+	public TypeArrayRef toTypeArrayRef() {
+		if (this instanceof TypeArrayRef) {
+			return (TypeArrayRef)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypeArray.Reference toTypeArrayReference() {
-		if (this instanceof TypeArray.Reference) {
-			return (TypeArray.Reference)this;
-		} else {
-			throw new UnexpectedException("Unexpected");
-		}
-	}
-	public TypeArray.Subrange toTypeArraySubrange() {
-		if (this instanceof TypeArray.Subrange) {
-			return (TypeArray.Subrange)this;
+	public TypeArraySub toTypeArraySub() {
+		if (this instanceof TypeArraySub) {
+			return (TypeArraySub)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
@@ -239,59 +238,41 @@ public abstract class Type implements Comparable<Type> {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypePointer toTypePointer() {
-		if (this instanceof TypePointer) {
-			return (TypePointer)this;
+	public TypePointerShort toTypePointerShort() {
+		if (this instanceof TypePointerShort) {
+			return (TypePointerShort)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypePointer.Short toTypePointerShort() {
-		if (this instanceof TypePointer.Short) {
-			return (TypePointer.Short)this;
+	public TypePointerLong toTypePointerLong() {
+		if (this instanceof TypePointerLong) {
+			return (TypePointerLong)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypePointer.Long toTypePointerLong() {
-		if (this instanceof TypePointer.Long) {
-			return (TypePointer.Long)this;
+	public TypeBitField16 toTypeBitField16() {
+		if (this instanceof TypeBitField16) {
+			return (TypeBitField16)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypeRecord toTypeRecord() {
-		if (this instanceof TypeRecord) {
-			return (TypeRecord)this;
+	public TypeBitField32 toTypeBitField32() {
+		if (this instanceof TypeBitField32) {
+			return (TypeBitField32)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypeRecord.BitField16 toTypeRecordBitField16() {
-		if (this instanceof TypeRecord.BitField16) {
-			return (TypeRecord.BitField16)this;
+	public TypeMultiWord toTypeMultiWord() {
+		if (this instanceof TypeMultiWord) {
+			return (TypeMultiWord)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypeRecord.BitField32 toTypeRecordBitField32() {
-		if (this instanceof TypeRecord.BitField32) {
-			return (TypeRecord.BitField32)this;
-		} else {
-			throw new UnexpectedException("Unexpected");
-		}
-	}
-	public TypeRecord.MultiWord toTypeRecordMultiWord() {
-		if (this instanceof TypeRecord.MultiWord) {
-			return (TypeRecord.MultiWord)this;
-		} else {
-			throw new UnexpectedException("Unexpected");
-		}
-	}
-
-
-	
-	
 	public TypeReference toTypeReference() {
 		if (this instanceof TypeReference) {
 			return (TypeReference)this;
