@@ -34,19 +34,4 @@ public abstract class TypeArray extends Type {
 		this.maxValue = maxValue;
 		this.size     = maxValue - minValue + 1;
 	}
-	
-	public TypeArraySub toSubrange() {
-		if (this instanceof TypeArraySub) {
-			return (TypeArraySub)this;
-		} else {
-			throw new UnexpectedException("Unexpected");
-		}
-	}
-	public TypeArrayRef toReference() {
-		if (this instanceof TypeArrayRef) {
-			return (TypeArrayRef)this;
-		} else {
-			throw new UnexpectedException("Unexpected");
-		}
-	}
 }
