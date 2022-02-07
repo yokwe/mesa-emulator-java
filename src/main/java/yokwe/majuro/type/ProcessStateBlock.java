@@ -30,36 +30,43 @@ public final class ProcessStateBlock extends MemoryBase {
     // link (0:0..15): PsbLink
     private static final int OFFSET_LINK = 0;
     public PsbLink link(MemoryAccess access) {
-        return PsbLink.longPointer(base + OFFSET_LINK, access);
+        int longPointer = base + OFFSET_LINK;
+        return PsbLink.longPointer(longPointer, access);
     }
     // flags (1:0..15): PsbFlags
     private static final int OFFSET_FLAGS = 1;
     public PsbFlags flags(MemoryAccess access) {
-        return PsbFlags.longPointer(base + OFFSET_FLAGS, access);
+        int longPointer = base + OFFSET_FLAGS;
+        return PsbFlags.longPointer(longPointer, access);
     }
     // context (2:0..15): POINTER
     private static final int OFFSET_CONTEXT = 2;
     public POINTER context() {
-        return POINTER.longPointer(base + OFFSET_CONTEXT);
+        int longPointer = base + OFFSET_CONTEXT;
+        return POINTER.longPointer(longPointer);
     }
     // timeout (3:0..15): Ticks
     private static final int OFFSET_TIMEOUT = 3;
     public CARDINAL timeout(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_TIMEOUT, access);
+        int longPointer = base + OFFSET_TIMEOUT;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // mds (4:0..15): CARDINAL
     private static final int OFFSET_MDS = 4;
     public CARDINAL mds(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_MDS, access);
+        int longPointer = base + OFFSET_MDS;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // available (5:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 5;
     public UNSPECIFIED available(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE, access);
+        int longPointer = base + OFFSET_AVAILABLE;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // sticky (6:0..31): LONG UNSPECIFIED
     private static final int OFFSET_STICKY = 6;
     public LONG_UNSPECIFIED sticky(MemoryAccess access) {
-        return LONG_UNSPECIFIED.longPointer(base + OFFSET_STICKY, access);
+        int longPointer = base + OFFSET_STICKY;
+        return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }
 }

@@ -30,11 +30,13 @@ public final class InterruptItem extends MemoryBase {
     // condition (0:0..15): Condition
     private static final int OFFSET_CONDITION = 0;
     public Condition condition(MemoryAccess access) {
-        return Condition.longPointer(base + OFFSET_CONDITION, access);
+        int longPointer = base + OFFSET_CONDITION;
+        return Condition.longPointer(longPointer, access);
     }
     // available (1:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 1;
     public UNSPECIFIED available(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE, access);
+        int longPointer = base + OFFSET_AVAILABLE;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
 }

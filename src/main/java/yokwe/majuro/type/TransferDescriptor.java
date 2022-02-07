@@ -30,16 +30,19 @@ public final class TransferDescriptor extends MemoryBase {
     // src (0:0..15): ShortControlLink
     private static final int OFFSET_SRC = 0;
     public UNSPECIFIED src(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_SRC, access);
+        int longPointer = base + OFFSET_SRC;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // reserved (1:0..15): UNSPECIFIED
     private static final int OFFSET_RESERVED = 1;
     public UNSPECIFIED reserved(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_RESERVED, access);
+        int longPointer = base + OFFSET_RESERVED;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // dst (2:0..31): ControlLink
     private static final int OFFSET_DST = 2;
     public LONG_UNSPECIFIED dst(MemoryAccess access) {
-        return LONG_UNSPECIFIED.longPointer(base + OFFSET_DST, access);
+        int longPointer = base + OFFSET_DST;
+        return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }
 }

@@ -30,11 +30,13 @@ public final class FaultQueue extends MemoryBase {
     // queue (0:0..15): Queue
     private static final int OFFSET_QUEUE = 0;
     public Queue queue(MemoryAccess access) {
-        return Queue.longPointer(base + OFFSET_QUEUE, access);
+        int longPointer = base + OFFSET_QUEUE;
+        return Queue.longPointer(longPointer, access);
     }
     // condition (1:0..15): Condition
     private static final int OFFSET_CONDITION = 1;
     public Condition condition(MemoryAccess access) {
-        return Condition.longPointer(base + OFFSET_CONDITION, access);
+        int longPointer = base + OFFSET_CONDITION;
+        return Condition.longPointer(longPointer, access);
     }
 }

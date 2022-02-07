@@ -35,6 +35,7 @@ public final class StateAllocationTable extends MemoryBase {
     //
     public final StateVector get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
-        return StateVector.longPointer(base + (POINTER.WORD_SIZE * index));
+        char pointer = Mesa.read16(base + (POINTER.WORD_SIZE * index));
+        return StateVector.pointer(pointer);
     }
 }

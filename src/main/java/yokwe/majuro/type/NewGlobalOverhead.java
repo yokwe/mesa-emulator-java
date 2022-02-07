@@ -30,16 +30,19 @@ public final class NewGlobalOverhead extends MemoryBase {
     // available (0:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 0;
     public UNSPECIFIED available(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE, access);
+        int longPointer = base + OFFSET_AVAILABLE;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // word (1:0..15): GlobalWord
     private static final int OFFSET_WORD = 1;
     public GlobalWord word(MemoryAccess access) {
-        return GlobalWord.longPointer(base + OFFSET_WORD, access);
+        int longPointer = base + OFFSET_WORD;
+        return GlobalWord.longPointer(longPointer, access);
     }
     // global (2): GlobalVariables
     private static final int OFFSET_GLOBAL = 2;
     public BLOCK global() {
-        return BLOCK.longPointer(base + OFFSET_GLOBAL);
+        int longPointer = base + OFFSET_GLOBAL;
+        return BLOCK.longPointer(longPointer);
     }
 }

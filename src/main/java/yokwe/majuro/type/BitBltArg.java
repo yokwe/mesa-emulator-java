@@ -30,41 +30,49 @@ public final class BitBltArg extends MemoryBase {
     // dst (0:0..47): BitAddress
     private static final int OFFSET_DST = 0;
     public BitAddress dst() {
-        return BitAddress.longPointer(base + OFFSET_DST);
+        int longPointer = base + OFFSET_DST;
+        return BitAddress.longPointer(longPointer);
     }
     // dstBpl (3:0..15): INTEGER
     private static final int OFFSET_DST_BPL = 3;
     public INTEGER dstBpl(MemoryAccess access) {
-        return INTEGER.longPointer(base + OFFSET_DST_BPL, access);
+        int longPointer = base + OFFSET_DST_BPL;
+        return INTEGER.longPointer(longPointer, access);
     }
     // src (4:0..47): BitAddress
     private static final int OFFSET_SRC = 4;
     public BitAddress src() {
-        return BitAddress.longPointer(base + OFFSET_SRC);
+        int longPointer = base + OFFSET_SRC;
+        return BitAddress.longPointer(longPointer);
     }
     // srcBpl (7:0..15): INTEGER
     private static final int OFFSET_SRC_BPL = 7;
     public INTEGER srcBpl(MemoryAccess access) {
-        return INTEGER.longPointer(base + OFFSET_SRC_BPL, access);
+        int longPointer = base + OFFSET_SRC_BPL;
+        return INTEGER.longPointer(longPointer, access);
     }
     // width (8:0..15): CARDINAL
     private static final int OFFSET_WIDTH = 8;
     public CARDINAL width(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_WIDTH, access);
+        int longPointer = base + OFFSET_WIDTH;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // height (9:0..15): CARDINAL
     private static final int OFFSET_HEIGHT = 9;
     public CARDINAL height(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_HEIGHT, access);
+        int longPointer = base + OFFSET_HEIGHT;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // flags (10:0..15): BitBltFlags
     private static final int OFFSET_FLAGS = 10;
     public BitBltFlags flags(MemoryAccess access) {
-        return BitBltFlags.longPointer(base + OFFSET_FLAGS, access);
+        int longPointer = base + OFFSET_FLAGS;
+        return BitBltFlags.longPointer(longPointer, access);
     }
     // reserved (11:0..15): UNSPECIFIED
     private static final int OFFSET_RESERVED = 11;
     public UNSPECIFIED reserved(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_RESERVED, access);
+        int longPointer = base + OFFSET_RESERVED;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
 }

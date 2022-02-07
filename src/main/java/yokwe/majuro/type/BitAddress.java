@@ -30,7 +30,8 @@ public final class BitAddress extends MemoryBase {
     // word (0:0..31): LONG POINTER
     private static final int OFFSET_WORD = 0;
     public LONG_POINTER word() {
-        return LONG_POINTER.longPointer(base + OFFSET_WORD);
+        int longPointer = base + OFFSET_WORD;
+        return LONG_POINTER.longPointer(longPointer);
     }
     // reserved (2:0..11): UNSPECIFIED
     // FIXME  Field is not aligned

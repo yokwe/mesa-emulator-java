@@ -30,26 +30,31 @@ public final class LocalOverhead extends MemoryBase {
     // word (0:0..15): LocalWord
     private static final int OFFSET_WORD = 0;
     public LocalWord word(MemoryAccess access) {
-        return LocalWord.longPointer(base + OFFSET_WORD, access);
+        int longPointer = base + OFFSET_WORD;
+        return LocalWord.longPointer(longPointer, access);
     }
     // returnlink (1:0..15): ShortControlLink
     private static final int OFFSET_RETURNLINK = 1;
     public UNSPECIFIED returnlink(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_RETURNLINK, access);
+        int longPointer = base + OFFSET_RETURNLINK;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // globallink (2:0..15): GFTHandle
     private static final int OFFSET_GLOBALLINK = 2;
     public CARDINAL globallink(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_GLOBALLINK, access);
+        int longPointer = base + OFFSET_GLOBALLINK;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // pc (3:0..15): CARDINAL
     private static final int OFFSET_PC = 3;
     public CARDINAL pc(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_PC, access);
+        int longPointer = base + OFFSET_PC;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // local (4): LocalVariables
     private static final int OFFSET_LOCAL = 4;
     public BLOCK local() {
-        return BLOCK.longPointer(base + OFFSET_LOCAL);
+        int longPointer = base + OFFSET_LOCAL;
+        return BLOCK.longPointer(longPointer);
     }
 }

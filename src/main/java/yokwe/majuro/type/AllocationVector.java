@@ -35,6 +35,7 @@ public final class AllocationVector extends MemoryBase {
     //
     public final AVItem get(int index, MemoryAccess access) {
         if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
-        return AVItem.longPointer(base + (AVItem.WORD_SIZE * index), access);
+        int longPointer = base + (AVItem.WORD_SIZE * index);
+        return AVItem.longPointer(longPointer, access);
     }
 }
