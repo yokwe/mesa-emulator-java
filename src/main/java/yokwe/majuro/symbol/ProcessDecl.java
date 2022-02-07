@@ -150,7 +150,7 @@ public class ProcessDecl {
 		}
 	}	
 	private static void arrayElement(JavaFile javaFile, Type indexType) {
-		Type elementType = javaFile.type.toArrayElement().realType();
+		Type elementType = javaFile.type.arrayElement().realType();
 		arrayElement(javaFile, indexType, elementType);
 	}
 	// array of short pointer
@@ -182,8 +182,8 @@ public class ProcessDecl {
 		arrayIndirectShort(javaFile, indexType, Type.POINTER);
 	}
 	private static void arrayIndirectShort(JavaFile javaFile, Type indexType) {
-		Type elementType = javaFile.type.toArrayElement().realType();
-		Type targetType  = elementType.toPointerTarget().realType();
+		Type elementType = javaFile.type.arrayElement().realType();
+		Type targetType  = elementType.pointerTarget().realType();
 				
 		arrayIndirectShort(javaFile, indexType, targetType);
 	}
@@ -216,8 +216,8 @@ public class ProcessDecl {
 		arrayIndirectLong(javaFile, indexType, Type.LONG_POINTER);
 	}
 	private static void arrayIndirectLong(JavaFile javaFile, Type indexType) {
-		Type elementType = javaFile.type.toArrayElement().realType();
-		Type targetType  = elementType.toPointerTarget().realType();
+		Type elementType = javaFile.type.arrayElement().realType();
+		Type targetType  = elementType.pointerTarget().realType();
 		
 		arrayIndirectLong(javaFile, indexType, targetType);
 	}
@@ -247,7 +247,7 @@ public class ProcessDecl {
 
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		Type   targetType     = field.type.realType().toPointerTarget().realType();
+		Type   targetType     = field.type.realType().pointerTarget().realType();
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
 		if (javaDataClass(targetType)) {
@@ -267,7 +267,7 @@ public class ProcessDecl {
 
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		Type   targetType     = field.type.realType().toPointerTarget().realType();
+		Type   targetType     = field.type.realType().pointerTarget().realType();
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
 		if (javaDataClass(targetType)) {
@@ -825,7 +825,7 @@ public class ProcessDecl {
 			out.println("// Access to Element of Array");
 			out.println("//");
 			
-			accept(type.toArrayElement().realType());
+			accept(type.arrayElement().realType());
 			
 			// close class body
 			out.println("}");
@@ -1205,7 +1205,7 @@ public class ProcessDecl {
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is SHORT POINTER
-				var targetType  = fieldType.realType().toPointerTarget().realType();
+				var targetType  = fieldType.realType().pointerTarget().realType();
 				var processType = new ProcessTypeRecordShortPointer(javaFile, field);
 				processType.accept(targetType);
 			}
@@ -1219,7 +1219,7 @@ public class ProcessDecl {
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is LONG POINTER
-				var targetType  = fieldType.realType().toPointerTarget().realType();
+				var targetType  = fieldType.realType().pointerTarget().realType();
 				var processType = new ProcessTypeRecordLongPointer(javaFile, field);
 				processType.accept(targetType);
 			}

@@ -173,7 +173,7 @@ public abstract class Type implements Comparable<Type> {
 	public Type realType() {
 		if (needsFix) throw new UnexpectedException("Unexpected");
 		if (this instanceof TypeReference) {
-			return toTypeReference().realType;
+			return toTypeReference().realType.realType(); // return realType() of realType
 		} else {
 			return this;
 		}
@@ -190,7 +190,7 @@ public abstract class Type implements Comparable<Type> {
 	}
 	
 	// field access
-	public Type toPointerTarget() {
+	public Type pointerTarget() {
 		if (this instanceof TypePointerShort) {
 			return toTypePointerShort().pointerTarget;
 		}
@@ -199,7 +199,7 @@ public abstract class Type implements Comparable<Type> {
 		}
 		throw new UnexpectedException("Unexpected");	
 	}
-	public Type toArrayElement() {
+	public Type arrayElement() {
 		if (this instanceof TypeArrayRef) {
 			return toTypeArrayRef().arrayElement;
 		}
