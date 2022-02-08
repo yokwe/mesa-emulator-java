@@ -304,6 +304,33 @@ public class ProcessDecl {
 		}
 	}
 
+	private static void recordFieldArrayElement(JavaFile javaFile, TypeRecord.Field field, Type indexType, Type elementType) {
+		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE arrayElement 3");
+		final var out = javaFile.out;
+		
+		String fieldConstName  = StringUtil.toJavaConstName(field.name);
+		
+		String indexTypeName   = StringUtil.toJavaName(indexType.name);
+		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		
+		if (javaDataClass(elementType)) {
+			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
+			if (indexType.bitSize() != 0) {
+				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
+			}
+			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
+			out.println("return %s.longPointer(longPointer, access);", elementTypeName);
+			out.println("}");
+		} else {
+			out.println("public final %s get(int index) {", elementTypeName);
+			if (indexType.bitSize() != 0) {
+				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
+			}
+			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
+			out.println("return %s.longPointer(longPointer);", elementTypeName, elementTypeName);
+			out.println("}");
+		}
+	}	
 
 	
 	public static void generateFile(JavaFile javaFile) {
@@ -1265,8 +1292,10 @@ public class ProcessDecl {
 			} else {
 				// RECORD FIELD is IMMEDIATE ARRAY-REFERENCE
 				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE ARRAY-REFERENCE");
-				javaFile.out.println("// FIXME RECORD FIELD is IMMEDIATE ARRAY-REFERENCE"); // FIXME
-				// FIXME use existing check method for check index value
+				Type indexType   = fieldType.typeReference.realType();
+				Type elementType = fieldType.arrayElement().realType();
+				
+				recordFieldArrayElement(javaFile, field, indexType, elementType);
 			}
 		}
 
