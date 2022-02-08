@@ -546,9 +546,8 @@ public class ProcessDecl {
 			out.println("public static final int  WORD_SIZE = %d;",  type.wordSize());
 			out.println("public static final int  BIT_SIZE  = %d;",  type.bitSize());
 			out.println();
-			out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
-			out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
-			out.println("public static final long SIZE_VALUE = %s;", StringUtil.toJavaString(type.maxValue - type.minValue + 1));
+			out.println("public static final long MIN_VALUE = %s;", StringUtil.toJavaString(type.minValue));
+			out.println("public static final long MAX_VALUE = %s;", StringUtil.toJavaString(type.maxValue));
 			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 			out.println();
 			
@@ -1294,7 +1293,6 @@ public class ProcessDecl {
 				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE ARRAY-REFERENCE");
 				Type indexType   = fieldType.typeReference.realType();
 				Type elementType = fieldType.arrayElement().realType();
-				
 				recordFieldArrayElement(javaFile, field, indexType, elementType);
 			}
 		}
@@ -1309,8 +1307,10 @@ public class ProcessDecl {
 			} else {
 				// RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE
 				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE");
-				javaFile.out.println("// FIXME RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE"); // FIXME
-				// FIXME add ContextSubrange and use it for check index value
+				javaFile.out.println("// FIXME Add code to create inner static class to check value of index"); // FIXME
+				Type indexType   = fieldType.typeSubrange;
+				Type elementType = fieldType.arrayElement().realType();
+				recordFieldArrayElement(javaFile, field, indexType, elementType);
 			}
 		}
 
