@@ -249,6 +249,11 @@ public class SymbolUtil {
 			for(var e: list) {
 				if (e.offset != 0)   bitField16 = false;
 				if (16 <= e.stopBit) bitField16 = false;
+				// FIXME if field is open array, record is not BitField16
+				if (e.type instanceof TypeArraySub) {
+					TypeArraySub typeArraySub = e.type.toTypeArraySub();
+					if (typeArraySub.typeSubrange.openSubrange()) bitField16 = false;
+				}
 			}
 			if (bitField16) {
 				return new TypeBitField16(name, list);
