@@ -12,12 +12,6 @@ public final class AllocationVector extends MemoryBase {
     public static final int BIT_SIZE  = 4096;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) FSIndex.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final AllocationVector longPointer(int base) {
@@ -34,7 +28,7 @@ public final class AllocationVector extends MemoryBase {
     // Access to Element of Array
     //
     public final AVItem get(int index, MemoryAccess access) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
+        if (Debug.ENABLE_CHECK_VALUE) FSIndex.checkValue(index);
         int longPointer = base + (AVItem.WORD_SIZE * index);
         return AVItem.longPointer(longPointer, access);
     }

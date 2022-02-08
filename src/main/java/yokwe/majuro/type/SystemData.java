@@ -12,12 +12,6 @@ public final class SystemData extends MemoryBase {
     public static final int BIT_SIZE  = 8192;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) SDIndex.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final SystemData longPointer(int base) {
@@ -34,7 +28,7 @@ public final class SystemData extends MemoryBase {
     // Access to Element of Array
     //
     public final LONG_UNSPECIFIED get(int index, MemoryAccess access) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
+        if (Debug.ENABLE_CHECK_VALUE) SDIndex.checkValue(index);
         int longPointer = base + (LONG_UNSPECIFIED.WORD_SIZE * index);
         return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }

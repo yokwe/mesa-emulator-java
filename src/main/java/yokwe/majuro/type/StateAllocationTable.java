@@ -12,12 +12,6 @@ public final class StateAllocationTable extends MemoryBase {
     public static final int BIT_SIZE  = 128;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final StateAllocationTable longPointer(int base) {
@@ -34,7 +28,7 @@ public final class StateAllocationTable extends MemoryBase {
     // Access to Element of Array
     //
     public final StateVector get(int index) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
+        if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(index);
         char pointer = Mesa.read16(base + (POINTER.WORD_SIZE * index));
         return StateVector.pointer(pointer);
     }

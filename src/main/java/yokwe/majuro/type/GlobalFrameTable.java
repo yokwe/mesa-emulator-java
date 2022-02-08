@@ -12,12 +12,6 @@ public final class GlobalFrameTable extends MemoryBase {
     public static final int BIT_SIZE  = 1048576;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) GFTIndex.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final GlobalFrameTable longPointer(int base) {
@@ -34,7 +28,7 @@ public final class GlobalFrameTable extends MemoryBase {
     // Access to Element of Array
     //
     public final GFTItem get(int index) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
+        if (Debug.ENABLE_CHECK_VALUE) GFTIndex.checkValue(index);
         int longPointer = base + (GFTItem.WORD_SIZE * index);
         return GFTItem.longPointer(longPointer);
     }

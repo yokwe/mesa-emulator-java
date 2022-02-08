@@ -12,12 +12,6 @@ public final class FaultVector extends MemoryBase {
     public static final int BIT_SIZE  = 256;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) FaultIndex.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final FaultVector longPointer(int base) {
@@ -34,7 +28,7 @@ public final class FaultVector extends MemoryBase {
     // Access to Element of Array
     //
     public final FaultQueue get(int index) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
+        if (Debug.ENABLE_CHECK_VALUE) FaultIndex.checkValue(index);
         int longPointer = base + (FaultQueue.WORD_SIZE * index);
         return FaultQueue.longPointer(longPointer);
     }
