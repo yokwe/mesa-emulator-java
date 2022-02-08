@@ -188,6 +188,15 @@ public abstract class Type implements Comparable<Type> {
 			return false;
 		}
 	}
+	public boolean openSubrange() {
+		if (this instanceof TypeSubrange) {
+			TypeSubrange typeSubrange = toTypeSubrange();
+			return (typeSubrange.minString.equals(typeSubrange.maxString) &&
+				typeSubrange.closeChar.equals(TypeSubrange.CLOSE_CHAR_EXCLUSIVE));
+		} else {
+			return false;
+		}
+	}
 	
 	// field access
 	public Type pointerTarget() {
