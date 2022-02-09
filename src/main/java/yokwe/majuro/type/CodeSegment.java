@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Mesa;
 
 // CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY [0..4) OF UNSPECIFIED, code (4): BLOCK];
@@ -29,12 +30,21 @@ public final class CodeSegment extends MemoryBase {
     //
     // available (0:0..63): ARRAY [0..4) OF UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 0;
-    public UNSPECIFIED available(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index), access);
+    private static final class AvailableIndex {
+        private static final ContextSubrange context = new ContextSubrange("CodeSegment", 0, 3);
+        private static final void checkValue(int value) {
+            if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));
+        }
+    }
+    public final UNSPECIFIED available(int index, MemoryAccess access) {
+        if (Debug.ENABLE_CHECK_VALUE) AvailableIndex.checkValue(index);
+        int longPointer = base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index);
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // code (4): BLOCK
     private static final int OFFSET_CODE = 4;
     public BLOCK code() {
-        return BLOCK.longPointer(base + OFFSET_CODE);
+        int longPointer = base + OFFSET_CODE;
+        return BLOCK.longPointer(longPointer);
     }
 }
