@@ -136,8 +136,41 @@ public class ProcessDecl {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE arrayElement 3");
 		final var out = javaFile.out;
 		
-		String indexTypeName   = StringUtil.toJavaName(indexType.name);
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		String indexTypeName   = StringUtil.toJavaName(indexType.name);
+		
+		if (indexTypeName.contains("#")) {
+			// fix indexTypeName like ArraySubFixed#index
+			String[] tokens = indexTypeName.split("#");
+			if (tokens.length == 2) {
+				if (tokens[0].equals(javaFile.type.name) && tokens[1].equals("index")) {
+					indexTypeName = "ArrayIndex";
+					
+					if (indexType.bitSize() != 0) {					
+						TypeSubrange typeSubrange = indexType.toTypeSubrange();
+						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
+						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
+						
+						// FIXME use constant string form for XXXValueString
+						out.println("private static final class %s {", indexTypeName);
+						out.println("private static final ContextSubrange context = new ContextSubrange(\"%s\", %s, %s);",
+								javaFile.name, minValueString, maxValueString);
+						out.println("private static final void checkValue(int value) {");
+						if (0 <= typeSubrange.minValue) {
+							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
+						} else {
+							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
+						}
+						out.println("}");
+						out.println("}");
+					}
+				} else {
+					throw new UnexpectedException("Unexpected");
+				}
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+		}
 		
 		if (javaDataClass(elementType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
@@ -305,7 +338,7 @@ public class ProcessDecl {
 	}
 
 	private static void recordFieldArrayElement(JavaFile javaFile, TypeRecord.Field field, Type indexType, Type elementType) {
-		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE arrayElement 3");
+		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldArrayElement");
 		final var out = javaFile.out;
 		
 		String fieldConstName  = StringUtil.toJavaConstName(field.name);
@@ -313,8 +346,42 @@ public class ProcessDecl {
 		String indexTypeName   = StringUtil.toJavaName(indexType.name);
 		String elementTypeName = StringUtil.toJavaName(elementType.name);
 		
+		if (indexTypeName.contains("#")) {
+			// fix indexTypeName like RecArraySubFixed#card1#index
+			String[] tokens = indexTypeName.split("#");
+			if (tokens.length == 3) {
+				if (tokens[0].equals(javaFile.type.name) && tokens[1].equals(field.name) && tokens[2].equals("index")) {
+					indexTypeName = StringUtil.toJavaClassName(field.name) + "Index";
+					
+					if (indexType.bitSize() != 0) {					
+						TypeSubrange typeSubrange = indexType.toTypeSubrange();
+						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
+						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
+						
+						// FIXME use constant string form for XXXValueString
+						out.println("private static final class %s {", indexTypeName);
+						out.println("private static final ContextSubrange context = new ContextSubrange(\"%s\", %s, %s);",
+								javaFile.name, minValueString, maxValueString);
+						out.println("private static final void checkValue(int value) {");
+						if (0 <= typeSubrange.minValue) {
+							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
+						} else {
+							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
+						}
+						out.println("}");
+						out.println("}");
+					}
+				} else {
+					throw new UnexpectedException("Unexpected");
+				}
+			} else {
+				throw new UnexpectedException("Unexpected");
+			}
+		}
+
+		
 		if (javaDataClass(elementType)) {
-			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
+			out.println("public final %s %s(int index, MemoryAccess access) {", elementTypeName, field.name);
 			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
@@ -322,7 +389,7 @@ public class ProcessDecl {
 			out.println("return %s.longPointer(longPointer, access);", elementTypeName);
 			out.println("}");
 		} else {
-			out.println("public final %s get(int index) {", elementTypeName);
+			out.println("public final %s %s(int index) {", elementTypeName, field.name);
 			if (indexType.bitSize() != 0) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
@@ -546,8 +613,9 @@ public class ProcessDecl {
 			out.println("public static final int  WORD_SIZE = %d;",  type.wordSize());
 			out.println("public static final int  BIT_SIZE  = %d;",  type.bitSize());
 			out.println();
-			out.println("public static final long MIN_VALUE = %s;", StringUtil.toJavaString(type.minValue));
-			out.println("public static final long MAX_VALUE = %s;", StringUtil.toJavaString(type.maxValue));
+			// FIXME use constant string form for XXX_VALUE
+			out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
+			out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
 			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 			out.println();
 			
@@ -824,25 +892,6 @@ public class ProcessDecl {
 				// INDEX is IMMEDIATE SUBRANGE
 				indexType = type.toTypeArraySub().typeSubrange;
 				
-				if (indexType.bitSize() != 0) {					
-					String indexTypeName  = StringUtil.toJavaName(indexType.name);
-					out.println("//");
-					out.println("// Check range of index");
-					out.println("//");
-
-					TypeSubrange typeSubrange = indexType.toTypeSubrange();
-					String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
-					String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
-					
-					// FIXME
-					out.println("private static final class Index {");
-					out.println("private static final ContextSubrange context = new ContextSubrange(\"%s\", %s, %s);",
-							javaFile.name, minValueString, maxValueString);
-					out.println("private static final void checkValue(int value) {");
-					out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);", indexTypeName);
-					out.println("}");
-					out.println("}");
-				}
 			}
 			
 			constructor(javaFile, parentClass);		
@@ -902,35 +951,35 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// ARRAY of BOOLEAN
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of BOOLEAN");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of BOOLEAN");
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// ARRAY of ENUM
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of ENUM");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of ENUM");
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// ARRAY of SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SUBRANGE");
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// ARRAY of ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of ARRAY-REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of ARRAY-REFERENCE");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// ARRAY of ARRAY-SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SUBRANGE");
 			unexpected(type);
 		}
 
@@ -939,11 +988,11 @@ public class ProcessDecl {
 			// ARRAY of SHORT POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW SHORT POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of RAW SHORT POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of RAW SHORT POINTER");
 				arrayIndirectShortRaw(javaFile, indexType);
 			} else {
 				// ARRAY of SHORT POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER");
 				var processType = new ProcessTypeArrayShortPointer(javaFile, indexType);
 				processType.accept(type.pointerTarget.realType());
 			}			
@@ -954,11 +1003,11 @@ public class ProcessDecl {
 			// ARRAY of LONG POINTER
 			if (type.rawPointer()) {
 				// ARRAY of RAW LONG POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of RAW LONG POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of RAW LONG POINTER");
 				arrayIndirectLongRaw(javaFile, indexType);
 			} else {
 				// ARRAY of LONG POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER");
 				var processType = new ProcessTypeArrayLongPointer(javaFile, indexType);
 				processType.accept(type.pointerTarget.realType());
 			}
@@ -967,28 +1016,28 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// ARRAY of BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of BIT FIELD 16");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of BIT FIELD 16");
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// ARRAY of BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of BIT FIELD 32");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of BIT FIELD 32");
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
 			// ARRAY of MULTI WORD RECORD
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of MULT WORD RECORD");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of MULT WORD RECORD");
 			arrayElement(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeReference(TypeReference type) {
 			// ARRAY of REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of REFERENCE");
 			unexpected(type);
 		}
 	}
@@ -1010,21 +1059,21 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// ARRAY of SHORT POINTER to BOOLEAN
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to BOOLEAN");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to BOOLEAN");
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// ARRAY of SHORT POINTER to ENUM
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to ENUM");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to ENUM");
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// ARRAY of SHORT POINTER to SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to SUBRANGE");
 			arrayIndirectShort(javaFile, indexType);
 		}
 
@@ -1033,24 +1082,24 @@ public class ProcessDecl {
 			Type arrayElement = type.arrayElement;
 			if (arrayElement instanceof TypeReference) {
 				// ARRAY of SHORT POINTER to REFERENCE of ARRAY
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to REFERENCE of ARRAY");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to REFERENCE of ARRAY");
 				arrayIndirectShort(javaFile, indexType);
 			} else {
 				// ARRAY of SHORT POINTER to IMMEDIATE ARRAY
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to IMMEDIATE ARRAY");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to IMMEDIATE ARRAY");
 				unexpected(type);
 			}
 		}
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// ARRAY of SHORT POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to ARRAY-REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to ARRAY-REFERENCE");
 			process(type);
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to ARRAY-SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to ARRAY-SUBRANGE");
 			// ARRAY of SHORT POINTER to ARRAY-SUBRANGE
 			process(type);
 		}
@@ -1058,42 +1107,42 @@ public class ProcessDecl {
 		@Override
 		protected void processTypePointeShort(TypePointerShort type) {
 			// ARRAY of SHORT POINTER to SHORT POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to SHORT POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to SHORT POINTER");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointerLong type) {
 			// ARRAY of SHORT POINTER to LONG POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to LONG POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to LONG POINTER");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// ARRAY of SHORT POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to BIT FIELD 16");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to BIT FIELD 16");
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// ARRAY of SHORT POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to BIT FIELD 32");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to BIT FIELD 32");
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
 			// ARRAY of SHORT POINTER to MULTI WORD RECORD
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to MULTI WORD RECORD");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to MULTI WORD RECORD");
 			arrayIndirectShort(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeReference(TypeReference type) {
 			// ARRAY of SHORT POINTER to REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of SHORT POINTER to REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of SHORT POINTER to REFERENCE");
 			unexpected(type);
 		}
 	}
@@ -1115,21 +1164,21 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// ARRAY of LONG POINTER to BOOLEAN
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to BOOLEAN");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to BOOLEAN");
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// ARRAY of LONG POINTER to ENUM
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to ENUM");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to ENUM");
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// ARRAY of LONG POINTER to SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to SUBRANGE");
 			arrayIndirectLong(javaFile, indexType);
 		}
 
@@ -1138,11 +1187,11 @@ public class ProcessDecl {
 			Type arrayElement = type.arrayElement;
 			if (arrayElement instanceof TypeReference) {
 				// ARRAY of LONG POINTER to REFERENCE of ARRAY
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to REFERENCE of ARRAY");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to REFERENCE of ARRAY");
 				arrayIndirectLong(javaFile, indexType);
 			} else {
 				// ARRAY of SHORT POINTER to IMMEDIATE ARRAY
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to IMMEDIATE ARRAY");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to IMMEDIATE ARRAY");
 				unexpected(type);
 			}
 		}
@@ -1150,56 +1199,56 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// ARRAY of LONG POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to ARRAY-REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to ARRAY-REFERENCE");
 			process(type);
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// ARRAY of LONG POINTER to ARRAY-SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to ARRAY-SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to ARRAY-SUBRANGE");
 			process(type);
 		}
 
 		@Override
 		protected void processTypePointeShort(TypePointerShort type) {
 			// ARRAY of LONG POINTER to SHORT POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to SHORT POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to SHORT POINTER");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointerLong type) {
 			// ARRAY of LONG POINTER to LONG POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to LONG POINTERs");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to LONG POINTERs");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// ARRAY of LONG POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to BIT FIELD 16");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to BIT FIELD 16");
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// ARRAY of LONG POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to BIT FIELD 32");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to BIT FIELD 32");
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
 			// ARRAY of LONG POINTER to MULTI WORD RECORD
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to MULTI WORD RECORD");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to MULTI WORD RECORD");
 			arrayIndirectLong(javaFile, indexType);
 		}
 
 		@Override
 		protected void processTypeReference(TypeReference type) {
 			// ARRAY of LONG POINTER to REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  ARRAY of LONG POINTER to REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to REFERENCE");
 			unexpected(type);
 		}
 	}
@@ -1263,21 +1312,21 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
 			// RECORD FIELD is BOOLEAN
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is BOOLEAN");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is BOOLEAN");
 			recordField(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeEnum(Field field, TypeEnum fieldType) {
 			// RECORD FIELD is ENUM
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is ENUM");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is ENUM");
 			recordField(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeSubrange(Field field, TypeSubrange fieldType) {
 			// RECORD FIELD is SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SUBRANGE");
 			recordField(javaFile, field);
 		}
 
@@ -1286,11 +1335,11 @@ public class ProcessDecl {
 			// RECORD FIELD is ARRAY-REFERENCE
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of ARRAY-REFERENCE
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is REFERENCE of ARRAY-REFERENCE");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is REFERENCE of ARRAY-REFERENCE");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is IMMEDIATE ARRAY-REFERENCE
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE ARRAY-REFERENCE");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is IMMEDIATE ARRAY-REFERENCE");
 				Type indexType   = fieldType.typeReference.realType();
 				Type elementType = fieldType.arrayElement().realType();
 				recordFieldArrayElement(javaFile, field, indexType, elementType);
@@ -1302,12 +1351,11 @@ public class ProcessDecl {
 			// RECORD FIELD is ARRAY-SUBRANGE
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of ARRAY-SUBRANGE
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is REFERENCE of ARRAY-SUBRANGE");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is REFERENCE of ARRAY-SUBRANGE");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE");
-				javaFile.out.println("// FIXME Add code to create inner static class to check value of index"); // FIXME
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is IMMEDIATE ARRAY-SUBRANGE");
 				Type indexType   = fieldType.typeSubrange;
 				Type elementType = fieldType.arrayElement().realType();
 				recordFieldArrayElement(javaFile, field, indexType, elementType);
@@ -1319,11 +1367,11 @@ public class ProcessDecl {
 			// RECORD FIELD is SHORT POINTER
 			if (fieldType.rawPointer()) {
 				// RECORD FIELD is RAW SHORT POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is RAW SHORT POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is RAW SHORT POINTER");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is SHORT POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER");
 				var targetType  = fieldType.realType().pointerTarget().realType();
 				var processType = new ProcessTypeRecordShortPointer(javaFile, field);
 				processType.accept(targetType);
@@ -1335,11 +1383,11 @@ public class ProcessDecl {
 			// RECORD FIELD is LONG POINTER
 			if (fieldType.rawPointer()) {
 				// RECORD FIELD is RAW LONG POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is RAW LONG POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is RAW LONG POINTER");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is LONG POINTER
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER");
 				var targetType  = fieldType.realType().pointerTarget().realType();
 				var processType = new ProcessTypeRecordLongPointer(javaFile, field);
 				processType.accept(targetType);
@@ -1351,11 +1399,11 @@ public class ProcessDecl {
 			// RECORD FIELD is BIT FIELD 16
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of BIT FIELD 16
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is REFERENCE of BIT FIELD 16");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is REFERENCE of BIT FIELD 16");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is IMMEDIATE BIT FIELD 16
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE BIT FIELD 16");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is IMMEDIATE BIT FIELD 16");
 				throw new UnexpectedException("unexpected");
 			}
 		}
@@ -1365,11 +1413,11 @@ public class ProcessDecl {
 			// RECORD FIELD is BIT FIELD 32
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of BIT FIELD 32
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is REFERNCE of BIT FIELD 32");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is REFERNCE of BIT FIELD 32");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is IMMEDIATE BIT FIELD 32
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE BIT FIELD 32");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is IMMEDIATE BIT FIELD 32");
 				throw new UnexpectedException("unexpected");
 			}
 		}
@@ -1379,11 +1427,11 @@ public class ProcessDecl {
 			// RECORD FIELD is MULTI WORD RECORD
 			if (field.type instanceof TypeReference) {
 				// RECORD FIELD is REFERENCE of MULTI WORD RECORD
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is REFERENCE of MULTI WORD RECORD");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is REFERENCE of MULTI WORD RECORD");
 				recordField(javaFile, field);
 			} else {
 				// RECORD FIELD is IMMEDIATE MULTI WORD RECORD
-				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is IMMEDIATE MULT WORD RECORD");
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is IMMEDIATE MULT WORD RECORD");
 				throw new UnexpectedException("unexpected");
 			}
 		}
@@ -1405,77 +1453,77 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// RECORD FIELD is SHORT POINTER to BOOLEAN
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to BOOLEAN");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to BOOLEAN");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// RECORD FIELD is SHORT POINTER to ENUM
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to ENUM");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ENUM");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// RECORD FIELD is SHORT POINTER to SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to SUBRANGE");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE");
 			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE"); // FIXME
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE");
 			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE"); // FIXME
 		}
 
 		@Override
 		protected void processTypePointeShort(TypePointerShort type) {
 			// RECORD FIELD is SHORT POINTER to SHORT POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to SHORT POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to SHORT POINTER");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointerLong type) {
 			// RECORD FIELD is SHORT POINTER to LONG POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to LONG POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to LONG POINTER");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is SHORT POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to BIT FIELD 16");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to BIT FIELD 16");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is SHORT POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to BIT FIELD 32");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to BIT FIELD 32");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
 			// RECORD FIELD is SHORT POINTER to MULTI WORD RECORD
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to MULTI WORD RECORD");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to MULTI WORD RECORD");
 			recordFieldIndirectShort(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeReference(TypeReference type) {
 			// RECORD FIELD is SHORT POINTER to REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is SHORT POINTER to REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to REFERENCE");
 			unexpected(type);
 		}
 	}
@@ -1496,77 +1544,77 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
 			// RECORD FIELD is LONG POINTER to BOOLEAN
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to BOOLEAN");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to BOOLEAN");
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
 			// RECORD FIELD is LONG POINTER to ENUM
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to ENUM");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to ENUM");
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
 			// RECORD FIELD is LONG POINTER to SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to SUBRANGE");
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is LONG POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to ARRAY-REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to ARRAY-REFERENCE");
 			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ARRAY-REFERENCE"); // FIXME
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE");
 			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE"); // FIXME
 		}
 
 		@Override
 		protected void processTypePointeShort(TypePointerShort type) {
 			// RECORD FIELD is LONG POINTER to SHORT POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to SHORT POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to SHORT POINTER");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointerLong type) {
 			// RECORD FIELD is LONG POINTER to LONG POINTER
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to LONG POINTER");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to LONG POINTER");
 			unexpected(type);
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is LONG POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to BIT FIELD 16");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to BIT FIELD 16");
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is LONG POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to BIT FIELD 32");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to BIT FIELD 32");
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
 			// RECORD FIELD is LONG POINTER to MULTI WORD RECORD
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to MULTI WORD RECORD");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to MULTI WORD RECORD");
 			recordFieldIndirectLong(javaFile, field);
 		}
 
 		@Override
 		protected void processTypeReference(TypeReference type) {
 			// RECORD FIELD is LONG POINTER to REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE  RECORD FIELD is LONG POINTER to REFERENCE");
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to REFERENCE");
 			unexpected(type);
 		}
 	}
