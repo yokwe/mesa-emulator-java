@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -92,6 +93,14 @@ public final class StringUtil {
 		} else {
 			return name;
 		}
+	}
+	//
+	// toJavaClassName
+	//
+	public static String toJavaClassName(String name) {
+		String ret = toJavaName(name);
+		// make first character upper case
+		return ret.substring(0, 1).toUpperCase(Locale.ROOT) + ret.substring(1);
 	}
 	//
 	// toJavaConstName
