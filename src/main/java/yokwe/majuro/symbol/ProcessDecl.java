@@ -397,8 +397,7 @@ public class ProcessDecl {
 			out.println("return %s.longPointer(longPointer);", elementTypeName, elementTypeName);
 			out.println("}");
 		}
-	}	
-
+	}
 	
 	public static void generateFile(JavaFile javaFile) {
 		if (javaFile.type != null) {
@@ -1474,15 +1473,33 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE");
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE"); // FIXME
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE");			
+			Type targetType = field.type.realType().pointerTarget();
+			if (targetType instanceof TypeReference) {
+				// RECORD FIELD is SHORT POINTER to REFERENCE of ARRAY-REFERENCE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to REFERENCE of ARRAY-REFERENCE");
+				recordFieldIndirectShort(javaFile, field);
+			} else {
+				// RECORD FIELD is SHORT POINTER to IMMEDIATE ARRAY-REFERENCE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to IMMEDIATE ARRAY-REFERENCE");
+				unexpected(type);
+			}
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE");
-			javaFile.out.println("// FIXME RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE"); // FIXME
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE");			
+			Type targetType = field.type.realType().pointerTarget();
+			if (targetType instanceof TypeReference) {
+				// RECORD FIELD is SHORT POINTER to REFERENCE of ARRAY-SUBRANGE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to REFERENCE of ARRAY-SUBRANGE");
+				recordFieldIndirectShort(javaFile, field);
+			} else {
+				// RECORD FIELD is SHORT POINTER to IMMEDIATE ARRAY-SUBRANGE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SHORT POINTER to IMMEDIATE ARRAY-SUBRANGE");
+				unexpected(type);
+			}
 		}
 
 		@Override
@@ -1565,15 +1582,32 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is LONG POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to ARRAY-REFERENCE");
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ARRAY-REFERENCE"); // FIXME
+			Type targetType = field.type.realType().pointerTarget();
+			if (targetType instanceof TypeReference) {
+				// RECORD FIELD is LONG POINTER to REFERENCE of ARRAY-REFERENCE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to REFERENCE of ARRAY-REFERENCE");
+				recordFieldIndirectLong(javaFile, field);
+			} else {
+				// RECORD FIELD is LONG POINTER to IMMEDIATE ARRAY-REFERENCE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to IMMEDIATE ARRAY-REFERENCE");
+				unexpected(type);
+			}
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE");
-			javaFile.out.println("// FIXME RECORD FIELD is LONG POINTER to ARRAY-SUBRANGE"); // FIXME
+			Type targetType = field.type.realType().pointerTarget();
+			if (targetType instanceof TypeReference) {
+				// RECORD FIELD is LONG POINTER to REFERENCE of ARRAY-SUBRANGE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to REFERENCE of ARRAY-SUBRANGE");
+				recordFieldIndirectLong(javaFile, field);
+			} else {
+				// RECORD FIELD is LONG POINTER to IMMEDIATE ARRAY-REFERENCE
+				if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is LONG POINTER to IMMEDIATE ARRAY-REFERENCE");
+				unexpected(type);
+			}
 		}
 
 		@Override
