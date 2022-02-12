@@ -12,16 +12,6 @@ public final class ArraySubFixed extends MemoryBase {
     public static final int BIT_SIZE  = 64;
     
     //
-    // Check range of index
-    //
-    private static final ContextSubrange contextIndex = new ContextSubrange(NAME + "#index", 0, 3);
-    public static final void checkIndex(long value) {
-        if (Debug.ENABLE_CHECK_VALUE) contextIndex.check(value);
-    }
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) contextIndex.check(Integer.toUnsignedLong(value));
-    }
-    //
     // Constructor
     //
     public static final ArraySubFixed longPointer(int base) {
@@ -37,7 +27,15 @@ public final class ArraySubFixed extends MemoryBase {
     //
     // Access to Element of Array
     //
+    private static final class ArrayIndex {
+        private static final ContextSubrange context = new ContextSubrange("ArraySubFixed", 0, 3);
+        private static final void checkValue(int value) {
+            context.check(Integer.toUnsignedLong(value));
+        }
+    }
     public final UNSPECIFIED get(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + (UNSPECIFIED.WORD_SIZE * index), access);
+        if (Debug.ENABLE_CHECK_VALUE) ArrayIndex.checkValue(index);
+        int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
 }

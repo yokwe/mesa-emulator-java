@@ -30,11 +30,13 @@ public final class RecPtr16Enum extends MemoryBase {
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
     public CARDINAL card0(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_CARD_0, access);
+        int longPointer = base + OFFSET_CARD_0;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..15): POINTER TO Enum
     private static final int OFFSET_CARD_1 = 1;
     public Enum card1(MemoryAccess access) {
-        return Enum.pointer(Mesa.read16(base + OFFSET_CARD_1), access);
+        char pointer = Mesa.read16(base + OFFSET_CARD_1);
+        return Enum.pointer(pointer, access);
     }
 }

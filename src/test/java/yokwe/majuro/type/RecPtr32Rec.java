@@ -30,11 +30,13 @@ public final class RecPtr32Rec extends MemoryBase {
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
     public CARDINAL card0(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_CARD_0, access);
+        int longPointer = base + OFFSET_CARD_0;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..31): LONG POINTER TO Rec
     private static final int OFFSET_CARD_1 = 1;
     public Rec card1() {
-        return Rec.longPointer(Mesa.read32(base + OFFSET_CARD_1));
+        int longPointer = Mesa.read32(base + OFFSET_CARD_1);
+        return Rec.longPointer(longPointer);
     }
 }

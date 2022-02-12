@@ -30,16 +30,19 @@ public final class Port extends MemoryBase {
     // inport (0:0..15): FrameLink
     private static final int OFFSET_INPORT = 0;
     public BLOCK inport() {
-        return BLOCK.pointer(Mesa.read16(base + OFFSET_INPORT));
+        char pointer = Mesa.read16(base + OFFSET_INPORT);
+        return BLOCK.pointer(pointer);
     }
     // unused (1:0..15): UNSPECIFIED
     private static final int OFFSET_UNUSED = 1;
     public UNSPECIFIED unused(MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_UNUSED, access);
+        int longPointer = base + OFFSET_UNUSED;
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // outport (2:0..31): ControlLink
     private static final int OFFSET_OUTPORT = 2;
     public LONG_UNSPECIFIED outport(MemoryAccess access) {
-        return LONG_UNSPECIFIED.longPointer(base + OFFSET_OUTPORT, access);
+        int longPointer = base + OFFSET_OUTPORT;
+        return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }
 }

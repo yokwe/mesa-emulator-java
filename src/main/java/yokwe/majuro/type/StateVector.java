@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Mesa;
 
 // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): LocalFrameHandle, data (16): BLOCK];
@@ -29,22 +30,33 @@ public final class StateVector extends MemoryBase {
     //
     // stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED
     private static final int OFFSET_STACK = 0;
-    public UNSPECIFIED stack(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + OFFSET_STACK + (UNSPECIFIED.WORD_SIZE * index), access);
+    private static final class StackIndex {
+        private static final ContextSubrange context = new ContextSubrange("StateVector", 0, 13);
+        private static final void checkValue(int value) {
+            context.check(Integer.toUnsignedLong(value));
+        }
+    }
+    public final UNSPECIFIED stack(int index, MemoryAccess access) {
+        if (Debug.ENABLE_CHECK_VALUE) StackIndex.checkValue(index);
+        int longPointer = base + OFFSET_STACK + (UNSPECIFIED.WORD_SIZE * index);
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
     // word (14:0..15): StateWord
     private static final int OFFSET_WORD = 14;
     public StateWord word(MemoryAccess access) {
-        return StateWord.longPointer(base + OFFSET_WORD, access);
+        int longPointer = base + OFFSET_WORD;
+        return StateWord.longPointer(longPointer, access);
     }
     // frame (15:0..15): LocalFrameHandle
     private static final int OFFSET_FRAME = 15;
     public BLOCK frame() {
-        return BLOCK.pointer(Mesa.read16(base + OFFSET_FRAME));
+        char pointer = Mesa.read16(base + OFFSET_FRAME);
+        return BLOCK.pointer(pointer);
     }
     // data (16): BLOCK
     private static final int OFFSET_DATA = 16;
     public BLOCK data() {
-        return BLOCK.longPointer(base + OFFSET_DATA);
+        int longPointer = base + OFFSET_DATA;
+        return BLOCK.longPointer(longPointer);
     }
 }

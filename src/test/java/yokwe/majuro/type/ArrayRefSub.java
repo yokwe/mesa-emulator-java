@@ -12,12 +12,6 @@ public final class ArrayRefSub extends MemoryBase {
     public static final int BIT_SIZE  = 64;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final ArrayRefSub longPointer(int base) {
@@ -34,7 +28,8 @@ public final class ArrayRefSub extends MemoryBase {
     // Access to Element of Array
     //
     public final UNSPECIFIED get(int index, MemoryAccess access) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
-        return UNSPECIFIED.longPointer(base + (UNSPECIFIED.WORD_SIZE * index), access);
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
+        int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
 }

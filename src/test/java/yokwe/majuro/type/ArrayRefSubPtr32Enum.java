@@ -12,12 +12,6 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
     public static final int BIT_SIZE  = 128;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final ArrayRefSubPtr32Enum longPointer(int base) {
@@ -34,7 +28,8 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
     // Access to Element of Array
     //
     public final Enum get(int index, MemoryAccess access) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
-        return Enum.longPointer(base + (LONG_POINTER.WORD_SIZE * index), access);
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
+        int longPointer = Mesa.read32(base + (LONG_POINTER.WORD_SIZE * index));
+        return Enum.longPointer(longPointer, access);
     }
 }

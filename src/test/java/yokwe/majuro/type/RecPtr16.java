@@ -30,11 +30,13 @@ public final class RecPtr16 extends MemoryBase {
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
     public CARDINAL card0(MemoryAccess access) {
-        return CARDINAL.longPointer(base + OFFSET_CARD_0, access);
+        int longPointer = base + OFFSET_CARD_0;
+        return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..15): POINTER
     private static final int OFFSET_CARD_1 = 1;
     public POINTER card1() {
-        return POINTER.longPointer(base + OFFSET_CARD_1);
+        int longPointer = base + OFFSET_CARD_1;
+        return POINTER.longPointer(longPointer);
     }
 }

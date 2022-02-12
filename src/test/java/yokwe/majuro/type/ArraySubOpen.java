@@ -27,6 +27,7 @@ public final class ArraySubOpen extends MemoryBase {
     // Access to Element of Array
     //
     public final UNSPECIFIED get(int index, MemoryAccess access) {
-        return UNSPECIFIED.longPointer(base + (UNSPECIFIED.WORD_SIZE * index), access);
+        int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
+        return UNSPECIFIED.longPointer(longPointer, access);
     }
 }

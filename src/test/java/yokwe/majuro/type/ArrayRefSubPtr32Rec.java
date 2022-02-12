@@ -12,12 +12,6 @@ public final class ArrayRefSubPtr32Rec extends MemoryBase {
     public static final int BIT_SIZE  = 128;
     
     //
-    // Check range of index
-    //
-    public static final void checkIndex(int value) {
-        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(value);
-    }
-    //
     // Constructor
     //
     public static final ArrayRefSubPtr32Rec longPointer(int base) {
@@ -34,7 +28,8 @@ public final class ArrayRefSubPtr32Rec extends MemoryBase {
     // Access to Element of Array
     //
     public final Rec get(int index) {
-        if (Debug.ENABLE_CHECK_VALUE) checkIndex(index);
-        return Rec.longPointer(base + (LONG_POINTER.WORD_SIZE * index));
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
+        int longPointer = Mesa.read32(base + (LONG_POINTER.WORD_SIZE * index));
+        return Rec.longPointer(longPointer);
     }
 }

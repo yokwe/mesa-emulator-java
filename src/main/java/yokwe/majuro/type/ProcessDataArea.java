@@ -51,7 +51,7 @@ public final class ProcessDataArea extends MemoryBase {
     private static final class AvailableIndex {
         private static final ContextSubrange context = new ContextSubrange("ProcessDataArea", 0, 4);
         private static final void checkValue(int value) {
-            if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));
+            context.check(Integer.toUnsignedLong(value));
         }
     }
     public final UNSPECIFIED available(int index, MemoryAccess access) {
