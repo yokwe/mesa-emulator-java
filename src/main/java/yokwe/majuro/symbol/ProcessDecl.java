@@ -157,9 +157,9 @@ public class ProcessDecl {
 								javaFile.name, minValueString, maxValueString);
 						out.println("private static final void checkValue(int value) {");
 						if (0 <= typeSubrange.minValue) {
-							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
+							out.println("context.check(Integer.toUnsignedLong(value));");
 						} else {
-							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
+							out.println("context.check(value);");
 						}
 						out.println("}");
 						out.println("}");
@@ -364,9 +364,9 @@ public class ProcessDecl {
 								javaFile.name, minValueString, maxValueString);
 						out.println("private static final void checkValue(int value) {");
 						if (0 <= typeSubrange.minValue) {
-							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
+							out.println("context.check(Integer.toUnsignedLong(value));");
 						} else {
-							out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
+							out.println("context.check(value);");
 						}
 						out.println("}");
 						out.println("}");
