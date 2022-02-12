@@ -1,14 +1,13 @@
 package yokwe.majuro.mesa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static yokwe.majuro.mesa.Constants.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static yokwe.majuro.mesa.Constant.*;
 
 public class MemoryTest {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MemoryTest.class);
