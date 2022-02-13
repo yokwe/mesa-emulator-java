@@ -33,7 +33,7 @@ public final class StateVector extends MemoryBase {
     private static final class StackIndex {
         private static final ContextSubrange context = new ContextSubrange("StateVector", 0, 13);
         private static final void checkValue(int value) {
-            context.check(Integer.toUnsignedLong(value));
+            context.check(value);
         }
     }
     public final UNSPECIFIED stack(int index, MemoryAccess access) {
