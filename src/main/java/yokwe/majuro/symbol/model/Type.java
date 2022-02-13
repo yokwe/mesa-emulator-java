@@ -200,6 +200,8 @@ public abstract class Type implements Comparable<Type> {
 	public boolean needsRangeCheck() {
 		if (this instanceof TypeSubrange) {
 			return 1 <= bitSize() && bitSize() <= 31;
+		} else if (this instanceof TypeEnum) {
+			return true;
 		} else {
 			return false;
 		}
