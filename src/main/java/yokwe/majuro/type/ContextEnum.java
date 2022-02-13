@@ -15,10 +15,10 @@ public final class ContextEnum implements CheckValue {
 		this.validNames  = validNames;
 	}
 	
-	public void check(long value) {
+	public void check(int value) {
 		toString(value);
 	}
-	public String toString(long value) {
+	public String toString(int value) {
 		for(int i = 0; i < validValues.length; i++) {
 			if (validValues[i] == value) return validNames[i];
 		}
