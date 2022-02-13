@@ -39,7 +39,7 @@ public final class RecArraySubFixed extends MemoryBase {
     private static final class Card1Index {
         private static final ContextSubrange context = new ContextSubrange("RecArraySubFixed", 0, 3);
         private static final void checkValue(int value) {
-            context.check(Integer.toUnsignedLong(value));
+            context.check(value);
         }
     }
     public final UNSPECIFIED card1(int index, MemoryAccess access) {

@@ -30,7 +30,7 @@ public final class ArraySubFixed extends MemoryBase {
     private static final class ArrayIndex {
         private static final ContextSubrange context = new ContextSubrange("ArraySubFixed", 0, 3);
         private static final void checkValue(int value) {
-            context.check(Integer.toUnsignedLong(value));
+            context.check(value);
         }
     }
     public final UNSPECIFIED get(int index, MemoryAccess access) {
