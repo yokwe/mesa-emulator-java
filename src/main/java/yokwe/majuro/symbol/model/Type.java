@@ -197,6 +197,13 @@ public abstract class Type implements Comparable<Type> {
 			return false;
 		}
 	}
+	public boolean needsRangeCheck() {
+		if (this instanceof TypeSubrange) {
+			return 1 <= bitSize() && bitSize() <= 31;
+		} else {
+			return false;
+		}
+	}
 	
 	// field access
 	public Type pointerTarget() {
