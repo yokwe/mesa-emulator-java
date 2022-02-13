@@ -146,7 +146,7 @@ public class ProcessDecl {
 				if (tokens[0].equals(javaFile.type.name) && tokens[1].equals("index")) {
 					indexTypeName = "ArrayIndex";
 					
-					if (indexType.bitSize() != 0) {					
+					if (indexType.needsRangeCheck()) {					
 						TypeSubrange typeSubrange = indexType.toTypeSubrange();
 						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
 						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
@@ -156,11 +156,7 @@ public class ProcessDecl {
 						out.println("private static final ContextSubrange context = new ContextSubrange(\"%s\", %s, %s);",
 								javaFile.name, minValueString, maxValueString);
 						out.println("private static final void checkValue(int value) {");
-						if (0 <= typeSubrange.minValue) {
-							out.println("context.check(Integer.toUnsignedLong(value));");
-						} else {
-							out.println("context.check(value);");
-						}
+						out.println("context.check(value);");
 						out.println("}");
 						out.println("}");
 					}
@@ -174,7 +170,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(elementType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
@@ -182,7 +178,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index) {", elementTypeName);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
@@ -206,7 +202,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(targetType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", targetTypeName);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -214,7 +210,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index) {", targetTypeName);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -245,7 +241,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(targetType)) {
 			out.println("public final %s get(int index, MemoryAccess access) {", targetTypeName);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -253,7 +249,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s get(int index) {", targetTypeName);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -353,21 +349,16 @@ public class ProcessDecl {
 				if (tokens[0].equals(javaFile.type.name) && tokens[1].equals(field.name) && tokens[2].equals("index")) {
 					indexTypeName = StringUtil.toJavaClassName(field.name) + "Index";
 					
-					if (indexType.bitSize() != 0) {					
+					if (indexType.needsRangeCheck()) {					
 						TypeSubrange typeSubrange = indexType.toTypeSubrange();
 						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
 						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
 						
-						// FIXME use constant string form for XXXValueString
 						out.println("private static final class %s {", indexTypeName);
 						out.println("private static final ContextSubrange context = new ContextSubrange(\"%s\", %s, %s);",
 								javaFile.name, minValueString, maxValueString);
 						out.println("private static final void checkValue(int value) {");
-						if (0 <= typeSubrange.minValue) {
-							out.println("context.check(Integer.toUnsignedLong(value));");
-						} else {
-							out.println("context.check(value);");
-						}
+						out.println("context.check(value);");
 						out.println("}");
 						out.println("}");
 					}
@@ -382,7 +373,7 @@ public class ProcessDecl {
 		
 		if (javaDataClass(elementType)) {
 			out.println("public final %s %s(int index, MemoryAccess access) {", elementTypeName, field.name);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
@@ -390,7 +381,7 @@ public class ProcessDecl {
 			out.println("}");
 		} else {
 			out.println("public final %s %s(int index) {", elementTypeName, field.name);
-			if (indexType.bitSize() != 0) {
+			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
@@ -611,27 +602,23 @@ public class ProcessDecl {
 			out.prepareLayout();
 			out.println("public static final int  WORD_SIZE = %d;",  type.wordSize());
 			out.println("public static final int  BIT_SIZE  = %d;",  type.bitSize());
-			out.println();
-			// FIXME use constant string form for XXX_VALUE
-			out.println("public static final long MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
-			out.println("public static final long MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
+			if (type.needsRangeCheck()) {
+				out.println();
+				out.println("public static final int MIN_VALUE  = %s;", StringUtil.toJavaString(type.minValue));
+				out.println("public static final int MAX_VALUE  = %s;", StringUtil.toJavaString(type.maxValue));
+			}
 			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 			out.println();
 			
-			out.println("private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);");
-			out.println();
-			
-			out.println("public static final void checkValue(long value) {");
-			out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
-			out.println("}");
-			
-			// if this type is unsigned, treat value as unsigned int
-			if (0 <= type.minValue) {
-				out.println("public static void checkValue(int value) {");
-				out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(Integer.toUnsignedLong(value));");
+			if (type.needsRangeCheck()) {
+				out.println("private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);");
+				out.println();
+				
+				out.println("public static final void checkValue(int value) {");
+				out.println("if (Debug.ENABLE_CHECK_VALUE) context.check(value);");
 				out.println("}");
+				out.println();
 			}
-			out.println();
 			
 			//
 			// Generate Constructor
