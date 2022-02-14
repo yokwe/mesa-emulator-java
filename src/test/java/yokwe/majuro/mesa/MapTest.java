@@ -4,27 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 
-public class MapTest {
+public class MapTest extends Base {	
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapTest.class);
 
-	@BeforeAll
-	public static void beforeAll() {
-		logger.info("beforeAll");
-	}
- 
-	@AfterAll
-	public static void afterAll() {
-		logger.info("afterAll");
-	}
-
-	@BeforeEach
-	void beforeEach() {
-	}
-
-	@AfterEach
-	void afterEach() {
-	}
-	
 	@Test
 	void clear() {
 		logger.info("clear");

@@ -3,51 +3,11 @@ package yokwe.majuro.mesa;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static yokwe.majuro.mesa.Constants.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class MemoryTest {
+public class MemoryTest extends Base {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MemoryTest.class);
 
-	static final int DEFAULT_VMBITS = 24;
-	static final int DEFAULT_RMBITS = 20;
-	static final int DEFAULT_MDS    = 0x3_0000;
-	
-	static Memory memory = null;
-
-	@BeforeAll
-	public static void beforeAll() {
-		logger.info("beforeAll");
-		memory = new Memory(DEFAULT_VMBITS, DEFAULT_RMBITS);
-	}
- 
-	@AfterAll
-	public static void afterAll() {
-		logger.info("afterAll");
-		memory = null;
-		System.gc();
-	}
-
-	@BeforeEach
-	void beforeEach() {
-//		logger.info("beforeEach START");
-		memory.clear();
-		memory.mds = DEFAULT_MDS;
-		Perf.clear();
-//		logger.info("beforeEach STOP");
-	}
-
-	@AfterEach
-	void afterEach() {
-//		logger.info("afterEach START");
-		Perf.stats();
-		System.gc();
-//		logger.info("afterEach STOP");
-	}
-	
 	@Test
 	public void dummy() {
 		logger.info("dummy");
