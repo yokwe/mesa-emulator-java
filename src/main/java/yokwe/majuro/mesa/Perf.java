@@ -23,7 +23,7 @@ public final class Perf {
 	// Mesa
 	public static long fetch       = 0;
 	public static long store       = 0;
-	public static long mapFlag     = 0;
+	public static long map         = 0;
 	
 	public static long readReal16  = 0;
 	public static long writeReal16 = 0;

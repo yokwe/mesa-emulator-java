@@ -46,7 +46,7 @@ public final class Memory {
 	public static final int DEFAULT_RM_SIZE        = 20;
 	public static final int DEFAULT_IO_REGION_PAGE = 0x80;
 	
-	public static final int VM_MAX = 24;
+	public static final int VM_MAX = 25;
 	public static final int RM_MAX = 20;
 	
 	private final int rpSize;
@@ -55,8 +55,7 @@ public final class Memory {
 	
 	// index of mapFlags and realPages is virtual page
 	// value of realPages contains realPage number of virtual page
-	private final MapFlag[] mapFlags;
-	private final char[]    realPages;
+	private final Map[] maps;
 	
 	// Main Data Space
 	public int mds;
@@ -82,11 +81,10 @@ public final class Memory {
 		logger.info("rpSize {}", String.format("%X", rpSize));
 		
 		realMemory = new char[rpSize * PAGE_SIZE];
-		mapFlags   = new MapFlag[vpSize];
-		for(int i = 0; i < mapFlags.length; i++) {
-			mapFlags[i] = new MapFlag();
+		maps       = new Map[vpSize];
+		for(int i = 0; i < maps.length; i++) {
+			maps[i] = new Map();
 		}
-		realPages  = new char[vpSize];
 		cacheArray = Cache.getCacheArray();
 
 		clear();
@@ -98,11 +96,8 @@ public final class Memory {
 		for(int i = 0; i < realMemory.length; i++) {
 			realMemory[i] = 0;
 		}
-		for(int i = 0; i < mapFlags.length; i++) {
-			mapFlags[i].clear();
-		}
-		for(int i = 0; i < realPages.length; i++) {
-			realPages[i] = 0;
+		for(int i = 0; i < maps.length; i++) {
+			maps[i].clear();
 		}
 		for(int i = 0; i < cacheArray.length; i++) {
 			cacheArray[i].clear();
@@ -115,18 +110,18 @@ public final class Memory {
 		char rp = 0;
 		// vp:[ioRegionPage .. 256) <=> rp:[0..256-ioRegionPage)
 		for(int i = ioRegionPage; i < 256; i++) {
-			mapFlags[i].clear();
-			realPages[i] = rp++;
+			maps[i].clear();
+			maps[i].setRealPage(rp++);
 		}
 		// vp:[0..ioRegionPage) <=> rp: [256-ioRegionPage .. 256)
 		for(int i = 0; i < ioRegionPage; i++) {
-			mapFlags[i].clear();
-			realPages[i] = rp++;
+			maps[i].clear();
+			maps[i].setRealPage(rp++);
 		}
 		// vp: [256 .. rpSize)
 		for(int i = 256; i < rpSize; i++) {
-			mapFlags[i].clear();
-			realPages[i] = rp++;
+			maps[i].clear();
+			maps[i].setRealPage(rp++);
 		}
 		if (rp != rpSize) {
 			logger.error("rp != rpSize");
@@ -134,8 +129,8 @@ public final class Memory {
 		}
 		// vp: [rpSize .. vpSize)
 		for(int i = rpSize; i < vpSize; i++) {
-			mapFlags[i].setVacant();
-			realPages[i] = 0;
+			maps[i].clear();
+			maps[i].setVacant();
 		}
 	}
 	
@@ -150,7 +145,9 @@ public final class Memory {
 	//
 	// low level memory access
 	//   fetch store mapFlag readReal writeReal
-	//
+	public Map map(int va) {
+		return maps[va >>> PAGE_BITS];
+	}
 	// fetch returns real address == offset of realMemory
 	public int fetch(int va) {
 		if (Perf.ENABLED) Perf.memoryFetch++;
@@ -170,21 +167,21 @@ public final class Memory {
 				else Perf.cacheMissConflict++;
 			}
 
-			MapFlag mapFlag = mapFlags[vp];
-			if (mapFlag.isVacant()) {
+			Map map = maps[vp];
+			if (map.isVacant()) {
 				Mesa.pageFault(va);
 			}
 			
 			// NO FAULT FROM HERE
-			if (mapFlag.isNotReferenced()) {
-				mapFlags[vp].setReferenced();
+			if (map.isNotReferenced()) {
+				map.setReferenced();
 			}
-			ra = realPages[vp] << PAGE_BITS;
+			ra = map.getRealAddress();
 			if (ra == 0) throw new UnexpectedException();
 			
 			cache.vp    = vp;
 			cache.ra    = ra;
-			cache.dirty = mapFlag.isDirty();
+			cache.dirty = map.isDirty();
 		}
 		return ra | (va & PAGE_MASK);
 	}
@@ -203,7 +200,7 @@ public final class Memory {
 			
 			ra = cache.ra;
 			if (!cache.dirty) {
-				mapFlags[vp].setReferencedDirty();
+				maps[vp].setReferencedDirty();
 				cache.dirty  = true;
 			}
 		} else {
@@ -212,19 +209,19 @@ public final class Memory {
 				else Perf.cacheMissConflict++;
 			}
 
-			MapFlag mapFlag = mapFlags[vp];
-			if (mapFlag.isVacant()) {
+			Map map = maps[vp];
+			if (map.isVacant()) {
 				Mesa.pageFault(va);
 			}
-			if (mapFlag.isProtect()) {
+			if (map.isProtect()) {
 				Mesa.writeProtectFault(va);
 			}
 			
 			// NO FAULT FROM HERE
-			if (mapFlag.isNotReferencedDirty()) {
-				mapFlags[vp].setReferencedDirty();
+			if (map.isNotReferencedDirty()) {
+				map.setReferencedDirty();
 			}
-			ra = realPages[vp] << PAGE_BITS;
+			ra = map.getRealAddress();
 			if (ra == 0) throw new UnexpectedException();
 			
 			cache.vp    = vp;
@@ -233,9 +230,6 @@ public final class Memory {
 		}
 				
 		return ra | (va & PAGE_MASK);
-	}
-	public MapFlag mapFlag(int va) {
-		return mapFlags[va >>> PAGE_BITS];
 	}
 	public char readReal16(int ra) {
 		return realMemory[ra];

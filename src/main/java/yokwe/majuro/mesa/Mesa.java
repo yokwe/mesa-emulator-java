@@ -34,9 +34,9 @@ public final class Mesa {
 		if (Perf.ENABLED) Perf.store++;
 		return memory.store(va);
 	}
-	public static MapFlag mapFlag(int va) {
-		if (Perf.ENABLED) Perf.mapFlag++;
-		return memory.mapFlag(va);
+	public static Map map(int va) {
+		if (Perf.ENABLED) Perf.map++;
+		return memory.map(va);
 	}
 	public static char readReal16(int ra) {
 		if (Perf.ENABLED) Perf.readReal16++;
