@@ -68,10 +68,10 @@ public class MemoryTest {
 		assertEquals(va, ra);
 		
 		// check side effect
-		MapFlag mapFlag = memory.mapFlag(va);
-		assertEquals(false, mapFlag.isDirty());
-		assertEquals(true,  mapFlag.isReferenced());
-		assertEquals(false, mapFlag.isProtect());
+		Map map = memory.map(va);
+		assertEquals(false, map.isDirty());
+		assertEquals(true,  map.isReferenced());
+		assertEquals(false, map.isProtect());
 	}
 	
 	@Test
@@ -88,10 +88,10 @@ public class MemoryTest {
 		assertEquals(va, ra);
 		
 		// check side effect
-		MapFlag mapFlag = memory.mapFlag(va);
-		assertEquals(true,  mapFlag.isDirty());
-		assertEquals(true,  mapFlag.isReferenced());
-		assertEquals(false, mapFlag.isProtect());
+		Map map = memory.map(va);
+		assertEquals(true,  map.isDirty());
+		assertEquals(true,  map.isReferenced());
+		assertEquals(false, map.isProtect());
 	}
 	
 	@Test
@@ -179,10 +179,10 @@ public class MemoryTest {
 		assertEquals(value, actual);
 		
 		// check side effect
-		MapFlag mapFlag = memory.mapFlag(va);
-		assertEquals(false,  mapFlag.isDirty());
-		assertEquals(true,  mapFlag.isReferenced());
-		assertEquals(false, mapFlag.isProtect());
+		Map map = memory.map(va);
+		assertEquals(false, map.isDirty());
+		assertEquals(true,  map.isReferenced());
+		assertEquals(false, map.isProtect());
 	}
 
 	@Test
@@ -201,10 +201,10 @@ public class MemoryTest {
 		assertEquals(value, actual);
 		
 		// check side effect
-		MapFlag mapFlag = memory.mapFlag(va);
-		assertEquals(true,  mapFlag.isDirty());
-		assertEquals(true,  mapFlag.isReferenced());
-		assertEquals(false, mapFlag.isProtect());
+		Map map = memory.map(va);
+		assertEquals(true,  map.isDirty());
+		assertEquals(true,  map.isReferenced());
+		assertEquals(false, map.isProtect());
 	}
 
 	@Test
@@ -235,10 +235,10 @@ public class MemoryTest {
 		assertEquals(value, actual);
 		
 		// check side effect
-		MapFlag mapFlag = memory.mapFlag(va);
-		assertEquals(false, mapFlag.isDirty());
-		assertEquals(true,  mapFlag.isReferenced());
-		assertEquals(false, mapFlag.isProtect());
+		Map map = memory.map(va);
+		assertEquals(false, map.isDirty());
+		assertEquals(true,  map.isReferenced());
+		assertEquals(false, map.isProtect());
 	}
 
 
@@ -258,10 +258,10 @@ public class MemoryTest {
 		assertEquals(value, actual);
 		
 		// check side effect
-		MapFlag mapFlag = memory.mapFlag(va);
-		assertEquals(true,  mapFlag.isDirty());
-		assertEquals(true,  mapFlag.isReferenced());
-		assertEquals(false, mapFlag.isProtect());
+		Map map = memory.map(va);
+		assertEquals(true,  map.isDirty());
+		assertEquals(true,  map.isReferenced());
+		assertEquals(false, map.isProtect());
 	}
 
 }
