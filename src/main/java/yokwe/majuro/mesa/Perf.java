@@ -49,6 +49,11 @@ public final class Perf {
 	
 	//
 	public static long dispatch = 0;
+	
+	// code cache
+	public static long codeCacheCodeByte = 0;
+	public static long codeCacheHit      = 0;
+	public static long codeCacheMiss     = 0;
 
 	// opcode
 	public static final long[] opcodeMop = new long[256];

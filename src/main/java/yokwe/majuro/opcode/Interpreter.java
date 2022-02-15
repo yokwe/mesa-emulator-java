@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.ControlTransfers;
 import yokwe.majuro.mesa.Perf;
 import yokwe.majuro.mesa.Processor;
@@ -20,18 +21,18 @@ public class Interpreter {
 	public static void execute() {
 		Processor.savedPC = Processor.PC;
 		Processor.savedSP = Processor.SP;
-//		dispatchMop(CodeCache.getCodeByte()); // FIXME
+		dispatchMop(CodeCache.getCodeByte());
 	}
 	
-	public static void dispatchMop(byte opcode) {
+	public static void dispatchMop(int opcode) {
 		if (Perf.ENABLED) Perf.dispatch++;
 		tableMop[opcode].run();
-		// opcode can rise Fault or Trap, so do stats count after call run()
+		// opcode can rise Fault or Trap, so do increment count after call run()
 		if (Perf.OPCODE) Perf.opcodeMop[opcode]++;
 	}
-	public static void dispatchEsc(byte opcode) {
+	public static void dispatchEsc(int opcode) {
 		tableEsc[opcode].run();
-		// opcode can rise Fault or Trap, so do stats count after call run()
+		// opcode can rise Fault or Trap, so do increment count after call run()
 		if (Perf.OPCODE) Perf.opcodeEsc[opcode]++;
 	}
 	
