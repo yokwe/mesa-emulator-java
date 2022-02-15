@@ -45,8 +45,8 @@ public class LongTest extends Base {
 	}
 	
 	@Test
-	public void readA() {
-		logger.info("valueA");
+	public void read() {
+		logger.info("read");
 
 		int va    = 0x20_1234;
 		int value = 0x89AB_CDEF;
@@ -62,6 +62,24 @@ public class LongTest extends Base {
 		assertEquals(Mesa.highHalf(value), object.high());
 		assertEquals(value, object.value);
 	}
+	
+	@Test
+	public void write() {
+		logger.info("write");
 
+		int va    = 0x20_1234;
+		int value = 0x89AB_CDEF;
+
+		// prepare
+		// execute
+		Long object = Long.longPointer(va, MemoryAccess.WRITE);
+		object.value = value;
+		object.write();
+		
+		// check result
+		assertEquals(Mesa.lowHalf(value),  Mesa.read16(va + 0));
+		assertEquals(Mesa.highHalf(value), Mesa.read16(va + 1));
+		assertEquals(value, object.value);
+	}
 
 }
