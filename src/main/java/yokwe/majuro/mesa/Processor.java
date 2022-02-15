@@ -6,14 +6,8 @@ public class Processor {
 	public static final int StackDepth = Constants.cSS;
 	
 	
-	public static char PC;
-	
 	// Main Data Space
 	public static int MDS;
-	
-	// Code Base
-	public static int CB;
-
 	
 	// 3.3.2 Evaluation Stack
 	public static final int[] stack = new int[StackDepth];

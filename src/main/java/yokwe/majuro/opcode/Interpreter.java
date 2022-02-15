@@ -19,7 +19,7 @@ public class Interpreter {
 	public static final Runnable[] tableEsc = new Runnable[256];
 	
 	public static void execute() {
-		Processor.savedPC = Processor.PC;
+		Processor.savedPC = CodeCache.PC();
 		Processor.savedSP = Processor.SP;
 		dispatchMop(CodeCache.getCodeByte());
 	}

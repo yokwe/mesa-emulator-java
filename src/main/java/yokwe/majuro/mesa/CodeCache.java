@@ -23,7 +23,7 @@ public class CodeCache {
 		cb = newValue;
 		invalidate();
 	}
-	public static int getCB() {
+	public static int CB() {
 		return cb;
 	}
 	
