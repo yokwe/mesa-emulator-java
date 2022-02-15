@@ -5,11 +5,17 @@ import yokwe.majuro.UnexpectedException;
 public final class Mesa {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Mesa.class);
 
-	private static Memory memory;
-	
+	private static Memory memory = null;
 	public static void init(int vmbits, int rmbits, int ioRegionPage) {
 		memory = new Memory(vmbits, rmbits, ioRegionPage);
 	}
+	public static void init(int vmbits, int rmbits) {
+		memory = new Memory(vmbits, rmbits);
+	}
+	public static Memory memory() {
+		return memory;
+	}
+
 	
 	public static void pageFault(int va) {
 		if (Perf.ENABLED) Perf.pageFault++;
@@ -110,5 +116,11 @@ public final class Mesa {
 	public static void write32MDS(int va, int newValue) {
 		throw new UnexpectedException("Unexpected");
 	}
-
+	//
+	// PDA
+	//
+	public static int lengthenPDA(char va) {
+		if (Perf.ENABLED) Perf.lengthenPDA++;
+		return memory.lengthenPDA(va);
+	}
 }
