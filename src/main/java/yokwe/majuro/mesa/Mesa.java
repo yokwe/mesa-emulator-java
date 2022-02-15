@@ -1,5 +1,7 @@
 package yokwe.majuro.mesa;
 
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
+
 import yokwe.majuro.UnexpectedException;
 
 public final class Mesa {
@@ -61,6 +63,14 @@ public final class Mesa {
 		memory.writeReal32(ra0, ra1, newValue);
 	}
 	
+	// returns low order word of double word
+	public static char lowHalf(int value) {
+		return (char)value;
+	}
+	// returns high order word of double word
+	public static char highHalf(int value) {
+		return (char)(value >>> WORD_BITS);
+	}
 	//
 	// memory read and write
 	//
