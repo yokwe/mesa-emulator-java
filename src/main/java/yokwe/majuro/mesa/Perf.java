@@ -13,14 +13,10 @@ public final class Perf {
 	public static final boolean ENABLED = true;
 	
 	// Memory
-	public static long memoryFetch = 0;
-	public static long memoryStore = 0;
-	
 	public static long cacheHit          = 0;
 	public static long cacheMissConflict = 0;
 	public static long cacheMissEmpty    = 0;
 
-	// Mesa
 	public static long fetch       = 0;
 	public static long store       = 0;
 	public static long map         = 0;
@@ -35,6 +31,8 @@ public final class Perf {
 	public static long write32     = 0;
 	
 	public static long lengthenMDS = 0;
+	public static long fetchMDS    = 0;
+	public static long storeMDS    = 0;
 	public static long read16MDS   = 0;
 	public static long write16MDS  = 0;
 	public static long read32MDS   = 0;

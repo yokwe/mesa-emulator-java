@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
 public final class FaultQueue extends MemoryBase {
@@ -17,7 +17,7 @@ public final class FaultQueue extends MemoryBase {
         return new FaultQueue(base);
     }
     public static final FaultQueue pointer(char base) {
-        return new FaultQueue(Mesa.lengthenMDS(base));
+        return new FaultQueue(Memory.instance.lengthenMDS(base));
     }
     
     private FaultQueue(int base) {

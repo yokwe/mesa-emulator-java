@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Enum: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
 public final class Enum extends MemoryData16 {
@@ -41,7 +41,7 @@ public final class Enum extends MemoryData16 {
         return new Enum(base, access);
     }
     public static final Enum pointer(char base, MemoryAccess access) {
-        return new Enum(Mesa.lengthenMDS(base), access);
+        return new Enum(Memory.instance.lengthenMDS(base), access);
     }
     
     private Enum(char value) {

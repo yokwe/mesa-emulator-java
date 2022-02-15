@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // InterruptLevel: TYPE = [0..16);
 public final class InterruptLevel extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class InterruptLevel extends MemoryData16 {
         return new InterruptLevel(base, access);
     }
     public static final InterruptLevel pointer(char base, MemoryAccess access) {
-        return new InterruptLevel(Mesa.lengthenMDS(base), access);
+        return new InterruptLevel(Memory.instance.lengthenMDS(base), access);
     }
     
     private InterruptLevel(char value) {

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
 public final class Queue extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class Queue extends MemoryData16 {
         return new Queue(base, access);
     }
     public static final Queue pointer(char base, MemoryAccess access) {
-        return new Queue(Mesa.lengthenMDS(base), access);
+        return new Queue(Memory.instance.lengthenMDS(base), access);
     }
     
     private Queue(char value) {

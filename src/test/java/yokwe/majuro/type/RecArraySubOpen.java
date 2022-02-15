@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecArraySubOpen: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1): ARRAY [0..0) OF UNSPECIFIED];
 public final class RecArraySubOpen extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecArraySubOpen extends MemoryBase {
         return new RecArraySubOpen(base);
     }
     public static final RecArraySubOpen pointer(char base) {
-        return new RecArraySubOpen(Mesa.lengthenMDS(base));
+        return new RecArraySubOpen(Memory.instance.lengthenMDS(base));
     }
     
     private RecArraySubOpen(int base) {

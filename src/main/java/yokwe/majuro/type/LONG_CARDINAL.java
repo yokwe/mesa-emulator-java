@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // LONG CARDINAL: TYPE = LONG CARDINAL;
 public final class LONG_CARDINAL extends MemoryData32 {
@@ -20,7 +20,7 @@ public final class LONG_CARDINAL extends MemoryData32 {
         return new LONG_CARDINAL(base, access);
     }
     public static final LONG_CARDINAL pointer(char base, MemoryAccess access) {
-        return new LONG_CARDINAL(Mesa.lengthenMDS(base), access);
+        return new LONG_CARDINAL(Memory.instance.lengthenMDS(base), access);
     }
     
     private LONG_CARDINAL(int value) {

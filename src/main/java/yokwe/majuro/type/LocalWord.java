@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
 public final class LocalWord extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class LocalWord extends MemoryData16 {
         return new LocalWord(base, access);
     }
     public static final LocalWord pointer(char base, MemoryAccess access) {
-        return new LocalWord(Mesa.lengthenMDS(base), access);
+        return new LocalWord(Memory.instance.lengthenMDS(base), access);
     }
     
     private LocalWord(char value) {

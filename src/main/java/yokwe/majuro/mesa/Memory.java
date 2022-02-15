@@ -66,10 +66,17 @@ public final class Memory {
 	// array of cache
 	private final Cache[]   cacheArray;
 	
-	public Memory(int vmbits, int rmbits) {
+	
+	public static Memory instance = null;
+	public static void init(int vmbits, int rmbits) {
+		instance = new Memory(vmbits, rmbits);
+	}
+	
+	
+	private Memory(int vmbits, int rmbits) {
 		this(vmbits, rmbits, DEFAULT_IO_REGION_PAGE);
 	}
-	public Memory(int vmbits, int rmbits, int ioRegionPage) {
+	private Memory(int vmbits, int rmbits, int ioRegionPage) {
 		logger.info("vmbits       {}", vmbits);
 		logger.info("rmbits       {}", rmbits);
 		logger.info("ioRegionPage {}", String.format("0x%X", ioRegionPage));
@@ -142,15 +149,17 @@ public final class Memory {
 		getCache(vp).clear();
 	}
 	
+	
 	//
 	// low level memory access
 	//   fetch store mapFlag readReal writeReal
 	public Map map(int va) {
+		if (Perf.ENABLED) Perf.map++;
 		return maps[va >>> PAGE_BITS];
 	}
 	// fetch returns real address == offset of realMemory
 	public int fetch(int va) {
-		if (Perf.ENABLED) Perf.memoryFetch++;
+		if (Perf.ENABLED) Perf.fetch++;
 		
 		final int vp = va >>> PAGE_BITS;
 		final int ra;
@@ -187,7 +196,7 @@ public final class Memory {
 	}
 	// store returns real address == offset of realMemory
 	public int store(int va) {
-		if (Perf.ENABLED) Perf.memoryStore++;
+		if (Perf.ENABLED) Perf.store++;
 
 		final int vp = va >>> PAGE_BITS;
 		final int ra;
@@ -232,19 +241,23 @@ public final class Memory {
 		return ra | (va & PAGE_MASK);
 	}
 	public char readReal16(int ra) {
+		if (Perf.ENABLED) Perf.readReal16++;
 		return realMemory[ra];
 	}
 	public void writeReal16(int ra, char newValue) {
+		if (Perf.ENABLED) Perf.writeReal16++;
 		realMemory[ra] = newValue;
 	}
 	public int readReal32(int ra0, int ra1) {
 		// ra0 -- low order  16 bit
 		// ra1 -- high order 16 bit
+		if (Perf.ENABLED) Perf.readReal32++;
 		return (realMemory[ra1] << WORD_BITS) | realMemory[ra0];
 	}
 	public void writeReal32(int ra0, int ra1, int newValue) {
 		// ra0 -- low order  16 bit
 		// ra1 -- high order 16 bit
+		if (Perf.ENABLED) Perf.writeReal32++;
 		realMemory[ra0] = (char)newValue;
 		realMemory[ra1] = (char)(newValue >>> WORD_BITS);
 	}
@@ -254,9 +267,11 @@ public final class Memory {
 	// memory read and write
 	//
 	public char read16(int va) {
+		if (Perf.ENABLED) Perf.read16++;
 		return realMemory[fetch(va)];
 	}
 	public void write16(int va, char newValue) {
+		if (Perf.ENABLED) Perf.write16++;
 		realMemory[store(va)] = newValue;
 	}
 	
@@ -271,12 +286,14 @@ public final class Memory {
 		return (a & ~PAGE_MASK) == (b & ~PAGE_MASK);
 	}
 	public int read32(int va) {
+		if (Perf.ENABLED) Perf.read32++;
 		int ra0 = fetch(va);
 		int ra1 = isSamePage(va, va + 1) ? ra0 + 1 : fetch(va + 1);
 		
 		return readReal32(ra0, ra1);
 	}
 	public void write32(int va, int newValue) {
+		if (Perf.ENABLED) Perf.write32++;
 		int ra0 = store(va);
 		int ra1 = isSamePage(va, va + 1) ? ra0 + 1 : store(va + 1);
 		
@@ -285,33 +302,37 @@ public final class Memory {
 	
 	
 	//
-	// MDS and PDA
+	// MDS
 	//
 	public int lengthenMDS(char value) {
+		if (Perf.ENABLED) Perf.lengthenMDS++;
 		return mds + value;
-	}
-	public int lengthenPDA(char value) {
-		return Constants.mPDA + value;
 	}
 	
 	// convenience methods for MDS data access
 	public int fetchMDS(char va) {
-		return fetch(lengthenMDS(va));
+		if (Perf.ENABLED) Perf.fetchMDS++;
+		return fetch(mds + va);
 	}
 	public int storeMDS(char va) {
-		return store(lengthenMDS(va));
+		if (Perf.ENABLED) Perf.storeMDS++;
+		return store(mds + va);
 	}
 	public char read16MDS(char va) {
-		return read16(lengthenMDS(va));
+		if (Perf.ENABLED) Perf.read16MDS++;
+		return read16(mds + va);
 	}
 	public void write16MDS(char va, char newValue) {
-		write16(lengthenMDS(va), newValue);
+		if (Perf.ENABLED) Perf.write16MDS++;
+		write16(mds + va, newValue);
 	}
 	public int read32MDS(char va) {
-		return read32(lengthenMDS(va));
+		if (Perf.ENABLED) Perf.read32MDS++;
+		return read32(mds + va);
 	}
 	public void write32MDS(char va, int newValue) {
-		write32(lengthenMDS(va), newValue);
+		if (Perf.ENABLED) Perf.write32MDS++;
+		write32(mds + va, newValue);
 	}
 	//
 	// prohibit int promotion of above methods
@@ -334,6 +355,15 @@ public final class Memory {
 	}
 	public void write32MDS(int va, int newValue) {
 		throw new UnexpectedException("Unexpected");
+	}
+
+	
+	//
+	// PDA
+	//
+	public static int lengthenPDA(char value) {
+		if (Perf.ENABLED) Perf.lengthenPDA++;
+		return Constants.mPDA + value;
 	}
 
 }

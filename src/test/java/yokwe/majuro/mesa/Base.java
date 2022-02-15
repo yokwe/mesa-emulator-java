@@ -17,9 +17,9 @@ public class Base {
 	@BeforeAll
 	protected static void beforeAll() {
 		logger.info("beforeAll");
-		Mesa.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
-		Mesa.memory().mds = DEFAULT_MDS;
-		memory = Mesa.memory();
+		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
+		Memory.instance.mds = DEFAULT_MDS;
+		memory = Memory.instance;
 	}
 	
 	@AfterAll

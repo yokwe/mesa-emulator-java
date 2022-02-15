@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // FieldDesc: TYPE = RECORD[offset (0:0..7): BYTE, field (0:8..15): FieldSpec];
 public final class FieldDesc extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class FieldDesc extends MemoryData16 {
         return new FieldDesc(base, access);
     }
     public static final FieldDesc pointer(char base, MemoryAccess access) {
-        return new FieldDesc(Mesa.lengthenMDS(base), access);
+        return new FieldDesc(Memory.instance.lengthenMDS(base), access);
     }
     
     private FieldDesc(char value) {

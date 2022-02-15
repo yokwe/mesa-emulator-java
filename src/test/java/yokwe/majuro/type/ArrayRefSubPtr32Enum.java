@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefSubPtr32Enum: TYPE = ARRAY Sub OF LONG POINTER TO Enum;
 public final class ArrayRefSubPtr32Enum extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
         return new ArrayRefSubPtr32Enum(base);
     }
     public static final ArrayRefSubPtr32Enum pointer(char base) {
-        return new ArrayRefSubPtr32Enum(Mesa.lengthenMDS(base));
+        return new ArrayRefSubPtr32Enum(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefSubPtr32Enum(int base) {
@@ -29,7 +29,7 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
     //
     public final Enum get(int index, MemoryAccess access) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
-        int longPointer = Mesa.read32(base + (LONG_POINTER.WORD_SIZE * index));
+        int longPointer = Memory.instance.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return Enum.longPointer(longPointer, access);
     }
 }

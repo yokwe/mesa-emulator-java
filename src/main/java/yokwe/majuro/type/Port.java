@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Port: TYPE = RECORD[inport (0:0..15): FrameLink, unused (1:0..15): UNSPECIFIED, outport (2:0..31): ControlLink];
 public final class Port extends MemoryBase {
@@ -17,7 +17,7 @@ public final class Port extends MemoryBase {
         return new Port(base);
     }
     public static final Port pointer(char base) {
-        return new Port(Mesa.lengthenMDS(base));
+        return new Port(Memory.instance.lengthenMDS(base));
     }
     
     private Port(int base) {
@@ -30,7 +30,7 @@ public final class Port extends MemoryBase {
     // inport (0:0..15): FrameLink
     private static final int OFFSET_INPORT = 0;
     public BLOCK inport() {
-        char pointer = Mesa.read16(base + OFFSET_INPORT);
+        char pointer = Memory.instance.read16(base + OFFSET_INPORT);
         return BLOCK.pointer(pointer);
     }
     // unused (1:0..15): UNSPECIFIED

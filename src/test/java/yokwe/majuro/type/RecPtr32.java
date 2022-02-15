@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecPtr32: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..31): LONG POINTER];
 public final class RecPtr32 extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecPtr32 extends MemoryBase {
         return new RecPtr32(base);
     }
     public static final RecPtr32 pointer(char base) {
-        return new RecPtr32(Mesa.lengthenMDS(base));
+        return new RecPtr32(Memory.instance.lengthenMDS(base));
     }
     
     private RecPtr32(int base) {

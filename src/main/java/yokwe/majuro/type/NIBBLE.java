@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // NIBBLE: TYPE = [0..16);
 public final class NIBBLE extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class NIBBLE extends MemoryData16 {
         return new NIBBLE(base, access);
     }
     public static final NIBBLE pointer(char base, MemoryAccess access) {
-        return new NIBBLE(Mesa.lengthenMDS(base), access);
+        return new NIBBLE(Memory.instance.lengthenMDS(base), access);
     }
     
     private NIBBLE(char value) {

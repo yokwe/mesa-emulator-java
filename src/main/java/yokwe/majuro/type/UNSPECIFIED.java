@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // UNSPECIFIED: TYPE = UNSPECIFIED;
 public final class UNSPECIFIED extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class UNSPECIFIED extends MemoryData16 {
         return new UNSPECIFIED(base, access);
     }
     public static final UNSPECIFIED pointer(char base, MemoryAccess access) {
-        return new UNSPECIFIED(Mesa.lengthenMDS(base), access);
+        return new UNSPECIFIED(Memory.instance.lengthenMDS(base), access);
     }
     
     private UNSPECIFIED(char value) {

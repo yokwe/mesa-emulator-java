@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // FieldSpec: TYPE = RECORD[pos (0:0..3): NIBBLE, size (0:4..7): NIBBLE];
 public final class FieldSpec extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class FieldSpec extends MemoryData16 {
         return new FieldSpec(base, access);
     }
     public static final FieldSpec pointer(char base, MemoryAccess access) {
-        return new FieldSpec(Mesa.lengthenMDS(base), access);
+        return new FieldSpec(Memory.instance.lengthenMDS(base), access);
     }
     
     private FieldSpec(char value) {

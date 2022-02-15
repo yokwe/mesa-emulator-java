@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BitBltFlags: TYPE = RECORD[direction (0:0..0): Direction, disjoint (0:1..1): BOOLEAN, disjointItems (0:2..2): BOOLEAN, gray (0:3..3): BOOLEAN, srcFunc (0:4..4): SrcFunc, dstFunc (0:5..6): DstFunc, reserved (0:7..15): UNSPECIFIED];
 public final class BitBltFlags extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class BitBltFlags extends MemoryData16 {
         return new BitBltFlags(base, access);
     }
     public static final BitBltFlags pointer(char base, MemoryAccess access) {
-        return new BitBltFlags(Mesa.lengthenMDS(base), access);
+        return new BitBltFlags(Memory.instance.lengthenMDS(base), access);
     }
     
     private BitBltFlags(char value) {

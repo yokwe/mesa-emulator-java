@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // GlobalWord: TYPE = RECORD[gfi (0:0..13): GFTIndex, trapxfers (0:14..14): BOOLEAN, codelinks (0:15..15): BOOLEAN];
 public final class GlobalWord extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class GlobalWord extends MemoryData16 {
         return new GlobalWord(base, access);
     }
     public static final GlobalWord pointer(char base, MemoryAccess access) {
-        return new GlobalWord(Mesa.lengthenMDS(base), access);
+        return new GlobalWord(Memory.instance.lengthenMDS(base), access);
     }
     
     private GlobalWord(char value) {

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefSubBit32: TYPE = ARRAY Sub OF BitField32;
 public final class ArrayRefSubBit32 extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefSubBit32 extends MemoryBase {
         return new ArrayRefSubBit32(base);
     }
     public static final ArrayRefSubBit32 pointer(char base) {
-        return new ArrayRefSubBit32(Mesa.lengthenMDS(base));
+        return new ArrayRefSubBit32(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefSubBit32(int base) {

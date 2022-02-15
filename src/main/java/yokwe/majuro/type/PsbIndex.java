@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // PsbIndex: TYPE = [0..1024);
 public final class PsbIndex extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class PsbIndex extends MemoryData16 {
         return new PsbIndex(base, access);
     }
     public static final PsbIndex pointer(char base, MemoryAccess access) {
-        return new PsbIndex(Mesa.lengthenMDS(base), access);
+        return new PsbIndex(Memory.instance.lengthenMDS(base), access);
     }
     
     private PsbIndex(char value) {

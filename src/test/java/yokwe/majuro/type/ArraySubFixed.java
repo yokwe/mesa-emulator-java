@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArraySubFixed: TYPE = ARRAY [0..4) OF UNSPECIFIED;
 public final class ArraySubFixed extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArraySubFixed extends MemoryBase {
         return new ArraySubFixed(base);
     }
     public static final ArraySubFixed pointer(char base) {
-        return new ArraySubFixed(Mesa.lengthenMDS(base));
+        return new ArraySubFixed(Memory.instance.lengthenMDS(base));
     }
     
     private ArraySubFixed(int base) {

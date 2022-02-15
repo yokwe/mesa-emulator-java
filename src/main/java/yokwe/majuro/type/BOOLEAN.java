@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BOOLEAN: TYPE = BOOLEAN;
 public final class BOOLEAN extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class BOOLEAN extends MemoryData16 {
         return new BOOLEAN(base, access);
     }
     public static final BOOLEAN pointer(char base, MemoryAccess access) {
-        return new BOOLEAN(Mesa.lengthenMDS(base), access);
+        return new BOOLEAN(Memory.instance.lengthenMDS(base), access);
     }
     
     private BOOLEAN(char value) {

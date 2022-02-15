@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefSubPtr32Bit32: TYPE = ARRAY Sub OF LONG POINTER TO BitField32;
 public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
         return new ArrayRefSubPtr32Bit32(base);
     }
     public static final ArrayRefSubPtr32Bit32 pointer(char base) {
-        return new ArrayRefSubPtr32Bit32(Mesa.lengthenMDS(base));
+        return new ArrayRefSubPtr32Bit32(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefSubPtr32Bit32(int base) {
@@ -29,7 +29,7 @@ public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
     //
     public final BitField32 get(int index, MemoryAccess access) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
-        int longPointer = Mesa.read32(base + (LONG_POINTER.WORD_SIZE * index));
+        int longPointer = Memory.instance.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return BitField32.longPointer(longPointer, access);
     }
 }

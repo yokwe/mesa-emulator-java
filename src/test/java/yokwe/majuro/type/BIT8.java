@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BIT8: TYPE = [0..256);
 public final class BIT8 extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class BIT8 extends MemoryData16 {
         return new BIT8(base, access);
     }
     public static final BIT8 pointer(char base, MemoryAccess access) {
-        return new BIT8(Mesa.lengthenMDS(base), access);
+        return new BIT8(Memory.instance.lengthenMDS(base), access);
     }
     
     private BIT8(char value) {

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // POINTER: TYPE = POINTER;
 public final class POINTER extends MemoryBase {
@@ -17,7 +17,7 @@ public final class POINTER extends MemoryBase {
         return new POINTER(base);
     }
     public static final POINTER pointer(char base) {
-        return new POINTER(Mesa.lengthenMDS(base));
+        return new POINTER(Memory.instance.lengthenMDS(base));
     }
     
     private POINTER(int base) {

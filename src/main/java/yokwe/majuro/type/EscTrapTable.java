@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
 public final class EscTrapTable extends MemoryBase {
@@ -18,7 +18,7 @@ public final class EscTrapTable extends MemoryBase {
         return new EscTrapTable(base);
     }
     public static final EscTrapTable pointer(char base) {
-        return new EscTrapTable(Mesa.lengthenMDS(base));
+        return new EscTrapTable(Memory.instance.lengthenMDS(base));
     }
     
     private EscTrapTable(int base) {

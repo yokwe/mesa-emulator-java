@@ -86,7 +86,7 @@ public class ProcessDecl {
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
-			out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
+			out.println("return new %s(Memory.instance.lengthenMDS(base), access);", javaFile.name);
 			out.println("}");
 			out.println();
 			
@@ -104,7 +104,7 @@ public class ProcessDecl {
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
-			out.println("return new %s(Mesa.lengthenMDS(base), access);", javaFile.name);
+			out.println("return new %s(Memory.instance.lengthenMDS(base), access);", javaFile.name);
 			out.println("}");
 			out.println();
 
@@ -119,7 +119,7 @@ public class ProcessDecl {
 			out.println("return new %s(base);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s pointer(char base) {", javaFile.name);
-			out.println("return new %s(Mesa.lengthenMDS(base));", javaFile.name);
+			out.println("return new %s(Memory.instance.lengthenMDS(base));", javaFile.name);
 			out.println("}");
 			out.println();
 			
@@ -205,7 +205,7 @@ public class ProcessDecl {
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
-			out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+			out.println("char pointer = Memory.instance.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		} else {
@@ -213,7 +213,7 @@ public class ProcessDecl {
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
-			out.println("char pointer = Mesa.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+			out.println("char pointer = Memory.instance.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
 			out.println("return %s.pointer(pointer);", targetTypeName);
 			out.println("}");
 		}
@@ -244,7 +244,7 @@ public class ProcessDecl {
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
-			out.println("int longPointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
+			out.println("int longPointer = Memory.instance.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
 			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		} else {
@@ -252,7 +252,7 @@ public class ProcessDecl {
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
-			out.println("int longPointer = Mesa.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
+			out.println("int longPointer = Memory.instance.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
 			out.println("return %s.longPointer(longPointer);", targetTypeName);
 			out.println("}");
 		}
@@ -301,12 +301,12 @@ public class ProcessDecl {
 
 		if (javaDataClass(targetType)) {
 			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
-			out.println("int longPointer = Mesa.read32(base + OFFSET_%s);", fieldConstName);
+			out.println("int longPointer = Memory.instance.read32(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("int longPointer = Mesa.read32(base + OFFSET_%s);", fieldConstName);
+			out.println("int longPointer = Memory.instance.read32(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.longPointer(longPointer);", targetTypeName);
 			out.println("}");
 		}
@@ -322,12 +322,12 @@ public class ProcessDecl {
 
 		if (javaDataClass(targetType)) {
 			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
-			out.println("char pointer = Mesa.read16(base + OFFSET_%s);", fieldConstName);
+			out.println("char pointer = Memory.instance.read16(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("char pointer = Mesa.read16(base + OFFSET_%s);", fieldConstName);
+			out.println("char pointer = Memory.instance.read16(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.pointer(pointer);", targetTypeName);
 			out.println("}");
 		}

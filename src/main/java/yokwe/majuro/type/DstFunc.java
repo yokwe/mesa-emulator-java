@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // DstFunc: TYPE = {null(0), and(1), or(2), xor(3)};
 public final class DstFunc extends MemoryData16 {
@@ -41,7 +41,7 @@ public final class DstFunc extends MemoryData16 {
         return new DstFunc(base, access);
     }
     public static final DstFunc pointer(char base, MemoryAccess access) {
-        return new DstFunc(Mesa.lengthenMDS(base), access);
+        return new DstFunc(Memory.instance.lengthenMDS(base), access);
     }
     
     private DstFunc(char value) {

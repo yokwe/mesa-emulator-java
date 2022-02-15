@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Direction: TYPE = {forward(0), backward(1)};
 public final class Direction extends MemoryData16 {
@@ -39,7 +39,7 @@ public final class Direction extends MemoryData16 {
         return new Direction(base, access);
     }
     public static final Direction pointer(char base, MemoryAccess access) {
-        return new Direction(Mesa.lengthenMDS(base), access);
+        return new Direction(Memory.instance.lengthenMDS(base), access);
     }
     
     private Direction(char value) {

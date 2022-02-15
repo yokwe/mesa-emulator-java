@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // AVItemType: TYPE = {frame(0), empty(1), indirect(2), unused(3)};
 public final class AVItemType extends MemoryData16 {
@@ -41,7 +41,7 @@ public final class AVItemType extends MemoryData16 {
         return new AVItemType(base, access);
     }
     public static final AVItemType pointer(char base, MemoryAccess access) {
-        return new AVItemType(Mesa.lengthenMDS(base), access);
+        return new AVItemType(Memory.instance.lengthenMDS(base), access);
     }
     
     private AVItemType(char value) {

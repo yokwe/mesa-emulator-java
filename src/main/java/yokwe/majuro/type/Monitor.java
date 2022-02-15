@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Monitor: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..14): UNSPECIFIED, locked (0:15..15): BOOLEAN];
 public final class Monitor extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class Monitor extends MemoryData16 {
         return new Monitor(base, access);
     }
     public static final Monitor pointer(char base, MemoryAccess access) {
-        return new Monitor(Mesa.lengthenMDS(base), access);
+        return new Monitor(Memory.instance.lengthenMDS(base), access);
     }
     
     private Monitor(char value) {

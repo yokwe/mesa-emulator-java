@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType];
 public final class AVItem extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class AVItem extends MemoryData16 {
         return new AVItem(base, access);
     }
     public static final AVItem pointer(char base, MemoryAccess access) {
-        return new AVItem(Mesa.lengthenMDS(base), access);
+        return new AVItem(Memory.instance.lengthenMDS(base), access);
     }
     
     private AVItem(char value) {

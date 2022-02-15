@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // INTEGER: TYPE = INTEGER;
 public final class INTEGER extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class INTEGER extends MemoryData16 {
         return new INTEGER(base, access);
     }
     public static final INTEGER pointer(char base, MemoryAccess access) {
-        return new INTEGER(Mesa.lengthenMDS(base), access);
+        return new INTEGER(Memory.instance.lengthenMDS(base), access);
     }
     
     private INTEGER(char value) {

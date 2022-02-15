@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // FaultIndex: TYPE = [0..8);
 public final class FaultIndex extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class FaultIndex extends MemoryData16 {
         return new FaultIndex(base, access);
     }
     public static final FaultIndex pointer(char base, MemoryAccess access) {
-        return new FaultIndex(Mesa.lengthenMDS(base), access);
+        return new FaultIndex(Memory.instance.lengthenMDS(base), access);
     }
     
     private FaultIndex(char value) {

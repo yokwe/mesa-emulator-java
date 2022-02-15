@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefSubEnum: TYPE = ARRAY Sub OF Enum;
 public final class ArrayRefSubEnum extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefSubEnum extends MemoryBase {
         return new ArrayRefSubEnum(base);
     }
     public static final ArrayRefSubEnum pointer(char base) {
-        return new ArrayRefSubEnum(Mesa.lengthenMDS(base));
+        return new ArrayRefSubEnum(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefSubEnum(int base) {

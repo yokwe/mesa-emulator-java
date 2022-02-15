@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // SystemData: TYPE = ARRAY SDIndex OF ControlLink;
 public final class SystemData extends MemoryBase {
@@ -18,7 +18,7 @@ public final class SystemData extends MemoryBase {
         return new SystemData(base);
     }
     public static final SystemData pointer(char base) {
-        return new SystemData(Mesa.lengthenMDS(base));
+        return new SystemData(Memory.instance.lengthenMDS(base));
     }
     
     private SystemData(int base) {

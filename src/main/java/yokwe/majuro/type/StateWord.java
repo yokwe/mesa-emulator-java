@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
 public final class StateWord extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class StateWord extends MemoryData16 {
         return new StateWord(base, access);
     }
     public static final StateWord pointer(char base, MemoryAccess access) {
-        return new StateWord(Mesa.lengthenMDS(base), access);
+        return new StateWord(Memory.instance.lengthenMDS(base), access);
     }
     
     private StateWord(char value) {

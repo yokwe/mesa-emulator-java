@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BitField32: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): Enum, fill (1:0..15): UNSPECIFIED];
 public final class BitField32 extends MemoryData32 {
@@ -20,7 +20,7 @@ public final class BitField32 extends MemoryData32 {
         return new BitField32(base, access);
     }
     public static final BitField32 pointer(char base, MemoryAccess access) {
-        return new BitField32(Mesa.lengthenMDS(base), access);
+        return new BitField32(Memory.instance.lengthenMDS(base), access);
     }
     
     private BitField32(int value) {
@@ -38,12 +38,12 @@ public final class BitField32 extends MemoryData32 {
     // tag  (0:14..15): Enum
     // fill (1:0..15):  UNSPECIFIED
     
-    private static final int DATA_MASK  = 0b1111_1111_1111_1100_0000_0000_0000_0000;
-    private static final int DATA_SHIFT =                                        18;
-    private static final int TAG_MASK   = 0b0000_0000_0000_0011_0000_0000_0000_0000;
-    private static final int TAG_SHIFT  =                                        16;
-    private static final int FILL_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-    private static final int FILL_SHIFT =                                         0;
+    private static final int DATA_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1100;
+    private static final int DATA_SHIFT =                                         2;
+    private static final int TAG_MASK   = 0b0000_0000_0000_0000_0000_0000_0000_0011;
+    private static final int TAG_SHIFT  =                                         0;
+    private static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int FILL_SHIFT =                                        16;
     
     //
     // Bit Field Access Methods

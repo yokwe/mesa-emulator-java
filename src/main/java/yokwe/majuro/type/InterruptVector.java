@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // InterruptVector: TYPE = ARRAY InterruptLevel OF InterruptItem;
 public final class InterruptVector extends MemoryBase {
@@ -18,7 +18,7 @@ public final class InterruptVector extends MemoryBase {
         return new InterruptVector(base);
     }
     public static final InterruptVector pointer(char base) {
-        return new InterruptVector(Mesa.lengthenMDS(base));
+        return new InterruptVector(Memory.instance.lengthenMDS(base));
     }
     
     private InterruptVector(int base) {

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BLOCK: TYPE = ARRAY [0..0) OF UNSPECIFIED;
 public final class BLOCK extends MemoryBase {
@@ -17,7 +17,7 @@ public final class BLOCK extends MemoryBase {
         return new BLOCK(base);
     }
     public static final BLOCK pointer(char base) {
-        return new BLOCK(Mesa.lengthenMDS(base));
+        return new BLOCK(Memory.instance.lengthenMDS(base));
     }
     
     private BLOCK(int base) {

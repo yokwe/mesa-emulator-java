@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecPtr16Enum: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..15): POINTER TO Enum];
 public final class RecPtr16Enum extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecPtr16Enum extends MemoryBase {
         return new RecPtr16Enum(base);
     }
     public static final RecPtr16Enum pointer(char base) {
-        return new RecPtr16Enum(Mesa.lengthenMDS(base));
+        return new RecPtr16Enum(Memory.instance.lengthenMDS(base));
     }
     
     private RecPtr16Enum(int base) {
@@ -36,7 +36,7 @@ public final class RecPtr16Enum extends MemoryBase {
     // card1 (1:0..15): POINTER TO Enum
     private static final int OFFSET_CARD_1 = 1;
     public Enum card1(MemoryAccess access) {
-        char pointer = Mesa.read16(base + OFFSET_CARD_1);
+        char pointer = Memory.instance.read16(base + OFFSET_CARD_1);
         return Enum.pointer(pointer, access);
     }
 }

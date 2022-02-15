@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // SDIndex: TYPE = [0..256);
 public final class SDIndex extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class SDIndex extends MemoryData16 {
         return new SDIndex(base, access);
     }
     public static final SDIndex pointer(char base, MemoryAccess access) {
-        return new SDIndex(Mesa.lengthenMDS(base), access);
+        return new SDIndex(Memory.instance.lengthenMDS(base), access);
     }
     
     private SDIndex(char value) {

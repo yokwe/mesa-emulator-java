@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // FSIndex: TYPE = [0..256);
 public final class FSIndex extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class FSIndex extends MemoryData16 {
         return new FSIndex(base, access);
     }
     public static final FSIndex pointer(char base, MemoryAccess access) {
-        return new FSIndex(Mesa.lengthenMDS(base), access);
+        return new FSIndex(Memory.instance.lengthenMDS(base), access);
     }
     
     private FSIndex(char value) {

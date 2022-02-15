@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // InterruptItem: TYPE = RECORD[condition (0:0..15): Condition, available (1:0..15): UNSPECIFIED];
 public final class InterruptItem extends MemoryBase {
@@ -17,7 +17,7 @@ public final class InterruptItem extends MemoryBase {
         return new InterruptItem(base);
     }
     public static final InterruptItem pointer(char base) {
-        return new InterruptItem(Mesa.lengthenMDS(base));
+        return new InterruptItem(Memory.instance.lengthenMDS(base));
     }
     
     private InterruptItem(int base) {

@@ -32,7 +32,7 @@ public class LONGCARDINALTest extends Base {
 		int value = 0x89A_BDEF;
 
 		// prepare
-		Mesa.writeReal32(va + 0 , va + 1, value);
+		Memory.instance.writeReal32(va + 0 , va + 1, value);
 		
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.longPointer(va, MemoryAccess.READ);
@@ -69,7 +69,7 @@ public class LONGCARDINALTest extends Base {
 		int value = 0x89A_BDEF;
 
 		// prepare
-		Mesa.writeReal32(va + 0 , va + 1, value);
+		Memory.instance.writeReal32(va + 0 , va + 1, value);
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.longPointer(va, MemoryAccess.READ_WRITE);
 		Map map = memory.map(va);
@@ -91,7 +91,7 @@ public class LONGCARDINALTest extends Base {
 		int  value = 0x89A_BDEF;
 		
 		// prepare
-		Mesa.writeReal32(va + 0 , va + 1, value);
+		Memory.instance.writeReal32(va + 0 , va + 1, value);
 		
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.pointer(sa, MemoryAccess.READ);
@@ -130,7 +130,7 @@ public class LONGCARDINALTest extends Base {
 		int  value = 0x89A_BDEF;
 
 		// prepare
-		Mesa.writeReal32(va + 0 , va + 1, value);
+		Memory.instance.writeReal32(va + 0 , va + 1, value);
 		
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.pointer(sa, MemoryAccess.READ_WRITE);

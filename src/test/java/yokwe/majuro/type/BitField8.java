@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BitField8: TYPE = RECORD[left (0:0..3): BIT4, right (0:4..7): BIT4];
 public final class BitField8 extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class BitField8 extends MemoryData16 {
         return new BitField8(base, access);
     }
     public static final BitField8 pointer(char base, MemoryAccess access) {
-        return new BitField8(Mesa.lengthenMDS(base), access);
+        return new BitField8(Memory.instance.lengthenMDS(base), access);
     }
     
     private BitField8(char value) {

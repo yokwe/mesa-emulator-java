@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // NewGlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, global (2): GlobalVariables];
 public final class NewGlobalOverhead extends MemoryBase {
@@ -17,7 +17,7 @@ public final class NewGlobalOverhead extends MemoryBase {
         return new NewGlobalOverhead(base);
     }
     public static final NewGlobalOverhead pointer(char base) {
-        return new NewGlobalOverhead(Mesa.lengthenMDS(base));
+        return new NewGlobalOverhead(Memory.instance.lengthenMDS(base));
     }
     
     private NewGlobalOverhead(int base) {

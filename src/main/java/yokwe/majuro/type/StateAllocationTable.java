@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // StateAllocationTable: TYPE = ARRAY Priority OF POINTER TO StateVector;
 public final class StateAllocationTable extends MemoryBase {
@@ -18,7 +18,7 @@ public final class StateAllocationTable extends MemoryBase {
         return new StateAllocationTable(base);
     }
     public static final StateAllocationTable pointer(char base) {
-        return new StateAllocationTable(Mesa.lengthenMDS(base));
+        return new StateAllocationTable(Memory.instance.lengthenMDS(base));
     }
     
     private StateAllocationTable(int base) {
@@ -29,7 +29,7 @@ public final class StateAllocationTable extends MemoryBase {
     //
     public final StateVector get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(index);
-        char pointer = Mesa.read16(base + (POINTER.WORD_SIZE * index));
+        char pointer = Memory.instance.read16(base + (POINTER.WORD_SIZE * index));
         return StateVector.pointer(pointer);
     }
 }

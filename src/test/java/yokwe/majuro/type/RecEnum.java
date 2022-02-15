@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecEnum: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..15): Enum];
 public final class RecEnum extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecEnum extends MemoryBase {
         return new RecEnum(base);
     }
     public static final RecEnum pointer(char base) {
-        return new RecEnum(Mesa.lengthenMDS(base));
+        return new RecEnum(Memory.instance.lengthenMDS(base));
     }
     
     private RecEnum(int base) {

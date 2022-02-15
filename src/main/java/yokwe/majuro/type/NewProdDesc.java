@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // NewProdDesc: TYPE = RECORD32[taggedGFI (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
 public final class NewProdDesc extends MemoryData32 {
@@ -20,7 +20,7 @@ public final class NewProdDesc extends MemoryData32 {
         return new NewProdDesc(base, access);
     }
     public static final NewProdDesc pointer(char base, MemoryAccess access) {
-        return new NewProdDesc(Mesa.lengthenMDS(base), access);
+        return new NewProdDesc(Memory.instance.lengthenMDS(base), access);
     }
     
     private NewProdDesc(int value) {

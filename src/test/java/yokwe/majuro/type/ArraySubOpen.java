@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArraySubOpen: TYPE = ARRAY [0..0) OF UNSPECIFIED;
 public final class ArraySubOpen extends MemoryBase {
@@ -17,7 +17,7 @@ public final class ArraySubOpen extends MemoryBase {
         return new ArraySubOpen(base);
     }
     public static final ArraySubOpen pointer(char base) {
-        return new ArraySubOpen(Mesa.lengthenMDS(base));
+        return new ArraySubOpen(Memory.instance.lengthenMDS(base));
     }
     
     private ArraySubOpen(int base) {

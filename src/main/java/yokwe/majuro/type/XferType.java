@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // XferType: TYPE = {return(0), call(1), localCall(2), part(3), xfer(4), trap(5), processSwitch(6), unused(7)};
 public final class XferType extends MemoryData16 {
@@ -45,7 +45,7 @@ public final class XferType extends MemoryData16 {
         return new XferType(base, access);
     }
     public static final XferType pointer(char base, MemoryAccess access) {
-        return new XferType(Mesa.lengthenMDS(base), access);
+        return new XferType(Memory.instance.lengthenMDS(base), access);
     }
     
     private XferType(char value) {

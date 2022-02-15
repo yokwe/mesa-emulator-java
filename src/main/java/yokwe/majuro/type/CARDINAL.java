@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // CARDINAL: TYPE = CARDINAL;
 public final class CARDINAL extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class CARDINAL extends MemoryData16 {
         return new CARDINAL(base, access);
     }
     public static final CARDINAL pointer(char base, MemoryAccess access) {
-        return new CARDINAL(Mesa.lengthenMDS(base), access);
+        return new CARDINAL(Memory.instance.lengthenMDS(base), access);
     }
     
     private CARDINAL(char value) {

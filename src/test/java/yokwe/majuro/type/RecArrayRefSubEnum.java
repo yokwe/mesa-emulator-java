@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecArrayRefSubEnum: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..63): ARRAY Sub OF Enum];
 public final class RecArrayRefSubEnum extends MemoryBase {
@@ -18,7 +18,7 @@ public final class RecArrayRefSubEnum extends MemoryBase {
         return new RecArrayRefSubEnum(base);
     }
     public static final RecArrayRefSubEnum pointer(char base) {
-        return new RecArrayRefSubEnum(Mesa.lengthenMDS(base));
+        return new RecArrayRefSubEnum(Memory.instance.lengthenMDS(base));
     }
     
     private RecArrayRefSubEnum(int base) {

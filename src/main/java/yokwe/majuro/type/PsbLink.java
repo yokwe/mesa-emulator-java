@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // PsbLink: TYPE = RECORD[priority (0:0..2): Priority, next (0:3..12): PsbIndex, failed (0:13..13): BOOLEAN, permanent (0:14..14): BOOLEAN, preempted (0:15..15): BOOLEAN];
 public final class PsbLink extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class PsbLink extends MemoryData16 {
         return new PsbLink(base, access);
     }
     public static final PsbLink pointer(char base, MemoryAccess access) {
-        return new PsbLink(Mesa.lengthenMDS(base), access);
+        return new PsbLink(Memory.instance.lengthenMDS(base), access);
     }
     
     private PsbLink(char value) {

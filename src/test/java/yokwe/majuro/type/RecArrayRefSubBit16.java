@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecArrayRefSubBit16: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..63): ARRAY Sub OF BitField16];
 public final class RecArrayRefSubBit16 extends MemoryBase {
@@ -18,7 +18,7 @@ public final class RecArrayRefSubBit16 extends MemoryBase {
         return new RecArrayRefSubBit16(base);
     }
     public static final RecArrayRefSubBit16 pointer(char base) {
-        return new RecArrayRefSubBit16(Mesa.lengthenMDS(base));
+        return new RecArrayRefSubBit16(Memory.instance.lengthenMDS(base));
     }
     
     private RecArrayRefSubBit16(int base) {

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOLEAN, abort (0:15..15): BOOLEAN];
 public final class PsbFlags extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class PsbFlags extends MemoryData16 {
         return new PsbFlags(base, access);
     }
     public static final PsbFlags pointer(char base, MemoryAccess access) {
-        return new PsbFlags(Mesa.lengthenMDS(base), access);
+        return new PsbFlags(Memory.instance.lengthenMDS(base), access);
     }
     
     private PsbFlags(char value) {

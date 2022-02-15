@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // SrcFunc: TYPE = {null(0), complement(1)};
 public final class SrcFunc extends MemoryData16 {
@@ -39,7 +39,7 @@ public final class SrcFunc extends MemoryData16 {
         return new SrcFunc(base, access);
     }
     public static final SrcFunc pointer(char base, MemoryAccess access) {
-        return new SrcFunc(Mesa.lengthenMDS(base), access);
+        return new SrcFunc(Memory.instance.lengthenMDS(base), access);
     }
     
     private SrcFunc(char value) {

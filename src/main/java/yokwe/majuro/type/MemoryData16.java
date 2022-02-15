@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 public class MemoryData16 {
     private final MemoryAccess access;
@@ -23,15 +23,15 @@ public class MemoryData16 {
             this.value = 0;
             break;
         case READ:
-            this.ra    = Mesa.fetch(base);
-            this.value = Mesa.readReal16(ra);
+            this.ra    = Memory.instance.fetch(base);
+            this.value = Memory.instance.readReal16(ra);
             break;
         case READ_WRITE:
-            this.ra    = Mesa.store(base);
-            this.value = Mesa.readReal16(ra);
+            this.ra    = Memory.instance.store(base);
+            this.value = Memory.instance.readReal16(ra);
             break;
         case WRITE:
-            this.ra    = Mesa.store(base);
+            this.ra    = Memory.instance.store(base);
             this.value = 0;
             break;
         default:
@@ -43,7 +43,7 @@ public class MemoryData16 {
         switch(access) {
         case READ_WRITE:
         case WRITE:
-            Mesa.writeReal16(ra, (char)value);
+        	Memory.instance.writeReal16(ra, (char)value);
             break;
         default:
             throw new UnexpectedException("Unexpected");
@@ -58,7 +58,7 @@ public class MemoryData16 {
         switch(access) {
         case READ:
         case READ_WRITE:
-        	value = Mesa.read16(ra);
+        	value = Memory.instance.read16(ra);
             return (char)value;
         default:
             throw new UnexpectedException("Unexpected");

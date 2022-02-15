@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefSubPtr16Rec: TYPE = ARRAY Sub OF POINTER TO Rec;
 public final class ArrayRefSubPtr16Rec extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefSubPtr16Rec extends MemoryBase {
         return new ArrayRefSubPtr16Rec(base);
     }
     public static final ArrayRefSubPtr16Rec pointer(char base) {
-        return new ArrayRefSubPtr16Rec(Mesa.lengthenMDS(base));
+        return new ArrayRefSubPtr16Rec(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefSubPtr16Rec(int base) {
@@ -29,7 +29,7 @@ public final class ArrayRefSubPtr16Rec extends MemoryBase {
     //
     public final Rec get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
-        char pointer = Mesa.read16(base + (POINTER.WORD_SIZE * index));
+        char pointer = Memory.instance.read16(base + (POINTER.WORD_SIZE * index));
         return Rec.pointer(pointer);
     }
 }

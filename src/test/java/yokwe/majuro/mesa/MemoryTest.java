@@ -225,7 +225,7 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		int va = Mesa.lengthenMDS(sa);
+		int va = Memory.instance.lengthenMDS(sa);
 		
 		// check result
 		assertEquals(sa + DEFAULT_MDS, va);
@@ -241,7 +241,7 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		int va = Mesa.lengthenPDA(sa);
+		int va = Memory.lengthenPDA(sa);
 		
 		// check result
 		assertEquals(sa + Constants.mPDA, va);

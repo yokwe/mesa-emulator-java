@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefEnum: TYPE = ARRAY Enum OF UNSPECIFIED;
 public final class ArrayRefEnum extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefEnum extends MemoryBase {
         return new ArrayRefEnum(base);
     }
     public static final ArrayRefEnum pointer(char base) {
-        return new ArrayRefEnum(Mesa.lengthenMDS(base));
+        return new ArrayRefEnum(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefEnum(int base) {

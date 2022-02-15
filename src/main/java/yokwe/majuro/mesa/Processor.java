@@ -30,8 +30,8 @@ public class Processor {
 //		Long t = {data};
 //		Push(t.low);
 //		Push(t.high);
-		push(Mesa.lowHalf(data));
-		push(Mesa.highHalf(data));
+		push(Types.lowHalf(data));
+		push(Types.highHalf(data));
 	}
 	public static int popLong() {
 //		Long t;
@@ -40,7 +40,7 @@ public class Processor {
 //		return t.u;
 		char high = pop();
 		char low  = pop();
-		return Mesa.makeLong(high, low);
+		return Types.makeLong(high, low);
 	}
 	public static void minimalStack() {
 		if (SP != 0) ControlTransfers.stackError();

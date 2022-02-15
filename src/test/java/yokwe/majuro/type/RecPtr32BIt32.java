@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecPtr32BIt32: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..31): LONG POINTER TO BitField32];
 public final class RecPtr32BIt32 extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecPtr32BIt32 extends MemoryBase {
         return new RecPtr32BIt32(base);
     }
     public static final RecPtr32BIt32 pointer(char base) {
-        return new RecPtr32BIt32(Mesa.lengthenMDS(base));
+        return new RecPtr32BIt32(Memory.instance.lengthenMDS(base));
     }
     
     private RecPtr32BIt32(int base) {
@@ -36,7 +36,7 @@ public final class RecPtr32BIt32 extends MemoryBase {
     // card1 (1:0..31): LONG POINTER TO BitField32
     private static final int OFFSET_CARD_1 = 1;
     public BitField32 card1(MemoryAccess access) {
-        int longPointer = Mesa.read32(base + OFFSET_CARD_1);
+        int longPointer = Memory.instance.read32(base + OFFSET_CARD_1);
         return BitField32.longPointer(longPointer, access);
     }
 }

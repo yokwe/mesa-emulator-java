@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
 public final class GlobalFrameTable extends MemoryBase {
@@ -18,7 +18,7 @@ public final class GlobalFrameTable extends MemoryBase {
         return new GlobalFrameTable(base);
     }
     public static final GlobalFrameTable pointer(char base) {
-        return new GlobalFrameTable(Mesa.lengthenMDS(base));
+        return new GlobalFrameTable(Memory.instance.lengthenMDS(base));
     }
     
     private GlobalFrameTable(int base) {

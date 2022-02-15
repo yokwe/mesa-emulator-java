@@ -29,8 +29,8 @@ public class LongTest extends Base {
 		logger.info("valueB");
 
 		int  value = 0xabcd1234;
-		char low   = Mesa.lowHalf(value);
-		char high  = Mesa.highHalf(value);
+		char low   = Types.lowHalf(value);
+		char high  = Types.highHalf(value);
 
 		// prepare
 		// execute
@@ -52,14 +52,14 @@ public class LongTest extends Base {
 		int value = 0x89AB_CDEF;
 
 		// prepare
-		Mesa.write32(va, value);
+		Memory.instance.write32(va, value);
 		
 		// execute
 		Long object = Long.longPointer(va, MemoryAccess.READ);
 		
 		// check result
-		assertEquals(Mesa.lowHalf(value), object.low());
-		assertEquals(Mesa.highHalf(value), object.high());
+		assertEquals(Types.lowHalf(value), object.low());
+		assertEquals(Types.highHalf(value), object.high());
 		assertEquals(value, object.value);
 	}
 	
@@ -77,8 +77,8 @@ public class LongTest extends Base {
 		object.write();
 		
 		// check result
-		assertEquals(Mesa.lowHalf(value),  Mesa.read16(va + 0));
-		assertEquals(Mesa.highHalf(value), Mesa.read16(va + 1));
+		assertEquals(Types.lowHalf(value),  Memory.instance.read16(va + 0));
+		assertEquals(Types.highHalf(value), Memory.instance.read16(va + 1));
 		assertEquals(value, object.value);
 	}
 

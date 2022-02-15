@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Sub: TYPE = [0..4);
 public final class Sub extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class Sub extends MemoryData16 {
         return new Sub(base, access);
     }
     public static final Sub pointer(char base, MemoryAccess access) {
-        return new Sub(Mesa.lengthenMDS(base), access);
+        return new Sub(Memory.instance.lengthenMDS(base), access);
     }
     
     private Sub(char value) {

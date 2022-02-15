@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecArraySubFixed: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..63): ARRAY [0..4) OF UNSPECIFIED];
 public final class RecArraySubFixed extends MemoryBase {
@@ -18,7 +18,7 @@ public final class RecArraySubFixed extends MemoryBase {
         return new RecArraySubFixed(base);
     }
     public static final RecArraySubFixed pointer(char base) {
-        return new RecArraySubFixed(Mesa.lengthenMDS(base));
+        return new RecArraySubFixed(Memory.instance.lengthenMDS(base));
     }
     
     private RecArraySubFixed(int base) {

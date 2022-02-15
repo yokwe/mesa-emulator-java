@@ -32,7 +32,7 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 
 		// prepare
-		Mesa.writeReal16(va, value);
+		Memory.instance.writeReal16(va, value);
 		
 		// execute
 		CARDINAL t = CARDINAL.longPointer(va, MemoryAccess.READ);
@@ -69,7 +69,7 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 
 		// prepare
-		Mesa.writeReal16(va, value);
+		Memory.instance.writeReal16(va, value);
 		// execute
 		CARDINAL t = CARDINAL.longPointer(va, MemoryAccess.READ_WRITE);
 		Map map = memory.map(va);
@@ -91,7 +91,7 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 		
 		// prepare
-		Mesa.writeReal16(va, value);
+		Memory.instance.writeReal16(va, value);
 		
 		// execute
 		CARDINAL t = CARDINAL.pointer(sa, MemoryAccess.READ);
@@ -130,7 +130,7 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 
 		// prepare
-		Mesa.writeReal16(va, value);
+		Memory.instance.writeReal16(va, value);
 		
 		// execute
 		CARDINAL t = CARDINAL.pointer(sa, MemoryAccess.READ_WRITE);

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BitAddress: TYPE = RECORD[word (0:0..31): LONG POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
 public final class BitAddress extends MemoryBase {
@@ -17,7 +17,7 @@ public final class BitAddress extends MemoryBase {
         return new BitAddress(base);
     }
     public static final BitAddress pointer(char base) {
-        return new BitAddress(Mesa.lengthenMDS(base));
+        return new BitAddress(Memory.instance.lengthenMDS(base));
     }
     
     private BitAddress(int base) {

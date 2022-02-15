@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // LocalOverhead: TYPE = RECORD[word (0:0..15): LocalWord, returnlink (1:0..15): ShortControlLink, globallink (2:0..15): GFTHandle, pc (3:0..15): CARDINAL, local (4): LocalVariables];
 public final class LocalOverhead extends MemoryBase {
@@ -17,7 +17,7 @@ public final class LocalOverhead extends MemoryBase {
         return new LocalOverhead(base);
     }
     public static final LocalOverhead pointer(char base) {
-        return new LocalOverhead(Mesa.lengthenMDS(base));
+        return new LocalOverhead(Memory.instance.lengthenMDS(base));
     }
     
     private LocalOverhead(int base) {

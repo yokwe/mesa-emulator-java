@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // NibblePair: TYPE = RECORD[left (0:0..3): NIBBLE, right (0:4..7): NIBBLE];
 public final class NibblePair extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class NibblePair extends MemoryData16 {
         return new NibblePair(base, access);
     }
     public static final NibblePair pointer(char base, MemoryAccess access) {
-        return new NibblePair(Mesa.lengthenMDS(base), access);
+        return new NibblePair(Memory.instance.lengthenMDS(base), access);
     }
     
     private NibblePair(char value) {

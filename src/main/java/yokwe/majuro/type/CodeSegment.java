@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY [0..4) OF UNSPECIFIED, code (4): BLOCK];
 public final class CodeSegment extends MemoryBase {
@@ -18,7 +18,7 @@ public final class CodeSegment extends MemoryBase {
         return new CodeSegment(base);
     }
     public static final CodeSegment pointer(char base) {
-        return new CodeSegment(Mesa.lengthenMDS(base));
+        return new CodeSegment(Memory.instance.lengthenMDS(base));
     }
     
     private CodeSegment(int base) {

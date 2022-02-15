@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
 public final class LinkType extends MemoryData16 {
@@ -41,7 +41,7 @@ public final class LinkType extends MemoryData16 {
         return new LinkType(base, access);
     }
     public static final LinkType pointer(char base, MemoryAccess access) {
-        return new LinkType(Mesa.lengthenMDS(base), access);
+        return new LinkType(Memory.instance.lengthenMDS(base), access);
     }
     
     private LinkType(char value) {

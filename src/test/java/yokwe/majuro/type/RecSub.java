@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecSub: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..15): Sub];
 public final class RecSub extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecSub extends MemoryBase {
         return new RecSub(base);
     }
     public static final RecSub pointer(char base) {
-        return new RecSub(Mesa.lengthenMDS(base));
+        return new RecSub(Memory.instance.lengthenMDS(base));
     }
     
     private RecSub(int base) {

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // LONG POINTER: TYPE = LONG POINTER;
 public final class LONG_POINTER extends MemoryBase {
@@ -17,7 +17,7 @@ public final class LONG_POINTER extends MemoryBase {
         return new LONG_POINTER(base);
     }
     public static final LONG_POINTER pointer(char base) {
-        return new LONG_POINTER(Mesa.lengthenMDS(base));
+        return new LONG_POINTER(Memory.instance.lengthenMDS(base));
     }
     
     private LONG_POINTER(int base) {

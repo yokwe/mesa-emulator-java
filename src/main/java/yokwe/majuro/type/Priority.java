@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Priority: TYPE = [0..7];
 public final class Priority extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class Priority extends MemoryData16 {
         return new Priority(base, access);
     }
     public static final Priority pointer(char base, MemoryAccess access) {
-        return new Priority(Mesa.lengthenMDS(base), access);
+        return new Priority(Memory.instance.lengthenMDS(base), access);
     }
     
     private Priority(char value) {

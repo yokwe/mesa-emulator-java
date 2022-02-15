@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BitBltArg: TYPE = RECORD[dst (0:0..47): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
 public final class BitBltArg extends MemoryBase {
@@ -17,7 +17,7 @@ public final class BitBltArg extends MemoryBase {
         return new BitBltArg(base);
     }
     public static final BitBltArg pointer(char base) {
-        return new BitBltArg(Mesa.lengthenMDS(base));
+        return new BitBltArg(Memory.instance.lengthenMDS(base));
     }
     
     private BitBltArg(int base) {

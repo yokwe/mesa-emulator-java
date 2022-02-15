@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // TaggedControlLink: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
 public final class TaggedControlLink extends MemoryData32 {
@@ -20,7 +20,7 @@ public final class TaggedControlLink extends MemoryData32 {
         return new TaggedControlLink(base, access);
     }
     public static final TaggedControlLink pointer(char base, MemoryAccess access) {
-        return new TaggedControlLink(Mesa.lengthenMDS(base), access);
+        return new TaggedControlLink(Memory.instance.lengthenMDS(base), access);
     }
     
     private TaggedControlLink(int value) {

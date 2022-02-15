@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ProcessDataArea: TYPE = RECORD[ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector, block (0): ARRAY PsbIndex OF ProcessStateBlock];
 public final class ProcessDataArea extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ProcessDataArea extends MemoryBase {
         return new ProcessDataArea(base);
     }
     public static final ProcessDataArea pointer(char base) {
-        return new ProcessDataArea(Mesa.lengthenMDS(base));
+        return new ProcessDataArea(Memory.instance.lengthenMDS(base));
     }
     
     private ProcessDataArea(int base) {

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ArrayRefSubSub: TYPE = ARRAY Sub OF Sub;
 public final class ArrayRefSubSub extends MemoryBase {
@@ -18,7 +18,7 @@ public final class ArrayRefSubSub extends MemoryBase {
         return new ArrayRefSubSub(base);
     }
     public static final ArrayRefSubSub pointer(char base) {
-        return new ArrayRefSubSub(Mesa.lengthenMDS(base));
+        return new ArrayRefSubSub(Memory.instance.lengthenMDS(base));
     }
     
     private ArrayRefSubSub(int base) {

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // FaultVector: TYPE = ARRAY FaultIndex OF FaultQueue;
 public final class FaultVector extends MemoryBase {
@@ -18,7 +18,7 @@ public final class FaultVector extends MemoryBase {
         return new FaultVector(base);
     }
     public static final FaultVector pointer(char base) {
-        return new FaultVector(Mesa.lengthenMDS(base));
+        return new FaultVector(Memory.instance.lengthenMDS(base));
     }
     
     private FaultVector(int base) {

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // GFTIndex: TYPE = [0..16384);
 public final class GFTIndex extends MemoryData16 {
@@ -30,7 +30,7 @@ public final class GFTIndex extends MemoryData16 {
         return new GFTIndex(base, access);
     }
     public static final GFTIndex pointer(char base, MemoryAccess access) {
-        return new GFTIndex(Mesa.lengthenMDS(base), access);
+        return new GFTIndex(Memory.instance.lengthenMDS(base), access);
     }
     
     private GFTIndex(char value) {

@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Condition: TYPE = RECORD[reserved (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, available (0:13..13): UNSPECIFIED, abortable (0:14..14): BOOLEAN, wakeup (0:15..15): BOOLEAN];
 public final class Condition extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class Condition extends MemoryData16 {
         return new Condition(base, access);
     }
     public static final Condition pointer(char base, MemoryAccess access) {
-        return new Condition(Mesa.lengthenMDS(base), access);
+        return new Condition(Memory.instance.lengthenMDS(base), access);
     }
     
     private Condition(char value) {

@@ -1,7 +1,7 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
 public final class AllocationVector extends MemoryBase {
@@ -18,7 +18,7 @@ public final class AllocationVector extends MemoryBase {
         return new AllocationVector(base);
     }
     public static final AllocationVector pointer(char base) {
-        return new AllocationVector(Mesa.lengthenMDS(base));
+        return new AllocationVector(Memory.instance.lengthenMDS(base));
     }
     
     private AllocationVector(int base) {

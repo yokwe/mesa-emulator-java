@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // Long: TYPE = RECORD32[low (0:0..15): UNSPECIFIED, high (1:0..15): UNSPECIFIED];
 public final class Long extends MemoryData32 {
@@ -20,7 +20,7 @@ public final class Long extends MemoryData32 {
         return new Long(base, access);
     }
     public static final Long pointer(char base, MemoryAccess access) {
-        return new Long(Mesa.lengthenMDS(base), access);
+        return new Long(Memory.instance.lengthenMDS(base), access);
     }
     
     private Long(int value) {

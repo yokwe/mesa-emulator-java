@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // BytePair: TYPE = RECORD[left (0:0..7): BYTE, right (0:8..15): BYTE];
 public final class BytePair extends MemoryData16 {
@@ -20,7 +20,7 @@ public final class BytePair extends MemoryData16 {
         return new BytePair(base, access);
     }
     public static final BytePair pointer(char base, MemoryAccess access) {
-        return new BytePair(Mesa.lengthenMDS(base), access);
+        return new BytePair(Memory.instance.lengthenMDS(base), access);
     }
     
     private BytePair(char value) {

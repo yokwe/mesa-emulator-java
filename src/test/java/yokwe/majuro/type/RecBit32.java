@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // RecBit32: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..31): BitField32];
 public final class RecBit32 extends MemoryBase {
@@ -17,7 +17,7 @@ public final class RecBit32 extends MemoryBase {
         return new RecBit32(base);
     }
     public static final RecBit32 pointer(char base) {
-        return new RecBit32(Mesa.lengthenMDS(base));
+        return new RecBit32(Memory.instance.lengthenMDS(base));
     }
     
     private RecBit32(int base) {

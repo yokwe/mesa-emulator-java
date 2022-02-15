@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // GlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, codebase (2:0..31): LONG POINTER TO CodeSegment, global (4): GlobalVariables];
 public final class GlobalOverhead extends MemoryBase {
@@ -17,7 +17,7 @@ public final class GlobalOverhead extends MemoryBase {
         return new GlobalOverhead(base);
     }
     public static final GlobalOverhead pointer(char base) {
-        return new GlobalOverhead(Mesa.lengthenMDS(base));
+        return new GlobalOverhead(Memory.instance.lengthenMDS(base));
     }
     
     private GlobalOverhead(int base) {
@@ -42,7 +42,7 @@ public final class GlobalOverhead extends MemoryBase {
     // codebase (2:0..31): LONG POINTER TO CodeSegment
     private static final int OFFSET_CODEBASE = 2;
     public CodeSegment codebase() {
-        int longPointer = Mesa.read32(base + OFFSET_CODEBASE);
+        int longPointer = Memory.instance.read32(base + OFFSET_CODEBASE);
         return CodeSegment.longPointer(longPointer);
     }
     // global (4): GlobalVariables

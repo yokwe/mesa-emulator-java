@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // ProcDesc: TYPE = RECORD32[taggedGF (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
 public final class ProcDesc extends MemoryData32 {
@@ -20,7 +20,7 @@ public final class ProcDesc extends MemoryData32 {
         return new ProcDesc(base, access);
     }
     public static final ProcDesc pointer(char base, MemoryAccess access) {
-        return new ProcDesc(Mesa.lengthenMDS(base), access);
+        return new ProcDesc(Memory.instance.lengthenMDS(base), access);
     }
     
     private ProcDesc(int value) {

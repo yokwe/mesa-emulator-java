@@ -1,6 +1,6 @@
 package yokwe.majuro.type;
 
-import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Memory;
 
 // TransferDescriptor: TYPE = RECORD[src (0:0..15): ShortControlLink, reserved (1:0..15): UNSPECIFIED, dst (2:0..31): ControlLink];
 public final class TransferDescriptor extends MemoryBase {
@@ -17,7 +17,7 @@ public final class TransferDescriptor extends MemoryBase {
         return new TransferDescriptor(base);
     }
     public static final TransferDescriptor pointer(char base) {
-        return new TransferDescriptor(Mesa.lengthenMDS(base));
+        return new TransferDescriptor(Memory.instance.lengthenMDS(base));
     }
     
     private TransferDescriptor(int base) {
