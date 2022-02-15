@@ -738,7 +738,7 @@ public class ProcessDecl {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 				
 				out.println("public final char %s() {", fieldName);
-				out.println("return (char)((value & %1$s_MASK) >> %1$s_SHIFT);", fieldCons);
+				out.println("return (char)((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
 				out.println("}");
 				
 				out.println("public final void %s(char newValue) {", fieldName);
@@ -752,7 +752,7 @@ public class ProcessDecl {
 		}
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
-			// RECORD FIELD is BIT FIELD 16
+			// RECORD FIELD is BIT FIELD 32
 			final var out         = javaFile.out;
 			final var parentClass = MemoryData32.class;
 			
@@ -787,11 +787,11 @@ public class ProcessDecl {
 				final int start;
 				final int stop;
 				if (offset == 0) {
-					start  = 16 + e.startBit;
-					stop   = 16 + e.stopBit;
-				} else if (offset == 1) {
 					start  = e.startBit;
 					stop   = e.stopBit;
+				} else if (offset == 1) {
+					start  = WORD_BITS + e.startBit;
+					stop   = WORD_BITS + e.stopBit;
 				} else {
 					throw new UnexpectedException("Unexpected");
 				}
@@ -815,7 +815,7 @@ public class ProcessDecl {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 				
 				out.println("public final int %s() {", fieldName);
-				out.println("return (value & %1$s_MASK) >> %1$s_SHIFT;", fieldCons);
+				out.println("return (value & %1$s_MASK) >>> %1$s_SHIFT;", fieldCons);
 				out.println("}");
 				
 				out.println("public final void %s(int newValue) {", fieldName);
