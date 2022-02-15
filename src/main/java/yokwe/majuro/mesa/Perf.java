@@ -40,6 +40,8 @@ public final class Perf {
 	public static long read32MDS   = 0;
 	public static long write32MDS  = 0;
 	
+	public static long lengthenPDA = 0;
+	
 	// fault
 	public static long pageFault         = 0;
 	public static long writeProtectFault = 0;
