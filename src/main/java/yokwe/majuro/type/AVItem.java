@@ -46,14 +46,14 @@ public final class AVItem extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char data() {
-        return (char)((value & DATA_MASK) >> DATA_SHIFT);
+        return (char)((value & DATA_MASK) >>> DATA_SHIFT);
     }
     public final void data(char newValue) {
         value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
     }
     
     public final char tag() {
-        return (char)((value & TAG_MASK) >> TAG_SHIFT);
+        return (char)((value & TAG_MASK) >>> TAG_SHIFT);
     }
     public final void tag(char newValue) {
         value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);

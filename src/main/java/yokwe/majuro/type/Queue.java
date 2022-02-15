@@ -49,21 +49,21 @@ public final class Queue extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char reserved1() {
-        return (char)((value & RESERVED_1_MASK) >> RESERVED_1_SHIFT);
+        return (char)((value & RESERVED_1_MASK) >>> RESERVED_1_SHIFT);
     }
     public final void reserved1(char newValue) {
         value = (value & ~RESERVED_1_MASK) | ((newValue << RESERVED_1_SHIFT) & RESERVED_1_MASK);
     }
     
     public final char tail() {
-        return (char)((value & TAIL_MASK) >> TAIL_SHIFT);
+        return (char)((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
     public final void tail(char newValue) {
         value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
     }
     
     public final char reserved2() {
-        return (char)((value & RESERVED_2_MASK) >> RESERVED_2_SHIFT);
+        return (char)((value & RESERVED_2_MASK) >>> RESERVED_2_SHIFT);
     }
     public final void reserved2(char newValue) {
         value = (value & ~RESERVED_2_MASK) | ((newValue << RESERVED_2_SHIFT) & RESERVED_2_MASK);

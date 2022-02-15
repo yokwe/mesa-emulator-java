@@ -46,14 +46,14 @@ public final class StateWord extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char instByte() {
-        return (char)((value & INST_BYTE_MASK) >> INST_BYTE_SHIFT);
+        return (char)((value & INST_BYTE_MASK) >>> INST_BYTE_SHIFT);
     }
     public final void instByte(char newValue) {
         value = (value & ~INST_BYTE_MASK) | ((newValue << INST_BYTE_SHIFT) & INST_BYTE_MASK);
     }
     
     public final char stkPtr() {
-        return (char)((value & STK_PTR_MASK) >> STK_PTR_SHIFT);
+        return (char)((value & STK_PTR_MASK) >>> STK_PTR_SHIFT);
     }
     public final void stkPtr(char newValue) {
         value = (value & ~STK_PTR_MASK) | ((newValue << STK_PTR_SHIFT) & STK_PTR_MASK);

@@ -55,35 +55,35 @@ public final class PsbFlags extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char available() {
-        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
+        return (char)((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
     public final char cleanup() {
-        return (char)((value & CLEANUP_MASK) >> CLEANUP_SHIFT);
+        return (char)((value & CLEANUP_MASK) >>> CLEANUP_SHIFT);
     }
     public final void cleanup(char newValue) {
         value = (value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK);
     }
     
     public final char reserved() {
-        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
+        return (char)((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     
     public final char waiting() {
-        return (char)((value & WAITING_MASK) >> WAITING_SHIFT);
+        return (char)((value & WAITING_MASK) >>> WAITING_SHIFT);
     }
     public final void waiting(char newValue) {
         value = (value & ~WAITING_MASK) | ((newValue << WAITING_SHIFT) & WAITING_MASK);
     }
     
     public final char abort() {
-        return (char)((value & ABORT_MASK) >> ABORT_SHIFT);
+        return (char)((value & ABORT_MASK) >>> ABORT_SHIFT);
     }
     public final void abort(char newValue) {
         value = (value & ~ABORT_MASK) | ((newValue << ABORT_SHIFT) & ABORT_MASK);

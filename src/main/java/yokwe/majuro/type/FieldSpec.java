@@ -46,14 +46,14 @@ public final class FieldSpec extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char pos() {
-        return (char)((value & POS_MASK) >> POS_SHIFT);
+        return (char)((value & POS_MASK) >>> POS_SHIFT);
     }
     public final void pos(char newValue) {
         value = (value & ~POS_MASK) | ((newValue << POS_SHIFT) & POS_MASK);
     }
     
     public final char size() {
-        return (char)((value & SIZE_MASK) >> SIZE_SHIFT);
+        return (char)((value & SIZE_MASK) >>> SIZE_SHIFT);
     }
     public final void size(char newValue) {
         value = (value & ~SIZE_MASK) | ((newValue << SIZE_SHIFT) & SIZE_MASK);

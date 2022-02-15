@@ -38,32 +38,32 @@ public final class BitField32 extends MemoryData32 {
     // tag  (0:14..15): Enum
     // fill (1:0..15):  UNSPECIFIED
     
-    private static final int DATA_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1100;
-    private static final int DATA_SHIFT =                                         2;
-    private static final int TAG_MASK   = 0b0000_0000_0000_0000_0000_0000_0000_0011;
-    private static final int TAG_SHIFT  =                                         0;
-    private static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    private static final int FILL_SHIFT =                                        16;
+    private static final int DATA_MASK  = 0b1111_1111_1111_1100_0000_0000_0000_0000;
+    private static final int DATA_SHIFT =                                        18;
+    private static final int TAG_MASK   = 0b0000_0000_0000_0011_0000_0000_0000_0000;
+    private static final int TAG_SHIFT  =                                        16;
+    private static final int FILL_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+    private static final int FILL_SHIFT =                                         0;
     
     //
     // Bit Field Access Methods
     //
     public final int data() {
-        return (value & DATA_MASK) >> DATA_SHIFT;
+        return (value & DATA_MASK) >>> DATA_SHIFT;
     }
     public final void data(int newValue) {
         value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
     }
     
     public final int tag() {
-        return (value & TAG_MASK) >> TAG_SHIFT;
+        return (value & TAG_MASK) >>> TAG_SHIFT;
     }
     public final void tag(int newValue) {
         value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);
     }
     
     public final int fill() {
-        return (value & FILL_MASK) >> FILL_SHIFT;
+        return (value & FILL_MASK) >>> FILL_SHIFT;
     }
     public final void fill(int newValue) {
         value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);

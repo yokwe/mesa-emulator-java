@@ -55,35 +55,35 @@ public final class PsbLink extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char priority() {
-        return (char)((value & PRIORITY_MASK) >> PRIORITY_SHIFT);
+        return (char)((value & PRIORITY_MASK) >>> PRIORITY_SHIFT);
     }
     public final void priority(char newValue) {
         value = (value & ~PRIORITY_MASK) | ((newValue << PRIORITY_SHIFT) & PRIORITY_MASK);
     }
     
     public final char next() {
-        return (char)((value & NEXT_MASK) >> NEXT_SHIFT);
+        return (char)((value & NEXT_MASK) >>> NEXT_SHIFT);
     }
     public final void next(char newValue) {
         value = (value & ~NEXT_MASK) | ((newValue << NEXT_SHIFT) & NEXT_MASK);
     }
     
     public final char failed() {
-        return (char)((value & FAILED_MASK) >> FAILED_SHIFT);
+        return (char)((value & FAILED_MASK) >>> FAILED_SHIFT);
     }
     public final void failed(char newValue) {
         value = (value & ~FAILED_MASK) | ((newValue << FAILED_SHIFT) & FAILED_MASK);
     }
     
     public final char permanent() {
-        return (char)((value & PERMANENT_MASK) >> PERMANENT_SHIFT);
+        return (char)((value & PERMANENT_MASK) >>> PERMANENT_SHIFT);
     }
     public final void permanent(char newValue) {
         value = (value & ~PERMANENT_MASK) | ((newValue << PERMANENT_SHIFT) & PERMANENT_MASK);
     }
     
     public final char preempted() {
-        return (char)((value & PREEMPTED_MASK) >> PREEMPTED_SHIFT);
+        return (char)((value & PREEMPTED_MASK) >>> PREEMPTED_SHIFT);
     }
     public final void preempted(char newValue) {
         value = (value & ~PREEMPTED_MASK) | ((newValue << PREEMPTED_SHIFT) & PREEMPTED_MASK);

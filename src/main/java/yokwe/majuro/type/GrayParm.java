@@ -52,28 +52,28 @@ public final class GrayParm extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char reserved() {
-        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
+        return (char)((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     
     public final char yOffset() {
-        return (char)((value & Y_OFFSET_MASK) >> Y_OFFSET_SHIFT);
+        return (char)((value & Y_OFFSET_MASK) >>> Y_OFFSET_SHIFT);
     }
     public final void yOffset(char newValue) {
         value = (value & ~Y_OFFSET_MASK) | ((newValue << Y_OFFSET_SHIFT) & Y_OFFSET_MASK);
     }
     
     public final char widthMinusOne() {
-        return (char)((value & WIDTH_MINUS_ONE_MASK) >> WIDTH_MINUS_ONE_SHIFT);
+        return (char)((value & WIDTH_MINUS_ONE_MASK) >>> WIDTH_MINUS_ONE_SHIFT);
     }
     public final void widthMinusOne(char newValue) {
         value = (value & ~WIDTH_MINUS_ONE_MASK) | ((newValue << WIDTH_MINUS_ONE_SHIFT) & WIDTH_MINUS_ONE_MASK);
     }
     
     public final char heightMinusOne() {
-        return (char)((value & HEIGHT_MINUS_ONE_MASK) >> HEIGHT_MINUS_ONE_SHIFT);
+        return (char)((value & HEIGHT_MINUS_ONE_MASK) >>> HEIGHT_MINUS_ONE_SHIFT);
     }
     public final void heightMinusOne(char newValue) {
         value = (value & ~HEIGHT_MINUS_ONE_MASK) | ((newValue << HEIGHT_MINUS_ONE_SHIFT) & HEIGHT_MINUS_ONE_MASK);

@@ -61,49 +61,49 @@ public final class BitBltFlags extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char direction() {
-        return (char)((value & DIRECTION_MASK) >> DIRECTION_SHIFT);
+        return (char)((value & DIRECTION_MASK) >>> DIRECTION_SHIFT);
     }
     public final void direction(char newValue) {
         value = (value & ~DIRECTION_MASK) | ((newValue << DIRECTION_SHIFT) & DIRECTION_MASK);
     }
     
     public final char disjoint() {
-        return (char)((value & DISJOINT_MASK) >> DISJOINT_SHIFT);
+        return (char)((value & DISJOINT_MASK) >>> DISJOINT_SHIFT);
     }
     public final void disjoint(char newValue) {
         value = (value & ~DISJOINT_MASK) | ((newValue << DISJOINT_SHIFT) & DISJOINT_MASK);
     }
     
     public final char disjointItems() {
-        return (char)((value & DISJOINT_ITEMS_MASK) >> DISJOINT_ITEMS_SHIFT);
+        return (char)((value & DISJOINT_ITEMS_MASK) >>> DISJOINT_ITEMS_SHIFT);
     }
     public final void disjointItems(char newValue) {
         value = (value & ~DISJOINT_ITEMS_MASK) | ((newValue << DISJOINT_ITEMS_SHIFT) & DISJOINT_ITEMS_MASK);
     }
     
     public final char gray() {
-        return (char)((value & GRAY_MASK) >> GRAY_SHIFT);
+        return (char)((value & GRAY_MASK) >>> GRAY_SHIFT);
     }
     public final void gray(char newValue) {
         value = (value & ~GRAY_MASK) | ((newValue << GRAY_SHIFT) & GRAY_MASK);
     }
     
     public final char srcFunc() {
-        return (char)((value & SRC_FUNC_MASK) >> SRC_FUNC_SHIFT);
+        return (char)((value & SRC_FUNC_MASK) >>> SRC_FUNC_SHIFT);
     }
     public final void srcFunc(char newValue) {
         value = (value & ~SRC_FUNC_MASK) | ((newValue << SRC_FUNC_SHIFT) & SRC_FUNC_MASK);
     }
     
     public final char dstFunc() {
-        return (char)((value & DST_FUNC_MASK) >> DST_FUNC_SHIFT);
+        return (char)((value & DST_FUNC_MASK) >>> DST_FUNC_SHIFT);
     }
     public final void dstFunc(char newValue) {
         value = (value & ~DST_FUNC_MASK) | ((newValue << DST_FUNC_SHIFT) & DST_FUNC_MASK);
     }
     
     public final char reserved() {
-        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
+        return (char)((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);

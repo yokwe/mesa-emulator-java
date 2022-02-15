@@ -46,14 +46,14 @@ public final class LocalWord extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char available() {
-        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
+        return (char)((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
     public final char fsi() {
-        return (char)((value & FSI_MASK) >> FSI_SHIFT);
+        return (char)((value & FSI_MASK) >>> FSI_SHIFT);
     }
     public final void fsi(char newValue) {
         value = (value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK);

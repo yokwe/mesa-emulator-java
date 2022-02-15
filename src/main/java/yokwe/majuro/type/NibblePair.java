@@ -46,14 +46,14 @@ public final class NibblePair extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char left() {
-        return (char)((value & LEFT_MASK) >> LEFT_SHIFT);
+        return (char)((value & LEFT_MASK) >>> LEFT_SHIFT);
     }
     public final void left(char newValue) {
         value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
     }
     
     public final char right() {
-        return (char)((value & RIGHT_MASK) >> RIGHT_SHIFT);
+        return (char)((value & RIGHT_MASK) >>> RIGHT_SHIFT);
     }
     public final void right(char newValue) {
         value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);

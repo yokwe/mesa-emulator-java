@@ -49,21 +49,21 @@ public final class GlobalWord extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char gfi() {
-        return (char)((value & GFI_MASK) >> GFI_SHIFT);
+        return (char)((value & GFI_MASK) >>> GFI_SHIFT);
     }
     public final void gfi(char newValue) {
         value = (value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK);
     }
     
     public final char trapxfers() {
-        return (char)((value & TRAPXFERS_MASK) >> TRAPXFERS_SHIFT);
+        return (char)((value & TRAPXFERS_MASK) >>> TRAPXFERS_SHIFT);
     }
     public final void trapxfers(char newValue) {
         value = (value & ~TRAPXFERS_MASK) | ((newValue << TRAPXFERS_SHIFT) & TRAPXFERS_MASK);
     }
     
     public final char codelinks() {
-        return (char)((value & CODELINKS_MASK) >> CODELINKS_SHIFT);
+        return (char)((value & CODELINKS_MASK) >>> CODELINKS_SHIFT);
     }
     public final void codelinks(char newValue) {
         value = (value & ~CODELINKS_MASK) | ((newValue << CODELINKS_SHIFT) & CODELINKS_MASK);

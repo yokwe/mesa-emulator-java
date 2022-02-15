@@ -37,23 +37,23 @@ public final class ProcDesc extends MemoryData32 {
     // taggedGF (0:0..15): UNSPECIFIED
     // pc       (1:0..15): CARDINAL
     
-    private static final int TAGGED_GF_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-    private static final int TAGGED_GF_SHIFT =                                         0;
-    private static final int PC_MASK         = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    private static final int PC_SHIFT        =                                        16;
+    private static final int TAGGED_GF_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int TAGGED_GF_SHIFT =                                        16;
+    private static final int PC_MASK         = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+    private static final int PC_SHIFT        =                                         0;
     
     //
     // Bit Field Access Methods
     //
     public final int taggedGF() {
-        return (value & TAGGED_GF_MASK) >> TAGGED_GF_SHIFT;
+        return (value & TAGGED_GF_MASK) >>> TAGGED_GF_SHIFT;
     }
     public final void taggedGF(int newValue) {
         value = (value & ~TAGGED_GF_MASK) | ((newValue << TAGGED_GF_SHIFT) & TAGGED_GF_MASK);
     }
     
     public final int pc() {
-        return (value & PC_MASK) >> PC_SHIFT;
+        return (value & PC_MASK) >>> PC_SHIFT;
     }
     public final void pc(int newValue) {
         value = (value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK);

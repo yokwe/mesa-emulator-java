@@ -55,35 +55,35 @@ public final class Condition extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char reserved() {
-        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
+        return (char)((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     
     public final char tail() {
-        return (char)((value & TAIL_MASK) >> TAIL_SHIFT);
+        return (char)((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
     public final void tail(char newValue) {
         value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
     }
     
     public final char available() {
-        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
+        return (char)((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
     public final char abortable() {
-        return (char)((value & ABORTABLE_MASK) >> ABORTABLE_SHIFT);
+        return (char)((value & ABORTABLE_MASK) >>> ABORTABLE_SHIFT);
     }
     public final void abortable(char newValue) {
         value = (value & ~ABORTABLE_MASK) | ((newValue << ABORTABLE_SHIFT) & ABORTABLE_MASK);
     }
     
     public final char wakeup() {
-        return (char)((value & WAKEUP_MASK) >> WAKEUP_SHIFT);
+        return (char)((value & WAKEUP_MASK) >>> WAKEUP_SHIFT);
     }
     public final void wakeup(char newValue) {
         value = (value & ~WAKEUP_MASK) | ((newValue << WAKEUP_SHIFT) & WAKEUP_MASK);

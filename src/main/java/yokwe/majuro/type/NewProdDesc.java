@@ -37,23 +37,23 @@ public final class NewProdDesc extends MemoryData32 {
     // taggedGFI (0:0..15): UNSPECIFIED
     // pc        (1:0..15): CARDINAL
     
-    private static final int TAGGED_GFI_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-    private static final int TAGGED_GFI_SHIFT =                                         0;
-    private static final int PC_MASK          = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    private static final int PC_SHIFT         =                                        16;
+    private static final int TAGGED_GFI_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int TAGGED_GFI_SHIFT =                                        16;
+    private static final int PC_MASK          = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+    private static final int PC_SHIFT         =                                         0;
     
     //
     // Bit Field Access Methods
     //
     public final int taggedGFI() {
-        return (value & TAGGED_GFI_MASK) >> TAGGED_GFI_SHIFT;
+        return (value & TAGGED_GFI_MASK) >>> TAGGED_GFI_SHIFT;
     }
     public final void taggedGFI(int newValue) {
         value = (value & ~TAGGED_GFI_MASK) | ((newValue << TAGGED_GFI_SHIFT) & TAGGED_GFI_MASK);
     }
     
     public final int pc() {
-        return (value & PC_MASK) >> PC_SHIFT;
+        return (value & PC_MASK) >>> PC_SHIFT;
     }
     public final void pc(int newValue) {
         value = (value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK);

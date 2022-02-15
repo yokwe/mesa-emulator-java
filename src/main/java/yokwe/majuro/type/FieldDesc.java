@@ -46,14 +46,14 @@ public final class FieldDesc extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char offset() {
-        return (char)((value & OFFSET_MASK) >> OFFSET_SHIFT);
+        return (char)((value & OFFSET_MASK) >>> OFFSET_SHIFT);
     }
     public final void offset(char newValue) {
         value = (value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK);
     }
     
     public final char field() {
-        return (char)((value & FIELD_MASK) >> FIELD_SHIFT);
+        return (char)((value & FIELD_MASK) >>> FIELD_SHIFT);
     }
     public final void field(char newValue) {
         value = (value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK);

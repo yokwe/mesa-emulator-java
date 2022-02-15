@@ -52,28 +52,28 @@ public final class Monitor extends MemoryData16 {
     // Bit Field Access Methods
     //
     public final char reserved() {
-        return (char)((value & RESERVED_MASK) >> RESERVED_SHIFT);
+        return (char)((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final void reserved(char newValue) {
         value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
     }
     
     public final char tail() {
-        return (char)((value & TAIL_MASK) >> TAIL_SHIFT);
+        return (char)((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
     public final void tail(char newValue) {
         value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
     }
     
     public final char available() {
-        return (char)((value & AVAILABLE_MASK) >> AVAILABLE_SHIFT);
+        return (char)((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final void available(char newValue) {
         value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
     }
     
     public final char locked() {
-        return (char)((value & LOCKED_MASK) >> LOCKED_SHIFT);
+        return (char)((value & LOCKED_MASK) >>> LOCKED_SHIFT);
     }
     public final void locked(char newValue) {
         value = (value & ~LOCKED_MASK) | ((newValue << LOCKED_SHIFT) & LOCKED_MASK);
