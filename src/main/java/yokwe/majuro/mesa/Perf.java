@@ -43,8 +43,14 @@ public final class Perf {
 	public static long lengthenPDA = 0;
 	
 	// fault
+	public static long frameFault        = 0;
 	public static long pageFault         = 0;
 	public static long writeProtectFault = 0;
+	
+	//
+	public static long dispatch = 0;
+
+	
 	
 	private static final Field[] fields;
 	static {		

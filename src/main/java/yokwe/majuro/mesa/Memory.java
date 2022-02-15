@@ -169,7 +169,7 @@ public final class Memory {
 
 			Map map = maps[vp];
 			if (map.isVacant()) {
-				Mesa.pageFault(va);
+				Processes.pageFault(va);
 			}
 			
 			// NO FAULT FROM HERE
@@ -211,10 +211,10 @@ public final class Memory {
 
 			Map map = maps[vp];
 			if (map.isVacant()) {
-				Mesa.pageFault(va);
+				Processes.pageFault(va);
 			}
 			if (map.isProtect()) {
-				Mesa.writeProtectFault(va);
+				Processes.writeProtectFault(va);
 			}
 			
 			// NO FAULT FROM HERE
