@@ -238,9 +238,13 @@ public final class Memory {
 		realMemory[ra] = newValue;
 	}
 	public int readReal32(int ra0, int ra1) {
+		// ra0 -- low order  16 bit
+		// ra1 -- high order 16 bit
 		return (realMemory[ra1] << WORD_BITS) | realMemory[ra0];
 	}
 	public void writeReal32(int ra0, int ra1, int newValue) {
+		// ra0 -- low order  16 bit
+		// ra1 -- high order 16 bit
 		realMemory[ra0] = (char)newValue;
 		realMemory[ra1] = (char)(newValue >>> WORD_BITS);
 	}
