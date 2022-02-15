@@ -263,7 +263,7 @@ public final class Memory {
 	// Code Segments
 	//
 	public char readCode(int offset) {
-		int longPointer = Processor.CB + (offset & 0xFFFF);
+		int longPointer = CodeCache.CB() + (offset & 0xFFFF);
 		return realMemory[fetch(longPointer)];
 	}
 
