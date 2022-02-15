@@ -37,10 +37,10 @@ public final class Long extends MemoryData32 {
     // low  (0:0..15): UNSPECIFIED
     // high (1:0..15): UNSPECIFIED
     
-    private static final int LOW_MASK   = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-    private static final int LOW_SHIFT  =                                        16;
-    private static final int HIGH_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-    private static final int HIGH_SHIFT =                                         0;
+    private static final int LOW_MASK   = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+    private static final int LOW_SHIFT  =                                         0;
+    private static final int HIGH_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+    private static final int HIGH_SHIFT =                                        16;
     
     //
     // Bit Field Access Methods
