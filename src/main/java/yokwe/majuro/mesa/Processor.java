@@ -8,10 +8,13 @@ public class Processor {
 	
 	public static char PC;
 	
+	// Main Data Space
+	public static int MDS;
+
 	
 	// 3.3.2 Evaluation Stack
-	public static final char[] stack = new char[StackDepth];
-	public static       char   SP; // [0..StackDepth)
+	public static final int[] stack = new int[StackDepth];
+	public static       int    SP; // [0..StackDepth)
 	
 	// 3.3.2 Evaluation Stack
 	public static int stackCount() {
@@ -23,7 +26,7 @@ public class Processor {
 	}
 	public static char pop() {
 		if (SP == 0) ControlTransfers.stackError();
-		return stack[--SP];
+		return (char)(stack[--SP]);
 	}
 
 	public static void pushLong(int data) {
@@ -70,9 +73,9 @@ public class Processor {
 	public static char GFI;
 
 	// 4.5 Instruction Execution
-	public static byte breakByte;
-	public static char savedPC;
-	public static char savedSP;
+	public static int breakByte;
+	public static int savedPC;
+	public static int savedSP;
 
 
 	@SuppressWarnings("serial")

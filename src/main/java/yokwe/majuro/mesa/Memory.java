@@ -57,9 +57,6 @@ public final class Memory {
 	// value of realPages contains realPage number of virtual page
 	private final Map[] maps;
 	
-	// Main Data Space
-	public int mds;
-
 	// index of realMemory is real address up to rpSize * Mesa.PAGE_SIZE
 	private final char[]    realMemory;
 	
@@ -99,7 +96,6 @@ public final class Memory {
 	
 	public void clear() {
 		// clear mds realMemory, mapFlags, realPages and cacheArray
-		mds = 0;
 		for(int i = 0; i < realMemory.length; i++) {
 			realMemory[i] = 0;
 		}
@@ -306,33 +302,33 @@ public final class Memory {
 	//
 	public int lengthenMDS(char value) {
 		if (Perf.ENABLED) Perf.lengthenMDS++;
-		return mds + value;
+		return Processor.MDS + value;
 	}
 	
 	// convenience methods for MDS data access
 	public int fetchMDS(char va) {
 		if (Perf.ENABLED) Perf.fetchMDS++;
-		return fetch(mds + va);
+		return fetch(Processor.MDS + va);
 	}
 	public int storeMDS(char va) {
 		if (Perf.ENABLED) Perf.storeMDS++;
-		return store(mds + va);
+		return store(Processor.MDS + va);
 	}
 	public char read16MDS(char va) {
 		if (Perf.ENABLED) Perf.read16MDS++;
-		return read16(mds + va);
+		return read16(Processor.MDS + va);
 	}
 	public void write16MDS(char va, char newValue) {
 		if (Perf.ENABLED) Perf.write16MDS++;
-		write16(mds + va, newValue);
+		write16(Processor.MDS + va, newValue);
 	}
 	public int read32MDS(char va) {
 		if (Perf.ENABLED) Perf.read32MDS++;
-		return read32(mds + va);
+		return read32(Processor.MDS + va);
 	}
 	public void write32MDS(char va, int newValue) {
 		if (Perf.ENABLED) Perf.write32MDS++;
-		write32(mds + va, newValue);
+		write32(Processor.MDS + va, newValue);
 	}
 	//
 	// prohibit int promotion of above methods
