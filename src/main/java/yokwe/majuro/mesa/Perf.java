@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.opcode.Opcode;
 
 public final class Perf {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Perf.class);
 
 	public static final boolean ENABLED = true;
+	public static final boolean OPCODE  = true;
 	
 	// Memory
 	public static long cacheHit          = 0;
@@ -48,16 +50,21 @@ public final class Perf {
 	//
 	public static long dispatch = 0;
 
+	// opcode
+	public static final long[] opcodeMop = new long[256];
+	public static final long[] opcodeEsc = new long[256];
 	
-	
+
 	private static final Field[] fields;
-	static {		
+	static {
 		List<Field> list = new ArrayList<>();
 		for(Field field: Perf.class.getDeclaredFields()) {
 			// Skip if field is not static field
 			if (!Modifier.isStatic(field.getModifiers())) continue;
 			// Skip if field type is not long
 			if (!field.getType().equals(Long.TYPE)) continue;
+			// Skip if field type is array
+			if (field.getType().isArray()) continue;
 			
 			list.add(field);
 		}
@@ -65,26 +72,40 @@ public final class Perf {
 	}
 	
 	public static void stats() {
-		int count = 0;
-		for(Field field: fields) {
-			try {
-				String name  = field.getName();
-				long   value = field.getLong(null);
-				
-				// Skip if value is zero
-				if (value == 0) continue;
-				
-				if (count == 0) logger.info("Perf stats START");
-				count++;
-				logger.info("{}", String.format("%-24s %10d", name, value));
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				String exceptionName = e.getClass().getSimpleName();
-				logger.error("{} {}", exceptionName, e);
-				logger.error("field {}", field);
-				throw new UnexpectedException(exceptionName, e);
+		{
+			int count = 0;
+			for(Field field: fields) {
+				try {
+					String name  = field.getName();
+					long   value = field.getLong(null);
+					
+					// Skip if value is zero
+					if (value == 0) continue;
+					
+					if (count == 0) logger.info("Perf stats START");
+					count++;
+					logger.info("{}", String.format("%-24s %10d", name, value));				
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					String exceptionName = e.getClass().getSimpleName();
+					logger.error("{} {}", exceptionName, e);
+					logger.error("field {}", field);
+					throw new UnexpectedException(exceptionName, e);
+				}
 			}
+			if (count != 0) logger.info("Perf stats STOP");
 		}
-		if (count != 0) logger.info("Perf stats STOP");
+		{
+			int count = 0;
+			for(Opcode info: Opcode.values()) {
+				long opcodeCount = (info.type == Opcode.Type.MOP) ? opcodeMop[info.code] : opcodeEsc[info.code];
+				if (opcodeCount != 0) {
+					if (count == 0) logger.info("Perf opcode START");
+					logger.info("{}", String.format("%s %-8s  %10d", info.type, info.name, opcodeCount));
+					count++;
+				}
+			}
+			if (count != 0) logger.info("Perf opcode STOP");
+		}
 	}
 	
 	public static void clear() {
@@ -97,6 +118,12 @@ public final class Perf {
 				logger.error("field {}", field);
 				throw new UnexpectedException(exceptionName, e);
 			}
+		}
+		for(int i = 0; i < opcodeMop.length; i++) {
+			opcodeMop[i] = 0;
+		}
+		for(int i = 0; i < opcodeEsc.length; i++) {
+			opcodeEsc[i] = 0;
 		}
 	}
 

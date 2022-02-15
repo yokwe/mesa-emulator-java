@@ -10,6 +10,9 @@ public class Processor {
 	
 	// Main Data Space
 	public static int MDS;
+	
+	// Code Base
+	public static int CB;
 
 	
 	// 3.3.2 Evaluation Stack

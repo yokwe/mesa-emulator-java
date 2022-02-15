@@ -260,6 +260,15 @@ public final class Memory {
 	
 	
 	//
+	// Code Segments
+	//
+	public char readCode(int offset) {
+		int longPointer = Processor.CB + (offset & 0xFFFF);
+		return realMemory[fetch(longPointer)];
+	}
+
+	
+	//
 	// memory read and write
 	//
 	public char read16(int va) {
@@ -352,7 +361,7 @@ public final class Memory {
 	public void write32MDS(int va, int newValue) {
 		throw new UnexpectedException("Unexpected");
 	}
-
+	
 	
 	//
 	// PDA

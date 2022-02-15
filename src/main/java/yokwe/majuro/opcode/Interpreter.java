@@ -14,42 +14,30 @@ import yokwe.majuro.util.ClassUtil;
 public class Interpreter {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Interpreter.class);
 
-	public static final boolean ENABLE_STATS = true;
-
 	public static final Runnable[] tableMop = new Runnable[256];
 	public static final Runnable[] tableEsc = new Runnable[256];
-	
-	public static final long[] countMop = new long[256];
-	public static final long[] countEsc = new long[256];
 	
 	public static void execute() {
 		Processor.savedPC = Processor.PC;
 		Processor.savedSP = Processor.SP;
-// FIXME		dispatchMop(CodeCache.getCodeByte());
+//		dispatchMop(CodeCache.getCodeByte()); // FIXME
 	}
 	
 	public static void dispatchMop(byte opcode) {
 		if (Perf.ENABLED) Perf.dispatch++;
 		tableMop[opcode].run();
-		if (ENABLE_STATS) countMop[opcode]++;
+		// opcode can rise Fault or Trap, so do stats count after call run()
+		if (Perf.OPCODE) Perf.opcodeMop[opcode]++;
 	}
 	public static void dispatchEsc(byte opcode) {
 		tableEsc[opcode].run();
-		if (ENABLE_STATS) countEsc[opcode]++;
-	}
-	
-	public static void stats() {
-		for(Opcode info: Opcode.values()) {
-			long count = (info.type == Type.MOP) ? countMop[info.code] : countEsc[info.code];
-			if (count != 0) {
-				logger.info("{}", String.format("%s %-8s  %10d", info.type, info.name, countMop[info.code]));
-			}
-		}
+		// opcode can rise Fault or Trap, so do stats count after call run()
+		if (Perf.OPCODE) Perf.opcodeEsc[opcode]++;
 	}
 	
 	private static class OpcodeTrap implements Runnable {
-		private final byte code;
-		OpcodeTrap(byte code) {
+		private final int code;
+		OpcodeTrap(int code) {
 			this.code = code;
 		}
 		public void run() {
@@ -57,8 +45,8 @@ public class Interpreter {
 		}
 	}
 	private static class EscOpcodeTrap implements Runnable {
-		private final byte code;
-		EscOpcodeTrap(byte code) {
+		private final int code;
+		EscOpcodeTrap(int code) {
 			this.code = code;
 		}
 		public void run() {
@@ -91,7 +79,7 @@ public class Interpreter {
 		}
 	}
 	
-	private static String PACKAGE_NAME_FOR_SCAN = "mh.majuro.mesa.opcode";
+	private static String PACKAGE_NAME_FOR_SCAN = "yokwe.majuro.opcode";
 	public static void initialize() {
 		int count = 0;
 		
@@ -123,7 +111,7 @@ public class Interpreter {
 		
 		// install opcode trap for empty entry of tableMop and tableEsc.
 		for(Opcode info: Opcode.values()) {
-			byte code = (byte)info.code;
+			int code = info.code;
 			switch (info.type) {
 			case MOP:
 				if (tableMop[code] == null) {

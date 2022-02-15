@@ -25,10 +25,10 @@ public final class ControlTransfers {
 	public static void breakTrap() {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
-	public static void codeTrap(char gfi) {
+	public static void codeTrap(int gfi) {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
-	public static void controlTrap(char src) {
+	public static void controlTrap(int src) {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
 	public static void divCheckTrap() {
@@ -37,13 +37,13 @@ public final class ControlTransfers {
 	public static void divZeroTrap() {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
-	public static void escOpcodeTrap(byte opcode) {
+	public static void escOpcodeTrap(int opcode) {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
 	public static void interruptError() {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
-	public static void opcodeTrap(byte opcode) {
+	public static void opcodeTrap(int opcode) {
 		throw new UnexpectedException("NO IMPL"); // FIXME
 	}
 	public static void pointerTrap() {

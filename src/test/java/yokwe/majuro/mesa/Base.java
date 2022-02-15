@@ -18,7 +18,7 @@ public class Base {
 	protected static void beforeAll() {
 		logger.info("beforeAll");
 		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
-		Memory.instance.mds = DEFAULT_MDS;
+		Processor.MDS = DEFAULT_MDS;
 		memory = Memory.instance;
 	}
 	
@@ -33,7 +33,7 @@ public class Base {
 	protected void beforeEach() {
 //		logger.info("beforeEach START");
 		memory.clear();
-		memory.mds = DEFAULT_MDS;
+		Processor.MDS = DEFAULT_MDS;
 		Perf.clear();
 //		logger.info("beforeEach STOP");
 	}
