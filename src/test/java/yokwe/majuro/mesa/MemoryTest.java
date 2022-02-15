@@ -9,12 +9,6 @@ public class MemoryTest extends Base {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MemoryTest.class);
 
 	@Test
-	public void dummy() {
-		logger.info("dummy");
-		assertEquals(0, 0);
-	}
-		
-	@Test
 	public void fetch() {
 		logger.info("fetch");
 
@@ -201,7 +195,6 @@ public class MemoryTest extends Base {
 		assertEquals(false, map.isProtect());
 	}
 
-
 	@Test
 	public void write32() {
 		logger.info("write32");
@@ -222,6 +215,38 @@ public class MemoryTest extends Base {
 		assertEquals(true,  map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
+	}
+
+	@Test
+	public void lengthenMDS() {
+		logger.info("lengthenMDS");
+
+		char sa = 0xFEDC;
+		
+		// prepare
+		// execute
+		int va = Mesa.lengthenMDS(sa);
+		
+		// check result
+		assertEquals(sa + DEFAULT_MDS, va);
+		
+		// check side effect
+	}
+	
+	@Test
+	public void lengthenPDA() {
+		logger.info("lengthenPDA");
+
+		char sa = 0xFEDC;
+		
+		// prepare
+		// execute
+		int va = Mesa.lengthenPDA(sa);
+		
+		// check result
+		assertEquals(sa + Constants.mPDA, va);
+		
+		// check side effect
 	}
 
 }
