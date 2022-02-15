@@ -31,7 +31,7 @@ public class Base {
 	
 	@BeforeEach
 	protected void beforeEach() {
-		logger.info("beforeEach START");
+//		logger.info("beforeEach START");
 		memory.clear();
 		memory.mds = DEFAULT_MDS;
 		Perf.clear();
@@ -40,7 +40,7 @@ public class Base {
 
 	@AfterEach
 	protected void afterEach() {
-		Perf.stats();
+//		Perf.stats();
 		System.gc();
 	}
 
