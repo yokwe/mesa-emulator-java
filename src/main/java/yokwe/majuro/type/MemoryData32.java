@@ -55,5 +55,20 @@ public class MemoryData32 {
             throw new UnexpectedException("Unexpected");
         }
     }
-
+    public void write(int newValue) {
+    	value = newValue;
+    	write();
+    }
+    
+    public int read() {
+        switch(access) {
+        case READ:
+        case READ_WRITE:
+        	value = Mesa.readReal32(ra0, ra1);
+            return value;
+        default:
+            throw new UnexpectedException("Unexpected");
+        }
+    }
+    
 }

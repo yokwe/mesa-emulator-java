@@ -49,5 +49,20 @@ public class MemoryData16 {
             throw new UnexpectedException("Unexpected");
         }
     }
+    public void write(char newValue) {
+    	value = newValue;
+    	write();
+    }
+    
+    public char read() {
+        switch(access) {
+        case READ:
+        case READ_WRITE:
+        	value = Mesa.read16(ra);
+            return (char)value;
+        default:
+            throw new UnexpectedException("Unexpected");
+        }
+    }
 
 }
