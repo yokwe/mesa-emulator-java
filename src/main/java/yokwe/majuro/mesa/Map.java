@@ -8,14 +8,18 @@ public final class Map {
 	private static final int SHIFT_FLAGS     =  0;
 	private static final int SHIFT_REALPAGE  = 16;
 			
-	private static final int MASK_PROTECT    = 0x0000_0004;
-	private static final int MASK_DIRTY      = 0x0000_0002;
-	private static final int MASK_REFERENCED = 0x0000_0001;
+	public static final int MASK_PROTECT    = 0x0000_0004;
+	public static final int MASK_DIRTY      = 0x0000_0002;
+	public static final int MASK_REFERENCED = 0x0000_0001;
 	
 	private static final int MASK_VACANT = MASK_REFERENCED | MASK_DIRTY | MASK_PROTECT;
 	private static final int FLAG_VACANT = MASK_DIRTY | MASK_PROTECT; // not referenced and dirty and protect
 	
 	private int value = 0;
+	
+	public int value() {
+		return value;
+	}
 	
 	public void clear() {
 		value = 0;
@@ -43,11 +47,11 @@ public final class Map {
 	public boolean isProtect() {
 		return (value & MASK_PROTECT) != 0;
 	}
-	public boolean isReferenced() {
-		return (value & MASK_REFERENCED) != 0;
-	}
 	public boolean isDirty() {
 		return (value & MASK_DIRTY) != 0;
+	}
+	public boolean isReferenced() {
+		return (value & MASK_REFERENCED) != 0;
 	}
 	
 	public boolean isNotReferenced() {
@@ -57,15 +61,15 @@ public final class Map {
 		return (value & (MASK_REFERENCED | MASK_DIRTY)) != (MASK_REFERENCED | MASK_DIRTY);
 	}
 	
+	public void setProtect() {
+		value |= MASK_PROTECT;
+	}
 	public void setReferenced() {
 		value |= MASK_REFERENCED;
 	}
 	public void setReferencedDirty() {
 		value |= MASK_REFERENCED;
 		value |= MASK_DIRTY;
-	}
-	public void setProtect() {
-		value |= MASK_PROTECT;
 	}
 	public void setVacant() {
 		value |= MASK_PROTECT;
