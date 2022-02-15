@@ -786,12 +786,13 @@ public class ProcessDecl {
 				final int offset = e.offset;
 				final int start;
 				final int stop;
+				// need to swap first word and second word
 				if (offset == 0) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else if (offset == 1) {
 					start  = WORD_BITS + e.startBit;
 					stop   = WORD_BITS + e.stopBit;
+				} else if (offset == 1) {
+					start  = e.startBit;
+					stop   = e.stopBit;
 				} else {
 					throw new UnexpectedException("Unexpected");
 				}
