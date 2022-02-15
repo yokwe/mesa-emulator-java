@@ -60,6 +60,7 @@ public class LongTest extends Base {
 		// check result
 		assertEquals(Mesa.lowHalf(value), object.low());
 		assertEquals(Mesa.highHalf(value), object.high());
+		assertEquals(value, object.value);
 	}
 
 
