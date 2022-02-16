@@ -1,8 +1,7 @@
 package yokwe.majuro.opcode;
 
-import static yokwe.majuro.opcode.Opcode.*;
-
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 
 import yokwe.majuro.UnexpectedException;
@@ -10,9 +9,10 @@ import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.ControlTransfers;
 import yokwe.majuro.mesa.Perf;
 import yokwe.majuro.mesa.Processor;
+import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.ClassUtil;
 
-public class Interpreter {
+public final class Interpreter {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Interpreter.class);
 
 	public static final Runnable[] tableMop = new Runnable[256];
@@ -89,6 +89,7 @@ public class Interpreter {
 		
 		logger.info("Start initialize opcode  package = {}", PACKAGE_NAME_FOR_SCAN);
 		List<Class<?>> classes = ClassUtil.findClass(PACKAGE_NAME_FOR_SCAN);
+		Collections.sort(classes, (a, b) -> a.getSimpleName().compareTo(b.getSimpleName()));
 		
 		for(Class<?> clazz : classes) {
 			// scan method - find annotated static method match Runnable and register method reference of the method
