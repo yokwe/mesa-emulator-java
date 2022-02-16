@@ -436,4 +436,19 @@ public enum Opcode {
 	public @interface Register {
 		Opcode value();
 	}
+
+	
+	public static void main(String[] args) {
+		org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Opcode.class);
+		for(var e: Opcode.values()) {
+			if (e.type == Opcode.Type.ESC && 0100 <= e.code && e.code <= 0377) {
+				logger.info("{}", String.format("// %03o %s", e.code, e.name));
+				logger.info("{}", String.format("@Register(Opcode.%s)", e.name));
+				logger.info("{}", String.format("public static final void OP_%s() {", e.name));
+				logger.info("{}", String.format("throw new UnexpectedException(); // FIXME"));
+				logger.info("{}", String.format("}"));
+			}
+		}
+	}
+
 }
