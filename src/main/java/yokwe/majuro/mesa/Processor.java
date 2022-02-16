@@ -2,12 +2,14 @@ package yokwe.majuro.mesa;
 
 import yokwe.majuro.UnexpectedException;
 
-public class Processor {
+public final class Processor {
 	public static final int StackDepth = Constants.cSS;
 	
 	
 	// Main Data Space
 	public static int MDS;
+	
+	public static char LF;
 	
 	// 3.3.2 Evaluation Stack
 	public static final int[] stack = new int[StackDepth];
