@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import yokwe.majuro.util.FormatLogger;
+
 public enum Opcode {
 	NOOP(Type.MOP, 00, "NOOP"),
 	LL0 (Type.MOP, 01, "LL0"),
@@ -439,14 +441,15 @@ public enum Opcode {
 
 	
 	public static void main(String[] args) {
-		org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Opcode.class);
+		FormatLogger logger = FormatLogger.getLogger(Opcode.class);
 		for(var e: Opcode.values()) {
-			if (e.type == Opcode.Type.ESC && 0100 <= e.code && e.code <= 0377) {
-				logger.info("{}", String.format("// %03o %s", e.code, e.name));
-				logger.info("{}", String.format("@Register(Opcode.%s)", e.name));
-				logger.info("{}", String.format("public static final void OP_%s() {", e.name));
-				logger.info("{}", String.format("throw new UnexpectedException(); // FIXME"));
-				logger.info("{}", String.format("}"));
+			if (e.type != Opcode.Type.MOP && 0100 <= e.code && e.code <= 0377) {
+				logger.info("// %03o %s", e.code, e.name);
+				logger.info("@Register(Opcode.%s)", e.name);
+				logger.info("public static final void OP_%s() {", e.name);
+				logger.info("if (Debug.ENABLE_TRACE_OPCODE) logger.debug(\"TRACE %%6o  %%-6s\", Processor.savedPC, Opcode.%s.name);", e.name);
+				logger.info("throw new UnexpectedException(); // FIXME");
+				logger.info("}");
 			}
 		}
 	}
