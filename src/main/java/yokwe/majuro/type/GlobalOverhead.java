@@ -17,7 +17,7 @@ public final class GlobalOverhead extends MemoryBase {
         return new GlobalOverhead(base);
     }
     public static final GlobalOverhead pointer(char base) {
-        return new GlobalOverhead(Memory.instance.lengthenMDS(base));
+        return new GlobalOverhead(Memory.lengthenMDS(base));
     }
     
     private GlobalOverhead(int base) {
@@ -42,7 +42,7 @@ public final class GlobalOverhead extends MemoryBase {
     // codebase (2:0..31): LONG POINTER TO CodeSegment
     private static final int OFFSET_CODEBASE = 2;
     public CodeSegment codebase() {
-        int longPointer = Memory.instance.read32(base + OFFSET_CODEBASE);
+        int longPointer = Memory.read32(base + OFFSET_CODEBASE);
         return CodeSegment.longPointer(longPointer);
     }
     // global (4): GlobalVariables

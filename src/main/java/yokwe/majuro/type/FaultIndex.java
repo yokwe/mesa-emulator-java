@@ -30,7 +30,7 @@ public final class FaultIndex extends MemoryData16 {
         return new FaultIndex(base, access);
     }
     public static final FaultIndex pointer(char base, MemoryAccess access) {
-        return new FaultIndex(Memory.instance.lengthenMDS(base), access);
+        return new FaultIndex(Memory.lengthenMDS(base), access);
     }
     
     private FaultIndex(char value) {

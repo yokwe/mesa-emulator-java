@@ -18,7 +18,7 @@ public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
         return new ArrayRefSubPtr32Bit32(base);
     }
     public static final ArrayRefSubPtr32Bit32 pointer(char base) {
-        return new ArrayRefSubPtr32Bit32(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubPtr32Bit32(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubPtr32Bit32(int base) {
@@ -29,7 +29,7 @@ public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
     //
     public final BitField32 get(int index, MemoryAccess access) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
-        int longPointer = Memory.instance.read32(base + (LONG_POINTER.WORD_SIZE * index));
+        int longPointer = Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return BitField32.longPointer(longPointer, access);
     }
 }

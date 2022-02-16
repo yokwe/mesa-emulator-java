@@ -18,7 +18,7 @@ public final class RecArrayRefEnum extends MemoryBase {
         return new RecArrayRefEnum(base);
     }
     public static final RecArrayRefEnum pointer(char base) {
-        return new RecArrayRefEnum(Memory.instance.lengthenMDS(base));
+        return new RecArrayRefEnum(Memory.lengthenMDS(base));
     }
     
     private RecArrayRefEnum(int base) {

@@ -17,7 +17,7 @@ public final class TransferDescriptor extends MemoryBase {
         return new TransferDescriptor(base);
     }
     public static final TransferDescriptor pointer(char base) {
-        return new TransferDescriptor(Memory.instance.lengthenMDS(base));
+        return new TransferDescriptor(Memory.lengthenMDS(base));
     }
     
     private TransferDescriptor(int base) {

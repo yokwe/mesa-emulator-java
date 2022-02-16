@@ -12,27 +12,23 @@ public class Base {
 	protected static final int DEFAULT_RMBITS = 20;
 	protected static final int DEFAULT_MDS    = 0x3_0000;
 	
-	protected static Memory memory = null;
-
 	@BeforeAll
 	protected static void beforeAll() {
 		logger.info("beforeAll");
 		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
 		Processor.MDS = DEFAULT_MDS;
-		memory = Memory.instance;
 	}
 	
 	@AfterAll
 	protected static void afterAll() {
 		logger.info("afterAll");
-		memory = null;
 		System.gc();
 	}
 	
 	@BeforeEach
 	protected void beforeEach() {
 //		logger.info("beforeEach START");
-		memory.clear();
+		Memory.clear();
 		Processor.MDS = DEFAULT_MDS;
 		Perf.clear();
 //		logger.info("beforeEach STOP");

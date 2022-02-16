@@ -18,7 +18,7 @@ public final class ArrayRefSubEnum extends MemoryBase {
         return new ArrayRefSubEnum(base);
     }
     public static final ArrayRefSubEnum pointer(char base) {
-        return new ArrayRefSubEnum(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubEnum(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubEnum(int base) {

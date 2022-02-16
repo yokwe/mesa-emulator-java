@@ -23,15 +23,15 @@ public class MemoryData16 {
             this.value = 0;
             break;
         case READ:
-            this.ra    = Memory.instance.fetch(base);
-            this.value = Memory.instance.readReal16(ra);
+            this.ra    = Memory.fetch(base);
+            this.value = Memory.readReal16(ra);
             break;
         case READ_WRITE:
-            this.ra    = Memory.instance.store(base);
-            this.value = Memory.instance.readReal16(ra);
+            this.ra    = Memory.store(base);
+            this.value = Memory.readReal16(ra);
             break;
         case WRITE:
-            this.ra    = Memory.instance.store(base);
+            this.ra    = Memory.store(base);
             this.value = 0;
             break;
         default:
@@ -43,7 +43,7 @@ public class MemoryData16 {
         switch(access) {
         case READ_WRITE:
         case WRITE:
-        	Memory.instance.writeReal16(ra, (char)value);
+        	Memory.writeReal16(ra, (char)value);
             break;
         default:
             throw new UnexpectedException("Unexpected");
@@ -58,7 +58,7 @@ public class MemoryData16 {
         switch(access) {
         case READ:
         case READ_WRITE:
-        	value = Memory.instance.read16(ra);
+        	value = Memory.read16(ra);
             return (char)value;
         default:
             throw new UnexpectedException("Unexpected");

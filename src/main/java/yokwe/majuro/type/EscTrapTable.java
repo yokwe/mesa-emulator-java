@@ -18,7 +18,7 @@ public final class EscTrapTable extends MemoryBase {
         return new EscTrapTable(base);
     }
     public static final EscTrapTable pointer(char base) {
-        return new EscTrapTable(Memory.instance.lengthenMDS(base));
+        return new EscTrapTable(Memory.lengthenMDS(base));
     }
     
     private EscTrapTable(int base) {

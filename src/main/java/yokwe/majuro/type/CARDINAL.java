@@ -30,7 +30,7 @@ public final class CARDINAL extends MemoryData16 {
         return new CARDINAL(base, access);
     }
     public static final CARDINAL pointer(char base, MemoryAccess access) {
-        return new CARDINAL(Memory.instance.lengthenMDS(base), access);
+        return new CARDINAL(Memory.lengthenMDS(base), access);
     }
     
     private CARDINAL(char value) {

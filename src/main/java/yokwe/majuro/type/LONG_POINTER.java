@@ -17,7 +17,7 @@ public final class LONG_POINTER extends MemoryBase {
         return new LONG_POINTER(base);
     }
     public static final LONG_POINTER pointer(char base) {
-        return new LONG_POINTER(Memory.instance.lengthenMDS(base));
+        return new LONG_POINTER(Memory.lengthenMDS(base));
     }
     
     private LONG_POINTER(int base) {

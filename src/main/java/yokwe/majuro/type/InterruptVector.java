@@ -18,7 +18,7 @@ public final class InterruptVector extends MemoryBase {
         return new InterruptVector(base);
     }
     public static final InterruptVector pointer(char base) {
-        return new InterruptVector(Memory.instance.lengthenMDS(base));
+        return new InterruptVector(Memory.lengthenMDS(base));
     }
     
     private InterruptVector(int base) {

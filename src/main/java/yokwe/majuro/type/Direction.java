@@ -39,7 +39,7 @@ public final class Direction extends MemoryData16 {
         return new Direction(base, access);
     }
     public static final Direction pointer(char base, MemoryAccess access) {
-        return new Direction(Memory.instance.lengthenMDS(base), access);
+        return new Direction(Memory.lengthenMDS(base), access);
     }
     
     private Direction(char value) {

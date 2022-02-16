@@ -17,7 +17,7 @@ public final class RecPtr32BIt32 extends MemoryBase {
         return new RecPtr32BIt32(base);
     }
     public static final RecPtr32BIt32 pointer(char base) {
-        return new RecPtr32BIt32(Memory.instance.lengthenMDS(base));
+        return new RecPtr32BIt32(Memory.lengthenMDS(base));
     }
     
     private RecPtr32BIt32(int base) {
@@ -36,7 +36,7 @@ public final class RecPtr32BIt32 extends MemoryBase {
     // card1 (1:0..31): LONG POINTER TO BitField32
     private static final int OFFSET_CARD_1 = 1;
     public BitField32 card1(MemoryAccess access) {
-        int longPointer = Memory.instance.read32(base + OFFSET_CARD_1);
+        int longPointer = Memory.read32(base + OFFSET_CARD_1);
         return BitField32.longPointer(longPointer, access);
     }
 }

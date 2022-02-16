@@ -18,7 +18,7 @@ public final class RecArrayRefSub extends MemoryBase {
         return new RecArrayRefSub(base);
     }
     public static final RecArrayRefSub pointer(char base) {
-        return new RecArrayRefSub(Memory.instance.lengthenMDS(base));
+        return new RecArrayRefSub(Memory.lengthenMDS(base));
     }
     
     private RecArrayRefSub(int base) {

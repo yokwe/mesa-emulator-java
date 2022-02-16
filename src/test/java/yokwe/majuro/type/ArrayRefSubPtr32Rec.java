@@ -18,7 +18,7 @@ public final class ArrayRefSubPtr32Rec extends MemoryBase {
         return new ArrayRefSubPtr32Rec(base);
     }
     public static final ArrayRefSubPtr32Rec pointer(char base) {
-        return new ArrayRefSubPtr32Rec(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubPtr32Rec(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubPtr32Rec(int base) {
@@ -29,7 +29,7 @@ public final class ArrayRefSubPtr32Rec extends MemoryBase {
     //
     public final Rec get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
-        int longPointer = Memory.instance.read32(base + (LONG_POINTER.WORD_SIZE * index));
+        int longPointer = Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return Rec.longPointer(longPointer);
     }
 }

@@ -17,7 +17,7 @@ public final class FaultQueue extends MemoryBase {
         return new FaultQueue(base);
     }
     public static final FaultQueue pointer(char base) {
-        return new FaultQueue(Memory.instance.lengthenMDS(base));
+        return new FaultQueue(Memory.lengthenMDS(base));
     }
     
     private FaultQueue(int base) {

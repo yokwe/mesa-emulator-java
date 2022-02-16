@@ -20,7 +20,7 @@ public final class LONG_UNSPECIFIED extends MemoryData32 {
         return new LONG_UNSPECIFIED(base, access);
     }
     public static final LONG_UNSPECIFIED pointer(char base, MemoryAccess access) {
-        return new LONG_UNSPECIFIED(Memory.instance.lengthenMDS(base), access);
+        return new LONG_UNSPECIFIED(Memory.lengthenMDS(base), access);
     }
     
     private LONG_UNSPECIFIED(int value) {

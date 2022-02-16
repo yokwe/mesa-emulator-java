@@ -17,7 +17,7 @@ public final class InterruptItem extends MemoryBase {
         return new InterruptItem(base);
     }
     public static final InterruptItem pointer(char base) {
-        return new InterruptItem(Memory.instance.lengthenMDS(base));
+        return new InterruptItem(Memory.lengthenMDS(base));
     }
     
     private InterruptItem(int base) {

@@ -17,7 +17,7 @@ public final class LocalOverhead extends MemoryBase {
         return new LocalOverhead(base);
     }
     public static final LocalOverhead pointer(char base) {
-        return new LocalOverhead(Memory.instance.lengthenMDS(base));
+        return new LocalOverhead(Memory.lengthenMDS(base));
     }
     
     private LocalOverhead(int base) {

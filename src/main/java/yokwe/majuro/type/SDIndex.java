@@ -30,7 +30,7 @@ public final class SDIndex extends MemoryData16 {
         return new SDIndex(base, access);
     }
     public static final SDIndex pointer(char base, MemoryAccess access) {
-        return new SDIndex(Memory.instance.lengthenMDS(base), access);
+        return new SDIndex(Memory.lengthenMDS(base), access);
     }
     
     private SDIndex(char value) {

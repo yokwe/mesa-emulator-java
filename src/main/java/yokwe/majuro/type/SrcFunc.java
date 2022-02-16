@@ -39,7 +39,7 @@ public final class SrcFunc extends MemoryData16 {
         return new SrcFunc(base, access);
     }
     public static final SrcFunc pointer(char base, MemoryAccess access) {
-        return new SrcFunc(Memory.instance.lengthenMDS(base), access);
+        return new SrcFunc(Memory.lengthenMDS(base), access);
     }
     
     private SrcFunc(char value) {

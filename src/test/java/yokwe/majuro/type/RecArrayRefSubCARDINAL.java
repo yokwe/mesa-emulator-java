@@ -18,7 +18,7 @@ public final class RecArrayRefSubCARDINAL extends MemoryBase {
         return new RecArrayRefSubCARDINAL(base);
     }
     public static final RecArrayRefSubCARDINAL pointer(char base) {
-        return new RecArrayRefSubCARDINAL(Memory.instance.lengthenMDS(base));
+        return new RecArrayRefSubCARDINAL(Memory.lengthenMDS(base));
     }
     
     private RecArrayRefSubCARDINAL(int base) {

@@ -17,7 +17,7 @@ public final class ProcessStateBlock extends MemoryBase {
         return new ProcessStateBlock(base);
     }
     public static final ProcessStateBlock pointer(char base) {
-        return new ProcessStateBlock(Memory.instance.lengthenMDS(base));
+        return new ProcessStateBlock(Memory.lengthenMDS(base));
     }
     
     private ProcessStateBlock(int base) {

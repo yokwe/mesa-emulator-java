@@ -17,7 +17,7 @@ public final class RecPtr32 extends MemoryBase {
         return new RecPtr32(base);
     }
     public static final RecPtr32 pointer(char base) {
-        return new RecPtr32(Memory.instance.lengthenMDS(base));
+        return new RecPtr32(Memory.lengthenMDS(base));
     }
     
     private RecPtr32(int base) {

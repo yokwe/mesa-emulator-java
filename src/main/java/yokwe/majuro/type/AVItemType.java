@@ -41,7 +41,7 @@ public final class AVItemType extends MemoryData16 {
         return new AVItemType(base, access);
     }
     public static final AVItemType pointer(char base, MemoryAccess access) {
-        return new AVItemType(Memory.instance.lengthenMDS(base), access);
+        return new AVItemType(Memory.lengthenMDS(base), access);
     }
     
     private AVItemType(char value) {

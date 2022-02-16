@@ -17,7 +17,7 @@ public final class Port extends MemoryBase {
         return new Port(base);
     }
     public static final Port pointer(char base) {
-        return new Port(Memory.instance.lengthenMDS(base));
+        return new Port(Memory.lengthenMDS(base));
     }
     
     private Port(int base) {
@@ -30,7 +30,7 @@ public final class Port extends MemoryBase {
     // inport (0:0..15): FrameLink
     private static final int OFFSET_INPORT = 0;
     public BLOCK inport() {
-        char pointer = Memory.instance.read16(base + OFFSET_INPORT);
+        char pointer = Memory.read16(base + OFFSET_INPORT);
         return BLOCK.pointer(pointer);
     }
     // unused (1:0..15): UNSPECIFIED

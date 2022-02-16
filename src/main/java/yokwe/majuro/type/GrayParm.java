@@ -20,7 +20,7 @@ public final class GrayParm extends MemoryData16 {
         return new GrayParm(base, access);
     }
     public static final GrayParm pointer(char base, MemoryAccess access) {
-        return new GrayParm(Memory.instance.lengthenMDS(base), access);
+        return new GrayParm(Memory.lengthenMDS(base), access);
     }
     
     private GrayParm(char value) {

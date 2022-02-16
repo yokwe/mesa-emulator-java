@@ -17,7 +17,7 @@ public final class BitBltArg extends MemoryBase {
         return new BitBltArg(base);
     }
     public static final BitBltArg pointer(char base) {
-        return new BitBltArg(Memory.instance.lengthenMDS(base));
+        return new BitBltArg(Memory.lengthenMDS(base));
     }
     
     private BitBltArg(int base) {

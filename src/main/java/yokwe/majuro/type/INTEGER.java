@@ -30,7 +30,7 @@ public final class INTEGER extends MemoryData16 {
         return new INTEGER(base, access);
     }
     public static final INTEGER pointer(char base, MemoryAccess access) {
-        return new INTEGER(Memory.instance.lengthenMDS(base), access);
+        return new INTEGER(Memory.lengthenMDS(base), access);
     }
     
     private INTEGER(char value) {

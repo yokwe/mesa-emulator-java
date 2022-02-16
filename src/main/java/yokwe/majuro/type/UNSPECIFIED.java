@@ -30,7 +30,7 @@ public final class UNSPECIFIED extends MemoryData16 {
         return new UNSPECIFIED(base, access);
     }
     public static final UNSPECIFIED pointer(char base, MemoryAccess access) {
-        return new UNSPECIFIED(Memory.instance.lengthenMDS(base), access);
+        return new UNSPECIFIED(Memory.lengthenMDS(base), access);
     }
     
     private UNSPECIFIED(char value) {

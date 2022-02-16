@@ -18,7 +18,7 @@ public final class GlobalFrameTable extends MemoryBase {
         return new GlobalFrameTable(base);
     }
     public static final GlobalFrameTable pointer(char base) {
-        return new GlobalFrameTable(Memory.instance.lengthenMDS(base));
+        return new GlobalFrameTable(Memory.lengthenMDS(base));
     }
     
     private GlobalFrameTable(int base) {

@@ -20,7 +20,7 @@ public final class ProcDesc extends MemoryData32 {
         return new ProcDesc(base, access);
     }
     public static final ProcDesc pointer(char base, MemoryAccess access) {
-        return new ProcDesc(Memory.instance.lengthenMDS(base), access);
+        return new ProcDesc(Memory.lengthenMDS(base), access);
     }
     
     private ProcDesc(int value) {

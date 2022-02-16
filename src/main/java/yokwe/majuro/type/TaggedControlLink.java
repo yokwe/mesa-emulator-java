@@ -20,7 +20,7 @@ public final class TaggedControlLink extends MemoryData32 {
         return new TaggedControlLink(base, access);
     }
     public static final TaggedControlLink pointer(char base, MemoryAccess access) {
-        return new TaggedControlLink(Memory.instance.lengthenMDS(base), access);
+        return new TaggedControlLink(Memory.lengthenMDS(base), access);
     }
     
     private TaggedControlLink(int value) {

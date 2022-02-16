@@ -20,7 +20,7 @@ public final class LocalWord extends MemoryData16 {
         return new LocalWord(base, access);
     }
     public static final LocalWord pointer(char base, MemoryAccess access) {
-        return new LocalWord(Memory.instance.lengthenMDS(base), access);
+        return new LocalWord(Memory.lengthenMDS(base), access);
     }
     
     private LocalWord(char value) {

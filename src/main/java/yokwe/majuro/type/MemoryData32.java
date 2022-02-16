@@ -25,18 +25,18 @@ public class MemoryData32 {
             this.value = 0;
             break;
         case READ:
-            this.ra0   = Memory.instance.fetch(base);
-            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.instance.fetch(base + 1);
-            this.value = Memory.instance.readReal32(ra0, ra1);
+            this.ra0   = Memory.fetch(base);
+            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.fetch(base + 1);
+            this.value = Memory.readReal32(ra0, ra1);
             break;
         case READ_WRITE:
-            this.ra0   = Memory.instance.store(base);
-            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.instance.store(base + 1);
-            this.value = Memory.instance.readReal32(ra0, ra1);
+            this.ra0   = Memory.store(base);
+            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.store(base + 1);
+            this.value = Memory.readReal32(ra0, ra1);
             break;
         case WRITE:
-            this.ra0   = Memory.instance.store(base);
-            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.instance.store(base + 1);
+            this.ra0   = Memory.store(base);
+            this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.store(base + 1);
             this.value = 0;
             break;
         default:
@@ -48,7 +48,7 @@ public class MemoryData32 {
         switch(access) {
         case READ_WRITE:
         case WRITE:
-        	Memory.instance.writeReal32(ra0, ra1, value);
+        	Memory.writeReal32(ra0, ra1, value);
             break;
         default:
             throw new UnexpectedException("Unexpected");
@@ -63,7 +63,7 @@ public class MemoryData32 {
         switch(access) {
         case READ:
         case READ_WRITE:
-        	value = Memory.instance.readReal32(ra0, ra1);
+        	value = Memory.readReal32(ra0, ra1);
             return value;
         default:
             throw new UnexpectedException("Unexpected");

@@ -18,7 +18,7 @@ public final class AllocationVector extends MemoryBase {
         return new AllocationVector(base);
     }
     public static final AllocationVector pointer(char base) {
-        return new AllocationVector(Memory.instance.lengthenMDS(base));
+        return new AllocationVector(Memory.lengthenMDS(base));
     }
     
     private AllocationVector(int base) {

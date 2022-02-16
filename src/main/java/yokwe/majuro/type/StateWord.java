@@ -20,7 +20,7 @@ public final class StateWord extends MemoryData16 {
         return new StateWord(base, access);
     }
     public static final StateWord pointer(char base, MemoryAccess access) {
-        return new StateWord(Memory.instance.lengthenMDS(base), access);
+        return new StateWord(Memory.lengthenMDS(base), access);
     }
     
     private StateWord(char value) {

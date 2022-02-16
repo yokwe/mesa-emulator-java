@@ -16,13 +16,13 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		int ra = memory.fetch(va);
+		int ra = Memory.fetch(va);
 		
 		// check result
 		assertEquals(va, ra);
 		
 		// check side effect
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		assertEquals(false, map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
@@ -36,13 +36,13 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		int ra = memory.store(va);
+		int ra = Memory.store(va);
 		
 		// check result
 		assertEquals(va, ra);
 		
 		// check side effect
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		assertEquals(true,  map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
@@ -56,10 +56,10 @@ public class MemoryTest extends Base {
 		char value = 0x1234;
 		
 		// prepare
-		memory.writeReal16(ra, value);
+		Memory.writeReal16(ra, value);
 		
 		// execute
-		int actual = memory.readReal16(ra);
+		int actual = Memory.readReal16(ra);
 		
 		// check result
 		assertEquals(value, actual);
@@ -73,10 +73,10 @@ public class MemoryTest extends Base {
 		char value = 0x1234;
 		
 		// prepare
-		memory.writeReal16(ra, value);
+		Memory.writeReal16(ra, value);
 		
 		// execute
-		int actual = memory.readReal16(ra);
+		int actual = Memory.readReal16(ra);
 		
 		// check result
 		assertEquals(value, actual);
@@ -90,11 +90,11 @@ public class MemoryTest extends Base {
 		int value = 0x12345678;
 		
 		// prepare
-		memory.writeReal16(ra + 0, (char)value);
-		memory.writeReal16(ra + 1, (char)(value >>> WORD_BITS));
+		Memory.writeReal16(ra + 0, (char)value);
+		Memory.writeReal16(ra + 1, (char)(value >>> WORD_BITS));
 		
 		// execute
-		int actual = memory.readReal32(ra + 0, ra + 1);
+		int actual = Memory.readReal32(ra + 0, ra + 1);
 		
 		// check result
 		assertEquals(value, actual);
@@ -109,11 +109,11 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		memory.writeReal32(ra + 0, ra + 1, value);
+		Memory.writeReal32(ra + 0, ra + 1, value);
 		
 		// check result
-		assertEquals((char)value,                 memory.readReal16(ra + 0));
-		assertEquals((char)(value >>> WORD_BITS), memory.readReal16(ra + 1));
+		assertEquals((char)value,                 Memory.readReal16(ra + 0));
+		assertEquals((char)(value >>> WORD_BITS), Memory.readReal16(ra + 1));
 	}
 
 	@Test
@@ -124,16 +124,16 @@ public class MemoryTest extends Base {
 		char value = 0x1234;
 		
 		// prepare
-		memory.writeReal16(va, value);
+		Memory.writeReal16(va, value);
 		
 		// execute
-		char actual = memory.read16(va);
+		char actual = Memory.read16(va);
 		
 		// check result
 		assertEquals(value, actual);
 		
 		// check side effect
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		assertEquals(false, map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
@@ -148,14 +148,14 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		memory.write16(va, value);
+		Memory.write16(va, value);
 		
 		// check result
-		char actual = memory.readReal16(va);
+		char actual = Memory.readReal16(va);
 		assertEquals(value, actual);
 		
 		// check side effect
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		assertEquals(true,  map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
@@ -180,16 +180,16 @@ public class MemoryTest extends Base {
 		int value = 0x12345678;
 		
 		// prepare
-		memory.writeReal32(va + 0, va + 1, value);
+		Memory.writeReal32(va + 0, va + 1, value);
 		
 		// execute
-		int actual = memory.read32(va);
+		int actual = Memory.read32(va);
 		
 		// check result
 		assertEquals(value, actual);
 		
 		// check side effect
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		assertEquals(false, map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
@@ -204,14 +204,14 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		memory.write32(va, value);
+		Memory.write32(va, value);
 		
 		// check result
-		int actual = memory.readReal32(va + 0, va + 1);
+		int actual = Memory.readReal32(va + 0, va + 1);
 		assertEquals(value, actual);
 		
 		// check side effect
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		assertEquals(true,  map.isDirty());
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
@@ -225,7 +225,7 @@ public class MemoryTest extends Base {
 		
 		// prepare
 		// execute
-		int va = Memory.instance.lengthenMDS(sa);
+		int va = Memory.lengthenMDS(sa);
 		
 		// check result
 		assertEquals(sa + DEFAULT_MDS, va);

@@ -17,7 +17,7 @@ public final class RecPtr16Rec extends MemoryBase {
         return new RecPtr16Rec(base);
     }
     public static final RecPtr16Rec pointer(char base) {
-        return new RecPtr16Rec(Memory.instance.lengthenMDS(base));
+        return new RecPtr16Rec(Memory.lengthenMDS(base));
     }
     
     private RecPtr16Rec(int base) {
@@ -36,7 +36,7 @@ public final class RecPtr16Rec extends MemoryBase {
     // card1 (1:0..15): POINTER TO Rec
     private static final int OFFSET_CARD_1 = 1;
     public Rec card1() {
-        char pointer = Memory.instance.read16(base + OFFSET_CARD_1);
+        char pointer = Memory.read16(base + OFFSET_CARD_1);
         return Rec.pointer(pointer);
     }
 }

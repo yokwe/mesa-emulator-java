@@ -17,7 +17,7 @@ public final class RecSub extends MemoryBase {
         return new RecSub(base);
     }
     public static final RecSub pointer(char base) {
-        return new RecSub(Memory.instance.lengthenMDS(base));
+        return new RecSub(Memory.lengthenMDS(base));
     }
     
     private RecSub(int base) {

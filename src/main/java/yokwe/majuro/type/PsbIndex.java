@@ -30,7 +30,7 @@ public final class PsbIndex extends MemoryData16 {
         return new PsbIndex(base, access);
     }
     public static final PsbIndex pointer(char base, MemoryAccess access) {
-        return new PsbIndex(Memory.instance.lengthenMDS(base), access);
+        return new PsbIndex(Memory.lengthenMDS(base), access);
     }
     
     private PsbIndex(char value) {

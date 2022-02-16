@@ -30,7 +30,7 @@ public final class Sub extends MemoryData16 {
         return new Sub(base, access);
     }
     public static final Sub pointer(char base, MemoryAccess access) {
-        return new Sub(Memory.instance.lengthenMDS(base), access);
+        return new Sub(Memory.lengthenMDS(base), access);
     }
     
     private Sub(char value) {

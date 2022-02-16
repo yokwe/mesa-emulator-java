@@ -18,7 +18,7 @@ public final class StateAllocationTable extends MemoryBase {
         return new StateAllocationTable(base);
     }
     public static final StateAllocationTable pointer(char base) {
-        return new StateAllocationTable(Memory.instance.lengthenMDS(base));
+        return new StateAllocationTable(Memory.lengthenMDS(base));
     }
     
     private StateAllocationTable(int base) {
@@ -29,7 +29,7 @@ public final class StateAllocationTable extends MemoryBase {
     //
     public final StateVector get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(index);
-        char pointer = Memory.instance.read16(base + (POINTER.WORD_SIZE * index));
+        char pointer = Memory.read16(base + (POINTER.WORD_SIZE * index));
         return StateVector.pointer(pointer);
     }
 }

@@ -20,7 +20,7 @@ public final class BitField32 extends MemoryData32 {
         return new BitField32(base, access);
     }
     public static final BitField32 pointer(char base, MemoryAccess access) {
-        return new BitField32(Memory.instance.lengthenMDS(base), access);
+        return new BitField32(Memory.lengthenMDS(base), access);
     }
     
     private BitField32(int value) {

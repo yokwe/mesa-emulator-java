@@ -20,7 +20,7 @@ public final class Queue extends MemoryData16 {
         return new Queue(base, access);
     }
     public static final Queue pointer(char base, MemoryAccess access) {
-        return new Queue(Memory.instance.lengthenMDS(base), access);
+        return new Queue(Memory.lengthenMDS(base), access);
     }
     
     private Queue(char value) {

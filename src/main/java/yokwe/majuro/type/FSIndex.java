@@ -30,7 +30,7 @@ public final class FSIndex extends MemoryData16 {
         return new FSIndex(base, access);
     }
     public static final FSIndex pointer(char base, MemoryAccess access) {
-        return new FSIndex(Memory.instance.lengthenMDS(base), access);
+        return new FSIndex(Memory.lengthenMDS(base), access);
     }
     
     private FSIndex(char value) {

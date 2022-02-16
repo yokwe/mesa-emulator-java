@@ -17,7 +17,7 @@ public final class BitAddress extends MemoryBase {
         return new BitAddress(base);
     }
     public static final BitAddress pointer(char base) {
-        return new BitAddress(Memory.instance.lengthenMDS(base));
+        return new BitAddress(Memory.lengthenMDS(base));
     }
     
     private BitAddress(int base) {

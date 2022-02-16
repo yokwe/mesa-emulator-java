@@ -32,11 +32,11 @@ public class LONGCARDINALTest extends Base {
 		int value = 0x89A_BDEF;
 
 		// prepare
-		Memory.instance.writeReal32(va + 0 , va + 1, value);
+		Memory.writeReal32(va + 0 , va + 1, value);
 		
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.longPointer(va, MemoryAccess.READ);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);
@@ -53,7 +53,7 @@ public class LONGCARDINALTest extends Base {
 		// prepare
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.longPointer(va, MemoryAccess.WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(0, t.value);
@@ -69,10 +69,10 @@ public class LONGCARDINALTest extends Base {
 		int value = 0x89A_BDEF;
 
 		// prepare
-		Memory.instance.writeReal32(va + 0 , va + 1, value);
+		Memory.writeReal32(va + 0 , va + 1, value);
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.longPointer(va, MemoryAccess.READ_WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);
@@ -91,11 +91,11 @@ public class LONGCARDINALTest extends Base {
 		int  value = 0x89A_BDEF;
 		
 		// prepare
-		Memory.instance.writeReal32(va + 0 , va + 1, value);
+		Memory.writeReal32(va + 0 , va + 1, value);
 		
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.pointer(sa, MemoryAccess.READ);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);
@@ -113,7 +113,7 @@ public class LONGCARDINALTest extends Base {
 		// prepare
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.pointer(sa, MemoryAccess.WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(0, t.value);
@@ -130,11 +130,11 @@ public class LONGCARDINALTest extends Base {
 		int  value = 0x89A_BDEF;
 
 		// prepare
-		Memory.instance.writeReal32(va + 0 , va + 1, value);
+		Memory.writeReal32(va + 0 , va + 1, value);
 		
 		// execute
 		LONG_CARDINAL t = LONG_CARDINAL.pointer(sa, MemoryAccess.READ_WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);

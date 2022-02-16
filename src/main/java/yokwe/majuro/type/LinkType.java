@@ -41,7 +41,7 @@ public final class LinkType extends MemoryData16 {
         return new LinkType(base, access);
     }
     public static final LinkType pointer(char base, MemoryAccess access) {
-        return new LinkType(Memory.instance.lengthenMDS(base), access);
+        return new LinkType(Memory.lengthenMDS(base), access);
     }
     
     private LinkType(char value) {

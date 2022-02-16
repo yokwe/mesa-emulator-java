@@ -17,7 +17,7 @@ public final class RecBit32 extends MemoryBase {
         return new RecBit32(base);
     }
     public static final RecBit32 pointer(char base) {
-        return new RecBit32(Memory.instance.lengthenMDS(base));
+        return new RecBit32(Memory.lengthenMDS(base));
     }
     
     private RecBit32(int base) {

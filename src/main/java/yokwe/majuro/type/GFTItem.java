@@ -17,7 +17,7 @@ public final class GFTItem extends MemoryBase {
         return new GFTItem(base);
     }
     public static final GFTItem pointer(char base) {
-        return new GFTItem(Memory.instance.lengthenMDS(base));
+        return new GFTItem(Memory.lengthenMDS(base));
     }
     
     private GFTItem(int base) {
@@ -30,13 +30,13 @@ public final class GFTItem extends MemoryBase {
     // globalFrame (0:0..31): GlobalFrameHandle
     private static final int OFFSET_GLOBAL_FRAME = 0;
     public BLOCK globalFrame() {
-        int longPointer = Memory.instance.read32(base + OFFSET_GLOBAL_FRAME);
+        int longPointer = Memory.read32(base + OFFSET_GLOBAL_FRAME);
         return BLOCK.longPointer(longPointer);
     }
     // codebase (2:0..31): LONG POINTER TO CodeSegment
     private static final int OFFSET_CODEBASE = 2;
     public CodeSegment codebase() {
-        int longPointer = Memory.instance.read32(base + OFFSET_CODEBASE);
+        int longPointer = Memory.read32(base + OFFSET_CODEBASE);
         return CodeSegment.longPointer(longPointer);
     }
 }

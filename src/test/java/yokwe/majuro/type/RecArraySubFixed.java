@@ -18,7 +18,7 @@ public final class RecArraySubFixed extends MemoryBase {
         return new RecArraySubFixed(base);
     }
     public static final RecArraySubFixed pointer(char base) {
-        return new RecArraySubFixed(Memory.instance.lengthenMDS(base));
+        return new RecArraySubFixed(Memory.lengthenMDS(base));
     }
     
     private RecArraySubFixed(int base) {

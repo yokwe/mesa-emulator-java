@@ -30,7 +30,7 @@ public final class GFTIndex extends MemoryData16 {
         return new GFTIndex(base, access);
     }
     public static final GFTIndex pointer(char base, MemoryAccess access) {
-        return new GFTIndex(Memory.instance.lengthenMDS(base), access);
+        return new GFTIndex(Memory.lengthenMDS(base), access);
     }
     
     private GFTIndex(char value) {

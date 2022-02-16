@@ -20,7 +20,7 @@ public final class AVItem extends MemoryData16 {
         return new AVItem(base, access);
     }
     public static final AVItem pointer(char base, MemoryAccess access) {
-        return new AVItem(Memory.instance.lengthenMDS(base), access);
+        return new AVItem(Memory.lengthenMDS(base), access);
     }
     
     private AVItem(char value) {

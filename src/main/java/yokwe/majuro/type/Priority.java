@@ -30,7 +30,7 @@ public final class Priority extends MemoryData16 {
         return new Priority(base, access);
     }
     public static final Priority pointer(char base, MemoryAccess access) {
-        return new Priority(Memory.instance.lengthenMDS(base), access);
+        return new Priority(Memory.lengthenMDS(base), access);
     }
     
     private Priority(char value) {

@@ -18,7 +18,7 @@ public final class FaultVector extends MemoryBase {
         return new FaultVector(base);
     }
     public static final FaultVector pointer(char base) {
-        return new FaultVector(Memory.instance.lengthenMDS(base));
+        return new FaultVector(Memory.lengthenMDS(base));
     }
     
     private FaultVector(int base) {

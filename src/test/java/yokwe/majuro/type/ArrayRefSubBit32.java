@@ -18,7 +18,7 @@ public final class ArrayRefSubBit32 extends MemoryBase {
         return new ArrayRefSubBit32(base);
     }
     public static final ArrayRefSubBit32 pointer(char base) {
-        return new ArrayRefSubBit32(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubBit32(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubBit32(int base) {

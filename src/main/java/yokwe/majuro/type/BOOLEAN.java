@@ -20,7 +20,7 @@ public final class BOOLEAN extends MemoryData16 {
         return new BOOLEAN(base, access);
     }
     public static final BOOLEAN pointer(char base, MemoryAccess access) {
-        return new BOOLEAN(Memory.instance.lengthenMDS(base), access);
+        return new BOOLEAN(Memory.lengthenMDS(base), access);
     }
     
     private BOOLEAN(char value) {

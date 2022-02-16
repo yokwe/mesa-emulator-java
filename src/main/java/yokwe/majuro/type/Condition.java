@@ -20,7 +20,7 @@ public final class Condition extends MemoryData16 {
         return new Condition(base, access);
     }
     public static final Condition pointer(char base, MemoryAccess access) {
-        return new Condition(Memory.instance.lengthenMDS(base), access);
+        return new Condition(Memory.lengthenMDS(base), access);
     }
     
     private Condition(char value) {

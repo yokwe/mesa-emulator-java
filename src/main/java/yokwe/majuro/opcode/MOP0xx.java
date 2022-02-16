@@ -27,7 +27,9 @@ public final class MOP0xx {
 	}
 	
 	private static final void LLn(int arg) {
-		Processor.push(Memory.instance.read16MDS(Processor.LF + arg));
+		int ra = Memory.fetchMDS(Processor.LF + arg);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(Memory.readReal16(ra));
 	}
 
 	// 002 LL1
@@ -123,8 +125,11 @@ public final class MOP0xx {
 	}
 
 	private static final void LLDn(int arg) {
-		Processor.push(Memory.instance.read16MDS(Processor.LF + arg + 0));
-		Processor.push(Memory.instance.read16MDS(Processor.LF + arg + 1));
+		int ra0 = Memory.fetchMDS(Processor.LF + arg + 0);
+		int ra1 = Memory.fetchMDS(Processor.LF + arg + 1);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(Memory.readReal16(ra0));
+		Processor.push(Memory.readReal16(ra1));
 	}
 
 	// 017 LLD1
@@ -206,7 +211,9 @@ public final class MOP0xx {
 	}
 	
 	private static final void SLn(int arg) {
-		Memory.instance.write16MDS(Processor.LF + arg, Processor.pop());
+		int ra = Memory.storeMDS(Processor.LF + arg);
+		// NO PAGE FAULT AFTER HERE
+		Memory.writeReal16(ra, Processor.pop());
 	}
 
 
@@ -296,8 +303,11 @@ public final class MOP0xx {
 	}
 	
 	static final void SLDn(int arg) {
-		Memory.instance.write16MDS(Processor.LF + arg + 1, Processor.pop());
-		Memory.instance.write16MDS(Processor.LF + arg + 0, Processor.pop());
+		int ra0 = Memory.storeMDS(Processor.LF + arg + 0);
+		int ra1 = Memory.storeMDS(Processor.LF + arg + 1);
+		// NO PAGE FAULT AFTER HERE
+		Memory.writeReal16(ra1, Processor.pop());
+		Memory.writeReal16(ra0, Processor.pop());
 	}
 
 	// 046 SLD1
@@ -358,7 +368,9 @@ public final class MOP0xx {
 	
 	private static final void PLn(int arg) {
 		// SLn(arg);
-		Memory.instance.write16MDS(Processor.LF + arg, Processor.pop());
+		int ra = Memory.storeMDS(Processor.LF + arg);
+		// NO PAGE FAULT AFTER HERE
+		Memory.writeReal16(ra, Processor.pop());
 		// Processor.recover();
 		Processor.SP++;
 	}
@@ -401,8 +413,11 @@ public final class MOP0xx {
 
 	private static final void PLDn(int arg) {
 		// SLDn(arg);
-		Memory.instance.write16MDS(Processor.LF + arg + 1, Processor.pop());
-		Memory.instance.write16MDS(Processor.LF + arg + 0, Processor.pop());
+		int ra0 = Memory.storeMDS(Processor.LF + arg + 0);
+		int ra1 = Memory.storeMDS(Processor.LF + arg + 1);
+		// NO PAGE FAULT AFTER HERE
+		Memory.writeReal16(ra1, Processor.pop());
+		Memory.writeReal16(ra0, Processor.pop());
 		// Processor.recover();
 		// Processor.recover();
 		Processor.SP += 2;
@@ -424,7 +439,9 @@ public final class MOP0xx {
 	}
 	
 	private static final void LGn(int arg) {
-		Processor.push(Memory.instance.read16(Processor.GF + arg));
+		int ra = Memory.fetch(Processor.GF + arg);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(Memory.readReal16(ra));
 	}
 	
 	// 065 LG1
@@ -457,8 +474,11 @@ public final class MOP0xx {
 	}
 
 	private static final void LGDn(int arg) {
-		Processor.push(Memory.instance.read16(Processor.GF + arg + 0));
-		Processor.push(Memory.instance.read16(Processor.GF + arg + 1));
+		int ra0 = Memory.fetch(Processor.GF + arg + 0);
+		int ra1 = Memory.fetch(Processor.GF + arg + 1);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(Memory.readReal16(ra0));
+		Processor.push(Memory.readReal16(ra1));
 	}
 
 	// 071 LGD2
@@ -481,7 +501,9 @@ public final class MOP0xx {
 	public static final void OP_SGB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.SGB.name);
 		int alpha = CodeCache.getCodeByte();
-		Memory.instance.write16(Processor.GF + alpha, Processor.pop());
+		int ra = Memory.store(Processor.GF + alpha);
+		// NO PAGE FAULT AFTER HERE
+		Memory.writeReal16(ra, Processor.pop());
 	}
 
 	// 074 BNDCK

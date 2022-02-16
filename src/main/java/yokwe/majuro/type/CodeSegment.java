@@ -18,7 +18,7 @@ public final class CodeSegment extends MemoryBase {
         return new CodeSegment(base);
     }
     public static final CodeSegment pointer(char base) {
-        return new CodeSegment(Memory.instance.lengthenMDS(base));
+        return new CodeSegment(Memory.lengthenMDS(base));
     }
     
     private CodeSegment(int base) {

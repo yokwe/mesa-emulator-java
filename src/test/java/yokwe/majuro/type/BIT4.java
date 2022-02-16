@@ -30,7 +30,7 @@ public final class BIT4 extends MemoryData16 {
         return new BIT4(base, access);
     }
     public static final BIT4 pointer(char base, MemoryAccess access) {
-        return new BIT4(Memory.instance.lengthenMDS(base), access);
+        return new BIT4(Memory.lengthenMDS(base), access);
     }
     
     private BIT4(char value) {

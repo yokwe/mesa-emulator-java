@@ -20,7 +20,7 @@ public final class NewProdDesc extends MemoryData32 {
         return new NewProdDesc(base, access);
     }
     public static final NewProdDesc pointer(char base, MemoryAccess access) {
-        return new NewProdDesc(Memory.instance.lengthenMDS(base), access);
+        return new NewProdDesc(Memory.lengthenMDS(base), access);
     }
     
     private NewProdDesc(int value) {

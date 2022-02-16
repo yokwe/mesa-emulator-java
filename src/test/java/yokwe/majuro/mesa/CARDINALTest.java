@@ -32,11 +32,11 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 
 		// prepare
-		Memory.instance.writeReal16(va, value);
+		Memory.writeReal16(va, value);
 		
 		// execute
 		CARDINAL t = CARDINAL.longPointer(va, MemoryAccess.READ);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);
@@ -53,7 +53,7 @@ public class CARDINALTest extends Base {
 		// prepare
 		// execute
 		CARDINAL t = CARDINAL.longPointer(va, MemoryAccess.WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(0, t.value);
@@ -69,10 +69,10 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 
 		// prepare
-		Memory.instance.writeReal16(va, value);
+		Memory.writeReal16(va, value);
 		// execute
 		CARDINAL t = CARDINAL.longPointer(va, MemoryAccess.READ_WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);
@@ -91,11 +91,11 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 		
 		// prepare
-		Memory.instance.writeReal16(va, value);
+		Memory.writeReal16(va, value);
 		
 		// execute
 		CARDINAL t = CARDINAL.pointer(sa, MemoryAccess.READ);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);
@@ -113,7 +113,7 @@ public class CARDINALTest extends Base {
 		// prepare
 		// execute
 		CARDINAL t = CARDINAL.pointer(sa, MemoryAccess.WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(0, t.value);
@@ -130,11 +130,11 @@ public class CARDINALTest extends Base {
 		char value = 0x89AB;
 
 		// prepare
-		Memory.instance.writeReal16(va, value);
+		Memory.writeReal16(va, value);
 		
 		// execute
 		CARDINAL t = CARDINAL.pointer(sa, MemoryAccess.READ_WRITE);
-		Map map = memory.map(va);
+		Map map = Memory.map(va);
 		
 		// check result
 		assertEquals(value, t.value);

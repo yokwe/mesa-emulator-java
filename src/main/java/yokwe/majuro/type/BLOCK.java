@@ -17,7 +17,7 @@ public final class BLOCK extends MemoryBase {
         return new BLOCK(base);
     }
     public static final BLOCK pointer(char base) {
-        return new BLOCK(Memory.instance.lengthenMDS(base));
+        return new BLOCK(Memory.lengthenMDS(base));
     }
     
     private BLOCK(int base) {

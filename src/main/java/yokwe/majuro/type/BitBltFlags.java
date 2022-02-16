@@ -20,7 +20,7 @@ public final class BitBltFlags extends MemoryData16 {
         return new BitBltFlags(base, access);
     }
     public static final BitBltFlags pointer(char base, MemoryAccess access) {
-        return new BitBltFlags(Memory.instance.lengthenMDS(base), access);
+        return new BitBltFlags(Memory.lengthenMDS(base), access);
     }
     
     private BitBltFlags(char value) {

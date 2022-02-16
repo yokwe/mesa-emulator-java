@@ -17,7 +17,7 @@ public final class RecRec extends MemoryBase {
         return new RecRec(base);
     }
     public static final RecRec pointer(char base) {
-        return new RecRec(Memory.instance.lengthenMDS(base));
+        return new RecRec(Memory.lengthenMDS(base));
     }
     
     private RecRec(int base) {

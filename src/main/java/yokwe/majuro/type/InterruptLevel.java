@@ -30,7 +30,7 @@ public final class InterruptLevel extends MemoryData16 {
         return new InterruptLevel(base, access);
     }
     public static final InterruptLevel pointer(char base, MemoryAccess access) {
-        return new InterruptLevel(Memory.instance.lengthenMDS(base), access);
+        return new InterruptLevel(Memory.lengthenMDS(base), access);
     }
     
     private InterruptLevel(char value) {

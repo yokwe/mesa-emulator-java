@@ -20,7 +20,7 @@ public final class NibblePair extends MemoryData16 {
         return new NibblePair(base, access);
     }
     public static final NibblePair pointer(char base, MemoryAccess access) {
-        return new NibblePair(Memory.instance.lengthenMDS(base), access);
+        return new NibblePair(Memory.lengthenMDS(base), access);
     }
     
     private NibblePair(char value) {

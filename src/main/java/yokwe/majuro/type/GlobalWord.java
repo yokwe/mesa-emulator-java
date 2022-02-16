@@ -20,7 +20,7 @@ public final class GlobalWord extends MemoryData16 {
         return new GlobalWord(base, access);
     }
     public static final GlobalWord pointer(char base, MemoryAccess access) {
-        return new GlobalWord(Memory.instance.lengthenMDS(base), access);
+        return new GlobalWord(Memory.lengthenMDS(base), access);
     }
     
     private GlobalWord(char value) {

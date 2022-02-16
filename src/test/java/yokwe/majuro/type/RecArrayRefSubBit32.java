@@ -18,7 +18,7 @@ public final class RecArrayRefSubBit32 extends MemoryBase {
         return new RecArrayRefSubBit32(base);
     }
     public static final RecArrayRefSubBit32 pointer(char base) {
-        return new RecArrayRefSubBit32(Memory.instance.lengthenMDS(base));
+        return new RecArrayRefSubBit32(Memory.lengthenMDS(base));
     }
     
     private RecArrayRefSubBit32(int base) {

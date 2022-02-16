@@ -17,7 +17,7 @@ public final class RecPtr32Rec extends MemoryBase {
         return new RecPtr32Rec(base);
     }
     public static final RecPtr32Rec pointer(char base) {
-        return new RecPtr32Rec(Memory.instance.lengthenMDS(base));
+        return new RecPtr32Rec(Memory.lengthenMDS(base));
     }
     
     private RecPtr32Rec(int base) {
@@ -36,7 +36,7 @@ public final class RecPtr32Rec extends MemoryBase {
     // card1 (1:0..31): LONG POINTER TO Rec
     private static final int OFFSET_CARD_1 = 1;
     public Rec card1() {
-        int longPointer = Memory.instance.read32(base + OFFSET_CARD_1);
+        int longPointer = Memory.read32(base + OFFSET_CARD_1);
         return Rec.longPointer(longPointer);
     }
 }

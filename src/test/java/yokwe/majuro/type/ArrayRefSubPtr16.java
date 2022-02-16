@@ -18,7 +18,7 @@ public final class ArrayRefSubPtr16 extends MemoryBase {
         return new ArrayRefSubPtr16(base);
     }
     public static final ArrayRefSubPtr16 pointer(char base) {
-        return new ArrayRefSubPtr16(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubPtr16(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubPtr16(int base) {
@@ -29,7 +29,7 @@ public final class ArrayRefSubPtr16 extends MemoryBase {
     //
     public final POINTER get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
-        char pointer = Memory.instance.read16(base + (POINTER.WORD_SIZE * index));
+        char pointer = Memory.read16(base + (POINTER.WORD_SIZE * index));
         return POINTER.pointer(pointer);
     }
 }

@@ -20,7 +20,7 @@ public final class PsbFlags extends MemoryData16 {
         return new PsbFlags(base, access);
     }
     public static final PsbFlags pointer(char base, MemoryAccess access) {
-        return new PsbFlags(Memory.instance.lengthenMDS(base), access);
+        return new PsbFlags(Memory.lengthenMDS(base), access);
     }
     
     private PsbFlags(char value) {

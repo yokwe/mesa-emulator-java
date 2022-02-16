@@ -18,7 +18,7 @@ public final class ArrayRefSubBit16 extends MemoryBase {
         return new ArrayRefSubBit16(base);
     }
     public static final ArrayRefSubBit16 pointer(char base) {
-        return new ArrayRefSubBit16(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubBit16(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubBit16(int base) {

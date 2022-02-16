@@ -17,7 +17,7 @@ public final class RecPtr16Enum extends MemoryBase {
         return new RecPtr16Enum(base);
     }
     public static final RecPtr16Enum pointer(char base) {
-        return new RecPtr16Enum(Memory.instance.lengthenMDS(base));
+        return new RecPtr16Enum(Memory.lengthenMDS(base));
     }
     
     private RecPtr16Enum(int base) {
@@ -36,7 +36,7 @@ public final class RecPtr16Enum extends MemoryBase {
     // card1 (1:0..15): POINTER TO Enum
     private static final int OFFSET_CARD_1 = 1;
     public Enum card1(MemoryAccess access) {
-        char pointer = Memory.instance.read16(base + OFFSET_CARD_1);
+        char pointer = Memory.read16(base + OFFSET_CARD_1);
         return Enum.pointer(pointer, access);
     }
 }

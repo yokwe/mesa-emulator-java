@@ -17,7 +17,7 @@ public final class RecPtr16 extends MemoryBase {
         return new RecPtr16(base);
     }
     public static final RecPtr16 pointer(char base) {
-        return new RecPtr16(Memory.instance.lengthenMDS(base));
+        return new RecPtr16(Memory.lengthenMDS(base));
     }
     
     private RecPtr16(int base) {

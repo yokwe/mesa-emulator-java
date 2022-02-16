@@ -20,7 +20,7 @@ public final class BitField16 extends MemoryData16 {
         return new BitField16(base, access);
     }
     public static final BitField16 pointer(char base, MemoryAccess access) {
-        return new BitField16(Memory.instance.lengthenMDS(base), access);
+        return new BitField16(Memory.lengthenMDS(base), access);
     }
     
     private BitField16(char value) {

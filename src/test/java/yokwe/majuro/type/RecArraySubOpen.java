@@ -17,7 +17,7 @@ public final class RecArraySubOpen extends MemoryBase {
         return new RecArraySubOpen(base);
     }
     public static final RecArraySubOpen pointer(char base) {
-        return new RecArraySubOpen(Memory.instance.lengthenMDS(base));
+        return new RecArraySubOpen(Memory.lengthenMDS(base));
     }
     
     private RecArraySubOpen(int base) {

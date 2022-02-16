@@ -18,7 +18,7 @@ public final class SystemData extends MemoryBase {
         return new SystemData(base);
     }
     public static final SystemData pointer(char base) {
-        return new SystemData(Memory.instance.lengthenMDS(base));
+        return new SystemData(Memory.lengthenMDS(base));
     }
     
     private SystemData(int base) {

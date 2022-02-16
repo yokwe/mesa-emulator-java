@@ -18,7 +18,7 @@ public final class ArraySubFixed extends MemoryBase {
         return new ArraySubFixed(base);
     }
     public static final ArraySubFixed pointer(char base) {
-        return new ArraySubFixed(Memory.instance.lengthenMDS(base));
+        return new ArraySubFixed(Memory.lengthenMDS(base));
     }
     
     private ArraySubFixed(int base) {

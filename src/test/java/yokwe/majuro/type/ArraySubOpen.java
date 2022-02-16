@@ -17,7 +17,7 @@ public final class ArraySubOpen extends MemoryBase {
         return new ArraySubOpen(base);
     }
     public static final ArraySubOpen pointer(char base) {
-        return new ArraySubOpen(Memory.instance.lengthenMDS(base));
+        return new ArraySubOpen(Memory.lengthenMDS(base));
     }
     
     private ArraySubOpen(int base) {

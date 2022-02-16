@@ -41,7 +41,7 @@ public final class DstFunc extends MemoryData16 {
         return new DstFunc(base, access);
     }
     public static final DstFunc pointer(char base, MemoryAccess access) {
-        return new DstFunc(Memory.instance.lengthenMDS(base), access);
+        return new DstFunc(Memory.lengthenMDS(base), access);
     }
     
     private DstFunc(char value) {

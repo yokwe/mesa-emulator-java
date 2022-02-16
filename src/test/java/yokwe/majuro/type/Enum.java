@@ -41,7 +41,7 @@ public final class Enum extends MemoryData16 {
         return new Enum(base, access);
     }
     public static final Enum pointer(char base, MemoryAccess access) {
-        return new Enum(Memory.instance.lengthenMDS(base), access);
+        return new Enum(Memory.lengthenMDS(base), access);
     }
     
     private Enum(char value) {

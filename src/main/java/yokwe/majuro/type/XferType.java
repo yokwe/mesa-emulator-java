@@ -45,7 +45,7 @@ public final class XferType extends MemoryData16 {
         return new XferType(base, access);
     }
     public static final XferType pointer(char base, MemoryAccess access) {
-        return new XferType(Memory.instance.lengthenMDS(base), access);
+        return new XferType(Memory.lengthenMDS(base), access);
     }
     
     private XferType(char value) {

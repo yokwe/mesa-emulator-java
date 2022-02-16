@@ -17,7 +17,7 @@ public final class POINTER extends MemoryBase {
         return new POINTER(base);
     }
     public static final POINTER pointer(char base) {
-        return new POINTER(Memory.instance.lengthenMDS(base));
+        return new POINTER(Memory.lengthenMDS(base));
     }
     
     private POINTER(int base) {

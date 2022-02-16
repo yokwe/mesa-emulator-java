@@ -18,7 +18,7 @@ public final class ArrayRefSubSub extends MemoryBase {
         return new ArrayRefSubSub(base);
     }
     public static final ArrayRefSubSub pointer(char base) {
-        return new ArrayRefSubSub(Memory.instance.lengthenMDS(base));
+        return new ArrayRefSubSub(Memory.lengthenMDS(base));
     }
     
     private ArrayRefSubSub(int base) {

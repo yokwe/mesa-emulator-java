@@ -52,7 +52,7 @@ public class LongTest extends Base {
 		int value = 0x89AB_CDEF;
 
 		// prepare
-		Memory.instance.write32(va, value);
+		Memory.write32(va, value);
 		
 		// execute
 		Long object = Long.longPointer(va, MemoryAccess.READ);
@@ -77,8 +77,8 @@ public class LongTest extends Base {
 		object.write();
 		
 		// check result
-		assertEquals(Types.lowHalf(value),  Memory.instance.read16(va + 0));
-		assertEquals(Types.highHalf(value), Memory.instance.read16(va + 1));
+		assertEquals(Types.lowHalf(value),  Memory.read16(va + 0));
+		assertEquals(Types.highHalf(value), Memory.read16(va + 1));
 		assertEquals(value, object.value);
 	}
 

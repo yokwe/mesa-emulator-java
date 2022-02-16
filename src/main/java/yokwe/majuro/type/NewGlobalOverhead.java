@@ -17,7 +17,7 @@ public final class NewGlobalOverhead extends MemoryBase {
         return new NewGlobalOverhead(base);
     }
     public static final NewGlobalOverhead pointer(char base) {
-        return new NewGlobalOverhead(Memory.instance.lengthenMDS(base));
+        return new NewGlobalOverhead(Memory.lengthenMDS(base));
     }
     
     private NewGlobalOverhead(int base) {

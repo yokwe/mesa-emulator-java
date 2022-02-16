@@ -18,7 +18,7 @@ public final class ProcessDataArea extends MemoryBase {
         return new ProcessDataArea(base);
     }
     public static final ProcessDataArea pointer(char base) {
-        return new ProcessDataArea(Memory.instance.lengthenMDS(base));
+        return new ProcessDataArea(Memory.lengthenMDS(base));
     }
     
     private ProcessDataArea(int base) {

@@ -20,7 +20,7 @@ public final class Long extends MemoryData32 {
         return new Long(base, access);
     }
     public static final Long pointer(char base, MemoryAccess access) {
-        return new Long(Memory.instance.lengthenMDS(base), access);
+        return new Long(Memory.lengthenMDS(base), access);
     }
     
     private Long(int value) {

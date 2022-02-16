@@ -30,7 +30,7 @@ public final class BYTE extends MemoryData16 {
         return new BYTE(base, access);
     }
     public static final BYTE pointer(char base, MemoryAccess access) {
-        return new BYTE(Memory.instance.lengthenMDS(base), access);
+        return new BYTE(Memory.lengthenMDS(base), access);
     }
     
     private BYTE(char value) {

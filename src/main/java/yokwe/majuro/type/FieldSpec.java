@@ -20,7 +20,7 @@ public final class FieldSpec extends MemoryData16 {
         return new FieldSpec(base, access);
     }
     public static final FieldSpec pointer(char base, MemoryAccess access) {
-        return new FieldSpec(Memory.instance.lengthenMDS(base), access);
+        return new FieldSpec(Memory.lengthenMDS(base), access);
     }
     
     private FieldSpec(char value) {

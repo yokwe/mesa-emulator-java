@@ -20,7 +20,7 @@ public final class BytePair extends MemoryData16 {
         return new BytePair(base, access);
     }
     public static final BytePair pointer(char base, MemoryAccess access) {
-        return new BytePair(Memory.instance.lengthenMDS(base), access);
+        return new BytePair(Memory.lengthenMDS(base), access);
     }
     
     private BytePair(char value) {

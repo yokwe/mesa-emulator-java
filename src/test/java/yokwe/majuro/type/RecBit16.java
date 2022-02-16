@@ -17,7 +17,7 @@ public final class RecBit16 extends MemoryBase {
         return new RecBit16(base);
     }
     public static final RecBit16 pointer(char base) {
-        return new RecBit16(Memory.instance.lengthenMDS(base));
+        return new RecBit16(Memory.lengthenMDS(base));
     }
     
     private RecBit16(int base) {

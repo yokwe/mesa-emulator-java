@@ -17,7 +17,7 @@ public final class RecEnum extends MemoryBase {
         return new RecEnum(base);
     }
     public static final RecEnum pointer(char base) {
-        return new RecEnum(Memory.instance.lengthenMDS(base));
+        return new RecEnum(Memory.lengthenMDS(base));
     }
     
     private RecEnum(int base) {

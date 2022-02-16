@@ -20,7 +20,7 @@ public final class LONG_CARDINAL extends MemoryData32 {
         return new LONG_CARDINAL(base, access);
     }
     public static final LONG_CARDINAL pointer(char base, MemoryAccess access) {
-        return new LONG_CARDINAL(Memory.instance.lengthenMDS(base), access);
+        return new LONG_CARDINAL(Memory.lengthenMDS(base), access);
     }
     
     private LONG_CARDINAL(int value) {

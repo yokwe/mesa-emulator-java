@@ -30,7 +30,7 @@ public final class BIT8 extends MemoryData16 {
         return new BIT8(base, access);
     }
     public static final BIT8 pointer(char base, MemoryAccess access) {
-        return new BIT8(Memory.instance.lengthenMDS(base), access);
+        return new BIT8(Memory.lengthenMDS(base), access);
     }
     
     private BIT8(char value) {

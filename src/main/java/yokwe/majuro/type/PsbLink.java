@@ -20,7 +20,7 @@ public final class PsbLink extends MemoryData16 {
         return new PsbLink(base, access);
     }
     public static final PsbLink pointer(char base, MemoryAccess access) {
-        return new PsbLink(Memory.instance.lengthenMDS(base), access);
+        return new PsbLink(Memory.lengthenMDS(base), access);
     }
     
     private PsbLink(char value) {

@@ -20,7 +20,7 @@ public final class FieldDesc extends MemoryData16 {
         return new FieldDesc(base, access);
     }
     public static final FieldDesc pointer(char base, MemoryAccess access) {
-        return new FieldDesc(Memory.instance.lengthenMDS(base), access);
+        return new FieldDesc(Memory.lengthenMDS(base), access);
     }
     
     private FieldDesc(char value) {

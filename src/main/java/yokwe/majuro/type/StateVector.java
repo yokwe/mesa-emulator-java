@@ -18,7 +18,7 @@ public final class StateVector extends MemoryBase {
         return new StateVector(base);
     }
     public static final StateVector pointer(char base) {
-        return new StateVector(Memory.instance.lengthenMDS(base));
+        return new StateVector(Memory.lengthenMDS(base));
     }
     
     private StateVector(int base) {
@@ -50,7 +50,7 @@ public final class StateVector extends MemoryBase {
     // frame (15:0..15): LocalFrameHandle
     private static final int OFFSET_FRAME = 15;
     public BLOCK frame() {
-        char pointer = Memory.instance.read16(base + OFFSET_FRAME);
+        char pointer = Memory.read16(base + OFFSET_FRAME);
         return BLOCK.pointer(pointer);
     }
     // data (16): BLOCK
