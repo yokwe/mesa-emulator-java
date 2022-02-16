@@ -1,6 +1,7 @@
 package yokwe.majuro.opcode;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.opcode.Opcode.Register;
@@ -384,7 +385,8 @@ public class MOP1xx {
 	@Register(Opcode.SLDB)
 	public static final void OP_SLDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.SLDB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = CodeCache.getCodeByte();
+		MOP0xx.SLDn(alpha);
 	}
 
 	// 166 SGDB
