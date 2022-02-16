@@ -309,57 +309,37 @@ public final class Memory {
 	//
 	// MDS
 	//
-	public int lengthenMDS(char value) {
+	// treat sa as short pointer
+	public static int lengthenMDS(char sa) {
 		if (Perf.ENABLED) Perf.lengthenMDS++;
-		return Processor.MDS + value;
+		return Processor.MDS + sa;
 	}
 	
 	// convenience methods for MDS data access
-	public int fetchMDS(char va) {
+	// treat sa as short pointer
+	public int fetchMDS(int sa) {
 		if (Perf.ENABLED) Perf.fetchMDS++;
-		return fetch(Processor.MDS + va);
+		return fetch(Processor.MDS + (sa & 0xFFFF));
 	}
-	public int storeMDS(char va) {
+	public int storeMDS(int sa) {
 		if (Perf.ENABLED) Perf.storeMDS++;
-		return store(Processor.MDS + va);
+		return store(Processor.MDS + (sa & 0xFFFF));
 	}
-	public char read16MDS(char va) {
+	public char read16MDS(int sa) {
 		if (Perf.ENABLED) Perf.read16MDS++;
-		return read16(Processor.MDS + va);
+		return read16(Processor.MDS + (sa & 0xFFFF));
 	}
-	public void write16MDS(char va, char newValue) {
+	public void write16MDS(int sa, char newValue) {
 		if (Perf.ENABLED) Perf.write16MDS++;
-		write16(Processor.MDS + va, newValue);
+		write16(Processor.MDS + (sa & 0xFFFF), newValue);
 	}
-	public int read32MDS(char va) {
+	public int read32MDS(int sa) {
 		if (Perf.ENABLED) Perf.read32MDS++;
-		return read32(Processor.MDS + va);
+		return read32(Processor.MDS + (sa & 0xFFFF));
 	}
-	public void write32MDS(char va, int newValue) {
+	public void write32MDS(int sa, int newValue) {
 		if (Perf.ENABLED) Perf.write32MDS++;
-		write32(Processor.MDS + va, newValue);
-	}
-	//
-	// prohibit int promotion of above methods
-	// capture wrong parameter invocation of (fetch|store|read16|write16|read32|write32)MDS
-	//
-	public int fetchMDS(int va) {
-		throw new UnexpectedException("Unexpected");
-	}
-	public int storeMDS(int va) {
-		throw new UnexpectedException("Unexpected");
-	}
-	public char read16MDS(int va) {
-		throw new UnexpectedException("Unexpected");
-	}
-	public void write16MDS(int va, char newValue) {
-		throw new UnexpectedException("Unexpected");
-	}
-	public int read32MDS(int va) {
-		throw new UnexpectedException("Unexpected");
-	}
-	public void write32MDS(int va, int newValue) {
-		throw new UnexpectedException("Unexpected");
+		write32(Processor.MDS + (sa & 0xFFFF), newValue);
 	}
 	
 	
