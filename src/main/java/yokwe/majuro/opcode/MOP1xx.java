@@ -3,6 +3,7 @@ package yokwe.majuro.opcode;
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.FormatLogger;
@@ -14,77 +15,125 @@ public class MOP1xx {
 	@Register(Opcode.R0)
 	public static final void OP_R0() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.R0.name);
-		throw new UnexpectedException(); // FIXME
+		Rn(0);
 	}
-
+	
+	private static void Rn(int arg) {
+		char ptr = Processor.pop();
+		int  ra = Memory.fetchMDS(ptr + arg);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(Memory.readReal16(ra));
+	}
+	
 	// 101 R1
 	@Register(Opcode.R1)
 	public static final void OP_R1() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.R1.name);
-		throw new UnexpectedException(); // FIXME
+		Rn(1);
 	}
 
 	// 102 RB
 	@Register(Opcode.RB)
 	public static final void OP_RB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = CodeCache.getCodeByte();
+		Rn(alpha);
 	}
 
 	// 103 RL0
 	@Register(Opcode.RL0)
 	public static final void OP_RL0() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RL0.name);
-		throw new UnexpectedException(); // FIXME
+		RLn(0);
 	}
-
+	
+	private static void RLn(int arg) {
+		int ptr = Processor.popLong();
+		int ra  = Memory.fetch(ptr + arg);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(Memory.readReal16(ra));
+	}
+	
 	// 104 RLB
 	@Register(Opcode.RLB)
 	public static final void OP_RLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = CodeCache.getCodeByte();
+		RLn(alpha);
 	}
 
 	// 105 RD0
 	@Register(Opcode.RD0)
 	public static final void OP_RD0() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RD0.name);
-		throw new UnexpectedException(); // FIXME
+		RDn(0);
+	}
+
+	private static void RDn(int arg) {
+		char ptr = Processor.pop();
+		int ra0 = Memory.fetchMDS(ptr + arg + 0);
+		int ra1 = Memory.fetchMDS(ptr + arg + 1);
+		// NO PAGE FAULT AFTER HERE
+		char u = Memory.readReal16(ra0);
+		char v = Memory.readReal16(ra1);
+		Processor.push(u);
+		Processor.push(v);
 	}
 
 	// 106 RDB
 	@Register(Opcode.RDB)
 	public static final void OP_RDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RDB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = CodeCache.getCodeByte();
+		RDn(alpha);
 	}
 
 	// 107 RDL0
 	@Register(Opcode.RDL0)
 	public static final void OP_RDL0() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RDL0.name);
-		throw new UnexpectedException(); // FIXME
+		RDLn(0);
+	}
+
+	private static void RDLn(int arg) {
+		int ptr = Processor.popLong();
+		int ra0 = Memory.fetch(ptr + arg + 0);
+		int ra1 = Memory.fetch(ptr + arg + 1);
+		// NO PAGE FAULT AFTER HERE
+		char u = Memory.readReal16(ra0);
+		char v = Memory.readReal16(ra1);
+		Processor.push(u);
+		Processor.push(v);
 	}
 
 	// 110 RDLB
 	@Register(Opcode.RDLB)
 	public static final void OP_RDLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RDLB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = CodeCache.getCodeByte();
+		RDLn(alpha);
 	}
 
 	// 111 W0
 	@Register(Opcode.W0)
 	public static final void OP_W0() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.W0.name);
-		throw new UnexpectedException(); // FIXME
+		Wn(0);
+	}
+	
+	private static void Wn(int arg) {
+		char ptr = Processor.pop();
+		int  ra  = Memory.storeMDS(ptr + arg);
+		// NO PAGE FAULT AFTER HERE
+		Memory.writeReal16(ra, Processor.pop());
 	}
 
 	// 112 WB
 	@Register(Opcode.WB)
 	public static final void OP_WB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = CodeCache.getCodeByte();
+		Wn(alpha);
 	}
 
 	// 113 PSB
