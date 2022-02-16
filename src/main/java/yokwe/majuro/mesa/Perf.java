@@ -30,7 +30,11 @@ public final class Perf {
 	public static long read16      = 0;
 	public static long write16     = 0;
 	public static long read32      = 0;
+	public static long read32Same  = 0;
+	public static long read32Diff  = 0;
 	public static long write32     = 0;
+	public static long write32Same = 0;
+	public static long write32Diff = 0;
 	
 	public static long lengthenMDS = 0;
 	public static long fetchMDS    = 0;
