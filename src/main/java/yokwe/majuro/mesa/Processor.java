@@ -9,8 +9,6 @@ public final class Processor {
 	// Main Data Space
 	public static int MDS;
 	
-	public static char LF;
-	
 	// 3.3.2 Evaluation Stack
 	public static final int[] stack = new int[StackDepth];
 	public static       int    SP; // [0..StackDepth)
@@ -68,6 +66,9 @@ public final class Processor {
 	// 3.3.1 Control Registers
 	// PsbIndex - 10.1.1
 	public static char PSB;
+	
+	public static char LF;
+	
 	public static int  GF;  // LONG POINTER TO GlobalVarables
 	public static char GFI;
 
