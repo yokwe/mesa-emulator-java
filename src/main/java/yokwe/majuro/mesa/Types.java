@@ -11,11 +11,8 @@ public class Types {
 	public static char highHalf(int value) {
 		return (char)(value >>> WORD_BITS);
 	}
-	public static int makeLong(char high, char low) {
-		return (high << WORD_BITS) | low;
-	}
 	public static int makeLong(int high, int low) {
-		return makeLong((char)high, (char)low);
+		return (high << WORD_BITS) | (low & WORD_MASK);
 	}
 
 }
