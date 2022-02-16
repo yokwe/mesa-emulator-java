@@ -4,13 +4,13 @@ import static yokwe.majuro.mesa.Constants.MAX_REALMEMORY_PAGE_SIZE;
 import static yokwe.majuro.mesa.Constants.PAGE_BITS;
 import static yokwe.majuro.mesa.Constants.PAGE_MASK;
 import static yokwe.majuro.mesa.Constants.PAGE_SIZE;
-import static yokwe.majuro.mesa.Constants.WORD_BITS;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.util.FormatLogger;
 
 
 public final class Memory {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Memory.class);
+	private static final FormatLogger logger = FormatLogger.getLogger(Memory.class);
 	
 	private static final class Cache {
 		private static final int N_BIT = 14;
@@ -49,38 +49,29 @@ public final class Memory {
 	public static final int VM_MAX = 25;
 	public static final int RM_MAX = 20;
 	
-	private final int rpSize;
-	private final int vpSize;
-	private final int ioRegionPage;
-	
+	private static int rpSize;
+	private static int vpSize;
+	private static int ioRegionPage;
+
 	// index of mapFlags and realPages is virtual page
 	// value of realPages contains realPage number of virtual page
-	private final Map[] maps;
+	private static Map[] maps;
 	
 	// index of realMemory is real address up to rpSize * Mesa.PAGE_SIZE
-	private final char[]    realMemory;
+	private static char[]    realMemory;
 	
 	// array of cache
-	private final Cache[]   cacheArray;
+	private static Cache[]   cacheArray;
 	
-	
-	public static Memory instance = null;
-	public static void init(int vmbits, int rmbits) {
-		instance = new Memory(vmbits, rmbits);
-	}
-	
-	
-	private Memory(int vmbits, int rmbits) {
-		this(vmbits, rmbits, DEFAULT_IO_REGION_PAGE);
-	}
-	private Memory(int vmbits, int rmbits, int ioRegionPage) {
-		logger.info("vmbits       {}", vmbits);
-		logger.info("rmbits       {}", rmbits);
-		logger.info("ioRegionPage {}", String.format("0x%X", ioRegionPage));
-		this.ioRegionPage = ioRegionPage;
+	public static void init(int vmbits, int rmbits, int ioRegionPage_) {
+		logger.info("vmbits       %2d", vmbits);
+		logger.info("rmbits       %2d", rmbits);
+		logger.info("ioRegionPage 0x%X", ioRegionPage_);
 		
 		vpSize = 1 << (vmbits - PAGE_BITS);
 		rpSize = Integer.max(MAX_REALMEMORY_PAGE_SIZE, 1 << (rmbits - PAGE_BITS));
+		ioRegionPage = ioRegionPage_;
+		
 		logger.info("vpSize {}", String.format("%X", vpSize));
 		logger.info("rpSize {}", String.format("%X", rpSize));
 		
@@ -93,8 +84,11 @@ public final class Memory {
 
 		clear();
 	}
+	public static void init(int vmbits, int rmbits) {
+		init(vmbits, rmbits, DEFAULT_IO_REGION_PAGE);
+	}
 	
-	public void clear() {
+	public static void clear() {
 		// clear mds realMemory, mapFlags, realPages and cacheArray
 		for(int i = 0; i < realMemory.length; i++) {
 			realMemory[i] = 0;
@@ -137,11 +131,11 @@ public final class Memory {
 		}
 	}
 	
-	private Cache getCache(int vp) {
+	private static Cache getCache(int vp) {
 		return Cache.getCache(cacheArray, vp);
 	}
 
-	public void clearCache(int vp) {
+	public static void clearCache(int vp) {
 		getCache(vp).clear();
 	}
 	
@@ -149,12 +143,12 @@ public final class Memory {
 	//
 	// low level memory access
 	//   fetch store mapFlag readReal writeReal
-	public Map map(int va) {
+	public static Map map(int va) {
 		if (Perf.ENABLED) Perf.map++;
 		return maps[va >>> PAGE_BITS];
 	}
 	// fetch returns real address == offset of realMemory
-	public int fetch(int va) {
+	public static int fetch(int va) {
 		if (Perf.ENABLED) Perf.fetch++;
 		
 		final int vp = va >>> PAGE_BITS;
@@ -191,7 +185,7 @@ public final class Memory {
 		return ra | (va & PAGE_MASK);
 	}
 	// store returns real address == offset of realMemory
-	public int store(int va) {
+	public static int store(int va) {
 		if (Perf.ENABLED) Perf.store++;
 
 		final int vp = va >>> PAGE_BITS;
@@ -233,49 +227,42 @@ public final class Memory {
 			cache.ra    = ra;
 			cache.dirty = true;
 		}
-				
 		return ra | (va & PAGE_MASK);
 	}
-	public char readReal16(int ra) {
+	//
+	// real memory access
+	//
+	public static char readReal16(int ra) {
 		if (Perf.ENABLED) Perf.readReal16++;
 		return realMemory[ra];
 	}
-	public void writeReal16(int ra, char newValue) {
+	public static void writeReal16(int ra, char newValue) {
 		if (Perf.ENABLED) Perf.writeReal16++;
 		realMemory[ra] = newValue;
 	}
-	public int readReal32(int ra0, int ra1) {
+	public static int readReal32(int ra0, int ra1) {
 		// ra0 -- low order  16 bit
 		// ra1 -- high order 16 bit
 		if (Perf.ENABLED) Perf.readReal32++;
-		return (realMemory[ra1] << WORD_BITS) | realMemory[ra0];
+		return Types.makeLong(realMemory[ra1], realMemory[ra0]);
 	}
-	public void writeReal32(int ra0, int ra1, int newValue) {
+	public static void writeReal32(int ra0, int ra1, int newValue) {
 		// ra0 -- low order  16 bit
 		// ra1 -- high order 16 bit
 		if (Perf.ENABLED) Perf.writeReal32++;
-		realMemory[ra0] = (char)newValue;
-		realMemory[ra1] = (char)(newValue >>> WORD_BITS);
+		realMemory[ra0] = Types.lowHalf(newValue);
+		realMemory[ra1] = Types.highHalf(newValue);
 	}
 	
-	
-	//
-	// Code Segments
-	//
-	public char readCode(int offset) {
-		int longPointer = CodeCache.CB() + (offset & 0xFFFF);
-		return realMemory[fetch(longPointer)];
-	}
-
 	
 	//
 	// memory read and write
 	//
-	public char read16(int va) {
+	public static char read16(int va) {
 		if (Perf.ENABLED) Perf.read16++;
 		return realMemory[fetch(va)];
 	}
-	public void write16(int va, char newValue) {
+	public static void write16(int va, char newValue) {
 		if (Perf.ENABLED) Perf.write16++;
 		realMemory[store(va)] = newValue;
 	}
@@ -290,18 +277,30 @@ public final class Memory {
 	public static boolean isSamePage(int a, int b) {
 		return (a & ~PAGE_MASK) == (b & ~PAGE_MASK);
 	}
-	public int read32(int va) {
+	public static int read32(int va) {
 		if (Perf.ENABLED) Perf.read32++;
 		int ra0 = fetch(va);
-		int ra1 = isSamePage(va, va + 1) ? ra0 + 1 : fetch(va + 1);
-		
+		int ra1;
+		if (isSamePage(va, va + 1)) {
+			if (Perf.ENABLED) Perf.read32Same++;
+			ra1 = ra0 + 1;
+		} else {
+			if (Perf.ENABLED) Perf.read32Diff++;
+			ra1 = fetch(va + 1);
+		}
 		return readReal32(ra0, ra1);
 	}
-	public void write32(int va, int newValue) {
+	public static void write32(int va, int newValue) {
 		if (Perf.ENABLED) Perf.write32++;
 		int ra0 = store(va);
-		int ra1 = isSamePage(va, va + 1) ? ra0 + 1 : store(va + 1);
-		
+		int ra1;
+		if (isSamePage(va, va + 1)) {
+			if (Perf.ENABLED) Perf.write32Same++;
+			ra1 = ra0 + 1;
+		} else {
+			if (Perf.ENABLED) Perf.write32Diff++;
+			ra1 = store(va + 1);
+		}
 		writeReal32(ra0, ra1, newValue);
 	}
 	
@@ -317,27 +316,27 @@ public final class Memory {
 	
 	// convenience methods for MDS data access
 	// treat sa as short pointer
-	public int fetchMDS(int sa) {
+	public static int fetchMDS(int sa) {
 		if (Perf.ENABLED) Perf.fetchMDS++;
 		return fetch(Processor.MDS + (sa & 0xFFFF));
 	}
-	public int storeMDS(int sa) {
+	public static int storeMDS(int sa) {
 		if (Perf.ENABLED) Perf.storeMDS++;
 		return store(Processor.MDS + (sa & 0xFFFF));
 	}
-	public char read16MDS(int sa) {
+	public static char read16MDS(int sa) {
 		if (Perf.ENABLED) Perf.read16MDS++;
 		return read16(Processor.MDS + (sa & 0xFFFF));
 	}
-	public void write16MDS(int sa, char newValue) {
+	public static void write16MDS(int sa, char newValue) {
 		if (Perf.ENABLED) Perf.write16MDS++;
 		write16(Processor.MDS + (sa & 0xFFFF), newValue);
 	}
-	public int read32MDS(int sa) {
+	public static int read32MDS(int sa) {
 		if (Perf.ENABLED) Perf.read32MDS++;
 		return read32(Processor.MDS + (sa & 0xFFFF));
 	}
-	public void write32MDS(int sa, int newValue) {
+	public static void write32MDS(int sa, int newValue) {
 		if (Perf.ENABLED) Perf.write32MDS++;
 		write32(Processor.MDS + (sa & 0xFFFF), newValue);
 	}
