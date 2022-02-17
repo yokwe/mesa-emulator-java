@@ -1,7 +1,17 @@
 package yokwe.majuro.opcode;
 
-import static yokwe.majuro.mesa.Memory.*;
-import static yokwe.majuro.mesa.Processor.*;
+import static yokwe.majuro.mesa.Memory.getCodeByte;
+import static yokwe.majuro.mesa.Memory.read16;
+import static yokwe.majuro.mesa.Memory.read16MDS;
+import static yokwe.majuro.mesa.Memory.write16;
+import static yokwe.majuro.mesa.Memory.write16MDS;
+import static yokwe.majuro.mesa.Processor.GF;
+import static yokwe.majuro.mesa.Processor.LF;
+import static yokwe.majuro.mesa.Processor.SP;
+import static yokwe.majuro.mesa.Processor.breakByte;
+import static yokwe.majuro.mesa.Processor.pop;
+import static yokwe.majuro.mesa.Processor.push;
+import static yokwe.majuro.mesa.Processor.savedPC;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.ControlTransfers;
