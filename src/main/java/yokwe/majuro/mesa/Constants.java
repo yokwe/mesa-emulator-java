@@ -8,7 +8,14 @@ public final class Constants {
 	public static final int WORD_SIZE = 1 << WORD_BITS;
 	public static final int WORD_MASK = WORD_SIZE - 1;
 	
-	
+	public static final int BYTE_BITS = 8;
+	public static final int BYTE_SIZE = 1 << BYTE_BITS;
+	public static final int BYTE_MASK = BYTE_SIZE - 1;
+
+	public static final int NIBBLE_BITS = 4;
+	public static final int NIBBLE_SIZE = 1 << NIBBLE_BITS;
+	public static final int NIBBLE_MASK = NIBBLE_SIZE - 1;
+
 	//
 	// Pilot related constants
 	//
