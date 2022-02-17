@@ -4,6 +4,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Processor;
+import yokwe.majuro.mesa.Types;
 import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.FormatLogger;
 
@@ -19,9 +20,9 @@ public class MOP1xx {
 	
 	private static void Rn(int arg) {
 		char ptr = Processor.pop();
-		int  ra = Memory.fetchMDS(ptr + arg);
+		char t   = Memory.read16MDS(ptr + arg);
 		// NO PAGE FAULT AFTER HERE
-		Processor.push(Memory.readReal16(ra));
+		Processor.push(t);
 	}
 	
 	// 101 R1
@@ -47,10 +48,10 @@ public class MOP1xx {
 	}
 	
 	private static void RLn(int arg) {
-		int ptr = Processor.popLong();
-		int ra  = Memory.fetch(ptr + arg);
+		int  ptr = Processor.popLong();
+		char t   = Memory.read16(ptr + arg);
 		// NO PAGE FAULT AFTER HERE
-		Processor.push(Memory.readReal16(ra));
+		Processor.push(t);
 	}
 	
 	// 104 RLB
@@ -70,11 +71,9 @@ public class MOP1xx {
 
 	private static void RDn(int arg) {
 		char ptr = Processor.pop();
-		int ra0 = Memory.fetchMDS(ptr + arg + 0);
-		int ra1 = Memory.fetchMDS(ptr + arg + 1);
+		char u   = Memory.read16MDS(ptr + arg + 0);
+		char v   = Memory.read16MDS(ptr + arg + 1);
 		// NO PAGE FAULT AFTER HERE
-		char u = Memory.readReal16(ra0);
-		char v = Memory.readReal16(ra1);
 		Processor.push(u);
 		Processor.push(v);
 	}
@@ -95,12 +94,10 @@ public class MOP1xx {
 	}
 
 	private static void RDLn(int arg) {
-		int ptr = Processor.popLong();
-		int ra0 = Memory.fetch(ptr + arg + 0);
-		int ra1 = Memory.fetch(ptr + arg + 1);
+		int  ptr = Processor.popLong();
+		char u   = Memory.read16(ptr + arg + 0);
+		char v   = Memory.read16(ptr + arg + 1);
 		// NO PAGE FAULT AFTER HERE
-		char u = Memory.readReal16(ra0);
-		char v = Memory.readReal16(ra1);
 		Processor.push(u);
 		Processor.push(v);
 	}
@@ -122,9 +119,8 @@ public class MOP1xx {
 	
 	private static void Wn(int arg) {
 		char ptr = Processor.pop();
-		int  ra  = Memory.storeMDS(ptr + arg);
+		Memory.write16MDS(ptr, Processor.pop());
 		// NO PAGE FAULT AFTER HERE
-		Memory.writeReal16(ra, Processor.pop());
 	}
 
 	// 112 WB
@@ -139,119 +135,188 @@ public class MOP1xx {
 	@Register(Opcode.PSB)
 	public static final void OP_PSB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PSB.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char u     = Processor.pop();
+		char ptr   = Processor.pop();
+		Memory.write16MDS(ptr + alpha, u);		
+		// NO PAGE FAULT AFTER HERE
+		Processor.SP++; // Recover()
 	}
 
 	// 114 WLB
 	@Register(Opcode.WLB)
 	public static final void OP_WLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WLB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		int ptr   = Processor.popLong();
+		Memory.write16(ptr + alpha, Processor.pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 115 PSLB
 	@Register(Opcode.PSLB)
 	public static final void OP_PSLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PSLB.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char u     = Processor.pop();
+		int  ptr   = Processor.popLong();
+		Memory.write16(ptr + alpha, u);
+		// NO PAGE FAULT AFTER HERE
+		Processor.SP += 2; // Recover(); Recover();
 	}
 
 	// 116 WDB
 	@Register(Opcode.WDB)
 	public static final void OP_WDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WDB.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char ptr   = Processor.pop();
+		Memory.write16MDS(ptr + alpha + 1, Processor.pop());
+		Memory.write16MDS(ptr + alpha + 0, Processor.pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 117 PSD0
 	@Register(Opcode.PSD0)
 	public static final void OP_PSD0() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PSD0.name);
-		throw new UnexpectedException(); // FIXME
+		PSDn(0);
+	}
+	
+	private static void PSDn(int arg) {
+		char v     = Processor.pop();
+		char u     = Processor.pop();
+		char ptr   = Processor.pop();
+		Memory.write16MDS(ptr + arg + 1, v);
+		Memory.write16MDS(ptr + arg + 0, u);
+		// NO PAGE FAULT AFTER HERE
+		Processor.SP++; // Recover()
 	}
 
 	// 120 PSDB
 	@Register(Opcode.PSDB)
 	public static final void OP_PSDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PSDB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		PSDn(alpha);
 	}
 
 	// 121 WDLB
 	@Register(Opcode.WDLB)
 	public static final void OP_WDLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WDLB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		int ptr   = Processor.popLong();
+		Memory.write16(ptr + alpha + 1, Processor.pop());
+		Memory.write16(ptr + alpha + 0, Processor.pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 122 PSDLB
 	@Register(Opcode.PSDLB)
 	public static final void OP_PSDLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PSDLB.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char v     = Processor.pop();
+		char u     = Processor.pop();
+		int  ptr   = Processor.popLong();
+		Memory.write16(ptr + alpha + 1, v);
+		Memory.write16(ptr + alpha + 0, u);
+		// NO PAGE FAULT AFTER HERE
+		Processor.SP += 2; // Recover(); Rcover();
 	}
 
 	// 123 RLI00
 	@Register(Opcode.RLI00)
 	public static final void OP_RLI00() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLI00.name);
-		throw new UnexpectedException(); // FIXME
+		RLInm(0, 0);
 	}
-
+	
+	private static void RLInm(int left, int right) {
+		char ptr = Memory.read16MDS(Processor.LF + left);
+		Processor.push(Memory.read16MDS(ptr + right));
+		// NO PAGE FAULT AFTER HERE
+	}
+	
 	// 124 RLI01
 	@Register(Opcode.RLI01)
 	public static final void OP_RLI01() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLI01.name);
-		throw new UnexpectedException(); // FIXME
+		RLInm(0, 1);
 	}
-
+	
 	// 125 RLI02
 	@Register(Opcode.RLI02)
 	public static final void OP_RLI02() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLI02.name);
-		throw new UnexpectedException(); // FIXME
+		RLInm(0, 2);
 	}
 
 	// 126 RLI03
 	@Register(Opcode.RLI03)
 	public static final void OP_RLI03() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLI03.name);
-		throw new UnexpectedException(); // FIXME
+		RLInm(0, 3);
 	}
 
 	// 127 RLIP
 	@Register(Opcode.RLIP)
 	public static final void OP_RLIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLIP.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		RLInm(Types.nibblePairLeft(alpha), Types.nibblePairRight(alpha));
 	}
 
 	// 130 RLILP
 	@Register(Opcode.RLILP)
 	public static final void OP_RLILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLILP.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		int left  = Types.nibblePairLeft(alpha);
+		int right = Types.nibblePairRight(alpha);
+		int ptr   = Memory.read32MDS(Processor.LF + left);
+		Processor.push(Memory.read16(ptr + right));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 131 RLDI00
 	@Register(Opcode.RLDI00)
 	public static final void OP_RLDI00() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLDI00.name);
-		throw new UnexpectedException(); // FIXME
+		RLDInm(0, 0);
+	}
+	
+	private static void RLDInm(int left, int right) {
+		char ptr = Memory.read16MDS(Processor.LF + left);
+		char u   = Memory.read16MDS(ptr + right + 0);
+		char v   = Memory.read16MDS(ptr + right + 1);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(u);
+		Processor.push(v);
 	}
 
 	// 132 RLDIP
 	@Register(Opcode.RLDIP)
 	public static final void OP_RLDIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLDIP.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		RLDInm(Types.nibblePairLeft(alpha), Types.nibblePairRight(alpha));
 	}
 
 	// 133 RLDILP
 	@Register(Opcode.RLDILP)
 	public static final void OP_RLDILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLDILP.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		int  left  = Types.nibblePairLeft(alpha);
+		int  right = Types.nibblePairRight(alpha);
+		int  ptr   = Memory.read32MDS(Processor.LF + left);
+		char u     = Memory.read16(ptr + right + 0);
+		char v     = Memory.read16(ptr + right + 1);
+		// NO PAGE FAULT AFTER HERE
+		Processor.push(u);
+		Processor.push(v);
 	}
 
 	// 134 RGIP
