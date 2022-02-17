@@ -244,6 +244,7 @@ public final class Memory {
 		// ra0 -- low order  16 bit
 		// ra1 -- high order 16 bit
 		if (Perf.ENABLED) Perf.readReal32++;
+		//                    high             low
 		return Types.makeLong(realMemory[ra1], realMemory[ra0]);
 	}
 	public static void writeReal32(int ra0, int ra1, int newValue) {
@@ -288,7 +289,8 @@ public final class Memory {
 			if (Perf.ENABLED) Perf.read32Diff++;
 			ra1 = fetch(va + 1);
 		}
-		return readReal32(ra0, ra1);
+		//                    high             low
+		return Types.makeLong(realMemory[ra1], realMemory[ra0]);
 	}
 	public static void write32(int va, int newValue) {
 		if (Perf.ENABLED) Perf.write32++;
@@ -348,6 +350,74 @@ public final class Memory {
 	public static int lengthenPDA(char value) {
 		if (Perf.ENABLED) Perf.lengthenPDA++;
 		return Constants.mPDA + value;
+	}
+
+	
+	//
+	// CodeCache
+	//
+	private static int cb;
+	private static int pc;
+
+	public static int CB() {
+		return cb;
+	}
+	public static void CB(int newValue) {
+		cb = newValue;
+		// invalidate
+		vaPC     =  0;
+		vaPCLast = ~0; // make (va == vaLast) false
+		vaPCPage = ~0; // make Memory.isSamePage(vaPage, va) false
+	}
+	
+	public static char PC() {
+		return (char)pc;
+	}
+	public static void PC(int newValue) {
+		pc = newValue & 0xFFFF;
+	}
+	
+	private static int vaPCPage;
+	private static int raPCPage;
+	private static int vaPC;
+	private static int raPC;
+	
+	private static int vaPCLast;
+	private static int wordLast;
+	
+	public static int getCodeByte() {
+		if (Perf.ENABLED) Perf.codeCacheCodeByte++;
+		vaPC = cb + (pc / 2);
+		if (vaPC == vaPCLast) {
+			// point to same address again
+			if (Perf.ENABLED) Perf.codeCacheSameLast++;
+		} else {
+			if (isSamePage(vaPCPage, vaPC)) {
+				if (Perf.ENABLED) Perf.codeCacheSamePage++;
+				raPC = raPCPage + (vaPC & Constants.PAGE_MASK);
+			} else {
+				if (Perf.ENABLED) Perf.codeCacheDiffPage++;
+				raPC = fetch(vaPC);
+				vaPCPage = vaPC & ~Constants.PAGE_MASK;
+				raPCPage = raPC & ~Constants.PAGE_MASK;
+			}
+			wordLast = realMemory[raPC];
+		}
+		vaPCLast = vaPC;
+		
+		// increment pc
+		pc = (pc + 1) & 0xFFFF;
+		
+		// pc is already incremented, so even is odd and odd is even
+		//       even means odd   right       left        
+		return (((pc & 1) == 0) ? wordLast : (wordLast >>> 8)) & 0xFF;
+	}
+	public static int getCodeWord() {
+		if (Perf.ENABLED) Perf.codeCacheCodeWord++;
+		int left  = getCodeByte();
+		int right = getCodeByte();
+		
+		return (left << 8) | right;
 	}
 
 }

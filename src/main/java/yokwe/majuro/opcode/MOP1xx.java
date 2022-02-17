@@ -1,7 +1,6 @@
 package yokwe.majuro.opcode;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Processor;
@@ -36,7 +35,7 @@ public class MOP1xx {
 	@Register(Opcode.RB)
 	public static final void OP_RB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		Rn(alpha);
 	}
 
@@ -58,7 +57,7 @@ public class MOP1xx {
 	@Register(Opcode.RLB)
 	public static final void OP_RLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		RLn(alpha);
 	}
 
@@ -84,7 +83,7 @@ public class MOP1xx {
 	@Register(Opcode.RDB)
 	public static final void OP_RDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RDB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		RDn(alpha);
 	}
 
@@ -110,7 +109,7 @@ public class MOP1xx {
 	@Register(Opcode.RDLB)
 	public static final void OP_RDLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RDLB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		RDLn(alpha);
 	}
 
@@ -132,7 +131,7 @@ public class MOP1xx {
 	@Register(Opcode.WB)
 	public static final void OP_WB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		Wn(alpha);
 	}
 
@@ -434,7 +433,7 @@ public class MOP1xx {
 	@Register(Opcode.SLDB)
 	public static final void OP_SLDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.SLDB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		MOP0xx.SLDn(alpha);
 	}
 

@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.ControlTransfers;
+import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Perf;
 import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.opcode.Opcode.Register;
@@ -19,9 +19,9 @@ public final class Interpreter {
 	public static final Runnable[] tableEsc = new Runnable[256];
 	
 	public static void execute() {
-		Processor.savedPC = CodeCache.PC();
+		Processor.savedPC = Memory.PC();
 		Processor.savedSP = Processor.SP;
-		dispatchMop(CodeCache.getCodeByte());
+		dispatchMop(Memory.getCodeByte());
 	}
 	
 	public static void dispatchMop(int opcode) {

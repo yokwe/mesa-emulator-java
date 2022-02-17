@@ -1,7 +1,6 @@
 package yokwe.majuro.opcode;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.mesa.CodeCache;
 import yokwe.majuro.mesa.ControlTransfers;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
@@ -113,7 +112,7 @@ public final class MOP0xx {
 	@Register(Opcode.LLB)
 	public static final void OP_LLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.LLB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		LLn(alpha);
 	}
 
@@ -199,7 +198,7 @@ public final class MOP0xx {
 	@Register(Opcode.LLDB)
 	public static final void OP_LLDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.LLDB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		LLDn(alpha);
 	}
 
@@ -291,7 +290,7 @@ public final class MOP0xx {
 	@Register(Opcode.SLB)
 	public static final void OP_SLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.SLB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		SLn(alpha);
 	}
 
@@ -400,7 +399,7 @@ public final class MOP0xx {
 	@Register(Opcode.PLB)
 	public static final void OP_PLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PLB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		PLn(alpha);
 	}
 
@@ -427,7 +426,7 @@ public final class MOP0xx {
 	@Register(Opcode.PLDB)
 	public static final void OP_PLDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.PLDB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		PLDn(alpha);
 	}
 
@@ -462,7 +461,7 @@ public final class MOP0xx {
 	@Register(Opcode.LGB)
 	public static final void OP_LGB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.LGB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		LGn(alpha);
 	}
 
@@ -492,7 +491,7 @@ public final class MOP0xx {
 	@Register(Opcode.LGDB)
 	public static final void OP_LGDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.LGDB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		LGDn(alpha);
 	}
 
@@ -500,7 +499,7 @@ public final class MOP0xx {
 	@Register(Opcode.SGB)
 	public static final void OP_SGB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.SGB.name);
-		int alpha = CodeCache.getCodeByte();
+		int alpha = Memory.getCodeByte();
 		int ra = Memory.store(Processor.GF + alpha);
 		// NO PAGE FAULT AFTER HERE
 		Memory.writeReal16(ra, Processor.pop());

@@ -55,11 +55,11 @@ public final class Perf {
 	public static long dispatch = 0;
 	
 	// code cache
-	public static long codeCacheCodeByte    = 0;
-	public static long codeCacheCodeWord    = 0;
-	public static long codeCacheSameLast    = 0;
-	public static long codeCacheSamePage    = 0;
-	public static long codeCacheNotSamePage = 0;
+	public static long codeCacheCodeByte = 0;
+	public static long codeCacheCodeWord = 0;
+	public static long codeCacheSameLast = 0;
+	public static long codeCacheSamePage = 0;
+	public static long codeCacheDiffPage = 0;
 
 	// opcode
 	public static final long[] opcodeMop = new long[256];
