@@ -1,5 +1,7 @@
 package yokwe.majuro.opcode;
 
+import static yokwe.majuro.mesa.Constants.*;
+
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
@@ -265,7 +267,7 @@ public class MOP1xx {
 	public static final void OP_RLIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLIP.name);
 		int alpha = Memory.getCodeByte();
-		RLInm(Types.nibblePairLeft(alpha), Types.nibblePairRight(alpha));
+		RLInm(Types.NibblePair.left(alpha), Types.NibblePair.right(alpha));
 	}
 
 	// 130 RLILP
@@ -273,8 +275,8 @@ public class MOP1xx {
 	public static final void OP_RLILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLILP.name);
 		int alpha = Memory.getCodeByte();
-		int left  = Types.nibblePairLeft(alpha);
-		int right = Types.nibblePairRight(alpha);
+		int left  = Types.NibblePair.left(alpha);
+		int right = Types.NibblePair.right(alpha);
 		int ptr   = Memory.read32MDS(Processor.LF + left);
 		Processor.push(Memory.read16(ptr + right));
 		// NO PAGE FAULT AFTER HERE
@@ -301,7 +303,7 @@ public class MOP1xx {
 	public static final void OP_RLDIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLDIP.name);
 		int alpha = Memory.getCodeByte();
-		RLDInm(Types.nibblePairLeft(alpha), Types.nibblePairRight(alpha));
+		RLDInm(Types.NibblePair.left(alpha), Types.NibblePair.right(alpha));
 	}
 
 	// 133 RLDILP
@@ -309,8 +311,8 @@ public class MOP1xx {
 	public static final void OP_RLDILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLDILP.name);
 		int  alpha = Memory.getCodeByte();
-		int  left  = Types.nibblePairLeft(alpha);
-		int  right = Types.nibblePairRight(alpha);
+		int  left  = Types.NibblePair.left(alpha);
+		int  right = Types.NibblePair.right(alpha);
 		int  ptr   = Memory.read32MDS(Processor.LF + left);
 		char u     = Memory.read16(ptr + right + 0);
 		char v     = Memory.read16(ptr + right + 1);
@@ -323,63 +325,103 @@ public class MOP1xx {
 	@Register(Opcode.RGIP)
 	public static final void OP_RGIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RGIP.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		int  left  = Types.NibblePair.left(alpha);
+		int  right = Types.NibblePair.right(alpha);
+		char ptr   = Memory.read16(Processor.GF + left);
+		Processor.push(Memory.read16MDS(ptr + right));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 135 RGILP
 	@Register(Opcode.RGILP)
 	public static final void OP_RGILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RGILP.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		int left  = Types.NibblePair.left(alpha);
+		int right = Types.NibblePair.right(alpha);
+		int ptr   = Memory.read32(Processor.GF + left);
+		Processor.push(Memory.read16(ptr + right));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 136 WLIP
 	@Register(Opcode.WLIP)
 	public static final void OP_WLIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WLIP.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		int  left  = Types.NibblePair.left(alpha);
+		int  right = Types.NibblePair.right(alpha);
+		char ptr   = Memory.read16MDS(Processor.LF + left);
+		Memory.write16MDS(ptr + right, Processor.pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 137 WLILP
 	@Register(Opcode.WLILP)
 	public static final void OP_WLILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WLILP.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		int left  = Types.NibblePair.left(alpha);
+		int right = Types.NibblePair.right(alpha);
+		int ptr   = Memory.read32MDS(Processor.LF + left);
+		Memory.write16(ptr + right, Processor.pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 140 WLDILP
 	@Register(Opcode.WLDILP)
 	public static final void OP_WLDILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WLDILP.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = Memory.getCodeByte();
+		int left  = Types.NibblePair.left(alpha);
+		int right = Types.NibblePair.right(alpha);
+		int ptr   = Memory.read32MDS(Processor.LF + left);
+		Memory.write16(ptr + right + 1, Processor.pop());
+		Memory.write16(ptr + right + 0, Processor.pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 141 RS
 	@Register(Opcode.RS)
 	public static final void OP_RS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RS.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char index = Processor.pop();
+		char ptr   = Processor.pop();
+		Processor.push(Memory.read8MDS(ptr, alpha + index));
 	}
 
 	// 142 RLS
 	@Register(Opcode.RLS)
 	public static final void OP_RLS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.RLS.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char index = Processor.pop();
+		int  ptr   = Processor.popLong();
+		Processor.push(Memory.read8(ptr, alpha + index));
 	}
 
 	// 143 WS
 	@Register(Opcode.WS)
 	public static final void OP_WS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WS.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char index = Processor.pop();
+		char ptr   = Processor.pop();
+		int  data  = Processor.pop() & BYTE_MASK;
+		Memory.write8MDS(ptr, alpha + index, data);
 	}
 
 	// 144 WLS
 	@Register(Opcode.WLS)
 	public static final void OP_WLS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", Processor.savedPC, Opcode.WLS.name);
-		throw new UnexpectedException(); // FIXME
+		int  alpha = Memory.getCodeByte();
+		char index = Processor.pop();
+		int  ptr   = Processor.popLong();
+		int  data  = Processor.pop() & BYTE_MASK;
+		Memory.write8(ptr, alpha + index, data);
 	}
 
 	// 145 R0F
