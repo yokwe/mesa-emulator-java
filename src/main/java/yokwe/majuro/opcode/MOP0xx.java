@@ -27,9 +27,8 @@ public final class MOP0xx {
 	}
 	
 	private static final void LLn(int arg) {
-		int ra = fetchMDS(LF + arg);
+		push(read16MDS(LF + arg));
 		// NO PAGE FAULT AFTER HERE
-		push(readReal16(ra));
 	}
 
 	// 002 LL1
@@ -125,11 +124,9 @@ public final class MOP0xx {
 	}
 
 	private static final void LLDn(int arg) {
-		int ra0 = fetchMDS(LF + arg + 0);
-		int ra1 = fetchMDS(LF + arg + 1);
+		push(read16MDS(LF + arg + 0));
+		push(read16MDS(LF + arg + 1));
 		// NO PAGE FAULT AFTER HERE
-		push(readReal16(ra0));
-		push(readReal16(ra1));
 	}
 
 	// 017 LLD1
@@ -211,9 +208,8 @@ public final class MOP0xx {
 	}
 	
 	private static final void SLn(int arg) {
-		int ra = storeMDS(LF + arg);
+		write16MDS(LF + arg, pop());
 		// NO PAGE FAULT AFTER HERE
-		writeReal16(ra, pop());
 	}
 
 
@@ -303,11 +299,9 @@ public final class MOP0xx {
 	}
 	
 	static final void SLDn(int arg) {
-		int ra0 = storeMDS(LF + arg + 0);
-		int ra1 = storeMDS(LF + arg + 1);
+		write16MDS(LF + arg + 1, pop());
+		write16MDS(LF + arg + 0, pop());
 		// NO PAGE FAULT AFTER HERE
-		writeReal16(ra1, pop());
-		writeReal16(ra0, pop());
 	}
 
 	// 046 SLD1
@@ -367,12 +361,9 @@ public final class MOP0xx {
 	}
 	
 	private static final void PLn(int arg) {
-		// SLn(arg);
-		int ra = storeMDS(LF + arg);
+		write16MDS(LF + arg, pop()); // SLn(arg)
 		// NO PAGE FAULT AFTER HERE
-		writeReal16(ra, pop());
-		// recover();
-		SP++;
+		SP++; // recover();
 	}
 	
 	// 056 PL1
@@ -413,14 +404,10 @@ public final class MOP0xx {
 
 	private static final void PLDn(int arg) {
 		// SLDn(arg);
-		int ra0 = storeMDS(LF + arg + 0);
-		int ra1 = storeMDS(LF + arg + 1);
+		write16MDS(LF + arg + 1, pop());
+		write16MDS(LF + arg + 0, pop());
 		// NO PAGE FAULT AFTER HERE
-		writeReal16(ra1, pop());
-		writeReal16(ra0, pop());
-		// recover();
-		// recover();
-		SP += 2;
+		SP += 2; // recover(); recover();
 	}
 	
 	// 063 PLDB
@@ -439,9 +426,8 @@ public final class MOP0xx {
 	}
 	
 	private static final void LGn(int arg) {
-		int ra = fetch(GF + arg);
+		push(read16(GF + arg));
 		// NO PAGE FAULT AFTER HERE
-		push(readReal16(ra));
 	}
 	
 	// 065 LG1
@@ -474,11 +460,9 @@ public final class MOP0xx {
 	}
 
 	private static final void LGDn(int arg) {
-		int ra0 = fetch(GF + arg + 0);
-		int ra1 = fetch(GF + arg + 1);
+		push(read16(GF + arg + 0));
+		push(read16(GF + arg + 1));
 		// NO PAGE FAULT AFTER HERE
-		push(readReal16(ra0));
-		push(readReal16(ra1));
 	}
 
 	// 071 LGD2
@@ -501,9 +485,8 @@ public final class MOP0xx {
 	public static final void OP_SGB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.SGB.name);
 		int alpha = getCodeByte();
-		int ra = store(GF + alpha);
+		write16(GF + alpha, pop());
 		// NO PAGE FAULT AFTER HERE
-		writeReal16(ra, pop());
 	}
 
 	// 074 BNDCK
