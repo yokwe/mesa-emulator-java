@@ -2,7 +2,7 @@ package yokwe.majuro.mesa;
 
 import static yokwe.majuro.mesa.Constants.*;
 
-public class Types {
+public final class Types {
 	//
 	// Long
 	//
@@ -17,17 +17,32 @@ public class Types {
 	public static int makeLong(int high, int low) {
 		return (high << WORD_BITS) | (low & WORD_MASK);
 	}
-
+	//
+	// BytePair
+	//
+	public static final class BytePair {
+		public static int left(int value) {
+			return (value >>> BYTE_BITS) & BYTE_MASK;
+		}
+		public static int right(int value) {
+			return value & BYTE_MASK;
+		}
+		public static int make(int left, int right) {
+			return ((left & BYTE_MASK) << BYTE_BITS) | (right & BYTE_MASK);
+		}
+	}
 	//
 	// NibblePair
 	//
-	public static int nibblePairLeft(int value) {
-		return (value >>> 4) & 0x0F;
-	}
-	public static int nibblePairRight(int value) {
-		return value & 0x0F;
-	}
-	public static int makeNibblePair(int left, int right) {
-		return ((left & 0x0F) << 4) | (right & 0x0F);
+	public static final class NibblePair {
+		public static int left(int value) {
+			return (value >>> NIBBLE_BITS) & NIBBLE_MASK;
+		}
+		public static int right(int value) {
+			return value & NIBBLE_MASK;
+		}
+		public static int make(int left, int right) {
+			return ((left & NIBBLE_MASK) << NIBBLE_BITS) | (right & NIBBLE_MASK);
+		}
 	}
 }
