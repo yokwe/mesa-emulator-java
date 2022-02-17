@@ -17,32 +17,4 @@ public final class Types {
 	public static int makeLong(int high, int low) {
 		return (high << WORD_BITS) | (low & WORD_MASK);
 	}
-	//
-	// BytePair
-	//
-	public static final class BytePair {
-		public static int left(int value) {
-			return (value >>> BYTE_BITS) & BYTE_MASK;
-		}
-		public static int right(int value) {
-			return value & BYTE_MASK;
-		}
-		public static int make(int left, int right) {
-			return ((left & BYTE_MASK) << BYTE_BITS) | (right & BYTE_MASK);
-		}
-	}
-	//
-	// NibblePair
-	//
-	public static final class NibblePair {
-		public static int left(int value) {
-			return (value >>> NIBBLE_BITS) & NIBBLE_MASK;
-		}
-		public static int right(int value) {
-			return value & NIBBLE_MASK;
-		}
-		public static int make(int left, int right) {
-			return ((left & NIBBLE_MASK) << NIBBLE_BITS) | (right & NIBBLE_MASK);
-		}
-	}
 }
