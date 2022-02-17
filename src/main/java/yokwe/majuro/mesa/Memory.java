@@ -1,8 +1,9 @@
 package yokwe.majuro.mesa;
 
 import static yokwe.majuro.mesa.Constants.*;
+import static yokwe.majuro.mesa.Processor.*;
 
-import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.type.FieldSpec;
 import yokwe.majuro.util.FormatLogger;
 
 
@@ -119,7 +120,7 @@ public final class Memory {
 		}
 		if (rp != rpSize) {
 			logger.error("rp != rpSize");
-			throw new UnexpectedException();
+			error();
 		}
 		// vp: [rpSize .. vpSize)
 		for(int i = rpSize; i < vpSize; i++) {
@@ -173,7 +174,7 @@ public final class Memory {
 				map.setReferenced();
 			}
 			ra = map.getRealAddress();
-			if (ra == 0) throw new UnexpectedException();
+			if (ra == 0) error();
 			
 			cache.vp    = vp;
 			cache.ra    = ra;
@@ -218,7 +219,7 @@ public final class Memory {
 				map.setReferencedDirty();
 			}
 			ra = map.getRealAddress();
-			if (ra == 0) throw new UnexpectedException();
+			if (ra == 0) error();
 			
 			cache.vp    = vp;
 			cache.ra    = ra;
@@ -438,12 +439,59 @@ public final class Memory {
 		//       even means odd   right       left        
 		return (((pc & 1) == 0) ? wordLast : (wordLast >>> 8)) & 0xFF;
 	}
-	public static int getCodeWord() {
+	public static char getCodeWord() {
 		if (Perf.ENABLED) Perf.codeCacheCodeWord++;
 		int left  = getCodeByte();
 		int right = getCodeByte();
 		
-		return (left << 8) | right;
+		return (char)((left << 8) | right);
+	}
+
+	
+	//
+	// Field
+	//
+	
+//	private static int maskTable(int n) {
+//		return ((1 << (n + 1)) - 1) & 0xFFFF;
+//	}
+	private static final int[] MASK_TABLE = {
+			0b0000_0000_0000_0001,
+			0b0000_0000_0000_0011,
+			0b0000_0000_0000_0111,
+			0b0000_0000_0000_1111,
+			0b0000_0000_0001_1111,
+			0b0000_0000_0011_1111,
+			0b0000_0000_0111_1111,
+			0b0000_0000_1111_1111,
+			0b0000_0001_1111_1111,
+			0b0000_0011_1111_1111,
+			0b0000_0111_1111_1111,
+			0b0000_1111_1111_1111,
+			0b0001_1111_1111_1111,
+			0b0011_1111_1111_1111,
+			0b0111_1111_1111_1111,
+			0b1111_1111_1111_1111,
+	};
+	
+	public static char readField(char source, int spec8) {
+		FieldSpec spec = FieldSpec.value((char)spec8);
+		
+		int size = spec.size();
+		int shift = WORD_BITS - (spec.pos() + size - 1);
+		if (shift < 0) error();
+		
+		return (char)((source >>> shift) & MASK_TABLE[size]);
+	}
+	public static char writeField(char dest, int spec8, char data) {
+		FieldSpec spec = FieldSpec.value((char)spec8);
+		
+		int size  = spec.size();
+		int shift = WORD_BITS - (spec.pos() + size - 1);
+		if (shift < 0) error();
+		int mask = MASK_TABLE[size] << shift;
+		
+		return (char)((dest & ~mask) | ((data << shift) & mask));
 	}
 
 }
