@@ -415,35 +415,50 @@ public class MOP1xx {
 	@Register(Opcode.R0F)
 	public static final void OP_R0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.R0F.name);
-		throw new UnexpectedException(); // FIXME
+		int field = getCodeByte();
+		RFnm(0, field);
 	}
 
 	// 146 RF
 	@Register(Opcode.RF)
 	public static final void OP_RF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RF.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(getCodeWord());
+		RFnm(desc.offset(), desc.field());
+	}
+	
+	private static void RFnm(int offset, int field) {
+		char ptr = pop();
+		push(readField(read16MDS(ptr + offset), field));
 	}
 
 	// 147 RL0F
 	@Register(Opcode.RL0F)
 	public static final void OP_RL0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RL0F.name);
-		throw new UnexpectedException(); // FIXME
+		int field = getCodeByte();
+		RLFnm(0, field);
 	}
 
 	// 150 RLF
 	@Register(Opcode.RLF)
 	public static final void OP_RLF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLF.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(getCodeWord());
+		RLFnm(desc.offset(), desc.field());
+	}
+
+	private static void RLFnm(int offset, int field) {
+		int ptr = popLong();
+		push(readField(read16(ptr + offset), field));
 	}
 
 	// 151 RLFS
 	@Register(Opcode.RLFS)
 	public static final void OP_RLFS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLFS.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(pop());
+		RLFnm(desc.offset(), desc.field());
 	}
 
 	// 152 RLIPF
