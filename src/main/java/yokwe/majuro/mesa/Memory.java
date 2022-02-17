@@ -1,9 +1,6 @@
 package yokwe.majuro.mesa;
 
-import static yokwe.majuro.mesa.Constants.MAX_REALMEMORY_PAGE_SIZE;
-import static yokwe.majuro.mesa.Constants.PAGE_BITS;
-import static yokwe.majuro.mesa.Constants.PAGE_MASK;
-import static yokwe.majuro.mesa.Constants.PAGE_SIZE;
+import static yokwe.majuro.mesa.Constants.*;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.FormatLogger;
@@ -267,6 +264,29 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.write16++;
 		realMemory[store(va)] = newValue;
 	}
+	private static final int BYTE_LEFT_MASK = BYTE_MASK << BYTE_BITS;
+	public static char read8(int ptr, int offset) {
+		int word = read16(ptr + offset / 2);
+		if ((offset & 1) == 0) {
+			// returns left
+			return (char)((word >> BYTE_BITS) & BYTE_MASK);
+		} else {
+			// returns right
+			return (char)(word & BYTE_MASK);
+		}
+	}
+	public static void write8(int ptr, int offset, int data) {
+		int ra = fetch(ptr + offset / 2);
+		int word = realMemory[ra];
+		
+		if ((offset & 1) == 0) {
+			// modify left
+			realMemory[ra] = (char)(((data << 8) & BYTE_LEFT_MASK) | (word & BYTE_MASK));
+		} else {
+			// modify right
+			realMemory[ra] = (char)((word & BYTE_LEFT_MASK) | (data & BYTE_MASK));
+		}
+	}
 	
 
 	// 2.3.1 Long Types
@@ -342,7 +362,13 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.write32MDS++;
 		write32(Processor.MDS + (sa & 0xFFFF), newValue);
 	}
-	
+	public static char read8MDS(int sa, int offset) {
+		return read8(Processor.MDS + (sa & 0xFFFF), offset);
+	}
+	public static void write8MDS(int sa, int offset, int data) {
+		write8(Processor.MDS + (sa & 0xFFFF), offset, data);
+	}
+
 	
 	//
 	// PDA
