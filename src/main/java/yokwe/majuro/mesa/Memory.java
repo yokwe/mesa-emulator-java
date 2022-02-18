@@ -227,6 +227,25 @@ public final class Memory {
 		}
 		return ra | (va & PAGE_MASK);
 	}
+	// realAddress returns real address without changing of cache and flags of map
+	public static int realAddress(int va) {
+		if (Perf.ENABLED) Perf.realAddress++;
+		
+		final int vp = va >>> PAGE_BITS;
+
+		Map map = maps[vp];
+		if (map.isVacant()) {
+			logger.error("va = %6X  vp = %4X", va, vp);
+			logger.error("mf = %4X  rp = %4X", map.getFlags(), map.getRealPage());
+			error();
+		}
+		
+		// NO FAULT FROM HERE
+		final int ra = map.getRealAddress();
+		if (ra == 0) error();
+
+		return ra | (va & PAGE_MASK);
+	}
 	//
 	// real memory access
 	//
