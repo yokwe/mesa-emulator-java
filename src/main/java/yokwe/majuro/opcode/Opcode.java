@@ -441,7 +441,7 @@ public enum Opcode {
 
 	
 	public static void main(String[] args) {
-		FormatLogger logger = FormatLogger.getLogger(Opcode.class);
+		FormatLogger logger = FormatLogger.getLogger();
 		for(var e: Opcode.values()) {
 			if (e.type != Opcode.Type.MOP && 0100 <= e.code && e.code <= 0377) {
 				logger.info("// %03o %s", e.code, e.name);

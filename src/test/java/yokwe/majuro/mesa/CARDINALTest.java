@@ -8,8 +8,7 @@ import yokwe.majuro.type.CARDINAL;
 import yokwe.majuro.type.MemoryAccess;
 
 public class CARDINALTest extends Base {
-	private static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger(SELF);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	@Test
 	public void value() {

@@ -8,7 +8,7 @@ import yokwe.majuro.util.FormatLogger;
 
 
 public final class Memory {
-	private static final FormatLogger logger = FormatLogger.getLogger(Memory.class);
+	private static final FormatLogger logger = FormatLogger.getLogger();
 	
 	private static final class Cache {
 		private static final int N_BIT = 14;
