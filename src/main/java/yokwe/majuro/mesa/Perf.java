@@ -9,7 +9,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.opcode.Opcode;
 
 public final class Perf {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Perf.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static final boolean ENABLED = true;
 	public static final boolean OPCODE  = true;
@@ -95,11 +95,11 @@ public final class Perf {
 					
 					if (count == 0) logger.info("Perf stats START");
 					count++;
-					logger.info("{}", String.format("%-24s %10d", name, value));				
+					logger.info("%-24s %10d", name, value);				
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					String exceptionName = e.getClass().getSimpleName();
-					logger.error("{} {}", exceptionName, e);
-					logger.error("field {}", field);
+					logger.error("%s %s", exceptionName, e);
+					logger.error("field %s", field);
 					throw new UnexpectedException(exceptionName, e);
 				}
 			}
@@ -111,7 +111,7 @@ public final class Perf {
 				long opcodeCount = (info.type == Opcode.Type.MOP) ? opcodeMop[info.code] : opcodeEsc[info.code];
 				if (opcodeCount != 0) {
 					if (count == 0) logger.info("Perf opcode START");
-					logger.info("{}", String.format("%s %-8s  %10d", info.type, info.name, opcodeCount));
+					logger.info("%s %-8s  %10d", info.type, info.name, opcodeCount);
 					count++;
 				}
 			}
@@ -125,8 +125,8 @@ public final class Perf {
 				field.setLong(null, 0);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				String exceptionName = e.getClass().getSimpleName();
-				logger.error("{} {}", exceptionName, e);
-				logger.error("field {}", field);
+				logger.error("%s %s", exceptionName, e);
+				logger.error("field %s", field);
 				throw new UnexpectedException(exceptionName, e);
 			}
 		}

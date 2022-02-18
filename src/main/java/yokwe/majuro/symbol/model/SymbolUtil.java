@@ -41,7 +41,7 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
 
 public class SymbolUtil {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SymbolUtil.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	//
 	// Type
@@ -73,7 +73,7 @@ public class SymbolUtil {
 		}
 
 		logger.error("Unexpected");
-		logger.error("  declType  {}", declType.getText());
+		logger.error("  declType  %s", declType.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	//
@@ -106,8 +106,8 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	
@@ -134,8 +134,8 @@ public class SymbolUtil {
 //			return SymbolUtil.getType(name, type.arrayType());
 //		}
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -152,8 +152,8 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -196,8 +196,8 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -227,8 +227,8 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -273,8 +273,8 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Type getType(String name, FieldTypeContext type) {
@@ -292,8 +292,8 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  {}", name);
-		Symbol.logger.error("  type  {}", type.getText());
+		Symbol.logger.error("  name  %s", name);
+		Symbol.logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	private static TypeRecord.Field getField(String typeName, RecordFieldContext recordField) {
@@ -319,7 +319,7 @@ public class SymbolUtil {
 		}
 		
 		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  type  {}", recordField.getText());
+		Symbol.logger.error("  type  %s", recordField.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	
@@ -340,7 +340,7 @@ public class SymbolUtil {
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  declConstant  {}", declConstant.getText());
+		logger.error("  declConstant  %s", declConstant.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Constant getConstant(String name, ConstantTypeNumericContext type, String value) {
@@ -350,9 +350,9 @@ public class SymbolUtil {
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  {}", name);
-		logger.error("  type  {}", type);
-		logger.error("  value {}", value);
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type);
+		logger.error("  value %s", value);
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Constant getConstant(String name, PointerTypeContext type, String value) {

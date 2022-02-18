@@ -9,7 +9,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public class TypeEnum extends Type {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeEnum.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static class Item {
 		public final String name;
@@ -56,7 +56,7 @@ public class TypeEnum extends Type {
 				if (minValue != 0) {
 					logger.warn("Unexpected");
 					logger.warn("  minValue != 0");
-					logger.warn("  enum {}", this);
+					logger.warn("  enum %s", this);
 				}
 			}
 
@@ -73,7 +73,7 @@ public class TypeEnum extends Type {
 					int value = e.value;
 					if (0 <= value && value <= 0xFFFF) continue;
 					logger.error("item value has out of range");
-					logger.error("  item {}", e);
+					logger.error("  item %s", e);
 					foundProblem = true;
 				}
 			}
@@ -82,8 +82,8 @@ public class TypeEnum extends Type {
 				for(var e: itemList) {
 					if (map.containsKey(e.name)) {
 						logger.error("item name has duplication");
-						logger.error("  new  {}", e);
-						logger.error("  old  {}", map.get(e.name));
+						logger.error("  new  %s", e);
+						logger.error("  old  %s", map.get(e.name));
 						foundProblem = true;
 					} else {
 						map.put(e.name, e);
@@ -95,8 +95,8 @@ public class TypeEnum extends Type {
 				for(var e: itemList) {
 					if (map.containsKey(e.value)) {
 						logger.error("item value has duplication");
-						logger.error("  new  {}", e);
-						logger.error("  old  {}", map.get(e.value));
+						logger.error("  new  %s", e);
+						logger.error("  old  %s", map.get(e.value));
 						foundProblem = true;
 					} else {
 						map.put(e.value, e);
@@ -106,7 +106,7 @@ public class TypeEnum extends Type {
 			
 			if (foundProblem) {
 				logger.error("found problem");
-				logger.error("  enum {}", this);
+				logger.error("  enum %s", this);
 				throw new UnexpectedException("found problem");
 			}
 		}
@@ -127,7 +127,7 @@ public class TypeEnum extends Type {
 			if (e.name.equals(itemName)) return e.value;
 		}
 		logger.error("Unexpected");
-		logger.error("  itemName {}", itemName);
+		logger.error("  itemName %s", itemName);
 		throw new UnexpectedException("Unexpected");
 	}
 

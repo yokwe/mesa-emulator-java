@@ -13,7 +13,7 @@ import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.StringUtil;
 
 public class JavaFile {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JavaFile.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	public static final String  TYPE_RULE_FILE_PATH      = Symbol.PATH_RULE_FILE_TYPE;
 	public static final String  TYPE_OUTPUT_DIR_PATH     = "src/main/java";
@@ -42,9 +42,9 @@ public class JavaFile {
 	}
 
 	public static void generate(String ruleFilePath, String outputDirPath, String packageName, boolean addPredefinedType) {
-		logger.info("ruleFilePath  {}",  ruleFilePath);
-		logger.info("outputDirPath {}", outputDirPath);
-		logger.info("packageName   {}",   packageName);
+		logger.info("ruleFilePath  %s",  ruleFilePath);
+		logger.info("outputDirPath %s", outputDirPath);
+		logger.info("packageName   %s",   packageName);
 		
 		Symbol symbol = Symbol.getInstance(ruleFilePath, addPredefinedType);
 		
@@ -102,8 +102,8 @@ public class JavaFile {
 			boolean success = tempFile.renameTo(ouputFile);
 			if (!success) {
 				logger.error("Failed to move file");
-				logger.error("  tempFile  {}", tempFile.getPath());
-				logger.error("  ouputFile {}", ouputFile.getPath());
+				logger.error("  tempFile  %s", tempFile.getPath());
+				logger.error("  ouputFile %s", ouputFile.getPath());
 				throw new UnexpectedException("Unexpected");
 			}
 		}

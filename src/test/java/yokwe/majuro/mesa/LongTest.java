@@ -8,7 +8,7 @@ import yokwe.majuro.type.Long;
 import yokwe.majuro.type.MemoryAccess;
 
 public class LongTest extends Base {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LongTest.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	@Test
 	public void valueA() {

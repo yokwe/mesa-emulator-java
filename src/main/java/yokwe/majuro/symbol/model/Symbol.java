@@ -78,7 +78,7 @@ public class Symbol {
 			symbolContext = parser.symbol();
 		} catch (IOException e) {
 			String exceptionName = e.getClass().getSimpleName();
-			logger.error("{} {}", exceptionName, e);
+			logger.error("%s %s", exceptionName, e);
 			throw new UnexpectedException(exceptionName, e);
 		}
 		
@@ -87,7 +87,7 @@ public class Symbol {
 		{
 			if (addPredefinedType) {
 				for(var e: Type.map.values()) {
-					logger.info("add predefined type  {}", e.name);
+					logger.info("add predefined type  %s", e.name);
 					declList.add(new DeclType(e));
 				}
 			}
@@ -107,28 +107,28 @@ public class Symbol {
 		
 		Symbol symbol = new Symbol(symbolContext.header().name.getText(), declList);
 		
-		logger.info("cons {}", Constant.map.size());
-		logger.info("type {}", Type.map.keySet().stream().filter(o -> !o.contains("#")).count());
+		logger.info("cons %s", Constant.map.size());
+		logger.info("type %s", Type.map.keySet().stream().filter(o -> !o.contains("#")).count());
 		
 		// sanity check
 		{
 			int needsFixCountCons = Constant.fixAll();
 			int needsFixCountType = Type.fixAll();
 			
-			logger.info("needsFix cons {}", needsFixCountCons);
-			logger.info("needsFix type {}", needsFixCountType);
+			logger.info("needsFix cons %d", needsFixCountCons);
+			logger.info("needsFix type %d", needsFixCountType);
 			
 			if (needsFixCountCons != 0) {
 				for(var e: Constant.map.values()) {
 					if (e.needsFix && e.type instanceof TypeReference) {
-						logger.info("needsFix cons {}", e);
+						logger.info("needsFix cons %s", e);
 					}
 				}
 			}
 			if (needsFixCountType != 0) {
 				for(var e: Type.map.values()) {
 					if (e.needsFix && e instanceof TypeReference) {
-						logger.info("needsFix type {}", e);
+						logger.info("needsFix type %s", e);
 					}
 				}
 			}
@@ -162,16 +162,16 @@ public class Symbol {
 		
 		String path = PATH_RULE_FILE_TYPE;
 //		String path = PATH_RULE_FILE_TEST;
-		logger.info("path {}", path);
+		logger.info("path %s", path);
 
 		Symbol symbol = Symbol.getInstance(path, true);
-		logger.info("symbol {}", symbol);
+		logger.info("symbol %s", symbol);
 		
 		for(var e: Constant.map.values()) {
-			if (e.needsFix) logger.info("needsFix cons {}", e);
+			if (e.needsFix) logger.info("needsFix cons %s", e);
 		}
 		for(var e: Type.map.values()) {
-			if (e.needsFix) logger.info("needsFix type {}", e);
+			if (e.needsFix) logger.info("needsFix type %s", e);
 		}
 		
 		logger.info("STOP");

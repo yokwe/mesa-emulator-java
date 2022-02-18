@@ -3,7 +3,7 @@ package yokwe.majuro.type;
 import yokwe.majuro.UnexpectedException;
 
 public final class ContextSubrange implements CheckValue {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(java.lang.invoke.MethodHandles.lookup().lookupClass());
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public final String name;
 	public final int    minValue;
@@ -18,8 +18,8 @@ public final class ContextSubrange implements CheckValue {
 	public void check(int value) {
 		if (minValue <= value && value <= maxValue) return;
 		logger.error("Unexpected");
-		logger.error("  class     {}", name);
-		logger.error("  value     {}", value);
+		logger.error("  class     %s", name);
+		logger.error("  value     %s", value);
 		throw new UnexpectedException("Unexpected");
 	}
 }

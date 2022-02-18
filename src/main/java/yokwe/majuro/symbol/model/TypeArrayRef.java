@@ -33,7 +33,7 @@ public class TypeArrayRef extends TypeArray {
 					setValue(typeEnum.minValue, typeEnum.maxValue);
 				} else {
 					logger.error("Unexpected");
-					logger.error("  this  {}", this);
+					logger.error("  this  %s", this);
 					throw new UnexpectedException("Unexpected");
 				}
 				

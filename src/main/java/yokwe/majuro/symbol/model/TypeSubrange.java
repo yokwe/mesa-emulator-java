@@ -4,7 +4,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public class TypeSubrange extends Type {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeSubrange.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	public static final String NAME_INTEGER          = "INTEGER";
 	
@@ -47,8 +47,8 @@ public class TypeSubrange extends Type {
 	public void checkValue(long value) {
 		if (minValue <= value && value <= maxValue) return;
 		logger.error("Unexpected");
-		logger.error("  value {}", value);
-		logger.error("  this  {}", this);
+		logger.error("  value %s", value);
+		logger.error("  this  %s", this);
 		throw new UnexpectedException("Unexpected");
 	}
 	
@@ -77,7 +77,7 @@ public class TypeSubrange extends Type {
 				} else {
 					if (maxValue < minValue) {
 						logger.error("Unexpected");
-						logger.error("  {}", this);
+						logger.error("  %s", this);
 						throw new UnexpectedException("Unexpected");
 					}
 				}

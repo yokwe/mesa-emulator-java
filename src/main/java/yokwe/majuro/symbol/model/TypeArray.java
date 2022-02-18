@@ -24,8 +24,8 @@ public abstract class TypeArray extends Type {
 	public void checkValue(long value) {
 		if (!needsFix && minValue <= value && value <= maxValue) return;
 		logger.error("Unexpected");
-		logger.error("  value {}", value);
-		logger.error("  this  {}", this);
+		logger.error("  value %s", value);
+		logger.error("  this  %s", this);
 		throw new UnexpectedException("Unexpected");
 	}
 	

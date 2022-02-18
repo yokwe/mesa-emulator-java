@@ -8,7 +8,7 @@ import yokwe.majuro.util.ClassUtil;
 import yokwe.majuro.util.StringUtil;
 
 public class Constant implements Comparable<Constant> {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Constant.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	public static Map<String, Constant> map = new TreeMap<>();
 	//                name
@@ -17,8 +17,8 @@ public class Constant implements Comparable<Constant> {
 		// add to map
 		if (map.containsKey(name)) {
 			logger.error("duplicate name");
-			logger.error("  old  {}", map.get(name));
-			logger.error("  new  {}", cons);
+			logger.error("  old  %s", map.get(name));
+			logger.error("  new  %s", cons);
 			throw new UnexpectedException("duplicate name");
 		} else {
 			map.put(name, cons);
@@ -74,9 +74,9 @@ public class Constant implements Comparable<Constant> {
 			}
 		} catch (NumberFormatException e) {
 			logger.error("Unexpected number format");
-			logger.error("  text {}!", text);
+			logger.error("  text %s!", text);
 			String exceptionName = e.getClass().getSimpleName();
-			logger.error("{} {}", exceptionName, e);
+			logger.error("%s %s", exceptionName, e);
 			throw new UnexpectedException(exceptionName, e);
 		}
 	}
@@ -94,7 +94,7 @@ public class Constant implements Comparable<Constant> {
 				Constant cons = map.get(string);
 				if (cons.needsFix) {
 					logger.error("cons needs fix");
-					logger.error("  cons {}", cons);
+					logger.error("  cons %s", cons);
 					throw new UnexpectedException("cons needs fix");
 				}
 				return cons.numericValue;
@@ -132,7 +132,7 @@ public class Constant implements Comparable<Constant> {
 					typePointerLong.checkValue(numericValue);
 				} else {
 					logger.error("Unexpected");
-					logger.error("  this  {}", this);
+					logger.error("  this  %s", this);
 					throw new UnexpectedException("Unexpected");
 				}
 			}

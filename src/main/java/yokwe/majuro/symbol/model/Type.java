@@ -9,7 +9,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public abstract class Type implements Comparable<Type> {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Type.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static Type findRealType(String name) {
 		if (map.containsKey(name)) {
@@ -39,9 +39,9 @@ public abstract class Type implements Comparable<Type> {
 			}
 		}
 		logger.error("Unexpected");
-		logger.error("  value dec {}", Long.toString(value));
-		logger.error("  value hex {}", Long.toHexString(value));
-		logger.error("  value bin {}", Long.toBinaryString(value));
+		logger.error("  value dec %s", Long.toString(value));
+		logger.error("  value hex %s", Long.toHexString(value));
+		logger.error("  value bin %s", Long.toBinaryString(value));
 		throw new UnexpectedException("Unexpected");
 	}
 	
@@ -52,8 +52,8 @@ public abstract class Type implements Comparable<Type> {
 		// add to map
 		if (map.containsKey(name)) {
 			logger.error("duplicate name");
-			logger.error("  old  {}", map.get(name));
-			logger.error("  new  {}", type);
+			logger.error("  old  %s", map.get(name));
+			logger.error("  new  %s", type);
 			throw new UnexpectedException("duplicate name");
 		} else {
 			map.put(name, type);
@@ -84,7 +84,7 @@ public abstract class Type implements Comparable<Type> {
 		logger.info("dumpReference START");
 		for(int i = 0; i < 99; i++) {
 			if (type == null) break;
-			logger.info("{} {}", i, type.toMesaDecl());
+			logger.info("%d %s", i, type.toMesaDecl());
 			if (type instanceof TypeReference) {
 				type = findType(type.toTypeReference().typeString);
 				continue;
@@ -151,8 +151,8 @@ public abstract class Type implements Comparable<Type> {
 		if (needsFix) throw new UnexpectedException("Unexpected");
 		if (bitSize == NO_VALUE) {
 			logger.error("bitSize == NO_VALUE");
-			logger.error("name  {}", name);
-			logger.error("type  {}", this);
+			logger.error("name  %s", name);
+			logger.error("type  %s", this);
 			throw new UnexpectedException("Unexpected");
 		}
 		return bitSize;

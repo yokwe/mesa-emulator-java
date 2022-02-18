@@ -11,7 +11,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public abstract class TypeRecord extends Type {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypeRecord.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static class Field {
 		public static final int    NO_VALUE = -1;
@@ -88,7 +88,7 @@ public abstract class TypeRecord extends Type {
 			if (8 < bitSize && (bitSize % 16) != 0) {
 				foundProblem = true;
 				logger.error("bitSize is not multiple of 16");
-				logger.error("  {}", String.format("%-30s  %4d:%2d", name, bitSize / 16, bitSize % 16));						
+				logger.error("  %-30s  %4d:%2d", name, bitSize / 16, bitSize % 16);						
 			}
 			
 			// check duplicate filed name
@@ -97,8 +97,8 @@ public abstract class TypeRecord extends Type {
 				for(var e: fieldList) {
 					if (map.containsKey(e.name)) {
 						logger.error("dupblicate field name");
-						logger.error("  new  {}", e);
-						logger.error("  old  {}", map.get(e.name));
+						logger.error("  new  %s", e);
+						logger.error("  old  %s", map.get(e.name));
 						foundProblem = true;
 					} else {
 						map.put(e.name, e);
@@ -122,9 +122,9 @@ public abstract class TypeRecord extends Type {
 						if (map.containsKey(i)) {
 							foundProblem = true;
 							Field o = map.get(i);
-							logger.error("field overlap at bit {}", i);
-							logger.error("{}", String.format("  old %-10s  %2d:%2d - %2d", o.name, o.offset, o.startBit, o.stopBit));
-							logger.error("{}", String.format("  new %-10s  %2d:%2d - %2d", e.name, e.offset, e.startBit, e.stopBit));
+							logger.error("field overlap at bit %s", i);
+							logger.error("  old %-10s  %2d:%2d - %2d", o.name, o.offset, o.startBit, o.stopBit);
+							logger.error("  new %-10s  %2d:%2d - %2d", e.name, e.offset, e.startBit, e.stopBit);
 						} else {
 							map.put(i, e);
 						}
@@ -158,7 +158,7 @@ public abstract class TypeRecord extends Type {
 								if (map.containsKey(j)) break;
 								stop = j;
 							}
-							logger.error("hole  {}  {}  {}:{} - {}:{}", name, bitSize, start / 16, start % 16, stop / 16, stop % 16);
+							logger.error("hole  %s  %d  %d:%d - %d:%d", name, bitSize, start / 16, start % 16, stop / 16, stop % 16);
 						}
 					}
 				}
@@ -166,7 +166,7 @@ public abstract class TypeRecord extends Type {
 
 			if (foundProblem) {
 				logger.error("found problem");
-				logger.error("  name {}", name);
+				logger.error("  name %s", name);
 				throw new UnexpectedException("found problem");
 			}
 		}
@@ -209,15 +209,15 @@ public abstract class TypeRecord extends Type {
 							if (type == Type.UNSPECIFIED) continue;
 							if (type == Type.CARDINAL)    continue;
 							foundProblem = true;
-							logger.error("field  {}  {}  fieldBitSize  {}  typeBitSize  {}", e.name, type.name, fieldBitSize, typeBitSize);
+							logger.error("field  %s  %s  fieldBitSize  %d  typeBitSize  %d", e.name, type.name, fieldBitSize, typeBitSize);
 						}
 					}
 					
 					if (foundProblem) {
 						logger.error("found problem");
-						logger.error("  {}", name);
+						logger.error("  %s", name);
 						for(var e: fieldList) {
-							logger.error("  {}", String.format("%-10s %-10s  field %2d  type %2d", e.name, e.type.realType().name, e.bitSize, e.type.bitSize));
+							logger.error("  %-10s %-10s  field %2d  type %2d", e.name, e.type.realType().name, e.bitSize, e.type.bitSize);
 						}
 						throw new UnexpectedException("found problem");
 					}

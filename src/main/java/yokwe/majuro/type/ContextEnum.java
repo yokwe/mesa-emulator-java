@@ -3,7 +3,7 @@ package yokwe.majuro.type;
 import yokwe.majuro.UnexpectedException;
 
 public final class ContextEnum implements CheckValue {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(java.lang.invoke.MethodHandles.lookup().lookupClass());
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public final String   name;
 	public final int[]    validValues;
@@ -23,8 +23,8 @@ public final class ContextEnum implements CheckValue {
 			if (validValues[i] == value) return validNames[i];
 		}
 		logger.error("Unexpected");
-		logger.error("  class {}", name);
-		logger.error("  value {}", value);
+		logger.error("  class %s", name);
+		logger.error("  value %s", value);
 		throw new UnexpectedException("Unexpected");
 	}
 }

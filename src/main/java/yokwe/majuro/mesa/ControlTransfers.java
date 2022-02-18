@@ -4,7 +4,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.type.XferType;
 
 public final class ControlTransfers {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ControlTransfers.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	// 9.5.3 Trap Handlers
 	public static void SaveStack(int state) {

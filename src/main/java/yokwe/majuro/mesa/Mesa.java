@@ -1,7 +1,6 @@
 package yokwe.majuro.mesa;
 
 public final class Mesa {
-//	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Mesa.class);
-
+//	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 }

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 
 public class MapTest extends Base {	
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapTest.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	@Test
 	void clear() {

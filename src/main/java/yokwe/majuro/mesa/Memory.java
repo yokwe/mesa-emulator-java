@@ -70,8 +70,8 @@ public final class Memory {
 		rpSize = Integer.max(MAX_REALMEMORY_PAGE_SIZE, 1 << (rmbits - PAGE_BITS));
 		ioRegionPage = ioRegionPage_;
 		
-		logger.info("vpSize {}", String.format("%X", vpSize));
-		logger.info("rpSize {}", String.format("%X", rpSize));
+		logger.info("vpSize %X", vpSize);
+		logger.info("rpSize %X", rpSize);
 		
 		realMemory = new char[rpSize * PAGE_SIZE];
 		maps       = new Map[vpSize];

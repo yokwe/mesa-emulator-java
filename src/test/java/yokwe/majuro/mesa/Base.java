@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 public class Base {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Base.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	protected static final int DEFAULT_VMBITS = 24;
 	protected static final int DEFAULT_RMBITS = 20;

@@ -4,7 +4,7 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.util.StringUtil;
 
 public abstract class TypePointer extends Type {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TypePointer.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	private final int    bits;
 	private final long   maxValue;
@@ -33,7 +33,7 @@ public abstract class TypePointer extends Type {
 	public void checkValue(long value) {
 		if (0 <= value && value <= maxValue) return;
 		logger.error("Unexpected");
-		logger.error("  this  {}", this);
+		logger.error("  this  ", this);
 		throw new UnexpectedException("Unexpected");
 	}
 

@@ -31,7 +31,7 @@ import yokwe.majuro.util.AutoIndentPrintWriter;
 import yokwe.majuro.util.StringUtil;
 
 public class ProcessDecl {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProcessDecl.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	private static final boolean DEBUG_SHOW_TYPE  = false;
 	private static final boolean DEBUG_SHOW_TRACE = false;
@@ -395,7 +395,7 @@ public class ProcessDecl {
 			var processType = new ProcessTypeTop(javaFile);
 			processType.process();
 		} else if (javaFile.cons != null) {
-			logger.info("CONSTANT {}", javaFile.cons.toMesaDecl());
+			logger.info("CONSTANT %s", javaFile.cons.toMesaDecl());
 			
 			var processCons = new ProcessConsTop(javaFile);
 			processCons.process();
@@ -714,7 +714,7 @@ public class ProcessDecl {
 					start  = e.startBit;
 					stop   = e.stopBit;
 				} else {
-					logger.error("field {}", e);
+					logger.error("field %s", e);
 					throw new UnexpectedException("Unexpected");
 				}
 				
@@ -1283,8 +1283,8 @@ public class ProcessDecl {
 				} else {
 					out.println("// FIXME  Field is not aligned");
 					logger.warn("Field is not aligned");
-					logger.warn("  name {}.{}", type.name, field.name);
-					logger.warn("  mesa {}", field.toMesaType());
+					logger.warn("  name %s.%s", type.name, field.name);
+					logger.warn("  mesa %s", field.toMesaType());
 					continue;
 				}
 				

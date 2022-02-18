@@ -15,10 +15,10 @@ import yokwe.majuro.symbol.model.TypePointerShort;
 import yokwe.majuro.symbol.model.TypeSubrange;
 
 public abstract class ProcessType {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProcessType.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static void unexpected(Type type) {
-		logger.error("type {}", type.toMesaDecl());
+		logger.error("type %s", type.toMesaDecl());
 		throw new UnexpectedException("Unexpected");
 	}
 	

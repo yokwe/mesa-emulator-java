@@ -15,10 +15,10 @@ import yokwe.majuro.symbol.model.TypePointerShort;
 import yokwe.majuro.symbol.model.TypeSubrange;
 
 public abstract class ProcessField {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProcessField.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static void unexpetected(Field field) {
-		logger.error("field {}", field.toMesaType());
+		logger.error("field %s", field.toMesaType());
 		throw new UnexpectedException("Unexpected");
 	}
 	

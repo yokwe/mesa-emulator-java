@@ -7,7 +7,7 @@ import org.junit.jupiter.api.*;
 import yokwe.majuro.type.BytePair;
 
 public class BytePairTest extends Base {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BytePairTest.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	@Test
 	public void valueA() {
