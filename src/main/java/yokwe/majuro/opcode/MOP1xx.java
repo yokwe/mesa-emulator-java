@@ -21,7 +21,7 @@ public class MOP1xx {
 	}
 	
 	private static void Rn(int arg) {
-		char ptr = pop();
+		int ptr = pop();
 		push(read16MDS(ptr + arg));
 		// NO PAGE FAULT AFTER HERE
 	}
@@ -49,8 +49,8 @@ public class MOP1xx {
 	}
 	
 	private static void RLn(int arg) {
-		int  ptr = popLong();
-		char t   = read16(ptr + arg);
+		int ptr = popLong();
+		int t   = read16(ptr + arg);
 		// NO PAGE FAULT AFTER HERE
 		push(t);
 	}
@@ -71,9 +71,9 @@ public class MOP1xx {
 	}
 
 	private static void RDn(int arg) {
-		char ptr = pop();
-		char u   = read16MDS(ptr + arg + 0);
-		char v   = read16MDS(ptr + arg + 1);
+		int ptr = pop();
+		int u   = read16MDS(ptr + arg + 0);
+		int v   = read16MDS(ptr + arg + 1);
 		// NO PAGE FAULT AFTER HERE
 		push(u);
 		push(v);
@@ -95,9 +95,9 @@ public class MOP1xx {
 	}
 
 	private static void RDLn(int arg) {
-		int  ptr = popLong();
-		char u   = read16(ptr + arg + 0);
-		char v   = read16(ptr + arg + 1);
+		int ptr = popLong();
+		int u   = read16(ptr + arg + 0);
+		int v   = read16(ptr + arg + 1);
 		// NO PAGE FAULT AFTER HERE
 		push(u);
 		push(v);
@@ -119,7 +119,7 @@ public class MOP1xx {
 	}
 	
 	private static void Wn(int arg) {
-		char ptr = pop();
+		int ptr = pop();
 		write16MDS(ptr, pop());
 		// NO PAGE FAULT AFTER HERE
 	}
@@ -136,9 +136,9 @@ public class MOP1xx {
 	@Register(Opcode.PSB)
 	public static final void OP_PSB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.PSB.name);
-		int  alpha = getCodeByte();
-		char u     = pop();
-		char ptr   = pop();
+		int alpha = getCodeByte();
+		int u     = pop();
+		int ptr   = pop();
 		write16MDS(ptr + alpha, u);		
 		// NO PAGE FAULT AFTER HERE
 		SP++; // Recover()
@@ -158,9 +158,9 @@ public class MOP1xx {
 	@Register(Opcode.PSLB)
 	public static final void OP_PSLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.PSLB.name);
-		int  alpha = getCodeByte();
-		char u     = pop();
-		int  ptr   = popLong();
+		int alpha = getCodeByte();
+		int u     = pop();
+		int ptr   = popLong();
 		write16(ptr + alpha, u);
 		// NO PAGE FAULT AFTER HERE
 		SP += 2; // Recover(); Recover();
@@ -170,8 +170,8 @@ public class MOP1xx {
 	@Register(Opcode.WDB)
 	public static final void OP_WDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WDB.name);
-		int  alpha = getCodeByte();
-		char ptr   = pop();
+		int alpha = getCodeByte();
+		int ptr   = pop();
 		write16MDS(ptr + alpha + 1, pop());
 		write16MDS(ptr + alpha + 0, pop());
 		// NO PAGE FAULT AFTER HERE
@@ -185,9 +185,9 @@ public class MOP1xx {
 	}
 	
 	private static void PSDn(int arg) {
-		char v     = pop();
-		char u     = pop();
-		char ptr   = pop();
+		int v     = pop();
+		int u     = pop();
+		int ptr   = pop();
 		write16MDS(ptr + arg + 1, v);
 		write16MDS(ptr + arg + 0, u);
 		// NO PAGE FAULT AFTER HERE
@@ -217,10 +217,10 @@ public class MOP1xx {
 	@Register(Opcode.PSDLB)
 	public static final void OP_PSDLB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.PSDLB.name);
-		int  alpha = getCodeByte();
-		char v     = pop();
-		char u     = pop();
-		int  ptr   = popLong();
+		int alpha = getCodeByte();
+		int v     = pop();
+		int u     = pop();
+		int ptr   = popLong();
 		write16(ptr + alpha + 1, v);
 		write16(ptr + alpha + 0, u);
 		// NO PAGE FAULT AFTER HERE
@@ -235,7 +235,7 @@ public class MOP1xx {
 	}
 	
 	private static void RLInm(int left, int right) {
-		char ptr = read16MDS(LF + left);
+		int ptr = read16MDS(LF + left);
 		push(read16MDS(ptr + right));
 		// NO PAGE FAULT AFTER HERE
 	}
@@ -265,7 +265,7 @@ public class MOP1xx {
 	@Register(Opcode.RLIP)
 	public static final void OP_RLIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLIP.name);
-		var alpha = NibblePair.value((char)getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		RLInm(alpha.left(), alpha.right());
 	}
 
@@ -273,7 +273,7 @@ public class MOP1xx {
 	@Register(Opcode.RLILP)
 	public static final void OP_RLILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLILP.name);
-		var alpha = NibblePair.value((char)getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read32MDS(LF + alpha.left());
 		push(read16(ptr + alpha.right()));
 		// NO PAGE FAULT AFTER HERE
@@ -287,9 +287,9 @@ public class MOP1xx {
 	}
 	
 	private static void RLDInm(int left, int right) {
-		char ptr = read16MDS(LF + left);
-		char u   = read16MDS(ptr + right + 0);
-		char v   = read16MDS(ptr + right + 1);
+		int ptr = read16MDS(LF + left);
+		int u   = read16MDS(ptr + right + 0);
+		int v   = read16MDS(ptr + right + 1);
 		// NO PAGE FAULT AFTER HERE
 		push(u);
 		push(v);
@@ -299,7 +299,7 @@ public class MOP1xx {
 	@Register(Opcode.RLDIP)
 	public static final void OP_RLDIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLDIP.name);
-		var alpha = NibblePair.value((char)getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		RLDInm(alpha.left(), alpha.right());
 	}
 
@@ -307,11 +307,11 @@ public class MOP1xx {
 	@Register(Opcode.RLDILP)
 	public static final void OP_RLDILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLDILP.name);
-		var  alpha = BytePair.value((char)getCodeByte());
-		int  ptr   = read32MDS(LF + alpha.left());
-		int  right = alpha.right();
-		char u     = read16(ptr + right + 0);
-		char v     = read16(ptr + right + 1);
+		var alpha = BytePair.value(getCodeByte());
+		int ptr   = read32MDS(LF + alpha.left());
+		int right = alpha.right();
+		int u     = read16(ptr + right + 0);
+		int v     = read16(ptr + right + 1);
 		// NO PAGE FAULT AFTER HERE
 		push(u);
 		push(v);
@@ -321,8 +321,8 @@ public class MOP1xx {
 	@Register(Opcode.RGIP)
 	public static final void OP_RGIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RGIP.name);
-		var  alpha = BytePair.value((char)getCodeByte());
-		char ptr   = read16(GF + alpha.left());
+		var alpha = BytePair.value(getCodeByte());
+		int ptr   = read16(GF + alpha.left());
 		push(read16MDS(ptr + alpha.right()));
 		// NO PAGE FAULT AFTER HERE
 	}
@@ -331,7 +331,7 @@ public class MOP1xx {
 	@Register(Opcode.RGILP)
 	public static final void OP_RGILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RGILP.name);
-		var alpha = NibblePair.value((char)getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read32(GF + alpha.left());
 		push(read16(ptr + alpha.right()));
 		// NO PAGE FAULT AFTER HERE
@@ -341,8 +341,8 @@ public class MOP1xx {
 	@Register(Opcode.WLIP)
 	public static final void OP_WLIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLIP.name);
-		var  alpha = BytePair.value((char)getCodeByte());
-		char ptr   = read16MDS(LF + alpha.left());
+		var alpha = BytePair.value(getCodeByte());
+		int ptr   = read16MDS(LF + alpha.left());
 		write16MDS(ptr + alpha.right(), pop());
 		// NO PAGE FAULT AFTER HERE
 	}
@@ -351,7 +351,7 @@ public class MOP1xx {
 	@Register(Opcode.WLILP)
 	public static final void OP_WLILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLILP.name);
-		var alpha = NibblePair.value((char)getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read32MDS(LF + alpha.left());
 		write16(ptr + alpha.right(), pop());
 		// NO PAGE FAULT AFTER HERE
@@ -361,7 +361,7 @@ public class MOP1xx {
 	@Register(Opcode.WLDILP)
 	public static final void OP_WLDILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLDILP.name);
-		var alpha = NibblePair.value((char)getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read32MDS(LF + alpha.left());
 		int right = alpha.right();
 		write16(ptr + right + 1, pop());
@@ -373,9 +373,9 @@ public class MOP1xx {
 	@Register(Opcode.RS)
 	public static final void OP_RS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RS.name);
-		int  alpha = getCodeByte();
-		char index = pop();
-		char ptr   = pop();
+		int alpha = getCodeByte();
+		int index = pop();
+		int ptr   = pop();
 		push(read8MDS(ptr, alpha + index));
 	}
 
@@ -383,9 +383,9 @@ public class MOP1xx {
 	@Register(Opcode.RLS)
 	public static final void OP_RLS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLS.name);
-		int  alpha = getCodeByte();
-		char index = pop();
-		int  ptr   = popLong();
+		int alpha = getCodeByte();
+		int index = pop();
+		int ptr   = popLong();
 		push(read8(ptr, alpha + index));
 	}
 
@@ -393,10 +393,10 @@ public class MOP1xx {
 	@Register(Opcode.WS)
 	public static final void OP_WS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WS.name);
-		int  alpha = getCodeByte();
-		char index = pop();
-		char ptr   = pop();
-		int  data  = pop() & BYTE_MASK;
+		int alpha = getCodeByte();
+		int index = pop();
+		int ptr   = pop();
+		int data  = pop() & BYTE_MASK;
 		write8MDS(ptr, alpha + index, data);
 	}
 
@@ -404,10 +404,10 @@ public class MOP1xx {
 	@Register(Opcode.WLS)
 	public static final void OP_WLS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLS.name);
-		int  alpha = getCodeByte();
-		char index = pop();
-		int  ptr   = popLong();
-		int  data  = pop() & BYTE_MASK;
+		int alpha = getCodeByte();
+		int index = pop();
+		int ptr   = popLong();
+		int data  = pop() & BYTE_MASK;
 		write8(ptr, alpha + index, data);
 	}
 
@@ -428,7 +428,7 @@ public class MOP1xx {
 	}
 	
 	private static void RFnm(int offset, int field) {
-		char ptr = pop();
+		int ptr = pop();
 		push(readField(read16MDS(ptr + offset), field));
 	}
 

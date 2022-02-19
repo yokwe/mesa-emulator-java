@@ -503,8 +503,8 @@ public final class MOP0xx {
 	@Register(Opcode.BNDCK)
 	public static final void OP_BNDCK() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.BNDCK.name);
-		char range = pop();
-		char index = pop();
+		int range = pop();
+		int index = pop();
 		SP++; // Push(index);
 		if (range <= index) ControlTransfers.boundsTrap();
 	}
