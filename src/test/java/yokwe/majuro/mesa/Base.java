@@ -105,9 +105,7 @@ public class Base {
 				
 				p = p + size;
 			}
-
 		}
-		
 	}
 	
 	@BeforeEach
