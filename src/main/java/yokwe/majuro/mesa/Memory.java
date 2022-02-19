@@ -136,6 +136,15 @@ public final class Memory {
 	public static void clearCache(int vp) {
 		getCache(vp).clear();
 	}
+	public static void clearCacheAndMapFlags() {
+		for(int i = 0; i < cacheArray.length; i++) {
+			cacheArray[i].clear();
+		}
+		for(int i = 0; i < maps.length; i++) {
+			if (maps[i].isVacant()) continue;
+			maps[i].setFlags(0);
+		}
+	}
 	
 	
 	//
@@ -170,6 +179,7 @@ public final class Memory {
 			}
 			
 			// NO FAULT FROM HERE
+			logger.info("XXX");
 			if (map.isNotReferenced()) {
 				map.setReferenced();
 			}
