@@ -25,11 +25,8 @@
  *******************************************************************************/
 package yokwe.majuro.study;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class T101 {
-	private static final Logger logger = LoggerFactory.getLogger(T101.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	public static void main(String[] args) {
 		logger.info("START");
