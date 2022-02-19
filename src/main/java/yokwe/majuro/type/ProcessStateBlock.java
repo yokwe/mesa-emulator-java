@@ -13,15 +13,15 @@ public final class ProcessStateBlock extends MemoryBase {
     //
     // Constructor
     //
-    public static final ProcessStateBlock longPointer(@Mesa.LONG_POINTER int base) {
-        return new ProcessStateBlock(base);
+    public static final ProcessStateBlock longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ProcessStateBlock(base, access);
     }
-    public static final ProcessStateBlock pointer(@Mesa.SHORT_POINTER int base) {
-        return new ProcessStateBlock(Memory.lengthenMDS(base));
+    public static final ProcessStateBlock pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ProcessStateBlock(Memory.lengthenMDS(base), access);
     }
     
-    private ProcessStateBlock(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ProcessStateBlock(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class ProcessStateBlock extends MemoryBase {
     //
     // link (0:0..15): PsbLink
     private static final int OFFSET_LINK = 0;
-    public PsbLink link(MemoryAccess access) {
+    public PsbLink link() {
         int longPointer = base + OFFSET_LINK;
         return PsbLink.longPointer(longPointer, access);
     }
     // flags (1:0..15): PsbFlags
     private static final int OFFSET_FLAGS = 1;
-    public PsbFlags flags(MemoryAccess access) {
+    public PsbFlags flags() {
         int longPointer = base + OFFSET_FLAGS;
         return PsbFlags.longPointer(longPointer, access);
     }
@@ -43,29 +43,29 @@ public final class ProcessStateBlock extends MemoryBase {
     private static final int OFFSET_CONTEXT = 2;
     public POINTER context() {
         int longPointer = base + OFFSET_CONTEXT;
-        return POINTER.longPointer(longPointer);
+        return POINTER.longPointer(longPointer, access);
     }
     // timeout (3:0..15): Ticks
     private static final int OFFSET_TIMEOUT = 3;
-    public CARDINAL timeout(MemoryAccess access) {
+    public CARDINAL timeout() {
         int longPointer = base + OFFSET_TIMEOUT;
         return CARDINAL.longPointer(longPointer, access);
     }
     // mds (4:0..15): CARDINAL
     private static final int OFFSET_MDS = 4;
-    public CARDINAL mds(MemoryAccess access) {
+    public CARDINAL mds() {
         int longPointer = base + OFFSET_MDS;
         return CARDINAL.longPointer(longPointer, access);
     }
     // available (5:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 5;
-    public UNSPECIFIED available(MemoryAccess access) {
+    public UNSPECIFIED available() {
         int longPointer = base + OFFSET_AVAILABLE;
         return UNSPECIFIED.longPointer(longPointer, access);
     }
     // sticky (6:0..31): LONG UNSPECIFIED
     private static final int OFFSET_STICKY = 6;
-    public LONG_UNSPECIFIED sticky(MemoryAccess access) {
+    public LONG_UNSPECIFIED sticky() {
         int longPointer = base + OFFSET_STICKY;
         return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }

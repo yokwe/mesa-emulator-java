@@ -13,15 +13,15 @@ public final class InterruptItem extends MemoryBase {
     //
     // Constructor
     //
-    public static final InterruptItem longPointer(@Mesa.LONG_POINTER int base) {
-        return new InterruptItem(base);
+    public static final InterruptItem longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new InterruptItem(base, access);
     }
-    public static final InterruptItem pointer(@Mesa.SHORT_POINTER int base) {
-        return new InterruptItem(Memory.lengthenMDS(base));
+    public static final InterruptItem pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new InterruptItem(Memory.lengthenMDS(base), access);
     }
     
-    private InterruptItem(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private InterruptItem(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class InterruptItem extends MemoryBase {
     //
     // condition (0:0..15): Condition
     private static final int OFFSET_CONDITION = 0;
-    public Condition condition(MemoryAccess access) {
+    public Condition condition() {
         int longPointer = base + OFFSET_CONDITION;
         return Condition.longPointer(longPointer, access);
     }
     // available (1:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 1;
-    public UNSPECIFIED available(MemoryAccess access) {
+    public UNSPECIFIED available() {
         int longPointer = base + OFFSET_AVAILABLE;
         return UNSPECIFIED.longPointer(longPointer, access);
     }

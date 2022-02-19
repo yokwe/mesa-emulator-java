@@ -13,15 +13,15 @@ public final class TransferDescriptor extends MemoryBase {
     //
     // Constructor
     //
-    public static final TransferDescriptor longPointer(@Mesa.LONG_POINTER int base) {
-        return new TransferDescriptor(base);
+    public static final TransferDescriptor longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new TransferDescriptor(base, access);
     }
-    public static final TransferDescriptor pointer(@Mesa.SHORT_POINTER int base) {
-        return new TransferDescriptor(Memory.lengthenMDS(base));
+    public static final TransferDescriptor pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new TransferDescriptor(Memory.lengthenMDS(base), access);
     }
     
-    private TransferDescriptor(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private TransferDescriptor(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,19 +29,19 @@ public final class TransferDescriptor extends MemoryBase {
     //
     // src (0:0..15): ShortControlLink
     private static final int OFFSET_SRC = 0;
-    public UNSPECIFIED src(MemoryAccess access) {
+    public UNSPECIFIED src() {
         int longPointer = base + OFFSET_SRC;
         return UNSPECIFIED.longPointer(longPointer, access);
     }
     // reserved (1:0..15): UNSPECIFIED
     private static final int OFFSET_RESERVED = 1;
-    public UNSPECIFIED reserved(MemoryAccess access) {
+    public UNSPECIFIED reserved() {
         int longPointer = base + OFFSET_RESERVED;
         return UNSPECIFIED.longPointer(longPointer, access);
     }
     // dst (2:0..31): ControlLink
     private static final int OFFSET_DST = 2;
-    public LONG_UNSPECIFIED dst(MemoryAccess access) {
+    public LONG_UNSPECIFIED dst() {
         int longPointer = base + OFFSET_DST;
         return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }

@@ -14,20 +14,20 @@ public final class AllocationVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final AllocationVector longPointer(@Mesa.LONG_POINTER int base) {
-        return new AllocationVector(base);
+    public static final AllocationVector longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new AllocationVector(base, access);
     }
-    public static final AllocationVector pointer(@Mesa.SHORT_POINTER int base) {
-        return new AllocationVector(Memory.lengthenMDS(base));
+    public static final AllocationVector pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new AllocationVector(Memory.lengthenMDS(base), access);
     }
     
-    private AllocationVector(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private AllocationVector(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final AVItem get(int index, MemoryAccess access) {
+    public final AVItem get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) FSIndex.checkValue(index);
         int longPointer = base + (AVItem.WORD_SIZE * index);
         return AVItem.longPointer(longPointer, access);

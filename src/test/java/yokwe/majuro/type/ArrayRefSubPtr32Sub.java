@@ -14,20 +14,20 @@ public final class ArrayRefSubPtr32Sub extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubPtr32Sub longPointer(@Mesa.LONG_POINTER int base) {
-        return new ArrayRefSubPtr32Sub(base);
+    public static final ArrayRefSubPtr32Sub longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSubPtr32Sub(base, access);
     }
-    public static final ArrayRefSubPtr32Sub pointer(@Mesa.SHORT_POINTER int base) {
-        return new ArrayRefSubPtr32Sub(Memory.lengthenMDS(base));
+    public static final ArrayRefSubPtr32Sub pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSubPtr32Sub(Memory.lengthenMDS(base), access);
     }
     
-    private ArrayRefSubPtr32Sub(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ArrayRefSubPtr32Sub(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final Sub get(int index, MemoryAccess access) {
+    public final Sub get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return Sub.longPointer(longPointer, access);

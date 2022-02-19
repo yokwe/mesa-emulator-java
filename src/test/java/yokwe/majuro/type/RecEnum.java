@@ -13,15 +13,15 @@ public final class RecEnum extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecEnum longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecEnum(base);
+    public static final RecEnum longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecEnum(base, access);
     }
-    public static final RecEnum pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecEnum(Memory.lengthenMDS(base));
+    public static final RecEnum pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecEnum(Memory.lengthenMDS(base), access);
     }
     
-    private RecEnum(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecEnum(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class RecEnum extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..15): Enum
     private static final int OFFSET_CARD_1 = 1;
-    public Enum card1(MemoryAccess access) {
+    public Enum card1() {
         int longPointer = base + OFFSET_CARD_1;
         return Enum.longPointer(longPointer, access);
     }

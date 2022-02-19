@@ -13,14 +13,14 @@ public final class POINTER extends MemoryBase {
     //
     // Constructor
     //
-    public static final POINTER longPointer(@Mesa.LONG_POINTER int base) {
-        return new POINTER(base);
+    public static final POINTER longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new POINTER(base, access);
     }
-    public static final POINTER pointer(@Mesa.SHORT_POINTER int base) {
-        return new POINTER(Memory.lengthenMDS(base));
+    public static final POINTER pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new POINTER(Memory.lengthenMDS(base), access);
     }
     
-    private POINTER(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private POINTER(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
 }

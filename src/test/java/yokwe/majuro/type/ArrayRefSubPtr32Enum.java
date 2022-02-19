@@ -14,20 +14,20 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubPtr32Enum longPointer(@Mesa.LONG_POINTER int base) {
-        return new ArrayRefSubPtr32Enum(base);
+    public static final ArrayRefSubPtr32Enum longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSubPtr32Enum(base, access);
     }
-    public static final ArrayRefSubPtr32Enum pointer(@Mesa.SHORT_POINTER int base) {
-        return new ArrayRefSubPtr32Enum(Memory.lengthenMDS(base));
+    public static final ArrayRefSubPtr32Enum pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSubPtr32Enum(Memory.lengthenMDS(base), access);
     }
     
-    private ArrayRefSubPtr32Enum(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ArrayRefSubPtr32Enum(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final Enum get(int index, MemoryAccess access) {
+    public final Enum get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return Enum.longPointer(longPointer, access);

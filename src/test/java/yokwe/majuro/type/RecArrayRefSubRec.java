@@ -14,15 +14,15 @@ public final class RecArrayRefSubRec extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSubRec longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecArrayRefSubRec(base);
+    public static final RecArrayRefSubRec longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecArrayRefSubRec(base, access);
     }
-    public static final RecArrayRefSubRec pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecArrayRefSubRec(Memory.lengthenMDS(base));
+    public static final RecArrayRefSubRec pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecArrayRefSubRec(Memory.lengthenMDS(base), access);
     }
     
-    private RecArrayRefSubRec(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecArrayRefSubRec(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -30,7 +30,7 @@ public final class RecArrayRefSubRec extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
@@ -39,6 +39,6 @@ public final class RecArrayRefSubRec extends MemoryBase {
     public final Rec card1(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = base + OFFSET_CARD_1 + (Rec.WORD_SIZE * index);
-        return Rec.longPointer(longPointer);
+        return Rec.longPointer(longPointer, access);
     }
 }

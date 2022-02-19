@@ -14,15 +14,15 @@ public final class RecArrayRefSubCARDINAL extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSubCARDINAL longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecArrayRefSubCARDINAL(base);
+    public static final RecArrayRefSubCARDINAL longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecArrayRefSubCARDINAL(base, access);
     }
-    public static final RecArrayRefSubCARDINAL pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecArrayRefSubCARDINAL(Memory.lengthenMDS(base));
+    public static final RecArrayRefSubCARDINAL pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecArrayRefSubCARDINAL(Memory.lengthenMDS(base), access);
     }
     
-    private RecArrayRefSubCARDINAL(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecArrayRefSubCARDINAL(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -30,13 +30,13 @@ public final class RecArrayRefSubCARDINAL extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..63): ARRAY Sub OF CARDINAL
     private static final int OFFSET_CARD_1 = 1;
-    public final CARDINAL card1(int index, MemoryAccess access) {
+    public final CARDINAL card1(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = base + OFFSET_CARD_1 + (CARDINAL.WORD_SIZE * index);
         return CARDINAL.longPointer(longPointer, access);

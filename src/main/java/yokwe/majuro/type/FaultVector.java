@@ -14,15 +14,15 @@ public final class FaultVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final FaultVector longPointer(@Mesa.LONG_POINTER int base) {
-        return new FaultVector(base);
+    public static final FaultVector longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new FaultVector(base, access);
     }
-    public static final FaultVector pointer(@Mesa.SHORT_POINTER int base) {
-        return new FaultVector(Memory.lengthenMDS(base));
+    public static final FaultVector pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new FaultVector(Memory.lengthenMDS(base), access);
     }
     
-    private FaultVector(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private FaultVector(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
@@ -30,6 +30,6 @@ public final class FaultVector extends MemoryBase {
     public final FaultQueue get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) FaultIndex.checkValue(index);
         int longPointer = base + (FaultQueue.WORD_SIZE * index);
-        return FaultQueue.longPointer(longPointer);
+        return FaultQueue.longPointer(longPointer, access);
     }
 }

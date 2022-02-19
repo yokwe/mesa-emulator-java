@@ -13,15 +13,15 @@ public final class Rec extends MemoryBase {
     //
     // Constructor
     //
-    public static final Rec longPointer(@Mesa.LONG_POINTER int base) {
-        return new Rec(base);
+    public static final Rec longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new Rec(base, access);
     }
-    public static final Rec pointer(@Mesa.SHORT_POINTER int base) {
-        return new Rec(Memory.lengthenMDS(base));
+    public static final Rec pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new Rec(Memory.lengthenMDS(base), access);
     }
     
-    private Rec(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private Rec(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class Rec extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..15): CARDINAL
     private static final int OFFSET_CARD_1 = 1;
-    public CARDINAL card1(MemoryAccess access) {
+    public CARDINAL card1() {
         int longPointer = base + OFFSET_CARD_1;
         return CARDINAL.longPointer(longPointer, access);
     }

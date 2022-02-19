@@ -14,15 +14,15 @@ public final class ArraySubFixed extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArraySubFixed longPointer(@Mesa.LONG_POINTER int base) {
-        return new ArraySubFixed(base);
+    public static final ArraySubFixed longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ArraySubFixed(base, access);
     }
-    public static final ArraySubFixed pointer(@Mesa.SHORT_POINTER int base) {
-        return new ArraySubFixed(Memory.lengthenMDS(base));
+    public static final ArraySubFixed pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ArraySubFixed(Memory.lengthenMDS(base), access);
     }
     
-    private ArraySubFixed(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ArraySubFixed(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
@@ -33,7 +33,7 @@ public final class ArraySubFixed extends MemoryBase {
             context.check(value);
         }
     }
-    public final UNSPECIFIED get(int index, MemoryAccess access) {
+    public final UNSPECIFIED get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) ArrayIndex.checkValue(index);
         int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);

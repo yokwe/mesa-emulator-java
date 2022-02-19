@@ -14,15 +14,15 @@ public final class RecArraySubFixed extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArraySubFixed longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecArraySubFixed(base);
+    public static final RecArraySubFixed longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecArraySubFixed(base, access);
     }
-    public static final RecArraySubFixed pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecArraySubFixed(Memory.lengthenMDS(base));
+    public static final RecArraySubFixed pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecArraySubFixed(Memory.lengthenMDS(base), access);
     }
     
-    private RecArraySubFixed(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecArraySubFixed(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -30,7 +30,7 @@ public final class RecArraySubFixed extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
@@ -42,7 +42,7 @@ public final class RecArraySubFixed extends MemoryBase {
             context.check(value);
         }
     }
-    public final UNSPECIFIED card1(int index, MemoryAccess access) {
+    public final UNSPECIFIED card1(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Card1Index.checkValue(index);
         int longPointer = base + OFFSET_CARD_1 + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);

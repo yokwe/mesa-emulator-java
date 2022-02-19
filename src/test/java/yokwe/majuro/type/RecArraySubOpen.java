@@ -13,15 +13,15 @@ public final class RecArraySubOpen extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArraySubOpen longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecArraySubOpen(base);
+    public static final RecArraySubOpen longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecArraySubOpen(base, access);
     }
-    public static final RecArraySubOpen pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecArraySubOpen(Memory.lengthenMDS(base));
+    public static final RecArraySubOpen pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecArraySubOpen(Memory.lengthenMDS(base), access);
     }
     
-    private RecArraySubOpen(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecArraySubOpen(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class RecArraySubOpen extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1): ARRAY [0..0) OF UNSPECIFIED
     private static final int OFFSET_CARD_1 = 1;
-    public final UNSPECIFIED card1(int index, MemoryAccess access) {
+    public final UNSPECIFIED card1(int index) {
         int longPointer = base + OFFSET_CARD_1 + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);
     }

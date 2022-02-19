@@ -13,15 +13,15 @@ public final class FaultQueue extends MemoryBase {
     //
     // Constructor
     //
-    public static final FaultQueue longPointer(@Mesa.LONG_POINTER int base) {
-        return new FaultQueue(base);
+    public static final FaultQueue longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new FaultQueue(base, access);
     }
-    public static final FaultQueue pointer(@Mesa.SHORT_POINTER int base) {
-        return new FaultQueue(Memory.lengthenMDS(base));
+    public static final FaultQueue pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new FaultQueue(Memory.lengthenMDS(base), access);
     }
     
-    private FaultQueue(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private FaultQueue(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class FaultQueue extends MemoryBase {
     //
     // queue (0:0..15): Queue
     private static final int OFFSET_QUEUE = 0;
-    public Queue queue(MemoryAccess access) {
+    public Queue queue() {
         int longPointer = base + OFFSET_QUEUE;
         return Queue.longPointer(longPointer, access);
     }
     // condition (1:0..15): Condition
     private static final int OFFSET_CONDITION = 1;
-    public Condition condition(MemoryAccess access) {
+    public Condition condition() {
         int longPointer = base + OFFSET_CONDITION;
         return Condition.longPointer(longPointer, access);
     }

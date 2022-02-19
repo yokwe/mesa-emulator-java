@@ -13,15 +13,15 @@ public final class BitAddress extends MemoryBase {
     //
     // Constructor
     //
-    public static final BitAddress longPointer(@Mesa.LONG_POINTER int base) {
-        return new BitAddress(base);
+    public static final BitAddress longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new BitAddress(base, access);
     }
-    public static final BitAddress pointer(@Mesa.SHORT_POINTER int base) {
-        return new BitAddress(Memory.lengthenMDS(base));
+    public static final BitAddress pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new BitAddress(Memory.lengthenMDS(base), access);
     }
     
-    private BitAddress(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private BitAddress(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -31,7 +31,7 @@ public final class BitAddress extends MemoryBase {
     private static final int OFFSET_WORD = 0;
     public LONG_POINTER word() {
         int longPointer = base + OFFSET_WORD;
-        return LONG_POINTER.longPointer(longPointer);
+        return LONG_POINTER.longPointer(longPointer, access);
     }
     // reserved (2:0..11): UNSPECIFIED
     // FIXME  Field is not aligned

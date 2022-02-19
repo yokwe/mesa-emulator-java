@@ -14,20 +14,20 @@ public final class ArrayRefSub extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSub longPointer(@Mesa.LONG_POINTER int base) {
-        return new ArrayRefSub(base);
+    public static final ArrayRefSub longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSub(base, access);
     }
-    public static final ArrayRefSub pointer(@Mesa.SHORT_POINTER int base) {
-        return new ArrayRefSub(Memory.lengthenMDS(base));
+    public static final ArrayRefSub pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSub(Memory.lengthenMDS(base), access);
     }
     
-    private ArrayRefSub(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ArrayRefSub(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final UNSPECIFIED get(int index, MemoryAccess access) {
+    public final UNSPECIFIED get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);

@@ -14,20 +14,20 @@ public final class ArrayRefEnum extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefEnum longPointer(@Mesa.LONG_POINTER int base) {
-        return new ArrayRefEnum(base);
+    public static final ArrayRefEnum longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ArrayRefEnum(base, access);
     }
-    public static final ArrayRefEnum pointer(@Mesa.SHORT_POINTER int base) {
-        return new ArrayRefEnum(Memory.lengthenMDS(base));
+    public static final ArrayRefEnum pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ArrayRefEnum(Memory.lengthenMDS(base), access);
     }
     
-    private ArrayRefEnum(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ArrayRefEnum(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final UNSPECIFIED get(int index, MemoryAccess access) {
+    public final UNSPECIFIED get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Enum.checkValue(index);
         int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);

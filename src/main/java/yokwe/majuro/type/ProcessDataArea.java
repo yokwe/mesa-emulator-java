@@ -14,15 +14,15 @@ public final class ProcessDataArea extends MemoryBase {
     //
     // Constructor
     //
-    public static final ProcessDataArea longPointer(@Mesa.LONG_POINTER int base) {
-        return new ProcessDataArea(base);
+    public static final ProcessDataArea longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ProcessDataArea(base, access);
     }
-    public static final ProcessDataArea pointer(@Mesa.SHORT_POINTER int base) {
-        return new ProcessDataArea(Memory.lengthenMDS(base));
+    public static final ProcessDataArea pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ProcessDataArea(Memory.lengthenMDS(base), access);
     }
     
-    private ProcessDataArea(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ProcessDataArea(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -30,19 +30,19 @@ public final class ProcessDataArea extends MemoryBase {
     //
     // ready (0:0..15): Queue
     private static final int OFFSET_READY = 0;
-    public Queue ready(MemoryAccess access) {
+    public Queue ready() {
         int longPointer = base + OFFSET_READY;
         return Queue.longPointer(longPointer, access);
     }
     // count (1:0..15): CARDINAL
     private static final int OFFSET_COUNT = 1;
-    public CARDINAL count(MemoryAccess access) {
+    public CARDINAL count() {
         int longPointer = base + OFFSET_COUNT;
         return CARDINAL.longPointer(longPointer, access);
     }
     // unused (2:0..15): UNSPECIFIED
     private static final int OFFSET_UNUSED = 2;
-    public UNSPECIFIED unused(MemoryAccess access) {
+    public UNSPECIFIED unused() {
         int longPointer = base + OFFSET_UNUSED;
         return UNSPECIFIED.longPointer(longPointer, access);
     }
@@ -54,7 +54,7 @@ public final class ProcessDataArea extends MemoryBase {
             context.check(value);
         }
     }
-    public final UNSPECIFIED available(int index, MemoryAccess access) {
+    public final UNSPECIFIED available(int index) {
         if (Debug.ENABLE_CHECK_VALUE) AvailableIndex.checkValue(index);
         int longPointer = base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);
@@ -63,25 +63,25 @@ public final class ProcessDataArea extends MemoryBase {
     private static final int OFFSET_STATE = 8;
     public StateAllocationTable state() {
         int longPointer = base + OFFSET_STATE;
-        return StateAllocationTable.longPointer(longPointer);
+        return StateAllocationTable.longPointer(longPointer, access);
     }
     // interrupt (16:0..511): InterruptVector
     private static final int OFFSET_INTERRUPT = 16;
     public InterruptVector interrupt() {
         int longPointer = base + OFFSET_INTERRUPT;
-        return InterruptVector.longPointer(longPointer);
+        return InterruptVector.longPointer(longPointer, access);
     }
     // fault (48:0..255): FaultVector
     private static final int OFFSET_FAULT = 48;
     public FaultVector fault() {
         int longPointer = base + OFFSET_FAULT;
-        return FaultVector.longPointer(longPointer);
+        return FaultVector.longPointer(longPointer, access);
     }
     // block (0): ARRAY PsbIndex OF ProcessStateBlock
     private static final int OFFSET_BLOCK = 0;
     public final ProcessStateBlock block(int index) {
         if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(index);
         int longPointer = base + OFFSET_BLOCK + (ProcessStateBlock.WORD_SIZE * index);
-        return ProcessStateBlock.longPointer(longPointer);
+        return ProcessStateBlock.longPointer(longPointer, access);
     }
 }

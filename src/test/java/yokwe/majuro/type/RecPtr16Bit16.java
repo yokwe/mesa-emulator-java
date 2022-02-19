@@ -13,15 +13,15 @@ public final class RecPtr16Bit16 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr16Bit16 longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecPtr16Bit16(base);
+    public static final RecPtr16Bit16 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecPtr16Bit16(base, access);
     }
-    public static final RecPtr16Bit16 pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecPtr16Bit16(Memory.lengthenMDS(base));
+    public static final RecPtr16Bit16 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecPtr16Bit16(Memory.lengthenMDS(base), access);
     }
     
-    private RecPtr16Bit16(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecPtr16Bit16(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class RecPtr16Bit16 extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..15): POINTER TO BitField16
     private static final int OFFSET_CARD_1 = 1;
-    public BitField16 card1(MemoryAccess access) {
+    public BitField16 card1() {
         int pointer = Memory.read16(base + OFFSET_CARD_1);
         return BitField16.pointer(pointer, access);
     }

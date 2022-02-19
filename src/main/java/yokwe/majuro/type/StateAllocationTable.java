@@ -14,15 +14,15 @@ public final class StateAllocationTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final StateAllocationTable longPointer(@Mesa.LONG_POINTER int base) {
-        return new StateAllocationTable(base);
+    public static final StateAllocationTable longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new StateAllocationTable(base, access);
     }
-    public static final StateAllocationTable pointer(@Mesa.SHORT_POINTER int base) {
-        return new StateAllocationTable(Memory.lengthenMDS(base));
+    public static final StateAllocationTable pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new StateAllocationTable(Memory.lengthenMDS(base), access);
     }
     
-    private StateAllocationTable(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private StateAllocationTable(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
@@ -30,6 +30,6 @@ public final class StateAllocationTable extends MemoryBase {
     public final StateVector get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(index);
         int pointer = Memory.read16(base + (POINTER.WORD_SIZE * index));
-        return StateVector.pointer(pointer);
+        return StateVector.pointer(pointer, access);
     }
 }

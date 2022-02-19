@@ -14,15 +14,15 @@ public final class RecArrayRefSubEnum extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSubEnum longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecArrayRefSubEnum(base);
+    public static final RecArrayRefSubEnum longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecArrayRefSubEnum(base, access);
     }
-    public static final RecArrayRefSubEnum pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecArrayRefSubEnum(Memory.lengthenMDS(base));
+    public static final RecArrayRefSubEnum pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecArrayRefSubEnum(Memory.lengthenMDS(base), access);
     }
     
-    private RecArrayRefSubEnum(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecArrayRefSubEnum(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -30,13 +30,13 @@ public final class RecArrayRefSubEnum extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..63): ARRAY Sub OF Enum
     private static final int OFFSET_CARD_1 = 1;
-    public final Enum card1(int index, MemoryAccess access) {
+    public final Enum card1(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = base + OFFSET_CARD_1 + (Enum.WORD_SIZE * index);
         return Enum.longPointer(longPointer, access);

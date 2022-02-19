@@ -14,20 +14,20 @@ public final class SystemData extends MemoryBase {
     //
     // Constructor
     //
-    public static final SystemData longPointer(@Mesa.LONG_POINTER int base) {
-        return new SystemData(base);
+    public static final SystemData longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new SystemData(base, access);
     }
-    public static final SystemData pointer(@Mesa.SHORT_POINTER int base) {
-        return new SystemData(Memory.lengthenMDS(base));
+    public static final SystemData pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new SystemData(Memory.lengthenMDS(base), access);
     }
     
-    private SystemData(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private SystemData(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final LONG_UNSPECIFIED get(int index, MemoryAccess access) {
+    public final LONG_UNSPECIFIED get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) SDIndex.checkValue(index);
         int longPointer = base + (LONG_UNSPECIFIED.WORD_SIZE * index);
         return LONG_UNSPECIFIED.longPointer(longPointer, access);

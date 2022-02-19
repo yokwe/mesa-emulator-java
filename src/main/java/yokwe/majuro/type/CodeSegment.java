@@ -14,15 +14,15 @@ public final class CodeSegment extends MemoryBase {
     //
     // Constructor
     //
-    public static final CodeSegment longPointer(@Mesa.LONG_POINTER int base) {
-        return new CodeSegment(base);
+    public static final CodeSegment longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new CodeSegment(base, access);
     }
-    public static final CodeSegment pointer(@Mesa.SHORT_POINTER int base) {
-        return new CodeSegment(Memory.lengthenMDS(base));
+    public static final CodeSegment pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new CodeSegment(Memory.lengthenMDS(base), access);
     }
     
-    private CodeSegment(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private CodeSegment(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -36,7 +36,7 @@ public final class CodeSegment extends MemoryBase {
             context.check(value);
         }
     }
-    public final UNSPECIFIED available(int index, MemoryAccess access) {
+    public final UNSPECIFIED available(int index) {
         if (Debug.ENABLE_CHECK_VALUE) AvailableIndex.checkValue(index);
         int longPointer = base + OFFSET_AVAILABLE + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);
@@ -45,6 +45,6 @@ public final class CodeSegment extends MemoryBase {
     private static final int OFFSET_CODE = 4;
     public BLOCK code() {
         int longPointer = base + OFFSET_CODE;
-        return BLOCK.longPointer(longPointer);
+        return BLOCK.longPointer(longPointer, access);
     }
 }

@@ -14,15 +14,15 @@ public final class GlobalFrameTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final GlobalFrameTable longPointer(@Mesa.LONG_POINTER int base) {
-        return new GlobalFrameTable(base);
+    public static final GlobalFrameTable longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new GlobalFrameTable(base, access);
     }
-    public static final GlobalFrameTable pointer(@Mesa.SHORT_POINTER int base) {
-        return new GlobalFrameTable(Memory.lengthenMDS(base));
+    public static final GlobalFrameTable pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new GlobalFrameTable(Memory.lengthenMDS(base), access);
     }
     
-    private GlobalFrameTable(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private GlobalFrameTable(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
@@ -30,6 +30,6 @@ public final class GlobalFrameTable extends MemoryBase {
     public final GFTItem get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) GFTIndex.checkValue(index);
         int longPointer = base + (GFTItem.WORD_SIZE * index);
-        return GFTItem.longPointer(longPointer);
+        return GFTItem.longPointer(longPointer, access);
     }
 }

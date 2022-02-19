@@ -13,20 +13,20 @@ public final class BLOCK extends MemoryBase {
     //
     // Constructor
     //
-    public static final BLOCK longPointer(@Mesa.LONG_POINTER int base) {
-        return new BLOCK(base);
+    public static final BLOCK longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new BLOCK(base, access);
     }
-    public static final BLOCK pointer(@Mesa.SHORT_POINTER int base) {
-        return new BLOCK(Memory.lengthenMDS(base));
+    public static final BLOCK pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new BLOCK(Memory.lengthenMDS(base), access);
     }
     
-    private BLOCK(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private BLOCK(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final UNSPECIFIED get(int index, MemoryAccess access) {
+    public final UNSPECIFIED get(int index) {
         int longPointer = base + (UNSPECIFIED.WORD_SIZE * index);
         return UNSPECIFIED.longPointer(longPointer, access);
     }

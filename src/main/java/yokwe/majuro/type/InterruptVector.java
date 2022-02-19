@@ -14,15 +14,15 @@ public final class InterruptVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final InterruptVector longPointer(@Mesa.LONG_POINTER int base) {
-        return new InterruptVector(base);
+    public static final InterruptVector longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new InterruptVector(base, access);
     }
-    public static final InterruptVector pointer(@Mesa.SHORT_POINTER int base) {
-        return new InterruptVector(Memory.lengthenMDS(base));
+    public static final InterruptVector pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new InterruptVector(Memory.lengthenMDS(base), access);
     }
     
-    private InterruptVector(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private InterruptVector(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
@@ -30,6 +30,6 @@ public final class InterruptVector extends MemoryBase {
     public final InterruptItem get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) InterruptLevel.checkValue(index);
         int longPointer = base + (InterruptItem.WORD_SIZE * index);
-        return InterruptItem.longPointer(longPointer);
+        return InterruptItem.longPointer(longPointer, access);
     }
 }

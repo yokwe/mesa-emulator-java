@@ -14,20 +14,20 @@ public final class ArrayRefSubBit32 extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubBit32 longPointer(@Mesa.LONG_POINTER int base) {
-        return new ArrayRefSubBit32(base);
+    public static final ArrayRefSubBit32 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSubBit32(base, access);
     }
-    public static final ArrayRefSubBit32 pointer(@Mesa.SHORT_POINTER int base) {
-        return new ArrayRefSubBit32(Memory.lengthenMDS(base));
+    public static final ArrayRefSubBit32 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new ArrayRefSubBit32(Memory.lengthenMDS(base), access);
     }
     
-    private ArrayRefSubBit32(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private ArrayRefSubBit32(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final BitField32 get(int index, MemoryAccess access) {
+    public final BitField32 get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         int longPointer = base + (BitField32.WORD_SIZE * index);
         return BitField32.longPointer(longPointer, access);

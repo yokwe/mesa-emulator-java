@@ -14,20 +14,20 @@ public final class EscTrapTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final EscTrapTable longPointer(@Mesa.LONG_POINTER int base) {
-        return new EscTrapTable(base);
+    public static final EscTrapTable longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new EscTrapTable(base, access);
     }
-    public static final EscTrapTable pointer(@Mesa.SHORT_POINTER int base) {
-        return new EscTrapTable(Memory.lengthenMDS(base));
+    public static final EscTrapTable pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new EscTrapTable(Memory.lengthenMDS(base), access);
     }
     
-    private EscTrapTable(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private EscTrapTable(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     //
     // Access to Element of Array
     //
-    public final LONG_UNSPECIFIED get(int index, MemoryAccess access) {
+    public final LONG_UNSPECIFIED get(int index) {
         if (Debug.ENABLE_CHECK_VALUE) BYTE.checkValue(index);
         int longPointer = base + (LONG_UNSPECIFIED.WORD_SIZE * index);
         return LONG_UNSPECIFIED.longPointer(longPointer, access);

@@ -13,15 +13,15 @@ public final class GlobalOverhead extends MemoryBase {
     //
     // Constructor
     //
-    public static final GlobalOverhead longPointer(@Mesa.LONG_POINTER int base) {
-        return new GlobalOverhead(base);
+    public static final GlobalOverhead longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new GlobalOverhead(base, access);
     }
-    public static final GlobalOverhead pointer(@Mesa.SHORT_POINTER int base) {
-        return new GlobalOverhead(Memory.lengthenMDS(base));
+    public static final GlobalOverhead pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new GlobalOverhead(Memory.lengthenMDS(base), access);
     }
     
-    private GlobalOverhead(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private GlobalOverhead(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class GlobalOverhead extends MemoryBase {
     //
     // available (0:0..15): UNSPECIFIED
     private static final int OFFSET_AVAILABLE = 0;
-    public UNSPECIFIED available(MemoryAccess access) {
+    public UNSPECIFIED available() {
         int longPointer = base + OFFSET_AVAILABLE;
         return UNSPECIFIED.longPointer(longPointer, access);
     }
     // word (1:0..15): GlobalWord
     private static final int OFFSET_WORD = 1;
-    public GlobalWord word(MemoryAccess access) {
+    public GlobalWord word() {
         int longPointer = base + OFFSET_WORD;
         return GlobalWord.longPointer(longPointer, access);
     }
@@ -43,12 +43,12 @@ public final class GlobalOverhead extends MemoryBase {
     private static final int OFFSET_CODEBASE = 2;
     public CodeSegment codebase() {
         int longPointer = Memory.read32(base + OFFSET_CODEBASE);
-        return CodeSegment.longPointer(longPointer);
+        return CodeSegment.longPointer(longPointer, access);
     }
     // global (4): GlobalVariables
     private static final int OFFSET_GLOBAL = 4;
     public BLOCK global() {
         int longPointer = base + OFFSET_GLOBAL;
-        return BLOCK.longPointer(longPointer);
+        return BLOCK.longPointer(longPointer, access);
     }
 }

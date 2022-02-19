@@ -13,15 +13,15 @@ public final class RecPtr32Sub extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr32Sub longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecPtr32Sub(base);
+    public static final RecPtr32Sub longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecPtr32Sub(base, access);
     }
-    public static final RecPtr32Sub pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecPtr32Sub(Memory.lengthenMDS(base));
+    public static final RecPtr32Sub pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecPtr32Sub(Memory.lengthenMDS(base), access);
     }
     
-    private RecPtr32Sub(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecPtr32Sub(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,13 +29,13 @@ public final class RecPtr32Sub extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
     // card1 (1:0..31): LONG POINTER TO Sub
     private static final int OFFSET_CARD_1 = 1;
-    public Sub card1(MemoryAccess access) {
+    public Sub card1() {
         int longPointer = Memory.read32(base + OFFSET_CARD_1);
         return Sub.longPointer(longPointer, access);
     }

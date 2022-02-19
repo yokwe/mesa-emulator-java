@@ -13,15 +13,15 @@ public final class RecPtr16 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr16 longPointer(@Mesa.LONG_POINTER int base) {
-        return new RecPtr16(base);
+    public static final RecPtr16 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new RecPtr16(base, access);
     }
-    public static final RecPtr16 pointer(@Mesa.SHORT_POINTER int base) {
-        return new RecPtr16(Memory.lengthenMDS(base));
+    public static final RecPtr16 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new RecPtr16(Memory.lengthenMDS(base), access);
     }
     
-    private RecPtr16(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private RecPtr16(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -29,7 +29,7 @@ public final class RecPtr16 extends MemoryBase {
     //
     // card0 (0:0..15): CARDINAL
     private static final int OFFSET_CARD_0 = 0;
-    public CARDINAL card0(MemoryAccess access) {
+    public CARDINAL card0() {
         int longPointer = base + OFFSET_CARD_0;
         return CARDINAL.longPointer(longPointer, access);
     }
@@ -37,6 +37,6 @@ public final class RecPtr16 extends MemoryBase {
     private static final int OFFSET_CARD_1 = 1;
     public POINTER card1() {
         int longPointer = base + OFFSET_CARD_1;
-        return POINTER.longPointer(longPointer);
+        return POINTER.longPointer(longPointer, access);
     }
 }

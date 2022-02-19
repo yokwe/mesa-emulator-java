@@ -13,15 +13,15 @@ public final class Port extends MemoryBase {
     //
     // Constructor
     //
-    public static final Port longPointer(@Mesa.LONG_POINTER int base) {
-        return new Port(base);
+    public static final Port longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new Port(base, access);
     }
-    public static final Port pointer(@Mesa.SHORT_POINTER int base) {
-        return new Port(Memory.lengthenMDS(base));
+    public static final Port pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new Port(Memory.lengthenMDS(base), access);
     }
     
-    private Port(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private Port(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -31,17 +31,17 @@ public final class Port extends MemoryBase {
     private static final int OFFSET_INPORT = 0;
     public BLOCK inport() {
         int pointer = Memory.read16(base + OFFSET_INPORT);
-        return BLOCK.pointer(pointer);
+        return BLOCK.pointer(pointer, access);
     }
     // unused (1:0..15): UNSPECIFIED
     private static final int OFFSET_UNUSED = 1;
-    public UNSPECIFIED unused(MemoryAccess access) {
+    public UNSPECIFIED unused() {
         int longPointer = base + OFFSET_UNUSED;
         return UNSPECIFIED.longPointer(longPointer, access);
     }
     // outport (2:0..31): ControlLink
     private static final int OFFSET_OUTPORT = 2;
-    public LONG_UNSPECIFIED outport(MemoryAccess access) {
+    public LONG_UNSPECIFIED outport() {
         int longPointer = base + OFFSET_OUTPORT;
         return LONG_UNSPECIFIED.longPointer(longPointer, access);
     }

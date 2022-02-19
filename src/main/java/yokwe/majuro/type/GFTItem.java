@@ -13,15 +13,15 @@ public final class GFTItem extends MemoryBase {
     //
     // Constructor
     //
-    public static final GFTItem longPointer(@Mesa.LONG_POINTER int base) {
-        return new GFTItem(base);
+    public static final GFTItem longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new GFTItem(base, access);
     }
-    public static final GFTItem pointer(@Mesa.SHORT_POINTER int base) {
-        return new GFTItem(Memory.lengthenMDS(base));
+    public static final GFTItem pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new GFTItem(Memory.lengthenMDS(base), access);
     }
     
-    private GFTItem(@Mesa.LONG_POINTER int base) {
-        super(base);
+    private GFTItem(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        super(base, access);
     }
     
     //
@@ -31,12 +31,12 @@ public final class GFTItem extends MemoryBase {
     private static final int OFFSET_GLOBAL_FRAME = 0;
     public BLOCK globalFrame() {
         int longPointer = Memory.read32(base + OFFSET_GLOBAL_FRAME);
-        return BLOCK.longPointer(longPointer);
+        return BLOCK.longPointer(longPointer, access);
     }
     // codebase (2:0..31): LONG POINTER TO CodeSegment
     private static final int OFFSET_CODEBASE = 2;
     public CodeSegment codebase() {
         int longPointer = Memory.read32(base + OFFSET_CODEBASE);
-        return CodeSegment.longPointer(longPointer);
+        return CodeSegment.longPointer(longPointer, access);
     }
 }
