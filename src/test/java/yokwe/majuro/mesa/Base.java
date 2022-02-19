@@ -42,7 +42,6 @@ public class Base {
 	protected static void beforeAll() {
 		logger.info("beforeAll");
 		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
-		Processor.MDS = DEFAULT_MDS;
 	}
 	
 	@AfterAll
@@ -113,7 +112,6 @@ public class Base {
 		// clear variable
 		Memory.clear();
 		Processor.clear();
-		Perf.clear();
 		
 		// set default values
 		Memory.CB(DEFAULT_CB + 0x80);
@@ -165,7 +163,6 @@ public class Base {
 
 	@AfterEach
 	protected void afterEach() {
-//		Perf.stats();
 		System.gc();
 	}
 
