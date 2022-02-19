@@ -24,7 +24,7 @@ public final class Mesa {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
-	public @interface POINTER {}
+	public @interface LONG_POINTER {}
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

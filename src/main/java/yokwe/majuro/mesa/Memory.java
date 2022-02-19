@@ -141,12 +141,12 @@ public final class Memory {
 	//
 	// low level memory access
 	//   fetch store mapFlag readReal writeReal
-	public static Map map(@Mesa.POINTER int va) {
+	public static Map map(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.map++;
 		return maps[va >>> PAGE_BITS];
 	}
 	// fetch returns real address == offset of realMemory
-	public static @Mesa.REAL_POINTER int fetch(@Mesa.POINTER int va) {
+	public static @Mesa.REAL_POINTER int fetch(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.fetch++;
 		
 		final int vp = va >>> PAGE_BITS;
@@ -183,7 +183,7 @@ public final class Memory {
 		return ra | (va & PAGE_MASK);
 	}
 	// store returns real address == offset of realMemory
-	public static @Mesa.REAL_POINTER int store(@Mesa.POINTER int va) {
+	public static @Mesa.REAL_POINTER int store(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.store++;
 
 		final int vp = va >>> PAGE_BITS;
@@ -228,7 +228,7 @@ public final class Memory {
 		return ra | (va & PAGE_MASK);
 	}
 	// realAddress returns real address without changing of cache and flags of map
-	public static @Mesa.REAL_POINTER int realAddress(@Mesa.POINTER int va) {
+	public static @Mesa.REAL_POINTER int realAddress(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.realAddress++;
 		
 		final int vp = va >>> PAGE_BITS;
@@ -276,16 +276,16 @@ public final class Memory {
 	//
 	// memory read and write
 	//
-	public static @Mesa.CARD16 int read16(@Mesa.POINTER int va) {
+	public static @Mesa.CARD16 int read16(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.read16++;
 		return readReal16(fetch(va));
 	}
-	public static void write16(@Mesa.POINTER int va, @Mesa.CARD16 int newValue) {
+	public static void write16(@Mesa.LONG_POINTER int va, @Mesa.CARD16 int newValue) {
 		if (Perf.ENABLED) Perf.write16++;
 		writeReal16(store(va), newValue);
 	}
 	private static final int BYTE_LEFT_MASK = BYTE_MASK << BYTE_BITS;
-	public static @Mesa.CARD8 int read8(@Mesa.POINTER int ptr, int offset) {
+	public static @Mesa.CARD8 int read8(@Mesa.LONG_POINTER int ptr, int offset) {
 		int word = read16(ptr + offset / 2);
 		if ((offset & 1) == 0) {
 			// returns left
@@ -295,7 +295,7 @@ public final class Memory {
 			return Types.toCARD8(word & BYTE_MASK);
 		}
 	}
-	public static void write8(@Mesa.POINTER int ptr, int offset, @Mesa.CARD8 int data) {
+	public static void write8(@Mesa.LONG_POINTER int ptr, int offset, @Mesa.CARD8 int data) {
 		int ra = fetch(ptr + offset / 2);
 		int word = readReal16(ra);
 		
@@ -315,10 +315,10 @@ public final class Memory {
 	// significant) sixteen bits occupy the second memory word(at the higher memory address).
 	//         |15    31|0   15|
 	// address  n        n+1    n+2
-	public static boolean isSamePage(@Mesa.POINTER int a, @Mesa.POINTER int b) {
+	public static boolean isSamePage(@Mesa.LONG_POINTER int a, @Mesa.LONG_POINTER int b) {
 		return (a & ~PAGE_MASK) == (b & ~PAGE_MASK);
 	}
-	public static @Mesa.CARD32 int read32(@Mesa.POINTER int va) {
+	public static @Mesa.CARD32 int read32(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.read32++;
 		int ra0 = fetch(va);
 		int ra1;
@@ -332,7 +332,7 @@ public final class Memory {
 		//                    high             low
 		return Types.toCARD32(realMemory[ra1], realMemory[ra0]);
 	}
-	public static void write32(@Mesa.POINTER int va, @Mesa.CARD32 int newValue) {
+	public static void write32(@Mesa.LONG_POINTER int va, @Mesa.CARD32 int newValue) {
 		if (Perf.ENABLED) Perf.write32++;
 		int ra0 = store(va);
 		int ra1;
@@ -393,7 +393,7 @@ public final class Memory {
 	//
 	// PDA
 	//
-	public static @Mesa.POINTER int lengthenPDA(@Mesa.PDA_POINTER int value) {
+	public static @Mesa.LONG_POINTER int lengthenPDA(@Mesa.PDA_POINTER int value) {
 		if (Perf.ENABLED) Perf.lengthenPDA++;
 		return Constants.mPDA + value;
 	}

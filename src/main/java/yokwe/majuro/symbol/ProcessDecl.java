@@ -82,7 +82,7 @@ public class ProcessDecl {
 			out.println("public static final %s value(@Mesa.CARD16 int value) {", javaFile.name);
 			out.println("return new %s(value);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s longPointer(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {", javaFile.name);
@@ -93,14 +93,14 @@ public class ProcessDecl {
 			out.println("private %s(@Mesa.CARD16 int value) {", javaFile.name);
 			out.println("super(value);");
 			out.println("}");
-			out.println("private %s(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("private %s(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("super(base, access);");
 			out.println("}");
 		} else if (parentClass.equals(MemoryData32.class)) {
 			out.println("public static final %s value(@Mesa.CARD32 int value) {", javaFile.name);
 			out.println("return new %s(value);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s longPointer(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {", javaFile.name);
@@ -111,11 +111,11 @@ public class ProcessDecl {
 			out.println("private %s(@Mesa.CARD32 int value) {", javaFile.name);
 			out.println("super(value);");
 			out.println("}");
-			out.println("private %s(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("private %s(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("super(base, access);");
 			out.println("}");
 		} else if (parentClass.equals(MemoryBase.class)) {
-			out.println("public static final %s longPointer(@Mesa.POINTER int base) {", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base) {", javaFile.name);
 			out.println("return new %s(base);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base) {", javaFile.name);
@@ -123,7 +123,7 @@ public class ProcessDecl {
 			out.println("}");
 			out.println();
 			
-			out.println("private %s(@Mesa.POINTER int base) {", javaFile.name);
+			out.println("private %s(@Mesa.LONG_POINTER int base) {", javaFile.name);
 			out.println("super(base);");
 			out.println("}");
 		} else {
