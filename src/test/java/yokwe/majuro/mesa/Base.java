@@ -1,13 +1,20 @@
 package yokwe.majuro.mesa;
 
 import static yokwe.majuro.mesa.Constants.*;
+import static yokwe.majuro.type.MemoryAccess.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.type.AVItemType;
+import yokwe.majuro.type.AllocationVector;
+import yokwe.majuro.type.FSIndex;
 import yokwe.majuro.type.GlobalOverhead;
+import yokwe.majuro.type.LocalOverhead;
+import yokwe.majuro.type.MemoryAccess;
 
 public class Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
@@ -43,6 +50,64 @@ public class Base {
 	protected static void afterAll() {
 		logger.info("afterAll");
 		System.gc();
+	}
+	
+	
+	private static final int[] FRAME_SIZE_MAP = {
+	       8,   12,   16,   20,   24,
+		  28,   32,   40,   48,   56,
+		  68,   80,   96,  112,  128,
+		 148,  168,  192,  224,  252,
+		 508,  764, 1020, 1276, 1532,
+		1788, 2044, 2556, 3068, 3580, 4092,
+	};
+	private static final int[] FRAME_WEIGHT_MAP = {
+		20, 26, 15, 16, 16,
+		12,  8,  8,  5,  5,
+		 7,  2,  2,  1,  1,
+		 1,  1,  1,  1,  0,
+		 0,  0,  0,  0,  0,
+		 0,  0,  0,  0,  0, 0,
+	};
+
+	private static void initAV(int origin, int limit) {
+		if (FRAME_SIZE_MAP.length != FRAME_WEIGHT_MAP.length) throw new UnexpectedException();
+		
+		AllocationVector av = AllocationVector.pointer(mAV);
+		
+		for(int i = 0; i <= FSIndex.MAX_VALUE; i++) {
+			av.get(i, WRITE).write(AVItemType.EMPTY);
+		}
+		
+		int p = origin;
+		for(int fsi = 0; fsi < FRAME_SIZE_MAP.length; fsi++) {
+			int size = FRAME_SIZE_MAP[fsi];
+			int weight = FRAME_WEIGHT_MAP[fsi];
+			if (weight == 0) continue;
+			
+			for(int j = 0; j < weight; j++) {
+				// align (p mod 4) == 0
+				p = (p + 3) & ~0x03;
+
+				// round up to next page boundary
+				if (((p + 8) % PAGE_SIZE) < (p % PAGE_SIZE)) {
+					p = (p + PAGE_SIZE - 1) & ~PAGE_MASK;
+				}
+				
+				LocalOverhead lo = LocalOverhead.pointer(p);
+				lo.word(WRITE).write(fsi);
+				lo.returnlink(WRITE).write(0);
+				lo.globallink(WRITE).write(0);
+				lo.pc(WRITE).write(0);
+				lo.local().get(0, WRITE).write(AVItemType.EMPTY);
+				
+				av.get(fsi, WRITE).write(p + LocalOverhead.WORD_SIZE);
+				
+				p = p + size;
+			}
+
+		}
+		
 	}
 	
 	@BeforeEach
@@ -94,6 +159,7 @@ public class Base {
 			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x5000 + i);
 		}
 				
+		initAV(0x0600, 0x1aff);
 		
 //		logger.info("beforeEach STOP");
 	}
