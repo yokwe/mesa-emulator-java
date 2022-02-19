@@ -115,16 +115,16 @@ public class ProcessDecl {
 			out.println("super(base, access);");
 			out.println("}");
 		} else if (parentClass.equals(MemoryBase.class)) {
-			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base) {", javaFile.name);
-			out.println("return new %s(base);", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base) {", javaFile.name);
-			out.println("return new %s(Memory.lengthenMDS(base));", javaFile.name);
+			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("return new %s(Memory.lengthenMDS(base), access);", javaFile.name);
 			out.println("}");
 			out.println();
 			
-			out.println("private %s(@Mesa.LONG_POINTER int base) {", javaFile.name);
-			out.println("super(base);");
+			out.println("private %s(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
+			out.println("super(base, access);");
 			out.println("}");
 		} else {
 			throw new UnexpectedException("Unexpected");
@@ -169,7 +169,7 @@ public class ProcessDecl {
 		}
 		
 		if (javaDataClass(elementType)) {
-			out.println("public final %s get(int index, MemoryAccess access) {", elementTypeName);
+			out.println("public final %s get(int index) {", elementTypeName);
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
@@ -182,7 +182,7 @@ public class ProcessDecl {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
-			out.println("return %s.longPointer(longPointer);", elementTypeName, elementTypeName);
+			out.println("return %s.longPointer(longPointer, access);", elementTypeName, elementTypeName);
 			out.println("}");
 		}
 	}	
@@ -201,7 +201,7 @@ public class ProcessDecl {
 		String targetTypeName  = StringUtil.toJavaName(targetType.name);
 		
 		if (javaDataClass(targetType)) {
-			out.println("public final %s get(int index, MemoryAccess access) {", targetTypeName);
+			out.println("public final %s get(int index) {", targetTypeName);
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
@@ -214,7 +214,7 @@ public class ProcessDecl {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
-			out.println("return %s.pointer(pointer);", targetTypeName);
+			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		}
 	}
@@ -240,7 +240,7 @@ public class ProcessDecl {
 		String targetTypeName  = StringUtil.toJavaName(targetType.name);
 		
 		if (javaDataClass(targetType)) {
-			out.println("public final %s get(int index, MemoryAccess access) {", targetTypeName);
+			out.println("public final %s get(int index) {", targetTypeName);
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
@@ -253,7 +253,7 @@ public class ProcessDecl {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = Memory.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
-			out.println("return %s.longPointer(longPointer);", targetTypeName);
+			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		}
 	}
@@ -279,14 +279,14 @@ public class ProcessDecl {
 		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
 
 		if (javaDataClass(fieldType)) {
-			out.println("public %s %s(MemoryAccess access) {", fieldTypeName, fieldName);
+			out.println("public %s %s() {", fieldTypeName, fieldName);
 			out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
 			out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", fieldTypeName, fieldName);
 			out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
-			out.println("return %s.longPointer(longPointer);", fieldTypeName);
+			out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
 			out.println("}");
 		}
 	}
@@ -300,14 +300,14 @@ public class ProcessDecl {
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
 		if (javaDataClass(targetType)) {
-			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
+			out.println("public %s %s() {", targetTypeName, fieldName);
 			out.println("int longPointer = Memory.read32(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", targetTypeName, fieldName);
 			out.println("int longPointer = Memory.read32(base + OFFSET_%s);", fieldConstName);
-			out.println("return %s.longPointer(longPointer);", targetTypeName);
+			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		}
 	}
@@ -321,14 +321,14 @@ public class ProcessDecl {
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
 		if (javaDataClass(targetType)) {
-			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
+			out.println("public %s %s() {", targetTypeName, fieldName);
 			out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", targetTypeName, fieldName);
 			out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
-			out.println("return %s.pointer(pointer);", targetTypeName);
+			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		}
 	}
@@ -372,7 +372,7 @@ public class ProcessDecl {
 
 		
 		if (javaDataClass(elementType)) {
-			out.println("public final %s %s(int index, MemoryAccess access) {", elementTypeName, field.name);
+			out.println("public final %s %s(int index) {", elementTypeName, field.name);
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
@@ -385,7 +385,7 @@ public class ProcessDecl {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
 			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
-			out.println("return %s.longPointer(longPointer);", elementTypeName, elementTypeName);
+			out.println("return %s.longPointer(longPointer, access);", elementTypeName, elementTypeName);
 			out.println("}");
 		}
 	}
