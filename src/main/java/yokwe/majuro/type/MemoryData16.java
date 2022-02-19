@@ -2,20 +2,22 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 public class MemoryData16 {
     private final MemoryAccess access;
-    private final int          ra;
+    private final @Mesa.REAL_POINTER int ra;
 
     // NOTE To reduce type conversion, using int for value
-    public int value;
+    public @Mesa.CARD16 int value;
 
-    public MemoryData16(char value) {
+    public MemoryData16(@Mesa.CARD16 int value) {
         this.access = MemoryAccess.NONE;
         this.ra     = 0;
-        this.value  = value;
+        this.value  = Types.toCARD16(value);
     }
-    public MemoryData16(int base, MemoryAccess access) {
+    public MemoryData16(@Mesa.POINTER int base, MemoryAccess access) {
         this.access = access;
         switch(access) {
         case NONE:
@@ -43,23 +45,23 @@ public class MemoryData16 {
         switch(access) {
         case READ_WRITE:
         case WRITE:
-        	Memory.writeReal16(ra, (char)value);
+        	Memory.writeReal16(ra, value);
             break;
         default:
             throw new UnexpectedException("Unexpected");
         }
     }
-    public void write(char newValue) {
-    	value = newValue;
+    public void write(@Mesa.CARD16 int newValue) {
+    	value = Types.toCARD16(newValue);
     	write();
     }
     
-    public char read() {
+    public @Mesa.CARD16 int read() {
         switch(access) {
         case READ:
         case READ_WRITE:
-        	value = Memory.read16(ra);
-            return (char)value;
+        	value = Memory.readReal16(ra);
+            return value;
         default:
             throw new UnexpectedException("Unexpected");
         }

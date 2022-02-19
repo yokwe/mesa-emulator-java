@@ -2,21 +2,22 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 public class MemoryData32 {
     private final MemoryAccess access;
-    private final int          ra0;
-    private final int          ra1;
+    private final @Mesa.REAL_POINTER int ra0;
+    private final @Mesa.REAL_POINTER int ra1;
 
-    public int value;
+    public @Mesa.CARD32 int value;
 
-    public MemoryData32(int value) {
+    public MemoryData32(@Mesa.CARD32 int value) {
         this.access = MemoryAccess.NONE;
         this.ra0    = 0;
         this.ra1    = 0;
         this.value  = value;
     }
-    public MemoryData32(int base, MemoryAccess access) {
+    public MemoryData32(@Mesa.POINTER int base, MemoryAccess access) {
         this.access = access;
         switch(access) {
         case NONE:
@@ -54,12 +55,12 @@ public class MemoryData32 {
             throw new UnexpectedException("Unexpected");
         }
     }
-    public void write(int newValue) {
+    public void write(@Mesa.CARD32 int newValue) {
     	value = newValue;
     	write();
     }
     
-    public int read() {
+    public @Mesa.CARD32 int read() {
         switch(access) {
         case READ:
         case READ_WRITE:

@@ -74,13 +74,13 @@ public final class Processor {
 	public static int  stackCount() {
 		return SP;
 	}
-	public static void push(char data) {
+	public static void push(int data) {
 		if (SP == StackDepth) ControlTransfers.stackError();
-		stack[SP++] = data;
+		stack[SP++] = Types.toCARD16(data);
 	}
-	public static char pop() {
+	public static int pop() {
 		if (SP == 0) ControlTransfers.stackError();
-		return (char)(stack[--SP]);
+		return Types.toCARD16(stack[--SP]);
 	}
 
 	public static void pushLong(int data) {
@@ -95,9 +95,9 @@ public final class Processor {
 //		t.high = Pop();
 //		t.low = Pop();
 //		return t.u;
-		char high = pop();
-		char low  = pop();
-		return Types.makeLong(high, low);
+		int high = pop();
+		int low  = pop();
+		return Types.toCARD32(high, low);
 	}
 	public static void minimalStack() {
 		if (SP != 0) ControlTransfers.stackError();

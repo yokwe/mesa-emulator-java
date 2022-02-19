@@ -1,9 +1,11 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Mesa;
+
 public class MemoryBase {
-	public final int base;
+	public final @Mesa.POINTER int base;
  
-    public MemoryBase(int base) {
+    public MemoryBase(@Mesa.POINTER int base) {
     	this.base = base;
     }
 }
