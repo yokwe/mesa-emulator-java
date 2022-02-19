@@ -8,33 +8,34 @@ public final class Processor {
 	//
 	
 	// 3.3.1 Control Registers
-	public static char PSB;
-	public static int  MDS;
-	public static char LF;
-	public static int  GF;  // LONG POINTER TO GlobalVarables
-	public static char GFI;
+	public static @Mesa.CARD16 int PSB;
+	public static @Mesa.CARD32 int MDS;
+	public static @Mesa.CARD16 int LF;
+	public static @Mesa.CARD32 int GF;  // LONG POINTER TO GlobalVarables
+	public static @Mesa.CARD16 int GFI;
 	
 	// public static int  CB;
 	// public static char PC
 
 	// 3.3.2 Evaluation Stack
 	public static final int   StackDepth = Constants.cSS;
-	public static final int[] stack      = new int[StackDepth];
+	public static final @Mesa.CARD16 int[] stack      = new int[StackDepth];
 	public static       int   SP; // [0..StackDepth)
 
 	// 3.3.3 Data and Status Registers
-	public static final char[] PID = new char[4];
-	public static char MP;
-	public static int  IT;
+	public static final @Mesa.CARD16 int[] PID = new int[4];
+	
+	public static @Mesa.CARD16 int MP;
+	public static @Mesa.CARD32 int IT;
 	//public static char WM;
-	public static char WP;
-	public static char WDC;
-	public static char PTC;
-	public static char XTS;
+	public static @Mesa.CARD16 int WP;
+	public static @Mesa.CARD16 int WDC;
+	public static @Mesa.CARD16 int PTC;
+	public static @Mesa.CARD16 int XTS;
 	
 	// 4.5 Instruction Execution
-	public static int     breakByte;
-	public static int     savedPC;
+	public static @Mesa.CARD8  int breakByte;
+	public static @Mesa.CARD16 int savedPC;
 	public static int     savedSP;
 	public static boolean running;
 	
@@ -74,23 +75,23 @@ public final class Processor {
 	public static int  stackCount() {
 		return SP;
 	}
-	public static void push(int data) {
+	public static void push(@Mesa.CARD16 int data) {
 		if (SP == StackDepth) ControlTransfers.stackError();
 		stack[SP++] = Types.toCARD16(data);
 	}
-	public static int pop() {
+	public static @Mesa.CARD16 int pop() {
 		if (SP == 0) ControlTransfers.stackError();
-		return Types.toCARD16(stack[--SP]);
+		return stack[--SP];
 	}
 
-	public static void pushLong(int data) {
+	public static void pushLong(@Mesa.CARD32 int data) {
 //		Long t = {data};
 //		Push(t.low);
 //		Push(t.high);
 		push(Types.lowHalf(data));
 		push(Types.highHalf(data));
 	}
-	public static int popLong() {
+	public static @Mesa.CARD32 int popLong() {
 //		Long t;
 //		t.high = Pop();
 //		t.low = Pop();
