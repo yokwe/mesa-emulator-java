@@ -120,14 +120,14 @@ public class MemoryTest extends Base {
 	public void read16() {
 		logger.info("read16");
 
-		int  va    = 0x0020_0100;
-		char value = 0x1234;
+		int va    = 0x0020_0100;
+		int value = 0x1234;
 		
 		// prepare
 		Memory.writeReal16(va, value);
 		
 		// execute
-		char actual = Memory.read16(va);
+		int actual = Memory.read16(va);
 		
 		// check result
 		assertEquals(value, actual);
@@ -151,7 +151,7 @@ public class MemoryTest extends Base {
 		Memory.write16(va, value);
 		
 		// check result
-		char actual = Memory.readReal16(va);
+		int actual = Memory.readReal16(va);
 		assertEquals(value, actual);
 		
 		// check side effect

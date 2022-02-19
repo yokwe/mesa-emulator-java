@@ -71,27 +71,27 @@ public class Base {
 		// initialize memory
 		{
 			int p = Memory.realAddress(DEFAULT_CB);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, (char)(0x3000 + i));
+			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x3000 + i);
 		}
 		{
 			int p = Memory.realAddress(DEFAULT_CB + 0x100);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, (char)(0x3000 + 0x100 + i));
+			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x3000 + 0x100 + i);
 		}
 		{
 			int p = Memory.realAddress(DEFAULT_CB + 0x200);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, (char)(0x3000 + 0x200 + i));
+			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x3000 + 0x200 + i);
 		}
 		{
 			int p = Memory.realAddress(DEFAULT_MDS);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, (char)(0x4000 + i));
+			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x4000 + i);
 		}
 		{
 			int p = Memory.realAddress(DEFAULT_MDS + 0x1000);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, (char)(0x4100 + i));
+			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x4100 + i);
 		}
 		{
 			int p = Memory.realAddress(DEFAULT_GF);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, (char)(0x5000 + i));
+			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x5000 + i);
 		}
 				
 		

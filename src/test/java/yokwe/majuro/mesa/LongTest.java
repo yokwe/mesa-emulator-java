@@ -28,9 +28,9 @@ public class LongTest extends Base {
 	public void valueB() {
 		logger.info("valueB");
 
-		int  value = 0xabcd1234;
-		char low   = Types.lowHalf(value);
-		char high  = Types.highHalf(value);
+		int value = 0xabcd1234;
+		int low   = Types.lowHalf(value);
+		int high  = Types.highHalf(value);
 
 		// prepare
 		// execute
