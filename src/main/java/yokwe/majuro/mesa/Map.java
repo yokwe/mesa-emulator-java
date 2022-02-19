@@ -2,6 +2,9 @@ package yokwe.majuro.mesa;
 
 import static yokwe.majuro.mesa.Constants.PAGE_BITS;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Map {
 	private static final int MASK_FLAGS      = 0x0000_FFFF;
 	private static final int MASK_REALPAGE   = 0xFFFF_0000;
@@ -13,10 +16,20 @@ public final class Map {
 	public static final int MASK_REFERENCED = 0x0000_0001;
 	
 	private static final int MASK_VACANT = MASK_REFERENCED | MASK_DIRTY | MASK_PROTECT;
-	private static final int FLAG_VACANT = MASK_DIRTY | MASK_PROTECT; // not referenced and dirty and protect
+	public static final int FLAG_VACANT = MASK_DIRTY | MASK_PROTECT; // not referenced and dirty and protect
 	
 	private int value = 0;
 	
+	@Override
+	public String toString() {
+		List<String> flags = new ArrayList<>();
+		if (isProtect()) flags.add("PROTECT");
+		if (isDirty()) flags.add("DIRTY");
+		if (isReferenced()) flags.add("REFERENCED");
+		
+		return String.format("{%X {%s|}", getRealPage(), String.join(" ", flags));
+	}
+
 	public int value() {
 		return value;
 	}
