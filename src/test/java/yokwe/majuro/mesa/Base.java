@@ -73,15 +73,15 @@ public class Base {
 	private static void initAV(int origin, int limit) {
 		if (FRAME_SIZE_MAP.length != FRAME_WEIGHT_MAP.length) throw new UnexpectedException();
 		
-		AllocationVector av = AllocationVector.pointer(mAV);
+		AllocationVector av = AllocationVector.pointer(mAV, WRITE);
 		
 		for(int i = 0; i <= FSIndex.MAX_VALUE; i++) {
-			av.get(i, WRITE).write(AVItemType.EMPTY);
+			av.get(i).write(AVItemType.EMPTY);
 		}
 		
 		int p = origin;
 		for(int fsi = 0; fsi < FRAME_SIZE_MAP.length; fsi++) {
-			int size = FRAME_SIZE_MAP[fsi];
+			int size   = FRAME_SIZE_MAP[fsi];
 			int weight = FRAME_WEIGHT_MAP[fsi];
 			if (weight == 0) continue;
 			
@@ -94,14 +94,14 @@ public class Base {
 					p = (p + PAGE_SIZE - 1) & ~PAGE_MASK;
 				}
 				
-				LocalOverhead lo = LocalOverhead.pointer(p);
-				lo.word(WRITE).write(fsi);
-				lo.returnlink(WRITE).write(0);
-				lo.globallink(WRITE).write(0);
-				lo.pc(WRITE).write(0);
-				lo.local().get(0, WRITE).write(AVItemType.EMPTY);
+				LocalOverhead lo = LocalOverhead.pointer(p, WRITE);
+				lo.word().write(fsi);
+				lo.returnlink().write(0);
+				lo.globallink().write(0);
+				lo.pc().write(0);
+				lo.local().get(0).write(AVItemType.EMPTY);
 				
-				av.get(fsi, WRITE).write(p + LocalOverhead.WORD_SIZE);
+				av.get(fsi).write(p + LocalOverhead.WORD_SIZE);
 				
 				p = p + size;
 			}
