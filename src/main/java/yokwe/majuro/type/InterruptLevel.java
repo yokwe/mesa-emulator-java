@@ -26,7 +26,7 @@ public final class InterruptLevel extends MemoryData16 {
     public static final InterruptLevel value(@Mesa.CARD16 int value) {
         return new InterruptLevel(value);
     }
-    public static final InterruptLevel longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final InterruptLevel longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new InterruptLevel(base, access);
     }
     public static final InterruptLevel pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class InterruptLevel extends MemoryData16 {
     private InterruptLevel(@Mesa.CARD16 int value) {
         super(value);
     }
-    private InterruptLevel(@Mesa.POINTER int base, MemoryAccess access) {
+    private InterruptLevel(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

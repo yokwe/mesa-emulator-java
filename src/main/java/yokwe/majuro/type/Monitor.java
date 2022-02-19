@@ -17,7 +17,7 @@ public final class Monitor extends MemoryData16 {
     public static final Monitor value(@Mesa.CARD16 int value) {
         return new Monitor(value);
     }
-    public static final Monitor longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Monitor longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Monitor(base, access);
     }
     public static final Monitor pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class Monitor extends MemoryData16 {
     private Monitor(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Monitor(@Mesa.POINTER int base, MemoryAccess access) {
+    private Monitor(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

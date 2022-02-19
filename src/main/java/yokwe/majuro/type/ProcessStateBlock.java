@@ -13,14 +13,14 @@ public final class ProcessStateBlock extends MemoryBase {
     //
     // Constructor
     //
-    public static final ProcessStateBlock longPointer(@Mesa.POINTER int base) {
+    public static final ProcessStateBlock longPointer(@Mesa.LONG_POINTER int base) {
         return new ProcessStateBlock(base);
     }
     public static final ProcessStateBlock pointer(@Mesa.SHORT_POINTER int base) {
         return new ProcessStateBlock(Memory.lengthenMDS(base));
     }
     
-    private ProcessStateBlock(@Mesa.POINTER int base) {
+    private ProcessStateBlock(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

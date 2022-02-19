@@ -14,14 +14,14 @@ public final class EscTrapTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final EscTrapTable longPointer(@Mesa.POINTER int base) {
+    public static final EscTrapTable longPointer(@Mesa.LONG_POINTER int base) {
         return new EscTrapTable(base);
     }
     public static final EscTrapTable pointer(@Mesa.SHORT_POINTER int base) {
         return new EscTrapTable(Memory.lengthenMDS(base));
     }
     
-    private EscTrapTable(@Mesa.POINTER int base) {
+    private EscTrapTable(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

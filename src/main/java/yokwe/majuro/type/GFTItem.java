@@ -13,14 +13,14 @@ public final class GFTItem extends MemoryBase {
     //
     // Constructor
     //
-    public static final GFTItem longPointer(@Mesa.POINTER int base) {
+    public static final GFTItem longPointer(@Mesa.LONG_POINTER int base) {
         return new GFTItem(base);
     }
     public static final GFTItem pointer(@Mesa.SHORT_POINTER int base) {
         return new GFTItem(Memory.lengthenMDS(base));
     }
     
-    private GFTItem(@Mesa.POINTER int base) {
+    private GFTItem(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

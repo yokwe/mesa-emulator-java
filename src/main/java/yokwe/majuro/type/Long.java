@@ -16,7 +16,7 @@ public final class Long extends MemoryData32 {
     public static final Long value(@Mesa.CARD32 int value) {
         return new Long(value);
     }
-    public static final Long longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Long longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Long(base, access);
     }
     public static final Long pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -26,7 +26,7 @@ public final class Long extends MemoryData32 {
     private Long(@Mesa.CARD32 int value) {
         super(value);
     }
-    private Long(@Mesa.POINTER int base, MemoryAccess access) {
+    private Long(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

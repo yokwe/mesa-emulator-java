@@ -13,14 +13,14 @@ public final class RecEnum extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecEnum longPointer(@Mesa.POINTER int base) {
+    public static final RecEnum longPointer(@Mesa.LONG_POINTER int base) {
         return new RecEnum(base);
     }
     public static final RecEnum pointer(@Mesa.SHORT_POINTER int base) {
         return new RecEnum(Memory.lengthenMDS(base));
     }
     
-    private RecEnum(@Mesa.POINTER int base) {
+    private RecEnum(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

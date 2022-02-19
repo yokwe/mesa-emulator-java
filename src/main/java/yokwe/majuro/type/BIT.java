@@ -26,7 +26,7 @@ public final class BIT extends MemoryData16 {
     public static final BIT value(@Mesa.CARD16 int value) {
         return new BIT(value);
     }
-    public static final BIT longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BIT longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BIT(base, access);
     }
     public static final BIT pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class BIT extends MemoryData16 {
     private BIT(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BIT(@Mesa.POINTER int base, MemoryAccess access) {
+    private BIT(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

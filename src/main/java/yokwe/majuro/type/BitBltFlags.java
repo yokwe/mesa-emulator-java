@@ -17,7 +17,7 @@ public final class BitBltFlags extends MemoryData16 {
     public static final BitBltFlags value(@Mesa.CARD16 int value) {
         return new BitBltFlags(value);
     }
-    public static final BitBltFlags longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BitBltFlags longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BitBltFlags(base, access);
     }
     public static final BitBltFlags pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class BitBltFlags extends MemoryData16 {
     private BitBltFlags(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BitBltFlags(@Mesa.POINTER int base, MemoryAccess access) {
+    private BitBltFlags(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

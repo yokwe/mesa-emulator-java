@@ -17,7 +17,7 @@ public final class FieldSpec extends MemoryData16 {
     public static final FieldSpec value(@Mesa.CARD16 int value) {
         return new FieldSpec(value);
     }
-    public static final FieldSpec longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final FieldSpec longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FieldSpec(base, access);
     }
     public static final FieldSpec pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class FieldSpec extends MemoryData16 {
     private FieldSpec(@Mesa.CARD16 int value) {
         super(value);
     }
-    private FieldSpec(@Mesa.POINTER int base, MemoryAccess access) {
+    private FieldSpec(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

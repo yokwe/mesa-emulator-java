@@ -26,7 +26,7 @@ public final class SDIndex extends MemoryData16 {
     public static final SDIndex value(@Mesa.CARD16 int value) {
         return new SDIndex(value);
     }
-    public static final SDIndex longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final SDIndex longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new SDIndex(base, access);
     }
     public static final SDIndex pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class SDIndex extends MemoryData16 {
     private SDIndex(@Mesa.CARD16 int value) {
         super(value);
     }
-    private SDIndex(@Mesa.POINTER int base, MemoryAccess access) {
+    private SDIndex(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

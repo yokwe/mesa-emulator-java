@@ -14,14 +14,14 @@ public final class AllocationVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final AllocationVector longPointer(@Mesa.POINTER int base) {
+    public static final AllocationVector longPointer(@Mesa.LONG_POINTER int base) {
         return new AllocationVector(base);
     }
     public static final AllocationVector pointer(@Mesa.SHORT_POINTER int base) {
         return new AllocationVector(Memory.lengthenMDS(base));
     }
     
-    private AllocationVector(@Mesa.POINTER int base) {
+    private AllocationVector(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

@@ -17,7 +17,7 @@ public class MemoryData32 {
         this.ra1    = 0;
         this.value  = value;
     }
-    public MemoryData32(@Mesa.POINTER int base, MemoryAccess access) {
+    public MemoryData32(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         this.access = access;
         switch(access) {
         case NONE:

@@ -35,7 +35,7 @@ public final class Direction extends MemoryData16 {
     public static final Direction value(@Mesa.CARD16 int value) {
         return new Direction(value);
     }
-    public static final Direction longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Direction longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Direction(base, access);
     }
     public static final Direction pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -45,7 +45,7 @@ public final class Direction extends MemoryData16 {
     private Direction(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Direction(@Mesa.POINTER int base, MemoryAccess access) {
+    private Direction(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

@@ -26,7 +26,7 @@ public final class Sub extends MemoryData16 {
     public static final Sub value(@Mesa.CARD16 int value) {
         return new Sub(value);
     }
-    public static final Sub longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Sub longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Sub(base, access);
     }
     public static final Sub pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class Sub extends MemoryData16 {
     private Sub(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Sub(@Mesa.POINTER int base, MemoryAccess access) {
+    private Sub(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

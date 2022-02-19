@@ -17,7 +17,7 @@ public final class GrayParm extends MemoryData16 {
     public static final GrayParm value(@Mesa.CARD16 int value) {
         return new GrayParm(value);
     }
-    public static final GrayParm longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final GrayParm longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new GrayParm(base, access);
     }
     public static final GrayParm pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class GrayParm extends MemoryData16 {
     private GrayParm(@Mesa.CARD16 int value) {
         super(value);
     }
-    private GrayParm(@Mesa.POINTER int base, MemoryAccess access) {
+    private GrayParm(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

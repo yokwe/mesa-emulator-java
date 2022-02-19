@@ -37,7 +37,7 @@ public final class LinkType extends MemoryData16 {
     public static final LinkType value(@Mesa.CARD16 int value) {
         return new LinkType(value);
     }
-    public static final LinkType longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final LinkType longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new LinkType(base, access);
     }
     public static final LinkType pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -47,7 +47,7 @@ public final class LinkType extends MemoryData16 {
     private LinkType(@Mesa.CARD16 int value) {
         super(value);
     }
-    private LinkType(@Mesa.POINTER int base, MemoryAccess access) {
+    private LinkType(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

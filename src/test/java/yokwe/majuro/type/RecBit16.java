@@ -13,14 +13,14 @@ public final class RecBit16 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecBit16 longPointer(@Mesa.POINTER int base) {
+    public static final RecBit16 longPointer(@Mesa.LONG_POINTER int base) {
         return new RecBit16(base);
     }
     public static final RecBit16 pointer(@Mesa.SHORT_POINTER int base) {
         return new RecBit16(Memory.lengthenMDS(base));
     }
     
-    private RecBit16(@Mesa.POINTER int base) {
+    private RecBit16(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

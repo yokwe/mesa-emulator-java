@@ -14,14 +14,14 @@ public final class RecArrayRefSubBit32 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSubBit32 longPointer(@Mesa.POINTER int base) {
+    public static final RecArrayRefSubBit32 longPointer(@Mesa.LONG_POINTER int base) {
         return new RecArrayRefSubBit32(base);
     }
     public static final RecArrayRefSubBit32 pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArrayRefSubBit32(Memory.lengthenMDS(base));
     }
     
-    private RecArrayRefSubBit32(@Mesa.POINTER int base) {
+    private RecArrayRefSubBit32(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

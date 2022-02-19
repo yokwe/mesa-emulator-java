@@ -14,14 +14,14 @@ public final class SystemData extends MemoryBase {
     //
     // Constructor
     //
-    public static final SystemData longPointer(@Mesa.POINTER int base) {
+    public static final SystemData longPointer(@Mesa.LONG_POINTER int base) {
         return new SystemData(base);
     }
     public static final SystemData pointer(@Mesa.SHORT_POINTER int base) {
         return new SystemData(Memory.lengthenMDS(base));
     }
     
-    private SystemData(@Mesa.POINTER int base) {
+    private SystemData(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

@@ -14,14 +14,14 @@ public final class ArrayRefSub extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSub longPointer(@Mesa.POINTER int base) {
+    public static final ArrayRefSub longPointer(@Mesa.LONG_POINTER int base) {
         return new ArrayRefSub(base);
     }
     public static final ArrayRefSub pointer(@Mesa.SHORT_POINTER int base) {
         return new ArrayRefSub(Memory.lengthenMDS(base));
     }
     
-    private ArrayRefSub(@Mesa.POINTER int base) {
+    private ArrayRefSub(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

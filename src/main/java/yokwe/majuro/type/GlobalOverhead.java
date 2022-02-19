@@ -13,14 +13,14 @@ public final class GlobalOverhead extends MemoryBase {
     //
     // Constructor
     //
-    public static final GlobalOverhead longPointer(@Mesa.POINTER int base) {
+    public static final GlobalOverhead longPointer(@Mesa.LONG_POINTER int base) {
         return new GlobalOverhead(base);
     }
     public static final GlobalOverhead pointer(@Mesa.SHORT_POINTER int base) {
         return new GlobalOverhead(Memory.lengthenMDS(base));
     }
     
-    private GlobalOverhead(@Mesa.POINTER int base) {
+    private GlobalOverhead(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

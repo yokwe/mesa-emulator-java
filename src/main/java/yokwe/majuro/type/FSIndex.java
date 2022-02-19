@@ -26,7 +26,7 @@ public final class FSIndex extends MemoryData16 {
     public static final FSIndex value(@Mesa.CARD16 int value) {
         return new FSIndex(value);
     }
-    public static final FSIndex longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final FSIndex longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FSIndex(base, access);
     }
     public static final FSIndex pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class FSIndex extends MemoryData16 {
     private FSIndex(@Mesa.CARD16 int value) {
         super(value);
     }
-    private FSIndex(@Mesa.POINTER int base, MemoryAccess access) {
+    private FSIndex(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

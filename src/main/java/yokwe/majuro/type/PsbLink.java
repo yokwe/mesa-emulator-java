@@ -17,7 +17,7 @@ public final class PsbLink extends MemoryData16 {
     public static final PsbLink value(@Mesa.CARD16 int value) {
         return new PsbLink(value);
     }
-    public static final PsbLink longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final PsbLink longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new PsbLink(base, access);
     }
     public static final PsbLink pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class PsbLink extends MemoryData16 {
     private PsbLink(@Mesa.CARD16 int value) {
         super(value);
     }
-    private PsbLink(@Mesa.POINTER int base, MemoryAccess access) {
+    private PsbLink(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

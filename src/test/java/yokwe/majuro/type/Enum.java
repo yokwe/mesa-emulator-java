@@ -37,7 +37,7 @@ public final class Enum extends MemoryData16 {
     public static final Enum value(@Mesa.CARD16 int value) {
         return new Enum(value);
     }
-    public static final Enum longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Enum longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Enum(base, access);
     }
     public static final Enum pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -47,7 +47,7 @@ public final class Enum extends MemoryData16 {
     private Enum(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Enum(@Mesa.POINTER int base, MemoryAccess access) {
+    private Enum(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

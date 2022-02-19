@@ -14,14 +14,14 @@ public final class CodeSegment extends MemoryBase {
     //
     // Constructor
     //
-    public static final CodeSegment longPointer(@Mesa.POINTER int base) {
+    public static final CodeSegment longPointer(@Mesa.LONG_POINTER int base) {
         return new CodeSegment(base);
     }
     public static final CodeSegment pointer(@Mesa.SHORT_POINTER int base) {
         return new CodeSegment(Memory.lengthenMDS(base));
     }
     
-    private CodeSegment(@Mesa.POINTER int base) {
+    private CodeSegment(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

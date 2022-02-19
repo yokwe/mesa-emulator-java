@@ -17,7 +17,7 @@ public final class FieldDesc extends MemoryData16 {
     public static final FieldDesc value(@Mesa.CARD16 int value) {
         return new FieldDesc(value);
     }
-    public static final FieldDesc longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final FieldDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FieldDesc(base, access);
     }
     public static final FieldDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class FieldDesc extends MemoryData16 {
     private FieldDesc(@Mesa.CARD16 int value) {
         super(value);
     }
-    private FieldDesc(@Mesa.POINTER int base, MemoryAccess access) {
+    private FieldDesc(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

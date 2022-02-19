@@ -14,14 +14,14 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubPtr32Enum longPointer(@Mesa.POINTER int base) {
+    public static final ArrayRefSubPtr32Enum longPointer(@Mesa.LONG_POINTER int base) {
         return new ArrayRefSubPtr32Enum(base);
     }
     public static final ArrayRefSubPtr32Enum pointer(@Mesa.SHORT_POINTER int base) {
         return new ArrayRefSubPtr32Enum(Memory.lengthenMDS(base));
     }
     
-    private ArrayRefSubPtr32Enum(@Mesa.POINTER int base) {
+    private ArrayRefSubPtr32Enum(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

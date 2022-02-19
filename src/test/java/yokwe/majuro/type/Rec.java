@@ -13,14 +13,14 @@ public final class Rec extends MemoryBase {
     //
     // Constructor
     //
-    public static final Rec longPointer(@Mesa.POINTER int base) {
+    public static final Rec longPointer(@Mesa.LONG_POINTER int base) {
         return new Rec(base);
     }
     public static final Rec pointer(@Mesa.SHORT_POINTER int base) {
         return new Rec(Memory.lengthenMDS(base));
     }
     
-    private Rec(@Mesa.POINTER int base) {
+    private Rec(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

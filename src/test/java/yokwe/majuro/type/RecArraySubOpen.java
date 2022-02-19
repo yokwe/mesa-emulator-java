@@ -13,14 +13,14 @@ public final class RecArraySubOpen extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArraySubOpen longPointer(@Mesa.POINTER int base) {
+    public static final RecArraySubOpen longPointer(@Mesa.LONG_POINTER int base) {
         return new RecArraySubOpen(base);
     }
     public static final RecArraySubOpen pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArraySubOpen(Memory.lengthenMDS(base));
     }
     
-    private RecArraySubOpen(@Mesa.POINTER int base) {
+    private RecArraySubOpen(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

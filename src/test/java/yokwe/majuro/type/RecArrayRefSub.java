@@ -14,14 +14,14 @@ public final class RecArrayRefSub extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSub longPointer(@Mesa.POINTER int base) {
+    public static final RecArrayRefSub longPointer(@Mesa.LONG_POINTER int base) {
         return new RecArrayRefSub(base);
     }
     public static final RecArrayRefSub pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArrayRefSub(Memory.lengthenMDS(base));
     }
     
-    private RecArrayRefSub(@Mesa.POINTER int base) {
+    private RecArrayRefSub(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

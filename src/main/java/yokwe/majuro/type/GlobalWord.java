@@ -17,7 +17,7 @@ public final class GlobalWord extends MemoryData16 {
     public static final GlobalWord value(@Mesa.CARD16 int value) {
         return new GlobalWord(value);
     }
-    public static final GlobalWord longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final GlobalWord longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new GlobalWord(base, access);
     }
     public static final GlobalWord pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class GlobalWord extends MemoryData16 {
     private GlobalWord(@Mesa.CARD16 int value) {
         super(value);
     }
-    private GlobalWord(@Mesa.POINTER int base, MemoryAccess access) {
+    private GlobalWord(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

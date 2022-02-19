@@ -13,14 +13,14 @@ public final class BLOCK extends MemoryBase {
     //
     // Constructor
     //
-    public static final BLOCK longPointer(@Mesa.POINTER int base) {
+    public static final BLOCK longPointer(@Mesa.LONG_POINTER int base) {
         return new BLOCK(base);
     }
     public static final BLOCK pointer(@Mesa.SHORT_POINTER int base) {
         return new BLOCK(Memory.lengthenMDS(base));
     }
     
-    private BLOCK(@Mesa.POINTER int base) {
+    private BLOCK(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

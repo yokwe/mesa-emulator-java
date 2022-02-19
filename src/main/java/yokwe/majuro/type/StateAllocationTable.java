@@ -14,14 +14,14 @@ public final class StateAllocationTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final StateAllocationTable longPointer(@Mesa.POINTER int base) {
+    public static final StateAllocationTable longPointer(@Mesa.LONG_POINTER int base) {
         return new StateAllocationTable(base);
     }
     public static final StateAllocationTable pointer(@Mesa.SHORT_POINTER int base) {
         return new StateAllocationTable(Memory.lengthenMDS(base));
     }
     
-    private StateAllocationTable(@Mesa.POINTER int base) {
+    private StateAllocationTable(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

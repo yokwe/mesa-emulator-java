@@ -13,14 +13,14 @@ public final class RecPtr32Rec extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr32Rec longPointer(@Mesa.POINTER int base) {
+    public static final RecPtr32Rec longPointer(@Mesa.LONG_POINTER int base) {
         return new RecPtr32Rec(base);
     }
     public static final RecPtr32Rec pointer(@Mesa.SHORT_POINTER int base) {
         return new RecPtr32Rec(Memory.lengthenMDS(base));
     }
     
-    private RecPtr32Rec(@Mesa.POINTER int base) {
+    private RecPtr32Rec(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

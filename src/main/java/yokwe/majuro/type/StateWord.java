@@ -17,7 +17,7 @@ public final class StateWord extends MemoryData16 {
     public static final StateWord value(@Mesa.CARD16 int value) {
         return new StateWord(value);
     }
-    public static final StateWord longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final StateWord longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new StateWord(base, access);
     }
     public static final StateWord pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class StateWord extends MemoryData16 {
     private StateWord(@Mesa.CARD16 int value) {
         super(value);
     }
-    private StateWord(@Mesa.POINTER int base, MemoryAccess access) {
+    private StateWord(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

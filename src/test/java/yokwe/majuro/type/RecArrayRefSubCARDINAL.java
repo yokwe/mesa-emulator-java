@@ -14,14 +14,14 @@ public final class RecArrayRefSubCARDINAL extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSubCARDINAL longPointer(@Mesa.POINTER int base) {
+    public static final RecArrayRefSubCARDINAL longPointer(@Mesa.LONG_POINTER int base) {
         return new RecArrayRefSubCARDINAL(base);
     }
     public static final RecArrayRefSubCARDINAL pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArrayRefSubCARDINAL(Memory.lengthenMDS(base));
     }
     
-    private RecArrayRefSubCARDINAL(@Mesa.POINTER int base) {
+    private RecArrayRefSubCARDINAL(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

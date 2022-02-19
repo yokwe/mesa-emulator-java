@@ -17,7 +17,7 @@ public final class AVItem extends MemoryData16 {
     public static final AVItem value(@Mesa.CARD16 int value) {
         return new AVItem(value);
     }
-    public static final AVItem longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final AVItem longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new AVItem(base, access);
     }
     public static final AVItem pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class AVItem extends MemoryData16 {
     private AVItem(@Mesa.CARD16 int value) {
         super(value);
     }
-    private AVItem(@Mesa.POINTER int base, MemoryAccess access) {
+    private AVItem(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

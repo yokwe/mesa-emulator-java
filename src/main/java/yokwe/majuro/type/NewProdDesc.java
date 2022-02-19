@@ -16,7 +16,7 @@ public final class NewProdDesc extends MemoryData32 {
     public static final NewProdDesc value(@Mesa.CARD32 int value) {
         return new NewProdDesc(value);
     }
-    public static final NewProdDesc longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final NewProdDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new NewProdDesc(base, access);
     }
     public static final NewProdDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -26,7 +26,7 @@ public final class NewProdDesc extends MemoryData32 {
     private NewProdDesc(@Mesa.CARD32 int value) {
         super(value);
     }
-    private NewProdDesc(@Mesa.POINTER int base, MemoryAccess access) {
+    private NewProdDesc(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

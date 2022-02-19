@@ -13,14 +13,14 @@ public final class LocalOverhead extends MemoryBase {
     //
     // Constructor
     //
-    public static final LocalOverhead longPointer(@Mesa.POINTER int base) {
+    public static final LocalOverhead longPointer(@Mesa.LONG_POINTER int base) {
         return new LocalOverhead(base);
     }
     public static final LocalOverhead pointer(@Mesa.SHORT_POINTER int base) {
         return new LocalOverhead(Memory.lengthenMDS(base));
     }
     
-    private LocalOverhead(@Mesa.POINTER int base) {
+    private LocalOverhead(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

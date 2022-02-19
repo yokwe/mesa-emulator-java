@@ -13,14 +13,14 @@ public final class RecPtr16Enum extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr16Enum longPointer(@Mesa.POINTER int base) {
+    public static final RecPtr16Enum longPointer(@Mesa.LONG_POINTER int base) {
         return new RecPtr16Enum(base);
     }
     public static final RecPtr16Enum pointer(@Mesa.SHORT_POINTER int base) {
         return new RecPtr16Enum(Memory.lengthenMDS(base));
     }
     
-    private RecPtr16Enum(@Mesa.POINTER int base) {
+    private RecPtr16Enum(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

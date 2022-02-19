@@ -13,14 +13,14 @@ public final class InterruptItem extends MemoryBase {
     //
     // Constructor
     //
-    public static final InterruptItem longPointer(@Mesa.POINTER int base) {
+    public static final InterruptItem longPointer(@Mesa.LONG_POINTER int base) {
         return new InterruptItem(base);
     }
     public static final InterruptItem pointer(@Mesa.SHORT_POINTER int base) {
         return new InterruptItem(Memory.lengthenMDS(base));
     }
     
-    private InterruptItem(@Mesa.POINTER int base) {
+    private InterruptItem(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

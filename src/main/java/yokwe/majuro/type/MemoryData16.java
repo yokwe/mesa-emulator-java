@@ -17,7 +17,7 @@ public class MemoryData16 {
         this.ra     = 0;
         this.value  = Types.toCARD16(value);
     }
-    public MemoryData16(@Mesa.POINTER int base, MemoryAccess access) {
+    public MemoryData16(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         this.access = access;
         switch(access) {
         case NONE:

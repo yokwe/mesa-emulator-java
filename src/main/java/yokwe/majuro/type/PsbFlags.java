@@ -17,7 +17,7 @@ public final class PsbFlags extends MemoryData16 {
     public static final PsbFlags value(@Mesa.CARD16 int value) {
         return new PsbFlags(value);
     }
-    public static final PsbFlags longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final PsbFlags longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new PsbFlags(base, access);
     }
     public static final PsbFlags pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class PsbFlags extends MemoryData16 {
     private PsbFlags(@Mesa.CARD16 int value) {
         super(value);
     }
-    private PsbFlags(@Mesa.POINTER int base, MemoryAccess access) {
+    private PsbFlags(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

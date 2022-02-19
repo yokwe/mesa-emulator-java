@@ -16,7 +16,7 @@ public final class BitField32 extends MemoryData32 {
     public static final BitField32 value(@Mesa.CARD32 int value) {
         return new BitField32(value);
     }
-    public static final BitField32 longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BitField32 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BitField32(base, access);
     }
     public static final BitField32 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -26,7 +26,7 @@ public final class BitField32 extends MemoryData32 {
     private BitField32(@Mesa.CARD32 int value) {
         super(value);
     }
-    private BitField32(@Mesa.POINTER int base, MemoryAccess access) {
+    private BitField32(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

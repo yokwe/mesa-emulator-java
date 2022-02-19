@@ -14,14 +14,14 @@ public final class FaultVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final FaultVector longPointer(@Mesa.POINTER int base) {
+    public static final FaultVector longPointer(@Mesa.LONG_POINTER int base) {
         return new FaultVector(base);
     }
     public static final FaultVector pointer(@Mesa.SHORT_POINTER int base) {
         return new FaultVector(Memory.lengthenMDS(base));
     }
     
-    private FaultVector(@Mesa.POINTER int base) {
+    private FaultVector(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

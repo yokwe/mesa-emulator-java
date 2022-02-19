@@ -13,14 +13,14 @@ public final class RecBit32 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecBit32 longPointer(@Mesa.POINTER int base) {
+    public static final RecBit32 longPointer(@Mesa.LONG_POINTER int base) {
         return new RecBit32(base);
     }
     public static final RecBit32 pointer(@Mesa.SHORT_POINTER int base) {
         return new RecBit32(Memory.lengthenMDS(base));
     }
     
-    private RecBit32(@Mesa.POINTER int base) {
+    private RecBit32(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

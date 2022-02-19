@@ -17,7 +17,7 @@ public final class BytePair extends MemoryData16 {
     public static final BytePair value(@Mesa.CARD16 int value) {
         return new BytePair(value);
     }
-    public static final BytePair longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BytePair longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BytePair(base, access);
     }
     public static final BytePair pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class BytePair extends MemoryData16 {
     private BytePair(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BytePair(@Mesa.POINTER int base, MemoryAccess access) {
+    private BytePair(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

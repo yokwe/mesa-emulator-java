@@ -14,14 +14,14 @@ public final class ArraySubFixed extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArraySubFixed longPointer(@Mesa.POINTER int base) {
+    public static final ArraySubFixed longPointer(@Mesa.LONG_POINTER int base) {
         return new ArraySubFixed(base);
     }
     public static final ArraySubFixed pointer(@Mesa.SHORT_POINTER int base) {
         return new ArraySubFixed(Memory.lengthenMDS(base));
     }
     
-    private ArraySubFixed(@Mesa.POINTER int base) {
+    private ArraySubFixed(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

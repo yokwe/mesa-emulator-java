@@ -13,14 +13,14 @@ public final class FaultQueue extends MemoryBase {
     //
     // Constructor
     //
-    public static final FaultQueue longPointer(@Mesa.POINTER int base) {
+    public static final FaultQueue longPointer(@Mesa.LONG_POINTER int base) {
         return new FaultQueue(base);
     }
     public static final FaultQueue pointer(@Mesa.SHORT_POINTER int base) {
         return new FaultQueue(Memory.lengthenMDS(base));
     }
     
-    private FaultQueue(@Mesa.POINTER int base) {
+    private FaultQueue(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

@@ -17,7 +17,7 @@ public final class LocalWord extends MemoryData16 {
     public static final LocalWord value(@Mesa.CARD16 int value) {
         return new LocalWord(value);
     }
-    public static final LocalWord longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final LocalWord longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new LocalWord(base, access);
     }
     public static final LocalWord pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class LocalWord extends MemoryData16 {
     private LocalWord(@Mesa.CARD16 int value) {
         super(value);
     }
-    private LocalWord(@Mesa.POINTER int base, MemoryAccess access) {
+    private LocalWord(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

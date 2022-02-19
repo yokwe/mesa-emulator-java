@@ -13,14 +13,14 @@ public final class Port extends MemoryBase {
     //
     // Constructor
     //
-    public static final Port longPointer(@Mesa.POINTER int base) {
+    public static final Port longPointer(@Mesa.LONG_POINTER int base) {
         return new Port(base);
     }
     public static final Port pointer(@Mesa.SHORT_POINTER int base) {
         return new Port(Memory.lengthenMDS(base));
     }
     
-    private Port(@Mesa.POINTER int base) {
+    private Port(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

@@ -16,7 +16,7 @@ public final class ProcDesc extends MemoryData32 {
     public static final ProcDesc value(@Mesa.CARD32 int value) {
         return new ProcDesc(value);
     }
-    public static final ProcDesc longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final ProcDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new ProcDesc(base, access);
     }
     public static final ProcDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -26,7 +26,7 @@ public final class ProcDesc extends MemoryData32 {
     private ProcDesc(@Mesa.CARD32 int value) {
         super(value);
     }
-    private ProcDesc(@Mesa.POINTER int base, MemoryAccess access) {
+    private ProcDesc(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

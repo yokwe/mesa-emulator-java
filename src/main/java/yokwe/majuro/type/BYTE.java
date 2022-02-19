@@ -26,7 +26,7 @@ public final class BYTE extends MemoryData16 {
     public static final BYTE value(@Mesa.CARD16 int value) {
         return new BYTE(value);
     }
-    public static final BYTE longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BYTE longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BYTE(base, access);
     }
     public static final BYTE pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class BYTE extends MemoryData16 {
     private BYTE(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BYTE(@Mesa.POINTER int base, MemoryAccess access) {
+    private BYTE(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

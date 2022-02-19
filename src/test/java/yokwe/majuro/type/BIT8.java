@@ -26,7 +26,7 @@ public final class BIT8 extends MemoryData16 {
     public static final BIT8 value(@Mesa.CARD16 int value) {
         return new BIT8(value);
     }
-    public static final BIT8 longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BIT8 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BIT8(base, access);
     }
     public static final BIT8 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class BIT8 extends MemoryData16 {
     private BIT8(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BIT8(@Mesa.POINTER int base, MemoryAccess access) {
+    private BIT8(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

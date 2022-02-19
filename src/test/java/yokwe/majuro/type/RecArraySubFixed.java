@@ -14,14 +14,14 @@ public final class RecArraySubFixed extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArraySubFixed longPointer(@Mesa.POINTER int base) {
+    public static final RecArraySubFixed longPointer(@Mesa.LONG_POINTER int base) {
         return new RecArraySubFixed(base);
     }
     public static final RecArraySubFixed pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArraySubFixed(Memory.lengthenMDS(base));
     }
     
-    private RecArraySubFixed(@Mesa.POINTER int base) {
+    private RecArraySubFixed(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

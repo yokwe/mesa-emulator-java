@@ -14,14 +14,14 @@ public final class StateVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final StateVector longPointer(@Mesa.POINTER int base) {
+    public static final StateVector longPointer(@Mesa.LONG_POINTER int base) {
         return new StateVector(base);
     }
     public static final StateVector pointer(@Mesa.SHORT_POINTER int base) {
         return new StateVector(Memory.lengthenMDS(base));
     }
     
-    private StateVector(@Mesa.POINTER int base) {
+    private StateVector(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

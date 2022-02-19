@@ -14,14 +14,14 @@ public final class GlobalFrameTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final GlobalFrameTable longPointer(@Mesa.POINTER int base) {
+    public static final GlobalFrameTable longPointer(@Mesa.LONG_POINTER int base) {
         return new GlobalFrameTable(base);
     }
     public static final GlobalFrameTable pointer(@Mesa.SHORT_POINTER int base) {
         return new GlobalFrameTable(Memory.lengthenMDS(base));
     }
     
-    private GlobalFrameTable(@Mesa.POINTER int base) {
+    private GlobalFrameTable(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

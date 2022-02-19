@@ -13,14 +13,14 @@ public final class ArraySubOpen extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArraySubOpen longPointer(@Mesa.POINTER int base) {
+    public static final ArraySubOpen longPointer(@Mesa.LONG_POINTER int base) {
         return new ArraySubOpen(base);
     }
     public static final ArraySubOpen pointer(@Mesa.SHORT_POINTER int base) {
         return new ArraySubOpen(Memory.lengthenMDS(base));
     }
     
-    private ArraySubOpen(@Mesa.POINTER int base) {
+    private ArraySubOpen(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

@@ -26,7 +26,7 @@ public final class Priority extends MemoryData16 {
     public static final Priority value(@Mesa.CARD16 int value) {
         return new Priority(value);
     }
-    public static final Priority longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Priority longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Priority(base, access);
     }
     public static final Priority pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class Priority extends MemoryData16 {
     private Priority(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Priority(@Mesa.POINTER int base, MemoryAccess access) {
+    private Priority(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

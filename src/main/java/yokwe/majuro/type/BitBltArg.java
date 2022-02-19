@@ -13,14 +13,14 @@ public final class BitBltArg extends MemoryBase {
     //
     // Constructor
     //
-    public static final BitBltArg longPointer(@Mesa.POINTER int base) {
+    public static final BitBltArg longPointer(@Mesa.LONG_POINTER int base) {
         return new BitBltArg(base);
     }
     public static final BitBltArg pointer(@Mesa.SHORT_POINTER int base) {
         return new BitBltArg(Memory.lengthenMDS(base));
     }
     
-    private BitBltArg(@Mesa.POINTER int base) {
+    private BitBltArg(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

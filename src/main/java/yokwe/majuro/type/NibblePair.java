@@ -17,7 +17,7 @@ public final class NibblePair extends MemoryData16 {
     public static final NibblePair value(@Mesa.CARD16 int value) {
         return new NibblePair(value);
     }
-    public static final NibblePair longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final NibblePair longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new NibblePair(base, access);
     }
     public static final NibblePair pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class NibblePair extends MemoryData16 {
     private NibblePair(@Mesa.CARD16 int value) {
         super(value);
     }
-    private NibblePair(@Mesa.POINTER int base, MemoryAccess access) {
+    private NibblePair(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

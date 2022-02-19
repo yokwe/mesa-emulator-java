@@ -13,14 +13,14 @@ public final class TransferDescriptor extends MemoryBase {
     //
     // Constructor
     //
-    public static final TransferDescriptor longPointer(@Mesa.POINTER int base) {
+    public static final TransferDescriptor longPointer(@Mesa.LONG_POINTER int base) {
         return new TransferDescriptor(base);
     }
     public static final TransferDescriptor pointer(@Mesa.SHORT_POINTER int base) {
         return new TransferDescriptor(Memory.lengthenMDS(base));
     }
     
-    private TransferDescriptor(@Mesa.POINTER int base) {
+    private TransferDescriptor(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

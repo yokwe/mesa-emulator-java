@@ -17,7 +17,7 @@ public final class BitField8 extends MemoryData16 {
     public static final BitField8 value(@Mesa.CARD16 int value) {
         return new BitField8(value);
     }
-    public static final BitField8 longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final BitField8 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BitField8(base, access);
     }
     public static final BitField8 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class BitField8 extends MemoryData16 {
     private BitField8(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BitField8(@Mesa.POINTER int base, MemoryAccess access) {
+    private BitField8(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

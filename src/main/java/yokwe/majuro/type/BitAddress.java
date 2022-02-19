@@ -13,14 +13,14 @@ public final class BitAddress extends MemoryBase {
     //
     // Constructor
     //
-    public static final BitAddress longPointer(@Mesa.POINTER int base) {
+    public static final BitAddress longPointer(@Mesa.LONG_POINTER int base) {
         return new BitAddress(base);
     }
     public static final BitAddress pointer(@Mesa.SHORT_POINTER int base) {
         return new BitAddress(Memory.lengthenMDS(base));
     }
     
-    private BitAddress(@Mesa.POINTER int base) {
+    private BitAddress(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

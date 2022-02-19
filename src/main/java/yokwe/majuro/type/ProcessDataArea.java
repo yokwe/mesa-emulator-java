@@ -14,14 +14,14 @@ public final class ProcessDataArea extends MemoryBase {
     //
     // Constructor
     //
-    public static final ProcessDataArea longPointer(@Mesa.POINTER int base) {
+    public static final ProcessDataArea longPointer(@Mesa.LONG_POINTER int base) {
         return new ProcessDataArea(base);
     }
     public static final ProcessDataArea pointer(@Mesa.SHORT_POINTER int base) {
         return new ProcessDataArea(Memory.lengthenMDS(base));
     }
     
-    private ProcessDataArea(@Mesa.POINTER int base) {
+    private ProcessDataArea(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     

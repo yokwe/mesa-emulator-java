@@ -17,7 +17,7 @@ public final class Condition extends MemoryData16 {
     public static final Condition value(@Mesa.CARD16 int value) {
         return new Condition(value);
     }
-    public static final Condition longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Condition longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Condition(base, access);
     }
     public static final Condition pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class Condition extends MemoryData16 {
     private Condition(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Condition(@Mesa.POINTER int base, MemoryAccess access) {
+    private Condition(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

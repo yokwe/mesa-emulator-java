@@ -26,7 +26,7 @@ public final class FaultIndex extends MemoryData16 {
     public static final FaultIndex value(@Mesa.CARD16 int value) {
         return new FaultIndex(value);
     }
-    public static final FaultIndex longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final FaultIndex longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FaultIndex(base, access);
     }
     public static final FaultIndex pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -36,7 +36,7 @@ public final class FaultIndex extends MemoryData16 {
     private FaultIndex(@Mesa.CARD16 int value) {
         super(value);
     }
-    private FaultIndex(@Mesa.POINTER int base, MemoryAccess access) {
+    private FaultIndex(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

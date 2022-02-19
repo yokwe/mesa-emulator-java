@@ -17,7 +17,7 @@ public final class Queue extends MemoryData16 {
     public static final Queue value(@Mesa.CARD16 int value) {
         return new Queue(value);
     }
-    public static final Queue longPointer(@Mesa.POINTER int base, MemoryAccess access) {
+    public static final Queue longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Queue(base, access);
     }
     public static final Queue pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
@@ -27,7 +27,7 @@ public final class Queue extends MemoryData16 {
     private Queue(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Queue(@Mesa.POINTER int base, MemoryAccess access) {
+    private Queue(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

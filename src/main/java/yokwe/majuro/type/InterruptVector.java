@@ -14,14 +14,14 @@ public final class InterruptVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final InterruptVector longPointer(@Mesa.POINTER int base) {
+    public static final InterruptVector longPointer(@Mesa.LONG_POINTER int base) {
         return new InterruptVector(base);
     }
     public static final InterruptVector pointer(@Mesa.SHORT_POINTER int base) {
         return new InterruptVector(Memory.lengthenMDS(base));
     }
     
-    private InterruptVector(@Mesa.POINTER int base) {
+    private InterruptVector(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

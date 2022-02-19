@@ -14,14 +14,14 @@ public final class ArrayRefSubPtr16Sub extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubPtr16Sub longPointer(@Mesa.POINTER int base) {
+    public static final ArrayRefSubPtr16Sub longPointer(@Mesa.LONG_POINTER int base) {
         return new ArrayRefSubPtr16Sub(base);
     }
     public static final ArrayRefSubPtr16Sub pointer(@Mesa.SHORT_POINTER int base) {
         return new ArrayRefSubPtr16Sub(Memory.lengthenMDS(base));
     }
     
-    private ArrayRefSubPtr16Sub(@Mesa.POINTER int base) {
+    private ArrayRefSubPtr16Sub(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     //

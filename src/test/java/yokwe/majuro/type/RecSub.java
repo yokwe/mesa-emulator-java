@@ -13,14 +13,14 @@ public final class RecSub extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecSub longPointer(@Mesa.POINTER int base) {
+    public static final RecSub longPointer(@Mesa.LONG_POINTER int base) {
         return new RecSub(base);
     }
     public static final RecSub pointer(@Mesa.SHORT_POINTER int base) {
         return new RecSub(Memory.lengthenMDS(base));
     }
     
-    private RecSub(@Mesa.POINTER int base) {
+    private RecSub(@Mesa.LONG_POINTER int base) {
         super(base);
     }
     
