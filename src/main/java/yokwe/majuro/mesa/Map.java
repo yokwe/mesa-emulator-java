@@ -27,7 +27,7 @@ public final class Map {
 		if (isDirty()) flags.add("DIRTY");
 		if (isReferenced()) flags.add("REFERENCED");
 		
-		return String.format("{%X {%s|}", getRealPage(), String.join(" ", flags));
+		return String.format("{%X {%s}}", getRealPage(), String.join(" ", flags));
 	}
 
 	public int value() {
