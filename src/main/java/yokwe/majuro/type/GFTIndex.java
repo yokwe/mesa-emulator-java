@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // GFTIndex: TYPE = [0..16384);
 public final class GFTIndex extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "GFTIndex";
     
     public static final int WORD_SIZE =     1;
     public static final int BIT_SIZE  =    14;
@@ -23,20 +23,20 @@ public final class GFTIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public static final GFTIndex value(char value) {
+    public static final GFTIndex value(@Mesa.CARD16 int value) {
         return new GFTIndex(value);
     }
-    public static final GFTIndex longPointer(int base, MemoryAccess access) {
+    public static final GFTIndex longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new GFTIndex(base, access);
     }
-    public static final GFTIndex pointer(char base, MemoryAccess access) {
+    public static final GFTIndex pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new GFTIndex(Memory.lengthenMDS(base), access);
     }
     
-    private GFTIndex(char value) {
+    private GFTIndex(@Mesa.CARD16 int value) {
         super(value);
     }
-    private GFTIndex(int base, MemoryAccess access) {
+    private GFTIndex(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

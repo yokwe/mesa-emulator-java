@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
 public final class GlobalFrameTable extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "GlobalFrameTable";
     
     public static final int WORD_SIZE =   65536;
     public static final int BIT_SIZE  = 1048576;
@@ -14,14 +14,14 @@ public final class GlobalFrameTable extends MemoryBase {
     //
     // Constructor
     //
-    public static final GlobalFrameTable longPointer(int base) {
+    public static final GlobalFrameTable longPointer(@Mesa.POINTER int base) {
         return new GlobalFrameTable(base);
     }
-    public static final GlobalFrameTable pointer(char base) {
+    public static final GlobalFrameTable pointer(@Mesa.SHORT_POINTER int base) {
         return new GlobalFrameTable(Memory.lengthenMDS(base));
     }
     
-    private GlobalFrameTable(int base) {
+    private GlobalFrameTable(@Mesa.POINTER int base) {
         super(base);
     }
     //

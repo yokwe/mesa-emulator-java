@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // SDIndex: TYPE = [0..256);
 public final class SDIndex extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "SDIndex";
     
     public static final int WORD_SIZE =    1;
     public static final int BIT_SIZE  =    8;
@@ -23,20 +23,20 @@ public final class SDIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public static final SDIndex value(char value) {
+    public static final SDIndex value(@Mesa.CARD16 int value) {
         return new SDIndex(value);
     }
-    public static final SDIndex longPointer(int base, MemoryAccess access) {
+    public static final SDIndex longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new SDIndex(base, access);
     }
-    public static final SDIndex pointer(char base, MemoryAccess access) {
+    public static final SDIndex pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new SDIndex(Memory.lengthenMDS(base), access);
     }
     
-    private SDIndex(char value) {
+    private SDIndex(@Mesa.CARD16 int value) {
         super(value);
     }
-    private SDIndex(int base, MemoryAccess access) {
+    private SDIndex(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

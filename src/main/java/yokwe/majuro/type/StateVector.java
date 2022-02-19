@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): LocalFrameHandle, data (16): BLOCK];
 public final class StateVector extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "StateVector";
     
     public static final int WORD_SIZE =  16;
     public static final int BIT_SIZE  = 256;
@@ -14,14 +14,14 @@ public final class StateVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final StateVector longPointer(int base) {
+    public static final StateVector longPointer(@Mesa.POINTER int base) {
         return new StateVector(base);
     }
-    public static final StateVector pointer(char base) {
+    public static final StateVector pointer(@Mesa.SHORT_POINTER int base) {
         return new StateVector(Memory.lengthenMDS(base));
     }
     
-    private StateVector(int base) {
+    private StateVector(@Mesa.POINTER int base) {
         super(base);
     }
     
@@ -50,7 +50,7 @@ public final class StateVector extends MemoryBase {
     // frame (15:0..15): LocalFrameHandle
     private static final int OFFSET_FRAME = 15;
     public BLOCK frame() {
-        char pointer = Memory.read16(base + OFFSET_FRAME);
+        int pointer = Memory.read16(base + OFFSET_FRAME);
         return BLOCK.pointer(pointer);
     }
     // data (16): BLOCK

@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // RecArrayRefSubBit16: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..63): ARRAY Sub OF BitField16];
 public final class RecArrayRefSubBit16 extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "RecArrayRefSubBit16";
     
     public static final int WORD_SIZE =  5;
     public static final int BIT_SIZE  = 80;
@@ -14,14 +14,14 @@ public final class RecArrayRefSubBit16 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefSubBit16 longPointer(int base) {
+    public static final RecArrayRefSubBit16 longPointer(@Mesa.POINTER int base) {
         return new RecArrayRefSubBit16(base);
     }
-    public static final RecArrayRefSubBit16 pointer(char base) {
+    public static final RecArrayRefSubBit16 pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArrayRefSubBit16(Memory.lengthenMDS(base));
     }
     
-    private RecArrayRefSubBit16(int base) {
+    private RecArrayRefSubBit16(@Mesa.POINTER int base) {
         super(base);
     }
     

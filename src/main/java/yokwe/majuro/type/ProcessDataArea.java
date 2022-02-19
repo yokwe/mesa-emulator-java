@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // ProcessDataArea: TYPE = RECORD[ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector, block (0): ARRAY PsbIndex OF ProcessStateBlock];
 public final class ProcessDataArea extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "ProcessDataArea";
     
     public static final int WORD_SIZE =   64;
     public static final int BIT_SIZE  = 1024;
@@ -14,14 +14,14 @@ public final class ProcessDataArea extends MemoryBase {
     //
     // Constructor
     //
-    public static final ProcessDataArea longPointer(int base) {
+    public static final ProcessDataArea longPointer(@Mesa.POINTER int base) {
         return new ProcessDataArea(base);
     }
-    public static final ProcessDataArea pointer(char base) {
+    public static final ProcessDataArea pointer(@Mesa.SHORT_POINTER int base) {
         return new ProcessDataArea(Memory.lengthenMDS(base));
     }
     
-    private ProcessDataArea(int base) {
+    private ProcessDataArea(@Mesa.POINTER int base) {
         super(base);
     }
     

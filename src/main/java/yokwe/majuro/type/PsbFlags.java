@@ -1,11 +1,12 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // PsbFlags: TYPE = RECORD[available (0:0..2): UNSPECIFIED, cleanup (0:3..12): PsbIndex, reserved (0:13..13): UNSPECIFIED, waiting (0:14..14): BOOLEAN, abort (0:15..15): BOOLEAN];
 public final class PsbFlags extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "PsbFlags";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
@@ -13,20 +14,20 @@ public final class PsbFlags extends MemoryData16 {
     //
     // Constructor
     //
-    public static final PsbFlags value(char value) {
+    public static final PsbFlags value(@Mesa.CARD16 int value) {
         return new PsbFlags(value);
     }
-    public static final PsbFlags longPointer(int base, MemoryAccess access) {
+    public static final PsbFlags longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new PsbFlags(base, access);
     }
-    public static final PsbFlags pointer(char base, MemoryAccess access) {
+    public static final PsbFlags pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new PsbFlags(Memory.lengthenMDS(base), access);
     }
     
-    private PsbFlags(char value) {
+    private PsbFlags(@Mesa.CARD16 int value) {
         super(value);
     }
-    private PsbFlags(int base, MemoryAccess access) {
+    private PsbFlags(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -54,39 +55,39 @@ public final class PsbFlags extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final char available() {
-        return (char)((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
+    public final @Mesa.CARD16 int available() {
+        return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
-    public final void available(char newValue) {
-        value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
-    }
-    
-    public final char cleanup() {
-        return (char)((value & CLEANUP_MASK) >>> CLEANUP_SHIFT);
-    }
-    public final void cleanup(char newValue) {
-        value = (value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK);
+    public final void available(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
     }
     
-    public final char reserved() {
-        return (char)((value & RESERVED_MASK) >>> RESERVED_SHIFT);
+    public final @Mesa.CARD16 int cleanup() {
+        return Types.toCARD16((value & CLEANUP_MASK) >>> CLEANUP_SHIFT);
     }
-    public final void reserved(char newValue) {
-        value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
-    }
-    
-    public final char waiting() {
-        return (char)((value & WAITING_MASK) >>> WAITING_SHIFT);
-    }
-    public final void waiting(char newValue) {
-        value = (value & ~WAITING_MASK) | ((newValue << WAITING_SHIFT) & WAITING_MASK);
+    public final void cleanup(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK));
     }
     
-    public final char abort() {
-        return (char)((value & ABORT_MASK) >>> ABORT_SHIFT);
+    public final @Mesa.CARD16 int reserved() {
+        return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
-    public final void abort(char newValue) {
-        value = (value & ~ABORT_MASK) | ((newValue << ABORT_SHIFT) & ABORT_MASK);
+    public final void reserved(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+    }
+    
+    public final @Mesa.CARD16 int waiting() {
+        return Types.toCARD16((value & WAITING_MASK) >>> WAITING_SHIFT);
+    }
+    public final void waiting(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~WAITING_MASK) | ((newValue << WAITING_SHIFT) & WAITING_MASK));
+    }
+    
+    public final @Mesa.CARD16 int abort() {
+        return Types.toCARD16((value & ABORT_MASK) >>> ABORT_SHIFT);
+    }
+    public final void abort(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~ABORT_MASK) | ((newValue << ABORT_SHIFT) & ABORT_MASK));
     }
     
 }

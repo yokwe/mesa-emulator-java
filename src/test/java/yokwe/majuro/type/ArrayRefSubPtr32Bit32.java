@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // ArrayRefSubPtr32Bit32: TYPE = ARRAY Sub OF LONG POINTER TO BitField32;
 public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "ArrayRefSubPtr32Bit32";
     
     public static final int WORD_SIZE =   8;
     public static final int BIT_SIZE  = 128;
@@ -14,14 +14,14 @@ public final class ArrayRefSubPtr32Bit32 extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubPtr32Bit32 longPointer(int base) {
+    public static final ArrayRefSubPtr32Bit32 longPointer(@Mesa.POINTER int base) {
         return new ArrayRefSubPtr32Bit32(base);
     }
-    public static final ArrayRefSubPtr32Bit32 pointer(char base) {
+    public static final ArrayRefSubPtr32Bit32 pointer(@Mesa.SHORT_POINTER int base) {
         return new ArrayRefSubPtr32Bit32(Memory.lengthenMDS(base));
     }
     
-    private ArrayRefSubPtr32Bit32(int base) {
+    private ArrayRefSubPtr32Bit32(@Mesa.POINTER int base) {
         super(base);
     }
     //

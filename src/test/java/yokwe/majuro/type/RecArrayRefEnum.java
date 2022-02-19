@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // RecArrayRefEnum: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..63): ARRAY Enum OF UNSPECIFIED];
 public final class RecArrayRefEnum extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "RecArrayRefEnum";
     
     public static final int WORD_SIZE =  5;
     public static final int BIT_SIZE  = 80;
@@ -14,14 +14,14 @@ public final class RecArrayRefEnum extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArrayRefEnum longPointer(int base) {
+    public static final RecArrayRefEnum longPointer(@Mesa.POINTER int base) {
         return new RecArrayRefEnum(base);
     }
-    public static final RecArrayRefEnum pointer(char base) {
+    public static final RecArrayRefEnum pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArrayRefEnum(Memory.lengthenMDS(base));
     }
     
-    private RecArrayRefEnum(int base) {
+    private RecArrayRefEnum(@Mesa.POINTER int base) {
         super(base);
     }
     

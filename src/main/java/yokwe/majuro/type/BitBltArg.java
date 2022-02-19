@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // BitBltArg: TYPE = RECORD[dst (0:0..47): BitAddress, dstBpl (3:0..15): INTEGER, src (4:0..47): BitAddress, srcBpl (7:0..15): INTEGER, width (8:0..15): CARDINAL, height (9:0..15): CARDINAL, flags (10:0..15): BitBltFlags, reserved (11:0..15): UNSPECIFIED];
 public final class BitBltArg extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "BitBltArg";
     
     public static final int WORD_SIZE =  12;
     public static final int BIT_SIZE  = 192;
@@ -13,14 +13,14 @@ public final class BitBltArg extends MemoryBase {
     //
     // Constructor
     //
-    public static final BitBltArg longPointer(int base) {
+    public static final BitBltArg longPointer(@Mesa.POINTER int base) {
         return new BitBltArg(base);
     }
-    public static final BitBltArg pointer(char base) {
+    public static final BitBltArg pointer(@Mesa.SHORT_POINTER int base) {
         return new BitBltArg(Memory.lengthenMDS(base));
     }
     
-    private BitBltArg(int base) {
+    private BitBltArg(@Mesa.POINTER int base) {
         super(base);
     }
     

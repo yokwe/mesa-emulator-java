@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // BitField32: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): Enum, fill (1:0..15): UNSPECIFIED];
 public final class BitField32 extends MemoryData32 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "BitField32";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,20 +13,20 @@ public final class BitField32 extends MemoryData32 {
     //
     // Constructor
     //
-    public static final BitField32 value(int value) {
+    public static final BitField32 value(@Mesa.CARD32 int value) {
         return new BitField32(value);
     }
-    public static final BitField32 longPointer(int base, MemoryAccess access) {
+    public static final BitField32 longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new BitField32(base, access);
     }
-    public static final BitField32 pointer(char base, MemoryAccess access) {
+    public static final BitField32 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new BitField32(Memory.lengthenMDS(base), access);
     }
     
-    private BitField32(int value) {
+    private BitField32(@Mesa.CARD32 int value) {
         super(value);
     }
-    private BitField32(int base, MemoryAccess access) {
+    private BitField32(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

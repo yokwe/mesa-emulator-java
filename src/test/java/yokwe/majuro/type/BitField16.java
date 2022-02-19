@@ -1,11 +1,12 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // BitField16: TYPE = RECORD[left (0:0..7): BIT8, right (0:8..15): BIT8];
 public final class BitField16 extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "BitField16";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
@@ -13,20 +14,20 @@ public final class BitField16 extends MemoryData16 {
     //
     // Constructor
     //
-    public static final BitField16 value(char value) {
+    public static final BitField16 value(@Mesa.CARD16 int value) {
         return new BitField16(value);
     }
-    public static final BitField16 longPointer(int base, MemoryAccess access) {
+    public static final BitField16 longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new BitField16(base, access);
     }
-    public static final BitField16 pointer(char base, MemoryAccess access) {
+    public static final BitField16 pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new BitField16(Memory.lengthenMDS(base), access);
     }
     
-    private BitField16(char value) {
+    private BitField16(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BitField16(int base, MemoryAccess access) {
+    private BitField16(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -45,18 +46,18 @@ public final class BitField16 extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final char left() {
-        return (char)((value & LEFT_MASK) >>> LEFT_SHIFT);
+    public final @Mesa.CARD16 int left() {
+        return Types.toCARD16((value & LEFT_MASK) >>> LEFT_SHIFT);
     }
-    public final void left(char newValue) {
-        value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
+    public final void left(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK));
     }
     
-    public final char right() {
-        return (char)((value & RIGHT_MASK) >>> RIGHT_SHIFT);
+    public final @Mesa.CARD16 int right() {
+        return Types.toCARD16((value & RIGHT_MASK) >>> RIGHT_SHIFT);
     }
-    public final void right(char newValue) {
-        value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
+    public final void right(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK));
     }
     
 }

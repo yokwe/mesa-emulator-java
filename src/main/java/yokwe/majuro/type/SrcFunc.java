@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // SrcFunc: TYPE = {null(0), complement(1)};
 public final class SrcFunc extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "SrcFunc";
     
     public static final int WORD_SIZE = 1;
     public static final int BIT_SIZE  = 1;
@@ -14,8 +14,8 @@ public final class SrcFunc extends MemoryData16 {
     //
     // Enum Value Constants
     //
-    public static final char NULL       = 0;
-    public static final char COMPLEMENT = 1;
+    public static final @Mesa.ENUM int NULL       = 0;
+    public static final @Mesa.ENUM int COMPLEMENT = 1;
     
     private static final int[] values = {
         NULL, COMPLEMENT
@@ -32,20 +32,20 @@ public final class SrcFunc extends MemoryData16 {
     //
     // Constructor
     //
-    public static final SrcFunc value(char value) {
+    public static final SrcFunc value(@Mesa.CARD16 int value) {
         return new SrcFunc(value);
     }
-    public static final SrcFunc longPointer(int base, MemoryAccess access) {
+    public static final SrcFunc longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new SrcFunc(base, access);
     }
-    public static final SrcFunc pointer(char base, MemoryAccess access) {
+    public static final SrcFunc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new SrcFunc(Memory.lengthenMDS(base), access);
     }
     
-    private SrcFunc(char value) {
+    private SrcFunc(@Mesa.CARD16 int value) {
         super(value);
     }
-    private SrcFunc(int base, MemoryAccess access) {
+    private SrcFunc(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

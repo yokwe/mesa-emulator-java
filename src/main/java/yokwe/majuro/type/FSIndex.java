@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // FSIndex: TYPE = [0..256);
 public final class FSIndex extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "FSIndex";
     
     public static final int WORD_SIZE =    1;
     public static final int BIT_SIZE  =    8;
@@ -23,20 +23,20 @@ public final class FSIndex extends MemoryData16 {
     //
     // Constructor
     //
-    public static final FSIndex value(char value) {
+    public static final FSIndex value(@Mesa.CARD16 int value) {
         return new FSIndex(value);
     }
-    public static final FSIndex longPointer(int base, MemoryAccess access) {
+    public static final FSIndex longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new FSIndex(base, access);
     }
-    public static final FSIndex pointer(char base, MemoryAccess access) {
+    public static final FSIndex pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new FSIndex(Memory.lengthenMDS(base), access);
     }
     
-    private FSIndex(char value) {
+    private FSIndex(@Mesa.CARD16 int value) {
         super(value);
     }
-    private FSIndex(int base, MemoryAccess access) {
+    private FSIndex(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

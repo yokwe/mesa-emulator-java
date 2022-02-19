@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // TaggedControlLink: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
 public final class TaggedControlLink extends MemoryData32 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "TaggedControlLink";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,20 +13,20 @@ public final class TaggedControlLink extends MemoryData32 {
     //
     // Constructor
     //
-    public static final TaggedControlLink value(int value) {
+    public static final TaggedControlLink value(@Mesa.CARD32 int value) {
         return new TaggedControlLink(value);
     }
-    public static final TaggedControlLink longPointer(int base, MemoryAccess access) {
+    public static final TaggedControlLink longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new TaggedControlLink(base, access);
     }
-    public static final TaggedControlLink pointer(char base, MemoryAccess access) {
+    public static final TaggedControlLink pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new TaggedControlLink(Memory.lengthenMDS(base), access);
     }
     
-    private TaggedControlLink(int value) {
+    private TaggedControlLink(@Mesa.CARD32 int value) {
         super(value);
     }
-    private TaggedControlLink(int base, MemoryAccess access) {
+    private TaggedControlLink(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

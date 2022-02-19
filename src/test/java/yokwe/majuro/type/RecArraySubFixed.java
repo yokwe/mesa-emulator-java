@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // RecArraySubFixed: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..63): ARRAY [0..4) OF UNSPECIFIED];
 public final class RecArraySubFixed extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "RecArraySubFixed";
     
     public static final int WORD_SIZE =  5;
     public static final int BIT_SIZE  = 80;
@@ -14,14 +14,14 @@ public final class RecArraySubFixed extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecArraySubFixed longPointer(int base) {
+    public static final RecArraySubFixed longPointer(@Mesa.POINTER int base) {
         return new RecArraySubFixed(base);
     }
-    public static final RecArraySubFixed pointer(char base) {
+    public static final RecArraySubFixed pointer(@Mesa.SHORT_POINTER int base) {
         return new RecArraySubFixed(Memory.lengthenMDS(base));
     }
     
-    private RecArraySubFixed(int base) {
+    private RecArraySubFixed(@Mesa.POINTER int base) {
         super(base);
     }
     

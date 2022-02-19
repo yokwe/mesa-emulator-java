@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // BitAddress: TYPE = RECORD[word (0:0..31): LONG POINTER, reserved (2:0..11): UNSPECIFIED, bit (2:12..15): CARDINAL];
 public final class BitAddress extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "BitAddress";
     
     public static final int WORD_SIZE =  3;
     public static final int BIT_SIZE  = 48;
@@ -13,14 +13,14 @@ public final class BitAddress extends MemoryBase {
     //
     // Constructor
     //
-    public static final BitAddress longPointer(int base) {
+    public static final BitAddress longPointer(@Mesa.POINTER int base) {
         return new BitAddress(base);
     }
-    public static final BitAddress pointer(char base) {
+    public static final BitAddress pointer(@Mesa.SHORT_POINTER int base) {
         return new BitAddress(Memory.lengthenMDS(base));
     }
     
-    private BitAddress(int base) {
+    private BitAddress(@Mesa.POINTER int base) {
         super(base);
     }
     

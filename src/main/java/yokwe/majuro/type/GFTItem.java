@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // GFTItem: TYPE = RECORD[globalFrame (0:0..31): GlobalFrameHandle, codebase (2:0..31): LONG POINTER TO CodeSegment];
 public final class GFTItem extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "GFTItem";
     
     public static final int WORD_SIZE =  4;
     public static final int BIT_SIZE  = 64;
@@ -13,14 +13,14 @@ public final class GFTItem extends MemoryBase {
     //
     // Constructor
     //
-    public static final GFTItem longPointer(int base) {
+    public static final GFTItem longPointer(@Mesa.POINTER int base) {
         return new GFTItem(base);
     }
-    public static final GFTItem pointer(char base) {
+    public static final GFTItem pointer(@Mesa.SHORT_POINTER int base) {
         return new GFTItem(Memory.lengthenMDS(base));
     }
     
-    private GFTItem(int base) {
+    private GFTItem(@Mesa.POINTER int base) {
         super(base);
     }
     

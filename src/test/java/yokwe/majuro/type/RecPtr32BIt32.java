@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // RecPtr32BIt32: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..31): LONG POINTER TO BitField32];
 public final class RecPtr32BIt32 extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "RecPtr32BIt32";
     
     public static final int WORD_SIZE =  3;
     public static final int BIT_SIZE  = 48;
@@ -13,14 +13,14 @@ public final class RecPtr32BIt32 extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr32BIt32 longPointer(int base) {
+    public static final RecPtr32BIt32 longPointer(@Mesa.POINTER int base) {
         return new RecPtr32BIt32(base);
     }
-    public static final RecPtr32BIt32 pointer(char base) {
+    public static final RecPtr32BIt32 pointer(@Mesa.SHORT_POINTER int base) {
         return new RecPtr32BIt32(Memory.lengthenMDS(base));
     }
     
-    private RecPtr32BIt32(int base) {
+    private RecPtr32BIt32(@Mesa.POINTER int base) {
         super(base);
     }
     

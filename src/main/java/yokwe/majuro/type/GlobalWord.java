@@ -1,11 +1,12 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // GlobalWord: TYPE = RECORD[gfi (0:0..13): GFTIndex, trapxfers (0:14..14): BOOLEAN, codelinks (0:15..15): BOOLEAN];
 public final class GlobalWord extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "GlobalWord";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
@@ -13,20 +14,20 @@ public final class GlobalWord extends MemoryData16 {
     //
     // Constructor
     //
-    public static final GlobalWord value(char value) {
+    public static final GlobalWord value(@Mesa.CARD16 int value) {
         return new GlobalWord(value);
     }
-    public static final GlobalWord longPointer(int base, MemoryAccess access) {
+    public static final GlobalWord longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new GlobalWord(base, access);
     }
-    public static final GlobalWord pointer(char base, MemoryAccess access) {
+    public static final GlobalWord pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new GlobalWord(Memory.lengthenMDS(base), access);
     }
     
-    private GlobalWord(char value) {
+    private GlobalWord(@Mesa.CARD16 int value) {
         super(value);
     }
-    private GlobalWord(int base, MemoryAccess access) {
+    private GlobalWord(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -48,25 +49,25 @@ public final class GlobalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final char gfi() {
-        return (char)((value & GFI_MASK) >>> GFI_SHIFT);
+    public final @Mesa.CARD16 int gfi() {
+        return Types.toCARD16((value & GFI_MASK) >>> GFI_SHIFT);
     }
-    public final void gfi(char newValue) {
-        value = (value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK);
-    }
-    
-    public final char trapxfers() {
-        return (char)((value & TRAPXFERS_MASK) >>> TRAPXFERS_SHIFT);
-    }
-    public final void trapxfers(char newValue) {
-        value = (value & ~TRAPXFERS_MASK) | ((newValue << TRAPXFERS_SHIFT) & TRAPXFERS_MASK);
+    public final void gfi(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK));
     }
     
-    public final char codelinks() {
-        return (char)((value & CODELINKS_MASK) >>> CODELINKS_SHIFT);
+    public final @Mesa.CARD16 int trapxfers() {
+        return Types.toCARD16((value & TRAPXFERS_MASK) >>> TRAPXFERS_SHIFT);
     }
-    public final void codelinks(char newValue) {
-        value = (value & ~CODELINKS_MASK) | ((newValue << CODELINKS_SHIFT) & CODELINKS_MASK);
+    public final void trapxfers(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~TRAPXFERS_MASK) | ((newValue << TRAPXFERS_SHIFT) & TRAPXFERS_MASK));
+    }
+    
+    public final @Mesa.CARD16 int codelinks() {
+        return Types.toCARD16((value & CODELINKS_MASK) >>> CODELINKS_SHIFT);
+    }
+    public final void codelinks(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~CODELINKS_MASK) | ((newValue << CODELINKS_SHIFT) & CODELINKS_MASK));
     }
     
 }

@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // Priority: TYPE = [0..7];
 public final class Priority extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "Priority";
     
     public static final int WORD_SIZE = 1;
     public static final int BIT_SIZE  = 3;
@@ -23,20 +23,20 @@ public final class Priority extends MemoryData16 {
     //
     // Constructor
     //
-    public static final Priority value(char value) {
+    public static final Priority value(@Mesa.CARD16 int value) {
         return new Priority(value);
     }
-    public static final Priority longPointer(int base, MemoryAccess access) {
+    public static final Priority longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new Priority(base, access);
     }
-    public static final Priority pointer(char base, MemoryAccess access) {
+    public static final Priority pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new Priority(Memory.lengthenMDS(base), access);
     }
     
-    private Priority(char value) {
+    private Priority(@Mesa.CARD16 int value) {
         super(value);
     }
-    private Priority(int base, MemoryAccess access) {
+    private Priority(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

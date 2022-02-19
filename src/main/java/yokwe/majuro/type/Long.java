@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // Long: TYPE = RECORD32[low (0:0..15): UNSPECIFIED, high (1:0..15): UNSPECIFIED];
 public final class Long extends MemoryData32 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "Long";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,20 +13,20 @@ public final class Long extends MemoryData32 {
     //
     // Constructor
     //
-    public static final Long value(int value) {
+    public static final Long value(@Mesa.CARD32 int value) {
         return new Long(value);
     }
-    public static final Long longPointer(int base, MemoryAccess access) {
+    public static final Long longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new Long(base, access);
     }
-    public static final Long pointer(char base, MemoryAccess access) {
+    public static final Long pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new Long(Memory.lengthenMDS(base), access);
     }
     
-    private Long(int value) {
+    private Long(@Mesa.CARD32 int value) {
         super(value);
     }
-    private Long(int base, MemoryAccess access) {
+    private Long(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

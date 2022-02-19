@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // BIT: TYPE = [0..2);
 public final class BIT extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "BIT";
     
     public static final int WORD_SIZE = 1;
     public static final int BIT_SIZE  = 1;
@@ -23,20 +23,20 @@ public final class BIT extends MemoryData16 {
     //
     // Constructor
     //
-    public static final BIT value(char value) {
+    public static final BIT value(@Mesa.CARD16 int value) {
         return new BIT(value);
     }
-    public static final BIT longPointer(int base, MemoryAccess access) {
+    public static final BIT longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new BIT(base, access);
     }
-    public static final BIT pointer(char base, MemoryAccess access) {
+    public static final BIT pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new BIT(Memory.lengthenMDS(base), access);
     }
     
-    private BIT(char value) {
+    private BIT(@Mesa.CARD16 int value) {
         super(value);
     }
-    private BIT(int base, MemoryAccess access) {
+    private BIT(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

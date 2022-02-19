@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // ArrayRefSubPtr32Enum: TYPE = ARRAY Sub OF LONG POINTER TO Enum;
 public final class ArrayRefSubPtr32Enum extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "ArrayRefSubPtr32Enum";
     
     public static final int WORD_SIZE =   8;
     public static final int BIT_SIZE  = 128;
@@ -14,14 +14,14 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArrayRefSubPtr32Enum longPointer(int base) {
+    public static final ArrayRefSubPtr32Enum longPointer(@Mesa.POINTER int base) {
         return new ArrayRefSubPtr32Enum(base);
     }
-    public static final ArrayRefSubPtr32Enum pointer(char base) {
+    public static final ArrayRefSubPtr32Enum pointer(@Mesa.SHORT_POINTER int base) {
         return new ArrayRefSubPtr32Enum(Memory.lengthenMDS(base));
     }
     
-    private ArrayRefSubPtr32Enum(int base) {
+    private ArrayRefSubPtr32Enum(@Mesa.POINTER int base) {
         super(base);
     }
     //

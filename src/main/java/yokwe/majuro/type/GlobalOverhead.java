@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // GlobalOverhead: TYPE = RECORD[available (0:0..15): UNSPECIFIED, word (1:0..15): GlobalWord, codebase (2:0..31): LONG POINTER TO CodeSegment, global (4): GlobalVariables];
 public final class GlobalOverhead extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "GlobalOverhead";
     
     public static final int WORD_SIZE =  4;
     public static final int BIT_SIZE  = 64;
@@ -13,14 +13,14 @@ public final class GlobalOverhead extends MemoryBase {
     //
     // Constructor
     //
-    public static final GlobalOverhead longPointer(int base) {
+    public static final GlobalOverhead longPointer(@Mesa.POINTER int base) {
         return new GlobalOverhead(base);
     }
-    public static final GlobalOverhead pointer(char base) {
+    public static final GlobalOverhead pointer(@Mesa.SHORT_POINTER int base) {
         return new GlobalOverhead(Memory.lengthenMDS(base));
     }
     
-    private GlobalOverhead(int base) {
+    private GlobalOverhead(@Mesa.POINTER int base) {
         super(base);
     }
     

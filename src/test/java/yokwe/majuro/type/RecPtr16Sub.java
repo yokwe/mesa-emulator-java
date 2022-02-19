@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // RecPtr16Sub: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..15): POINTER TO Sub];
 public final class RecPtr16Sub extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "RecPtr16Sub";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,14 +13,14 @@ public final class RecPtr16Sub extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr16Sub longPointer(int base) {
+    public static final RecPtr16Sub longPointer(@Mesa.POINTER int base) {
         return new RecPtr16Sub(base);
     }
-    public static final RecPtr16Sub pointer(char base) {
+    public static final RecPtr16Sub pointer(@Mesa.SHORT_POINTER int base) {
         return new RecPtr16Sub(Memory.lengthenMDS(base));
     }
     
-    private RecPtr16Sub(int base) {
+    private RecPtr16Sub(@Mesa.POINTER int base) {
         super(base);
     }
     
@@ -36,7 +36,7 @@ public final class RecPtr16Sub extends MemoryBase {
     // card1 (1:0..15): POINTER TO Sub
     private static final int OFFSET_CARD_1 = 1;
     public Sub card1(MemoryAccess access) {
-        char pointer = Memory.read16(base + OFFSET_CARD_1);
+        int pointer = Memory.read16(base + OFFSET_CARD_1);
         return Sub.pointer(pointer, access);
     }
 }

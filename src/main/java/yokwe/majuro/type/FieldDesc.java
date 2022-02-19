@@ -1,11 +1,12 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // FieldDesc: TYPE = RECORD[offset (0:0..7): BYTE, field (0:8..15): FieldSpec];
 public final class FieldDesc extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "FieldDesc";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
@@ -13,20 +14,20 @@ public final class FieldDesc extends MemoryData16 {
     //
     // Constructor
     //
-    public static final FieldDesc value(char value) {
+    public static final FieldDesc value(@Mesa.CARD16 int value) {
         return new FieldDesc(value);
     }
-    public static final FieldDesc longPointer(int base, MemoryAccess access) {
+    public static final FieldDesc longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new FieldDesc(base, access);
     }
-    public static final FieldDesc pointer(char base, MemoryAccess access) {
+    public static final FieldDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new FieldDesc(Memory.lengthenMDS(base), access);
     }
     
-    private FieldDesc(char value) {
+    private FieldDesc(@Mesa.CARD16 int value) {
         super(value);
     }
-    private FieldDesc(int base, MemoryAccess access) {
+    private FieldDesc(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -45,18 +46,18 @@ public final class FieldDesc extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final char offset() {
-        return (char)((value & OFFSET_MASK) >>> OFFSET_SHIFT);
+    public final @Mesa.CARD16 int offset() {
+        return Types.toCARD16((value & OFFSET_MASK) >>> OFFSET_SHIFT);
     }
-    public final void offset(char newValue) {
-        value = (value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK);
+    public final void offset(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK));
     }
     
-    public final char field() {
-        return (char)((value & FIELD_MASK) >>> FIELD_SHIFT);
+    public final @Mesa.CARD16 int field() {
+        return Types.toCARD16((value & FIELD_MASK) >>> FIELD_SHIFT);
     }
-    public final void field(char newValue) {
-        value = (value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK);
+    public final void field(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK));
     }
     
 }

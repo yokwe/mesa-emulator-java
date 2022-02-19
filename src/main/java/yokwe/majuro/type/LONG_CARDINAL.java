@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // LONG CARDINAL: TYPE = LONG CARDINAL;
 public final class LONG_CARDINAL extends MemoryData32 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "LONG_CARDINAL";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,20 +13,20 @@ public final class LONG_CARDINAL extends MemoryData32 {
     //
     // Constructor
     //
-    public static final LONG_CARDINAL value(int value) {
+    public static final LONG_CARDINAL value(@Mesa.CARD32 int value) {
         return new LONG_CARDINAL(value);
     }
-    public static final LONG_CARDINAL longPointer(int base, MemoryAccess access) {
+    public static final LONG_CARDINAL longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new LONG_CARDINAL(base, access);
     }
-    public static final LONG_CARDINAL pointer(char base, MemoryAccess access) {
+    public static final LONG_CARDINAL pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new LONG_CARDINAL(Memory.lengthenMDS(base), access);
     }
     
-    private LONG_CARDINAL(int value) {
+    private LONG_CARDINAL(@Mesa.CARD32 int value) {
         super(value);
     }
-    private LONG_CARDINAL(int base, MemoryAccess access) {
+    private LONG_CARDINAL(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

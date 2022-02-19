@@ -1,11 +1,12 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // LocalWord: TYPE = RECORD[available (0:0..7): BYTE, fsi (0:8..15): FSIndex];
 public final class LocalWord extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "LocalWord";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
@@ -13,20 +14,20 @@ public final class LocalWord extends MemoryData16 {
     //
     // Constructor
     //
-    public static final LocalWord value(char value) {
+    public static final LocalWord value(@Mesa.CARD16 int value) {
         return new LocalWord(value);
     }
-    public static final LocalWord longPointer(int base, MemoryAccess access) {
+    public static final LocalWord longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new LocalWord(base, access);
     }
-    public static final LocalWord pointer(char base, MemoryAccess access) {
+    public static final LocalWord pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new LocalWord(Memory.lengthenMDS(base), access);
     }
     
-    private LocalWord(char value) {
+    private LocalWord(@Mesa.CARD16 int value) {
         super(value);
     }
-    private LocalWord(int base, MemoryAccess access) {
+    private LocalWord(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -45,18 +46,18 @@ public final class LocalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final char available() {
-        return (char)((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
+    public final @Mesa.CARD16 int available() {
+        return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
-    public final void available(char newValue) {
-        value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
+    public final void available(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
     }
     
-    public final char fsi() {
-        return (char)((value & FSI_MASK) >>> FSI_SHIFT);
+    public final @Mesa.CARD16 int fsi() {
+        return Types.toCARD16((value & FSI_MASK) >>> FSI_SHIFT);
     }
-    public final void fsi(char newValue) {
-        value = (value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK);
+    public final void fsi(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK));
     }
     
 }

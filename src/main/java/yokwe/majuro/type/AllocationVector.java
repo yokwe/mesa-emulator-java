@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
 public final class AllocationVector extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "AllocationVector";
     
     public static final int WORD_SIZE =  256;
     public static final int BIT_SIZE  = 4096;
@@ -14,14 +14,14 @@ public final class AllocationVector extends MemoryBase {
     //
     // Constructor
     //
-    public static final AllocationVector longPointer(int base) {
+    public static final AllocationVector longPointer(@Mesa.POINTER int base) {
         return new AllocationVector(base);
     }
-    public static final AllocationVector pointer(char base) {
+    public static final AllocationVector pointer(@Mesa.SHORT_POINTER int base) {
         return new AllocationVector(Memory.lengthenMDS(base));
     }
     
-    private AllocationVector(int base) {
+    private AllocationVector(@Mesa.POINTER int base) {
         super(base);
     }
     //

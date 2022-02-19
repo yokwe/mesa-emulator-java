@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // CARDINAL: TYPE = CARDINAL;
 public final class CARDINAL extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "CARDINAL";
     
     public static final int WORD_SIZE =      1;
     public static final int BIT_SIZE  =     16;
@@ -23,20 +23,20 @@ public final class CARDINAL extends MemoryData16 {
     //
     // Constructor
     //
-    public static final CARDINAL value(char value) {
+    public static final CARDINAL value(@Mesa.CARD16 int value) {
         return new CARDINAL(value);
     }
-    public static final CARDINAL longPointer(int base, MemoryAccess access) {
+    public static final CARDINAL longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new CARDINAL(base, access);
     }
-    public static final CARDINAL pointer(char base, MemoryAccess access) {
+    public static final CARDINAL pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new CARDINAL(Memory.lengthenMDS(base), access);
     }
     
-    private CARDINAL(char value) {
+    private CARDINAL(@Mesa.CARD16 int value) {
         super(value);
     }
-    private CARDINAL(int base, MemoryAccess access) {
+    private CARDINAL(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

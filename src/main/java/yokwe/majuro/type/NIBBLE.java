@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // NIBBLE: TYPE = [0..16);
 public final class NIBBLE extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "NIBBLE";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  =  4;
@@ -23,20 +23,20 @@ public final class NIBBLE extends MemoryData16 {
     //
     // Constructor
     //
-    public static final NIBBLE value(char value) {
+    public static final NIBBLE value(@Mesa.CARD16 int value) {
         return new NIBBLE(value);
     }
-    public static final NIBBLE longPointer(int base, MemoryAccess access) {
+    public static final NIBBLE longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new NIBBLE(base, access);
     }
-    public static final NIBBLE pointer(char base, MemoryAccess access) {
+    public static final NIBBLE pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new NIBBLE(Memory.lengthenMDS(base), access);
     }
     
-    private NIBBLE(char value) {
+    private NIBBLE(@Mesa.CARD16 int value) {
         super(value);
     }
-    private NIBBLE(int base, MemoryAccess access) {
+    private NIBBLE(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // CodeSegment: TYPE = RECORD[available (0:0..63): ARRAY [0..4) OF UNSPECIFIED, code (4): BLOCK];
 public final class CodeSegment extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "CodeSegment";
     
     public static final int WORD_SIZE =  4;
     public static final int BIT_SIZE  = 64;
@@ -14,14 +14,14 @@ public final class CodeSegment extends MemoryBase {
     //
     // Constructor
     //
-    public static final CodeSegment longPointer(int base) {
+    public static final CodeSegment longPointer(@Mesa.POINTER int base) {
         return new CodeSegment(base);
     }
-    public static final CodeSegment pointer(char base) {
+    public static final CodeSegment pointer(@Mesa.SHORT_POINTER int base) {
         return new CodeSegment(Memory.lengthenMDS(base));
     }
     
-    private CodeSegment(int base) {
+    private CodeSegment(@Mesa.POINTER int base) {
         super(base);
     }
     

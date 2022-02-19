@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // ArraySubFixed: TYPE = ARRAY [0..4) OF UNSPECIFIED;
 public final class ArraySubFixed extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "ArraySubFixed";
     
     public static final int WORD_SIZE =  4;
     public static final int BIT_SIZE  = 64;
@@ -14,14 +14,14 @@ public final class ArraySubFixed extends MemoryBase {
     //
     // Constructor
     //
-    public static final ArraySubFixed longPointer(int base) {
+    public static final ArraySubFixed longPointer(@Mesa.POINTER int base) {
         return new ArraySubFixed(base);
     }
-    public static final ArraySubFixed pointer(char base) {
+    public static final ArraySubFixed pointer(@Mesa.SHORT_POINTER int base) {
         return new ArraySubFixed(Memory.lengthenMDS(base));
     }
     
-    private ArraySubFixed(int base) {
+    private ArraySubFixed(@Mesa.POINTER int base) {
         super(base);
     }
     //

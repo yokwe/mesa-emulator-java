@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // ProcessStateBlock: TYPE = RECORD[link (0:0..15): PsbLink, flags (1:0..15): PsbFlags, context (2:0..15): POINTER, timeout (3:0..15): Ticks, mds (4:0..15): CARDINAL, available (5:0..15): UNSPECIFIED, sticky (6:0..31): LONG UNSPECIFIED];
 public final class ProcessStateBlock extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "ProcessStateBlock";
     
     public static final int WORD_SIZE =   8;
     public static final int BIT_SIZE  = 128;
@@ -13,14 +13,14 @@ public final class ProcessStateBlock extends MemoryBase {
     //
     // Constructor
     //
-    public static final ProcessStateBlock longPointer(int base) {
+    public static final ProcessStateBlock longPointer(@Mesa.POINTER int base) {
         return new ProcessStateBlock(base);
     }
-    public static final ProcessStateBlock pointer(char base) {
+    public static final ProcessStateBlock pointer(@Mesa.SHORT_POINTER int base) {
         return new ProcessStateBlock(Memory.lengthenMDS(base));
     }
     
-    private ProcessStateBlock(int base) {
+    private ProcessStateBlock(@Mesa.POINTER int base) {
         super(base);
     }
     

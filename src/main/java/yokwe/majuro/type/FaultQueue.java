@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // FaultQueue: TYPE = RECORD[queue (0:0..15): Queue, condition (1:0..15): Condition];
 public final class FaultQueue extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "FaultQueue";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,14 +13,14 @@ public final class FaultQueue extends MemoryBase {
     //
     // Constructor
     //
-    public static final FaultQueue longPointer(int base) {
+    public static final FaultQueue longPointer(@Mesa.POINTER int base) {
         return new FaultQueue(base);
     }
-    public static final FaultQueue pointer(char base) {
+    public static final FaultQueue pointer(@Mesa.SHORT_POINTER int base) {
         return new FaultQueue(Memory.lengthenMDS(base));
     }
     
-    private FaultQueue(int base) {
+    private FaultQueue(@Mesa.POINTER int base) {
         super(base);
     }
     

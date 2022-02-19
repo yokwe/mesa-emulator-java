@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // NewProdDesc: TYPE = RECORD32[taggedGFI (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
 public final class NewProdDesc extends MemoryData32 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "NewProdDesc";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,20 +13,20 @@ public final class NewProdDesc extends MemoryData32 {
     //
     // Constructor
     //
-    public static final NewProdDesc value(int value) {
+    public static final NewProdDesc value(@Mesa.CARD32 int value) {
         return new NewProdDesc(value);
     }
-    public static final NewProdDesc longPointer(int base, MemoryAccess access) {
+    public static final NewProdDesc longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new NewProdDesc(base, access);
     }
-    public static final NewProdDesc pointer(char base, MemoryAccess access) {
+    public static final NewProdDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new NewProdDesc(Memory.lengthenMDS(base), access);
     }
     
-    private NewProdDesc(int value) {
+    private NewProdDesc(@Mesa.CARD32 int value) {
         super(value);
     }
-    private NewProdDesc(int base, MemoryAccess access) {
+    private NewProdDesc(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     

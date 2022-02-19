@@ -2,11 +2,11 @@ package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // UNSPECIFIED: TYPE = UNSPECIFIED;
 public final class UNSPECIFIED extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "UNSPECIFIED";
     
     public static final int WORD_SIZE =      1;
     public static final int BIT_SIZE  =     16;
@@ -23,20 +23,20 @@ public final class UNSPECIFIED extends MemoryData16 {
     //
     // Constructor
     //
-    public static final UNSPECIFIED value(char value) {
+    public static final UNSPECIFIED value(@Mesa.CARD16 int value) {
         return new UNSPECIFIED(value);
     }
-    public static final UNSPECIFIED longPointer(int base, MemoryAccess access) {
+    public static final UNSPECIFIED longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new UNSPECIFIED(base, access);
     }
-    public static final UNSPECIFIED pointer(char base, MemoryAccess access) {
+    public static final UNSPECIFIED pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new UNSPECIFIED(Memory.lengthenMDS(base), access);
     }
     
-    private UNSPECIFIED(char value) {
+    private UNSPECIFIED(@Mesa.CARD16 int value) {
         super(value);
     }
-    private UNSPECIFIED(int base, MemoryAccess access) {
+    private UNSPECIFIED(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
 }

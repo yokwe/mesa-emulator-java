@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // Port: TYPE = RECORD[inport (0:0..15): FrameLink, unused (1:0..15): UNSPECIFIED, outport (2:0..31): ControlLink];
 public final class Port extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "Port";
     
     public static final int WORD_SIZE =  4;
     public static final int BIT_SIZE  = 64;
@@ -13,14 +13,14 @@ public final class Port extends MemoryBase {
     //
     // Constructor
     //
-    public static final Port longPointer(int base) {
+    public static final Port longPointer(@Mesa.POINTER int base) {
         return new Port(base);
     }
-    public static final Port pointer(char base) {
+    public static final Port pointer(@Mesa.SHORT_POINTER int base) {
         return new Port(Memory.lengthenMDS(base));
     }
     
-    private Port(int base) {
+    private Port(@Mesa.POINTER int base) {
         super(base);
     }
     
@@ -30,7 +30,7 @@ public final class Port extends MemoryBase {
     // inport (0:0..15): FrameLink
     private static final int OFFSET_INPORT = 0;
     public BLOCK inport() {
-        char pointer = Memory.read16(base + OFFSET_INPORT);
+        int pointer = Memory.read16(base + OFFSET_INPORT);
         return BLOCK.pointer(pointer);
     }
     // unused (1:0..15): UNSPECIFIED

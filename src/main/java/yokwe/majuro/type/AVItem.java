@@ -1,11 +1,12 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // AVItem: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): AVItemType];
 public final class AVItem extends MemoryData16 {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "AVItem";
     
     public static final int WORD_SIZE =  1;
     public static final int BIT_SIZE  = 16;
@@ -13,20 +14,20 @@ public final class AVItem extends MemoryData16 {
     //
     // Constructor
     //
-    public static final AVItem value(char value) {
+    public static final AVItem value(@Mesa.CARD16 int value) {
         return new AVItem(value);
     }
-    public static final AVItem longPointer(int base, MemoryAccess access) {
+    public static final AVItem longPointer(@Mesa.POINTER int base, MemoryAccess access) {
         return new AVItem(base, access);
     }
-    public static final AVItem pointer(char base, MemoryAccess access) {
+    public static final AVItem pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
         return new AVItem(Memory.lengthenMDS(base), access);
     }
     
-    private AVItem(char value) {
+    private AVItem(@Mesa.CARD16 int value) {
         super(value);
     }
-    private AVItem(int base, MemoryAccess access) {
+    private AVItem(@Mesa.POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
@@ -45,18 +46,18 @@ public final class AVItem extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    public final char data() {
-        return (char)((value & DATA_MASK) >>> DATA_SHIFT);
+    public final @Mesa.CARD16 int data() {
+        return Types.toCARD16((value & DATA_MASK) >>> DATA_SHIFT);
     }
-    public final void data(char newValue) {
-        value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
+    public final void data(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK));
     }
     
-    public final char tag() {
-        return (char)((value & TAG_MASK) >>> TAG_SHIFT);
+    public final @Mesa.CARD16 int tag() {
+        return Types.toCARD16((value & TAG_MASK) >>> TAG_SHIFT);
     }
-    public final void tag(char newValue) {
-        value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);
+    public final void tag(@Mesa.CARD16 int newValue) {
+        value = Types.toCARD16((value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK));
     }
     
 }

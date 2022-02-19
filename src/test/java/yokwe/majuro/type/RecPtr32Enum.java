@@ -1,11 +1,11 @@
 package yokwe.majuro.type;
 
 import yokwe.majuro.mesa.Memory;
+import yokwe.majuro.mesa.Mesa;
 
 // RecPtr32Enum: TYPE = RECORD[card0 (0:0..15): CARDINAL, card1 (1:0..31): LONG POINTER TO Enum];
 public final class RecPtr32Enum extends MemoryBase {
-    public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();
-    public static final String   NAME = SELF.getSimpleName();
+    public static final String NAME = "RecPtr32Enum";
     
     public static final int WORD_SIZE =  3;
     public static final int BIT_SIZE  = 48;
@@ -13,14 +13,14 @@ public final class RecPtr32Enum extends MemoryBase {
     //
     // Constructor
     //
-    public static final RecPtr32Enum longPointer(int base) {
+    public static final RecPtr32Enum longPointer(@Mesa.POINTER int base) {
         return new RecPtr32Enum(base);
     }
-    public static final RecPtr32Enum pointer(char base) {
+    public static final RecPtr32Enum pointer(@Mesa.SHORT_POINTER int base) {
         return new RecPtr32Enum(Memory.lengthenMDS(base));
     }
     
-    private RecPtr32Enum(int base) {
+    private RecPtr32Enum(@Mesa.POINTER int base) {
         super(base);
     }
     
