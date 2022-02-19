@@ -61,13 +61,13 @@ public class ProcessDecl {
 		out.println("import yokwe.majuro.mesa.Debug;");
 		out.println("import yokwe.majuro.mesa.Memory;");
 		out.println("import yokwe.majuro.mesa.Mesa;");
+		out.println("import yokwe.majuro.mesa.Types;");
 		out.println();
 		
 		out.println("// %s", javaFile.type.toMesaDecl());
 		
 		out.println("public final class %s extends %s {", javaFile.name, parentClass.getSimpleName());
-		out.println("public static final Class<?> SELF = java.lang.invoke.MethodHandles.lookup().lookupClass();");
-		out.println("public static final String   NAME = SELF.getSimpleName();");
+		out.println("public static final String NAME = \"%s\";", javaFile.name);
 		out.println();
 	}
 	private static void constructor(JavaFile javaFile, Class<?> parentClass) {
@@ -79,51 +79,51 @@ public class ProcessDecl {
 		out.println("//");
 		
 		if (parentClass.equals(MemoryData16.class)) {
-			out.println("public static final %s value(char value) {", javaFile.name);
+			out.println("public static final %s value(@Mesa.CARD16 int value) {", javaFile.name);
 			out.println("return new %s(value);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
+			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(Memory.lengthenMDS(base), access);", javaFile.name);
 			out.println("}");
 			out.println();
 			
-			out.println("private %s(char value) {", javaFile.name);
+			out.println("private %s(@Mesa.CARD16 int value) {", javaFile.name);
 			out.println("super(value);");
 			out.println("}");
-			out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
+			out.println("private %s(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("super(base, access);");
 			out.println("}");
 		} else if (parentClass.equals(MemoryData32.class)) {
-			out.println("public static final %s value(int value) {", javaFile.name);
+			out.println("public static final %s value(@Mesa.CARD32 int value) {", javaFile.name);
 			out.println("return new %s(value);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s longPointer(int base, MemoryAccess access) {", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s pointer(char base, MemoryAccess access) {", javaFile.name);
+			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(Memory.lengthenMDS(base), access);", javaFile.name);
 			out.println("}");
 			out.println();
 
-			out.println("private %s(int value) {", javaFile.name);
+			out.println("private %s(@Mesa.CARD32 int value) {", javaFile.name);
 			out.println("super(value);");
 			out.println("}");
-			out.println("private %s(int base, MemoryAccess access) {", javaFile.name);
+			out.println("private %s(@Mesa.POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("super(base, access);");
 			out.println("}");
 		} else if (parentClass.equals(MemoryBase.class)) {
-			out.println("public static final %s longPointer(int base) {", javaFile.name);
+			out.println("public static final %s longPointer(@Mesa.POINTER int base) {", javaFile.name);
 			out.println("return new %s(base);", javaFile.name);
 			out.println("}");
-			out.println("public static final %s pointer(char base) {", javaFile.name);
+			out.println("public static final %s pointer(@Mesa.SHORT_POINTER int base) {", javaFile.name);
 			out.println("return new %s(Memory.lengthenMDS(base));", javaFile.name);
 			out.println("}");
 			out.println();
 			
-			out.println("private %s(int base) {", javaFile.name);
+			out.println("private %s(@Mesa.POINTER int base) {", javaFile.name);
 			out.println("super(base);");
 			out.println("}");
 		} else {
@@ -205,7 +205,7 @@ public class ProcessDecl {
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
-			out.println("char pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+			out.println("int pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		} else {
@@ -213,7 +213,7 @@ public class ProcessDecl {
 			if (indexType.needsRangeCheck()) {
 				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 			}
-			out.println("char pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+			out.println("int pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
 			out.println("return %s.pointer(pointer);", targetTypeName);
 			out.println("}");
 		}
@@ -322,12 +322,12 @@ public class ProcessDecl {
 
 		if (javaDataClass(targetType)) {
 			out.println("public %s %s(MemoryAccess access) {", targetTypeName, fieldName);
-			out.println("char pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
+			out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		} else {
 			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("char pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
+			out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
 			out.println("return %s.pointer(pointer);", targetTypeName);
 			out.println("}");
 		}
@@ -562,7 +562,7 @@ public class ProcessDecl {
 			out.println("//");
 			out.prepareLayout();
 			for(var e: type.itemList) {
-				out.println("public static final char %s = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaString(e.value));
+				out.println("public static final @Mesa.ENUM int %s = %s;", StringUtil.toJavaConstName(e.name), StringUtil.toJavaString(e.value));
 			}
 			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 			out.println();
@@ -737,12 +737,12 @@ public class ProcessDecl {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 				
-				out.println("public final char %s() {", fieldName);
-				out.println("return (char)((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
+				out.println("public final @Mesa.CARD16 int %s() {", fieldName);
+				out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
 				out.println("}");
 				
-				out.println("public final void %s(char newValue) {", fieldName);
-				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+				out.println("public final void %s(@Mesa.CARD16 int newValue) {", fieldName);
+				out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
 				out.println("}");
 				out.println();
 			}
