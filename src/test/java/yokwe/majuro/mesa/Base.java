@@ -14,7 +14,6 @@ import yokwe.majuro.type.AllocationVector;
 import yokwe.majuro.type.FSIndex;
 import yokwe.majuro.type.GlobalOverhead;
 import yokwe.majuro.type.LocalOverhead;
-import yokwe.majuro.type.MemoryAccess;
 
 public class Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
@@ -156,15 +155,17 @@ public class Base {
 			int p = Memory.realAddress(DEFAULT_GF);
 			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x5000 + i);
 		}
-				
+		
 		initAV(0x0600, 0x1aff);
 		
+		// clear cache and map flags again for initAV()
+		Memory.clearCacheAndMapFlags();
 //		logger.info("beforeEach STOP");
 	}
 
 	@AfterEach
 	protected void afterEach() {
-		Perf.stats();
+//		Perf.stats();
 		System.gc();
 	}
 
