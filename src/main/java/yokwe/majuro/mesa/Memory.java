@@ -105,17 +105,17 @@ public final class Memory {
 		int rp = 0;
 		// vp:[ioRegionPage .. 256) <=> rp:[0..256-ioRegionPage)
 		for(int i = ioRegionPage; i < 256; i++) {
-			maps[i].clear();
+			maps[i].setFlags(0);
 			maps[i].setRealPage(rp++);
 		}
 		// vp:[0..ioRegionPage) <=> rp: [256-ioRegionPage .. 256)
 		for(int i = 0; i < ioRegionPage; i++) {
-			maps[i].clear();
+			maps[i].setFlags(0);
 			maps[i].setRealPage(rp++);
 		}
 		// vp: [256 .. rpSize)
 		for(int i = 256; i < rpSize; i++) {
-			maps[i].clear();
+			maps[i].setFlags(0);
 			maps[i].setRealPage(rp++);
 		}
 		if (rp != rpSize) {
@@ -124,8 +124,8 @@ public final class Memory {
 		}
 		// vp: [rpSize .. vpSize)
 		for(int i = rpSize; i < vpSize; i++) {
-			maps[i].clear();
-			maps[i].setVacant();
+			maps[i].setFlags(Map.FLAG_VACANT);
+			maps[i].setRealPage(0);
 		}
 	}
 	
