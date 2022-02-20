@@ -17,10 +17,9 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.ControlTransfers;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.opcode.Opcode.Register;
-import yokwe.majuro.util.FormatLogger;
 
 public final class MOP0xx {
-	private static final FormatLogger logger = FormatLogger.getLogger(MOP0xx.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
 	// 000 NOOP
 	@Register(Opcode.NOOP)

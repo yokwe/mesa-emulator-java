@@ -8,10 +8,9 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.type.*;
-import yokwe.majuro.util.FormatLogger;
 
 public class MOP1xx {
-	private static final FormatLogger logger = FormatLogger.getLogger(MOP1xx.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	// 100 R0
 	@Register(Opcode.R0)
