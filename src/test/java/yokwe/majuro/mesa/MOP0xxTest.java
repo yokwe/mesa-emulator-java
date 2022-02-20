@@ -75,6 +75,50 @@ public class MOP0xxTest extends Base {
 		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
 		// memory
 	}
+	
+	@Test
+	public void LL3() {
+		logger.info("LL3");
+
+		int n = 3;
+		
+		// opcode
+		Memory.writeReal16(ra_PC + 0, Types.toCARD16(Opcode.LL3.code, 0));
+		// data
+		Memory.writeReal16(ra_LF + n, 0xCAFE);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(Processor.savedPC + 1, Memory.PC());
+		// sp
+		assertEquals(1, Processor.SP);
+		// stack contents
+		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
+		// memory
+	}
+	
+	@Test
+	public void LL4() {
+		logger.info("LL4");
+
+		int n = 4;
+		
+		// opcode
+		Memory.writeReal16(ra_PC + 0, Types.toCARD16(Opcode.LL4.code, 0));
+		// data
+		Memory.writeReal16(ra_LF + n, 0xCAFE);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(Processor.savedPC + 1, Memory.PC());
+		// sp
+		assertEquals(1, Processor.SP);
+		// stack contents
+		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
+		// memory
+	}
 
 	
 }
