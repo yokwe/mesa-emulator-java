@@ -10,7 +10,7 @@ import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.FormatLogger;
 
 public class MOP3xx {
-	private static final FormatLogger logger = FormatLogger.getLogger(MOP3xx.class);
+	private static final FormatLogger logger = FormatLogger.getLogger();
 
 	// 300 LI0
 	@Register(Opcode.LI0)

@@ -11,7 +11,7 @@ import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.FormatLogger;
 
 public class ESC123xx {
-	private static final FormatLogger logger = FormatLogger.getLogger(ESC123xx.class);
+	private static final FormatLogger logger = FormatLogger.getLogger();
 
 	// 160 WRPSB
 	@Register(Opcode.WRPSB)
