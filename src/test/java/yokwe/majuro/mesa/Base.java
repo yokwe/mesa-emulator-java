@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.opcode.Interpreter;
 import yokwe.majuro.type.*;
 
 public class Base {
@@ -32,6 +33,7 @@ public class Base {
 	int ra_ETT;
 	int ra_LF;
 	int ra_GF;
+	int ra_PC;
 	
 	int GFI_GF;
 	int GFI_SD;
@@ -164,6 +166,7 @@ public class Base {
 	protected static void beforeAll() {
 		logger.info("beforeAll");
 		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
+		Interpreter.init();
 	}
 	
 	@AfterAll
@@ -209,6 +212,7 @@ public class Base {
 		ra_ETT = Memory.realAddress(Processor.MDS + mETT);
 		ra_LF  = Memory.realAddress(Processor.MDS + Processor.LF);
 		ra_GF  = Memory.realAddress(Processor.GF);
+		ra_PC  = ra_CB + (Memory.PC() / 2);
 		
 		// initialize memory for test case
 		// FIXME move to each test case
