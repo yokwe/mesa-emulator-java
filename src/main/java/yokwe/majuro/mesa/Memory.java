@@ -179,7 +179,6 @@ public final class Memory {
 			}
 			
 			// NO FAULT FROM HERE
-			logger.info("XXX");
 			if (map.isNotReferenced()) {
 				map.setReferenced();
 			}
