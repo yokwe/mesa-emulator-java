@@ -33,10 +33,22 @@ public final class GFTItem extends MemoryBase {
         int longPointer = Memory.read32(base + OFFSET_GLOBAL_FRAME);
         return BLOCK.longPointer(longPointer, access);
     }
+    public final @Mesa.LONG_POINTER int globalFrameValue() {
+        return Memory.read32(base + OFFSET_GLOBAL_FRAME);
+    }
+    public final void globalFrameValue(@Mesa.LONG_POINTER int newValue) {
+        Memory.write32(base + OFFSET_GLOBAL_FRAME, newValue);
+    }
     // codebase (2:0..31): LONG POINTER TO CodeSegment
     private static final int OFFSET_CODEBASE = 2;
     public CodeSegment codebase() {
         int longPointer = Memory.read32(base + OFFSET_CODEBASE);
         return CodeSegment.longPointer(longPointer, access);
+    }
+    public final @Mesa.LONG_POINTER int codebaseValue() {
+        return Memory.read32(base + OFFSET_CODEBASE);
+    }
+    public final void codebaseValue(@Mesa.LONG_POINTER int newValue) {
+        Memory.write32(base + OFFSET_CODEBASE, newValue);
     }
 }

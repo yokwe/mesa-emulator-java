@@ -33,6 +33,12 @@ public final class Port extends MemoryBase {
         int pointer = Memory.read16(base + OFFSET_INPORT);
         return BLOCK.pointer(pointer, access);
     }
+    public final @Mesa.SHORT_POINTER int inportValue() {
+        return Memory.read16(base + OFFSET_INPORT);
+    }
+    public final void inportValue(@Mesa.SHORT_POINTER int newValue) {
+        Memory.write16(base + OFFSET_INPORT, newValue);
+    }
     // unused (1:0..15): UNSPECIFIED
     private static final int OFFSET_UNUSED = 1;
     public UNSPECIFIED unused() {

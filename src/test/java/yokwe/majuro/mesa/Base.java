@@ -9,11 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.type.AVItemType;
-import yokwe.majuro.type.AllocationVector;
-import yokwe.majuro.type.FSIndex;
-import yokwe.majuro.type.GlobalOverhead;
-import yokwe.majuro.type.LocalOverhead;
+import yokwe.majuro.type.*;
 
 public class Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
@@ -36,20 +32,14 @@ public class Base {
 	int ra_ETT;
 	int ra_LF;
 	int ra_GF;
-
 	
-	@BeforeAll
-	protected static void beforeAll() {
-		logger.info("beforeAll");
-		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
-	}
+	int GFI_GF;
+	int GFI_SD;
+	int GFI_ETT;
+	int GFI_EFC;
 	
-	@AfterAll
-	protected static void afterAll() {
-		logger.info("afterAll");
-		System.gc();
-	}
-	
+	int pc_SD;
+	int pc_ETT;
 	
 	private static final int[] FRAME_SIZE_MAP = {
 	       8,   12,   16,   20,   24,
@@ -68,7 +58,7 @@ public class Base {
 		 0,  0,  0,  0,  0, 0,
 	};
 
-	private static void initAV(int origin, int limit) {
+	private void initAV(int origin, int limit) {
 		if (FRAME_SIZE_MAP.length != FRAME_WEIGHT_MAP.length) throw new UnexpectedException();
 		
 		AllocationVector av = AllocationVector.pointer(mAV, WRITE_READ);
@@ -109,7 +99,79 @@ public class Base {
 		Processor.LF = av.get(fsi).read();
 		av.get(fsi).write(Memory.read16MDS(Processor.LF));
 	}
+	private void initSD() {
+		SystemData  sd   = SystemData.pointer(mSD, WRITE);
+		BLOCK       cb   = BLOCK.longPointer(Memory.CB(), WRITE);
+		NewProcDesc item = NewProcDesc.value(0);
+		
+		item.taggedGFI(GFI_SD | LinkType.NEW_PROCEDURE);
+
+		for(int i = 0; i < 256; i++) {
+			item.pc(pc_SD | i);
+			sd.get(i).write(item.value);
+			cb.get(item.pc() / 2).write(0);
+		}
+	}
+	private void initETT() {
+		EscTrapTable ett  = EscTrapTable.pointer(mETT, WRITE);
+		BLOCK        cb   = BLOCK.longPointer(Memory.CB(), WRITE);
+		NewProcDesc  item = NewProcDesc.value(0);
+		
+		item.taggedGFI(GFI_ETT | LinkType.NEW_PROCEDURE);
+
+		for(int i = 0; i < 256; i++) {
+			item.pc(pc_ETT | i);
+			ett.get(i).write(item.value);
+			cb.get(item.pc() / 2).write(0);
+		}
+	}
+	private void initGFT() {
+		GlobalFrameTable gft = GlobalFrameTable.longPointer(mGFT, WRITE);
+		for(int i = 0; i < GFTIndex.MAX_VALUE; i++) {
+			GFTItem item = gft.get(i);
+			item.codebaseValue(0);
+			item.globalFrameValue(0);
+		}
+		
+		// GFI_GF
+		{
+			GFTItem item = gft.get(GFI_GF);
+			item.globalFrameValue(Processor.GF);
+			item.codebaseValue(Memory.CB());
+		}
+		// GFI_SD
+		{
+			GFTItem item = gft.get(GFI_SD);
+			item.globalFrameValue(Processor.GF);
+			item.codebaseValue(Memory.CB());
+		}
+		// GFI_ETT
+		{
+			GFTItem item = gft.get(GFI_ETT);
+			item.globalFrameValue(Processor.GF);
+			item.codebaseValue(Memory.CB());
+		}
+		// GFI_EFC
+		{
+			GFTItem item = gft.get(GFI_EFC);
+			item.globalFrameValue(Processor.GF);
+			item.codebaseValue(Memory.CB());
+		}
+	}
 	
+	
+	@BeforeAll
+	protected static void beforeAll() {
+		logger.info("beforeAll");
+		Memory.init(DEFAULT_VMBITS, DEFAULT_RMBITS);
+	}
+	
+	@AfterAll
+	protected static void afterAll() {
+		logger.info("afterAll");
+		System.gc();
+	}
+		
 	@BeforeEach
 	protected void beforeEach() {
 //		logger.info("beforeEach START");
@@ -122,8 +184,20 @@ public class Base {
 		Memory.PC(DEFAULT_PC);
 		Processor.MDS = DEFAULT_MDS;
 		Processor.GF  = DEFAULT_GF + 0x80 + GlobalOverhead.WORD_SIZE;
+		Processor.GFI =  1;
 		
+		GFI_GF  =  4; // 1
+		GFI_SD  =  8; // 2
+		GFI_ETT = 12; // 3
+		GFI_EFC = 16; // 4
+
+		pc_SD  = 0x1000;
+		pc_ETT = 0x2000;
+
 		initAV(0x0600, 0x1aff);
+		initSD();
+		initETT();
+		initGFT();
 		
 		// get real address
 		ra_PDA = Memory.realAddress(mPDA);
@@ -137,12 +211,13 @@ public class Base {
 		ra_GF  = Memory.realAddress(Processor.GF);
 		
 		// initialize memory for test case
-		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x000 + i, 0x3000 + i);
-		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x100 + i, 0x3100 + i);
-		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x200 + i, 0x3200 + i);
-		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4000 + i);
-		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4100 + i);
-		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_GF & ~PAGE_MASK) + i, 0x5000 + i);		
+		// FIXME move to each test case
+//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x000 + i, 0x3000 + i);
+//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x100 + i, 0x3100 + i);
+//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x200 + i, 0x3200 + i);
+//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4000 + i);
+//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4100 + i);
+//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_GF & ~PAGE_MASK) + i, 0x5000 + i);		
 
 		// clear cache and map flags again for initAV()
 		Memory.clearCacheAndMapFlags();

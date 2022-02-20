@@ -32,4 +32,10 @@ public final class ArrayRefSubPtr16Bit16 extends MemoryBase {
         int pointer = Memory.read16(base + (POINTER.WORD_SIZE * index));
         return BitField16.pointer(pointer, access);
     }
+    public final @Mesa.SHORT_POINTER int getValue(int index) {
+        return Memory.read16(base + (POINTER.WORD_SIZE * index));
+    }
+    public final void getValue(int index, @Mesa.SHORT_POINTER int newValue) {
+        Memory.write16(base + (POINTER.WORD_SIZE * index), newValue);
+    }
 }

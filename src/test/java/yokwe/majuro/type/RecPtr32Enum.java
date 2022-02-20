@@ -39,4 +39,10 @@ public final class RecPtr32Enum extends MemoryBase {
         int longPointer = Memory.read32(base + OFFSET_CARD_1);
         return Enum.longPointer(longPointer, access);
     }
+    public final @Mesa.LONG_POINTER int card1Value(int index) {
+        return Memory.read32(base + OFFSET_CARD_1);
+    }
+    public final void card1Value(int index, @Mesa.LONG_POINTER int newValue) {
+        Memory.write32(base + OFFSET_CARD_1, newValue);
+    }
 }

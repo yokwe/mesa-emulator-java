@@ -28,7 +28,7 @@ public final class ArraySubFixed extends MemoryBase {
     // Access to Element of Array
     //
     private static final class ArrayIndex {
-        private static final ContextSubrange context = new ContextSubrange("ArraySubFixed", 0, 3);
+        private static final ContextSubrange context = new ContextSubrange(NAME, 0, 3);
         private static final void checkValue(int value) {
             context.check(value);
         }

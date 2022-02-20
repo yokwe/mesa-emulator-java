@@ -53,6 +53,12 @@ public final class StateVector extends MemoryBase {
         int pointer = Memory.read16(base + OFFSET_FRAME);
         return BLOCK.pointer(pointer, access);
     }
+    public final @Mesa.SHORT_POINTER int frameValue() {
+        return Memory.read16(base + OFFSET_FRAME);
+    }
+    public final void frameValue(@Mesa.SHORT_POINTER int newValue) {
+        Memory.write16(base + OFFSET_FRAME, newValue);
+    }
     // data (16): BLOCK
     private static final int OFFSET_DATA = 16;
     public BLOCK data() {

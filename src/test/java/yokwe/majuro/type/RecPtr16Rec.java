@@ -39,4 +39,10 @@ public final class RecPtr16Rec extends MemoryBase {
         int pointer = Memory.read16(base + OFFSET_CARD_1);
         return Rec.pointer(pointer, access);
     }
+    public final @Mesa.SHORT_POINTER int card1Value(int index) {
+        return Memory.read16(base + OFFSET_CARD_1);
+    }
+    public final void card1Value(int index, @Mesa.SHORT_POINTER int newValue) {
+        Memory.write16(base + OFFSET_CARD_1, newValue);
+    }
 }

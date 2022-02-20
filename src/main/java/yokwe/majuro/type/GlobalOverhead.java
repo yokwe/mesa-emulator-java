@@ -45,6 +45,12 @@ public final class GlobalOverhead extends MemoryBase {
         int longPointer = Memory.read32(base + OFFSET_CODEBASE);
         return CodeSegment.longPointer(longPointer, access);
     }
+    public final @Mesa.LONG_POINTER int codebaseValue() {
+        return Memory.read32(base + OFFSET_CODEBASE);
+    }
+    public final void codebaseValue(@Mesa.LONG_POINTER int newValue) {
+        Memory.write32(base + OFFSET_CODEBASE, newValue);
+    }
     // global (4): GlobalVariables
     private static final int OFFSET_GLOBAL = 4;
     public BLOCK global() {

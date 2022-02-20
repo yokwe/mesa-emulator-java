@@ -32,4 +32,10 @@ public final class ArrayRefSubPtr32Enum extends MemoryBase {
         int longPointer = Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
         return Enum.longPointer(longPointer, access);
     }
+    public final @Mesa.LONG_POINTER int getValue(int index) {
+        return Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
+    }
+    public final void getValue(int index, @Mesa.LONG_POINTER int newValue) {
+        Memory.write32(base + (LONG_POINTER.WORD_SIZE * index), newValue);
+    }
 }
