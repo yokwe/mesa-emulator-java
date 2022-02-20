@@ -56,7 +56,7 @@ public final class Interpreter {
 	}
 	
 	private static void register(Opcode info, Runnable runnable) {
-		logger.info("register %s", info);
+//		logger.info("register %s", info);
 		switch(info.type) {
 		case MOP:
 			if (tableMop[info.code] == null) {
