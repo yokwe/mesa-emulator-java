@@ -196,12 +196,11 @@ public class Base {
 
 		pc_SD  = 0x1000;
 		pc_ETT = 0x2000;
-
-		initAV(0x0600, 0x1aff);
-		initSD();
-		initETT();
-		initGFT();
 		
+		int avOrigin = 0x0600;
+		int avLimit  = 0x1AFF;
+		
+		// initialize memory for test case
 		// get real address
 		ra_PDA = Memory.realAddress(mPDA);
 		ra_GFT = Memory.realAddress(mGFT);
@@ -210,19 +209,25 @@ public class Base {
 		ra_AV  = Memory.realAddress(Processor.MDS + mAV);
 		ra_SD  = Memory.realAddress(Processor.MDS + mSD);
 		ra_ETT = Memory.realAddress(Processor.MDS + mETT);
-		ra_LF  = Memory.realAddress(Processor.MDS + Processor.LF);
 		ra_GF  = Memory.realAddress(Processor.GF);
 		ra_PC  = ra_CB + (Memory.PC() / 2);
 		
-		// initialize memory for test case
-		// FIXME move to each test case
-//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x000 + i, 0x3000 + i);
-//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x100 + i, 0x3100 + i);
-//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x200 + i, 0x3200 + i);
-//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4000 + i);
-//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4100 + i);
-//		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_GF & ~PAGE_MASK) + i, 0x5000 + i);		
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x000 + i, 0x3000 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x100 + i, 0x3100 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x200 + i, 0x3200 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + 0x4000 + i, 0x4000 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + 0x4100 + i, 0x4100 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_GF & ~PAGE_MASK) + i, 0x5000 + i);
+		for(int i = avOrigin; i <= avLimit; i++) Memory.writeReal16(ra_MDS + i, i);
 
+		initAV(avOrigin, avLimit);
+		initSD();
+		initETT();
+		initGFT();
+		
+		// initAV() sets value of LF, so set ra_LF after initAV()
+		ra_LF  = Memory.realAddress(Processor.MDS + Processor.LF);
+		
 		// clear cache and map flags again for initAV()
 		Memory.clearCacheAndMapFlags();
 //		logger.info("beforeEach STOP");
