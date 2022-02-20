@@ -6,6 +6,7 @@ import static yokwe.majuro.mesa.Processor.*;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.FormatLogger;
 
@@ -23,7 +24,7 @@ public class ESC123xx {
 	@Register(Opcode.WRMDS)
 	public static final void OP_WRMDS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRMDS.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.MDS = pop() << WORD_BITS;
 	}
 
 	// 162 WRWP
