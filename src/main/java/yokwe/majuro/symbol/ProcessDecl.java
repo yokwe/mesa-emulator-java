@@ -151,10 +151,9 @@ public class ProcessDecl {
 						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
 						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
 						
-						// FIXME use constant string form for XXXValueString
 						out.println("private static final class %s {", indexTypeName);
-						out.println("private static final ContextSubrange context = new ContextSubrange(\"%s\", %s, %s);",
-								javaFile.name, minValueString, maxValueString);
+						out.println("private static final ContextSubrange context = new ContextSubrange(NAME, %s, %s);",
+							minValueString, maxValueString);
 						out.println("private static final void checkValue(int value) {");
 						out.println("context.check(value);");
 						out.println("}");
@@ -217,6 +216,13 @@ public class ProcessDecl {
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		}
+		// FIXME getValue()  getValue(newValue)
+		out.println("public final @Mesa.SHORT_POINTER int getValue(int index) {", targetTypeName);
+		out.println("return Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+		out.println("}");
+		out.println("public final void getValue(int index, @Mesa.SHORT_POINTER int newValue) {", targetTypeName);
+		out.println("Memory.write16(base + (%s.WORD_SIZE * index), newValue);", elementTypeName);
+		out.println("}");
 	}
 	private static void arrayIndirectShortRaw(JavaFile javaFile, Type indexType) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE arrayIndirectShortRaw");
@@ -256,6 +262,13 @@ public class ProcessDecl {
 			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		}
+		// FIXME getValue()  getValue(newValue)
+		out.println("public final @Mesa.LONG_POINTER int getValue(int index) {", targetTypeName);
+		out.println("return Memory.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
+		out.println("}");
+		out.println("public final void getValue(int index, @Mesa.LONG_POINTER int newValue) {", targetTypeName);
+		out.println("Memory.write32(base + (%s.WORD_SIZE * index), newValue);", elementTypeName);
+		out.println("}");
 	}
 	private static void arrayIndirectLongRaw(JavaFile javaFile, Type indexType) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE arrayIndirectLongRaw");
@@ -310,6 +323,13 @@ public class ProcessDecl {
 			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 			out.println("}");
 		}
+		// FIXME %sValue()  %sValue(newValue)
+		out.println("public final @Mesa.LONG_POINTER int %sValue() {", fieldName);
+		out.println("return Memory.read32(base + OFFSET_%s);", fieldConstName);
+		out.println("}");
+		out.println("public final void %sValue(@Mesa.LONG_POINTER int newValue) {", fieldName);
+		out.println("Memory.write32(base + OFFSET_%s, newValue);", fieldConstName);
+		out.println("}");
 	}
 	private static void recordFieldIndirectShort(JavaFile javaFile, TypeRecord.Field field) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldIndirectShort");
@@ -331,6 +351,13 @@ public class ProcessDecl {
 			out.println("return %s.pointer(pointer, access);", targetTypeName);
 			out.println("}");
 		}
+		// FIXME %sValue()  %sValue(newValue)
+		out.println("public final @Mesa.SHORT_POINTER int %sValue() {", fieldName);
+		out.println("return Memory.read16(base + OFFSET_%s);", fieldConstName);
+		out.println("}");
+		out.println("public final void %sValue(@Mesa.SHORT_POINTER int newValue) {", fieldName);
+		out.println("Memory.write16(base + OFFSET_%s, newValue);", fieldConstName);
+		out.println("}");
 	}
 
 	private static void recordFieldArrayElement(JavaFile javaFile, TypeRecord.Field field, Type indexType, Type elementType) {
