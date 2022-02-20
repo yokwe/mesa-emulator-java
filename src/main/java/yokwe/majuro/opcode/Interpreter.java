@@ -81,13 +81,13 @@ public final class Interpreter {
 	}
 	
 	private static String PACKAGE_NAME_FOR_SCAN = "yokwe.majuro.opcode";
-	public static void initialize() {
+	public static void init() {
 		int count = 0;
 		
 		for(int i = 0; i < tableMop.length; i++) tableMop[i] = null;
 		for(int i = 0; i < tableEsc.length; i++) tableEsc[i] = null;
 		
-		logger.info("Start initialize opcode  package = %s", PACKAGE_NAME_FOR_SCAN);
+		logger.info("Start init opcode  package = %s", PACKAGE_NAME_FOR_SCAN);
 		List<Class<?>> classes = ClassUtil.findClass(PACKAGE_NAME_FOR_SCAN);
 		Collections.sort(classes, (a, b) -> a.getSimpleName().compareTo(b.getSimpleName()));
 		
@@ -109,7 +109,7 @@ public final class Interpreter {
 				}
 			}
 		}
-		logger.info(String.format("Stop  initialize opcode  count = %d / %d", count, Opcode.values().length));
+		logger.info(String.format("Stop  init opcode  count = %d / %d", count, Opcode.values().length));
 		
 		// install opcode trap for empty entry of tableMop and tableEsc.
 		for(Opcode info: Opcode.values()) {
@@ -131,7 +131,7 @@ public final class Interpreter {
 
 	public static void main(String[] args) {
     	logger.info("START");
-    	initialize();
+    	init();
     	tableMop[0].run();
     	logger.info("STOP");
     }
