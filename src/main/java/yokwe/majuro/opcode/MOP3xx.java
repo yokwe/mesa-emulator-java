@@ -400,15 +400,15 @@ public class MOP3xx {
 	// 370 ESC
 	@Register(Opcode.ESC)
 	public static final void OP_ESC() {
-		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.ESC.name);
-		throw new UnexpectedException(); // FIXME
+//		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.ESC.name);
+		Interpreter.dispatchEsc(getCodeByte());
 	}
 
 	// 371 ESCL
 	@Register(Opcode.ESCL)
 	public static final void OP_ESCL() {
-		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.ESCL.name);
-		throw new UnexpectedException(); // FIXME
+//		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.ESCL.name);
+		Interpreter.dispatchEsc(getCodeByte());
 	}
 
 	// 372 LGA0
