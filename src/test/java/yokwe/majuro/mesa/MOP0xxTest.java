@@ -14,13 +14,12 @@ public class MOP0xxTest extends Base {
 	public void LL0() {
 		logger.info("LL0");
 
-		int value = 0xCAFE;
-		int n     = 0;
+		int n = 0;
 		
 		// opcode
 		Memory.writeReal16(ra_PC + 0, Types.toCARD16(Opcode.LL0.code, 0));
 		// data
-		Memory.writeReal16(ra_LF + n, value);
+		Memory.writeReal16(ra_LF + n, 0xCAFE);
 		// execute
 		Interpreter.execute();
 		// check result
@@ -29,7 +28,7 @@ public class MOP0xxTest extends Base {
 		// sp
 		assertEquals(1, Processor.SP);
 		// stack contents
-		assertEquals(value, Processor.stack[0]);
+		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
 		// memory
 	}
 	
@@ -37,13 +36,12 @@ public class MOP0xxTest extends Base {
 	public void LL1() {
 		logger.info("LL1");
 
-		int value = 0xCAFE;
-		int n     = 1;
+		int n = 1;
 		
 		// opcode
 		Memory.writeReal16(ra_PC + 0, Types.toCARD16(Opcode.LL1.code, 0));
 		// data
-		Memory.writeReal16(ra_LF + n, value);
+		Memory.writeReal16(ra_LF + n, 0xCAFE);
 		// execute
 		Interpreter.execute();
 		// check result
@@ -52,7 +50,7 @@ public class MOP0xxTest extends Base {
 		// sp
 		assertEquals(1, Processor.SP);
 		// stack contents
-		assertEquals(value, Processor.stack[0]);
+		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
 		// memory
 	}
 	
@@ -60,13 +58,12 @@ public class MOP0xxTest extends Base {
 	public void LL2() {
 		logger.info("LL2");
 
-		int value = 0xCAFE;
-		int n     = 2;
+		int n = 2;
 		
 		// opcode
 		Memory.writeReal16(ra_PC + 0, Types.toCARD16(Opcode.LL2.code, 0));
 		// data
-		Memory.writeReal16(ra_LF + n, value);
+		Memory.writeReal16(ra_LF + n, 0xCAFE);
 		// execute
 		Interpreter.execute();
 		// check result
@@ -75,7 +72,7 @@ public class MOP0xxTest extends Base {
 		// sp
 		assertEquals(1, Processor.SP);
 		// stack contents
-		assertEquals(value, Processor.stack[0]);
+		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
 		// memory
 	}
 
