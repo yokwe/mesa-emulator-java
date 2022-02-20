@@ -36,6 +36,7 @@ public class MemoryData32 {
             this.value = Memory.readReal32(ra0, ra1);
             break;
         case WRITE:
+        case WRITE_READ:
             this.ra0   = Memory.store(base);
             this.ra1   = Memory.isSamePage(base, base + 1) ? ra0 + 1 : Memory.store(base + 1);
             this.value = 0;
@@ -49,6 +50,7 @@ public class MemoryData32 {
         switch(access) {
         case READ_WRITE:
         case WRITE:
+        case WRITE_READ:
         	Memory.writeReal32(ra0, ra1, value);
             break;
         default:
@@ -64,6 +66,7 @@ public class MemoryData32 {
         switch(access) {
         case READ:
         case READ_WRITE:
+        case WRITE_READ:
         	value = Memory.readReal32(ra0, ra1);
             return value;
         default:

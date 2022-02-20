@@ -5,4 +5,5 @@ public enum MemoryAccess {
 	READ,
 	READ_WRITE,
 	WRITE,
+	WRITE_READ,
 }

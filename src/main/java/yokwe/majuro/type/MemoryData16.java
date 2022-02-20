@@ -33,6 +33,7 @@ public class MemoryData16 {
             this.value = Memory.readReal16(ra);
             break;
         case WRITE:
+        case WRITE_READ:
             this.ra    = Memory.store(base);
             this.value = 0;
             break;
@@ -45,6 +46,7 @@ public class MemoryData16 {
         switch(access) {
         case READ_WRITE:
         case WRITE:
+        case WRITE_READ:
         	Memory.writeReal16(ra, value);
             break;
         default:
@@ -60,7 +62,8 @@ public class MemoryData16 {
         switch(access) {
         case READ:
         case READ_WRITE:
-        	value = Memory.readReal16(ra);
+        case WRITE_READ:
+       	value = Memory.readReal16(ra);
             return value;
         default:
             throw new UnexpectedException("Unexpected");
