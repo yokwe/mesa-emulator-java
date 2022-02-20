@@ -1,5 +1,7 @@
 package yokwe.majuro.mesa;
 
+import static yokwe.majuro.mesa.Constants.BYTE_BITS;
+import static yokwe.majuro.mesa.Constants.BYTE_MASK;
 import static yokwe.majuro.mesa.Constants.WORD_BITS;
 import static yokwe.majuro.mesa.Constants.WORD_MASK;
 
@@ -31,4 +33,8 @@ public final class Types {
 	public static @Mesa.CARD16 int toCARD16(int value) {
 		return value & 0xFFFF;
 	}
+	public static @Mesa.CARD16 int toCARD16(@Mesa.CARD8 int left, @Mesa.CARD8 int right) {
+		return ((left & BYTE_MASK) << BYTE_BITS) | (right & BYTE_MASK);
+	}
+
 }
