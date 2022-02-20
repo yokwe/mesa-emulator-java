@@ -173,7 +173,7 @@ BEGIN
     // GFI = And[proc.taggedGF, 177774B];
     // GF  = ReadDbl[@GFT[GFI].globalFrame];
     // CB  = ReadDbl[@GFT[GFI].codebase];
-    NewProdDesc: TYPE = RECORD32 [       // RECORD32
+    NewProcDesc: TYPE = RECORD32 [       // RECORD32
         taggedGFI(0:0..15): UNSPECIFIED, 
         pc       (1:0..15): CARDINAL];
 

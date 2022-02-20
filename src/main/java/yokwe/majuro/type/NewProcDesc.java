@@ -3,9 +3,9 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 
-// NewProdDesc: TYPE = RECORD32[taggedGFI (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
-public final class NewProdDesc extends MemoryData32 {
-    public static final String NAME = "NewProdDesc";
+// NewProcDesc: TYPE = RECORD32[taggedGFI (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
+public final class NewProcDesc extends MemoryData32 {
+    public static final String NAME = "NewProcDesc";
     
     public static final int WORD_SIZE =  2;
     public static final int BIT_SIZE  = 32;
@@ -13,20 +13,20 @@ public final class NewProdDesc extends MemoryData32 {
     //
     // Constructor
     //
-    public static final NewProdDesc value(@Mesa.CARD32 int value) {
-        return new NewProdDesc(value);
+    public static final NewProcDesc value(@Mesa.CARD32 int value) {
+        return new NewProcDesc(value);
     }
-    public static final NewProdDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
-        return new NewProdDesc(base, access);
+    public static final NewProcDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        return new NewProcDesc(base, access);
     }
-    public static final NewProdDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
-        return new NewProdDesc(Memory.lengthenMDS(base), access);
+    public static final NewProcDesc pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+        return new NewProcDesc(Memory.lengthenMDS(base), access);
     }
     
-    private NewProdDesc(@Mesa.CARD32 int value) {
+    private NewProcDesc(@Mesa.CARD32 int value) {
         super(value);
     }
-    private NewProdDesc(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+    private NewProcDesc(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         super(base, access);
     }
     
