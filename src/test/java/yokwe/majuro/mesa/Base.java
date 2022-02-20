@@ -71,7 +71,7 @@ public class Base {
 	private static void initAV(int origin, int limit) {
 		if (FRAME_SIZE_MAP.length != FRAME_WEIGHT_MAP.length) throw new UnexpectedException();
 		
-		AllocationVector av = AllocationVector.pointer(mAV, WRITE);
+		AllocationVector av = AllocationVector.pointer(mAV, WRITE_READ);
 		
 		for(int i = 0; i <= FSIndex.MAX_VALUE; i++) {
 			av.get(i).write(AVItemType.EMPTY);
@@ -104,6 +104,10 @@ public class Base {
 				p = p + size;
 			}
 		}
+		
+		int fsi = 10;
+		Processor.LF = av.get(fsi).read();
+		av.get(fsi).write(Memory.read16MDS(Processor.LF));
 	}
 	
 	@BeforeEach
@@ -119,43 +123,27 @@ public class Base {
 		Processor.MDS = DEFAULT_MDS;
 		Processor.GF  = DEFAULT_GF + 0x80 + GlobalOverhead.WORD_SIZE;
 		
+		initAV(0x0600, 0x1aff);
+		
 		// get real address
 		ra_PDA = Memory.realAddress(mPDA);
 		ra_GFT = Memory.realAddress(mGFT);
-		ra_CB  = Memory.realAddress(Processor.MDS);
+		ra_CB  = Memory.realAddress(Memory.CB());
+		ra_MDS = Memory.realAddress(Processor.MDS);
 		ra_AV  = Memory.realAddress(Processor.MDS + mAV);
 		ra_SD  = Memory.realAddress(Processor.MDS + mSD);
 		ra_ETT = Memory.realAddress(Processor.MDS + mETT);
+		ra_LF  = Memory.realAddress(Processor.MDS + Processor.LF);
 		ra_GF  = Memory.realAddress(Processor.GF);
 		
-		// initialize memory
-		{
-			int p = Memory.realAddress(DEFAULT_CB);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x3000 + i);
-		}
-		{
-			int p = Memory.realAddress(DEFAULT_CB + 0x100);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x3000 + 0x100 + i);
-		}
-		{
-			int p = Memory.realAddress(DEFAULT_CB + 0x200);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x3000 + 0x200 + i);
-		}
-		{
-			int p = Memory.realAddress(DEFAULT_MDS);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x4000 + i);
-		}
-		{
-			int p = Memory.realAddress(DEFAULT_MDS + 0x1000);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x4100 + i);
-		}
-		{
-			int p = Memory.realAddress(DEFAULT_GF);
-			for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(p + i, 0x5000 + i);
-		}
-		
-		initAV(0x0600, 0x1aff);
-		
+		// initialize memory for test case
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x000 + i, 0x3000 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x100 + i, 0x3100 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_CB & ~PAGE_MASK) + 0x200 + i, 0x3200 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4000 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16(ra_MDS + i, 0x4100 + i);
+		for(int i = 0; i < PAGE_SIZE; i++) Memory.writeReal16((ra_GF & ~PAGE_MASK) + i, 0x5000 + i);		
+
 		// clear cache and map flags again for initAV()
 		Memory.clearCacheAndMapFlags();
 //		logger.info("beforeEach STOP");
