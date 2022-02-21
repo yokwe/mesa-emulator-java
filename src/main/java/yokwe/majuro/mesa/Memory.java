@@ -4,6 +4,7 @@ import static yokwe.majuro.mesa.Constants.*;
 import static yokwe.majuro.mesa.Processor.*;
 
 import yokwe.majuro.type.FieldSpec;
+import yokwe.majuro.type.ProcessStateBlock;
 import yokwe.majuro.util.FormatLogger;
 
 
@@ -406,7 +407,12 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.lengthenPDA++;
 		return Constants.mPDA + value;
 	}
-
+	public static int psbHandle(int psbIndex) {
+		return psbIndex * ProcessStateBlock.WORD_SIZE;
+	}
+	public static int psbIndex(int psbHandle) {
+		return psbHandle / ProcessStateBlock.WORD_SIZE;
+	}
 	
 	//
 	// CodeCache
