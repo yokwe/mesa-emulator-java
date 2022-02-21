@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -55,34 +56,42 @@ public final class GrayParm extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is NIBBLE
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final GrayParm reserved(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is NIBBLE
     public final @Mesa.CARD16 int yOffset() {
         return Types.toCARD16((value & Y_OFFSET_MASK) >>> Y_OFFSET_SHIFT);
     }
     public final GrayParm yOffset(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
         value = Types.toCARD16((value & ~Y_OFFSET_MASK) | ((newValue << Y_OFFSET_SHIFT) & Y_OFFSET_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is NIBBLE
     public final @Mesa.CARD16 int widthMinusOne() {
         return Types.toCARD16((value & WIDTH_MINUS_ONE_MASK) >>> WIDTH_MINUS_ONE_SHIFT);
     }
     public final GrayParm widthMinusOne(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
         value = Types.toCARD16((value & ~WIDTH_MINUS_ONE_MASK) | ((newValue << WIDTH_MINUS_ONE_SHIFT) & WIDTH_MINUS_ONE_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is NIBBLE
     public final @Mesa.CARD16 int heightMinusOne() {
         return Types.toCARD16((value & HEIGHT_MINUS_ONE_MASK) >>> HEIGHT_MINUS_ONE_SHIFT);
     }
     public final GrayParm heightMinusOne(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
         value = Types.toCARD16((value & ~HEIGHT_MINUS_ONE_MASK) | ((newValue << HEIGHT_MINUS_ONE_SHIFT) & HEIGHT_MINUS_ONE_MASK));
         return this;
     }

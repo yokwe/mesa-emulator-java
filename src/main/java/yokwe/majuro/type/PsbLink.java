@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -58,43 +59,47 @@ public final class PsbLink extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is Priority
     public final @Mesa.CARD16 int priority() {
         return Types.toCARD16((value & PRIORITY_MASK) >>> PRIORITY_SHIFT);
     }
     public final PsbLink priority(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(newValue);
         value = Types.toCARD16((value & ~PRIORITY_MASK) | ((newValue << PRIORITY_SHIFT) & PRIORITY_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int next() {
         return Types.toCARD16((value & NEXT_MASK) >>> NEXT_SHIFT);
     }
     public final PsbLink next(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
         value = Types.toCARD16((value & ~NEXT_MASK) | ((newValue << NEXT_SHIFT) & NEXT_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int failed() {
-        return Types.toCARD16((value & FAILED_MASK) >>> FAILED_SHIFT);
+    public final boolean failed() {
+        return ((value & FAILED_MASK) >>> FAILED_SHIFT) != 0;
     }
-    public final PsbLink failed(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~FAILED_MASK) | ((newValue << FAILED_SHIFT) & FAILED_MASK));
+    public final PsbLink failed(boolean newValue) {
+        value = Types.toCARD16((value & ~FAILED_MASK) | (((newValue ? 1 : 0) << FAILED_SHIFT) & FAILED_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int permanent() {
-        return Types.toCARD16((value & PERMANENT_MASK) >>> PERMANENT_SHIFT);
+    public final boolean permanent() {
+        return ((value & PERMANENT_MASK) >>> PERMANENT_SHIFT) != 0;
     }
-    public final PsbLink permanent(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~PERMANENT_MASK) | ((newValue << PERMANENT_SHIFT) & PERMANENT_MASK));
+    public final PsbLink permanent(boolean newValue) {
+        value = Types.toCARD16((value & ~PERMANENT_MASK) | (((newValue ? 1 : 0) << PERMANENT_SHIFT) & PERMANENT_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int preempted() {
-        return Types.toCARD16((value & PREEMPTED_MASK) >>> PREEMPTED_SHIFT);
+    public final boolean preempted() {
+        return ((value & PREEMPTED_MASK) >>> PREEMPTED_SHIFT) != 0;
     }
-    public final PsbLink preempted(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~PREEMPTED_MASK) | ((newValue << PREEMPTED_SHIFT) & PREEMPTED_MASK));
+    public final PsbLink preempted(boolean newValue) {
+        value = Types.toCARD16((value & ~PREEMPTED_MASK) | (((newValue ? 1 : 0) << PREEMPTED_SHIFT) & PREEMPTED_MASK));
         return this;
     }
     

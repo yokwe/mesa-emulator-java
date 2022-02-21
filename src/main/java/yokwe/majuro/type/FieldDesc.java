@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -49,19 +50,22 @@ public final class FieldDesc extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is BYTE
     public final @Mesa.CARD16 int offset() {
         return Types.toCARD16((value & OFFSET_MASK) >>> OFFSET_SHIFT);
     }
     public final FieldDesc offset(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) BYTE.checkValue(newValue);
         value = Types.toCARD16((value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int field() {
-        return Types.toCARD16((value & FIELD_MASK) >>> FIELD_SHIFT);
+    // FieldSpec is BIT FIELD 16
+    public final FieldSpec field() {
+        return FieldSpec.value(Types.toCARD16((value & FIELD_MASK) >>> FIELD_SHIFT));
     }
-    public final FieldDesc field(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK));
+    public final FieldDesc field(FieldSpec newValue) {
+        value = Types.toCARD16((value & ~FIELD_MASK) | ((newValue.value << FIELD_SHIFT) & FIELD_MASK));
         return this;
     }
     

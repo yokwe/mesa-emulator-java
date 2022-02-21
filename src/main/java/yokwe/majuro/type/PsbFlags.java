@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -58,43 +59,49 @@ public final class PsbFlags extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int available() {
         return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final PsbFlags available(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
         value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int cleanup() {
         return Types.toCARD16((value & CLEANUP_MASK) >>> CLEANUP_SHIFT);
     }
     public final PsbFlags cleanup(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
         value = Types.toCARD16((value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final PsbFlags reserved(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int waiting() {
-        return Types.toCARD16((value & WAITING_MASK) >>> WAITING_SHIFT);
+    public final boolean waiting() {
+        return ((value & WAITING_MASK) >>> WAITING_SHIFT) != 0;
     }
-    public final PsbFlags waiting(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~WAITING_MASK) | ((newValue << WAITING_SHIFT) & WAITING_MASK));
+    public final PsbFlags waiting(boolean newValue) {
+        value = Types.toCARD16((value & ~WAITING_MASK) | (((newValue ? 1 : 0) << WAITING_SHIFT) & WAITING_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int abort() {
-        return Types.toCARD16((value & ABORT_MASK) >>> ABORT_SHIFT);
+    public final boolean abort() {
+        return ((value & ABORT_MASK) >>> ABORT_SHIFT) != 0;
     }
-    public final PsbFlags abort(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~ABORT_MASK) | ((newValue << ABORT_SHIFT) & ABORT_MASK));
+    public final PsbFlags abort(boolean newValue) {
+        value = Types.toCARD16((value & ~ABORT_MASK) | (((newValue ? 1 : 0) << ABORT_SHIFT) & ABORT_MASK));
         return this;
     }
     

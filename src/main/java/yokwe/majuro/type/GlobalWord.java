@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -52,27 +53,29 @@ public final class GlobalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is GFTIndex
     public final @Mesa.CARD16 int gfi() {
         return Types.toCARD16((value & GFI_MASK) >>> GFI_SHIFT);
     }
     public final GlobalWord gfi(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) GFTIndex.checkValue(newValue);
         value = Types.toCARD16((value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int trapxfers() {
-        return Types.toCARD16((value & TRAPXFERS_MASK) >>> TRAPXFERS_SHIFT);
+    public final boolean trapxfers() {
+        return ((value & TRAPXFERS_MASK) >>> TRAPXFERS_SHIFT) != 0;
     }
-    public final GlobalWord trapxfers(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~TRAPXFERS_MASK) | ((newValue << TRAPXFERS_SHIFT) & TRAPXFERS_MASK));
+    public final GlobalWord trapxfers(boolean newValue) {
+        value = Types.toCARD16((value & ~TRAPXFERS_MASK) | (((newValue ? 1 : 0) << TRAPXFERS_SHIFT) & TRAPXFERS_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int codelinks() {
-        return Types.toCARD16((value & CODELINKS_MASK) >>> CODELINKS_SHIFT);
+    public final boolean codelinks() {
+        return ((value & CODELINKS_MASK) >>> CODELINKS_SHIFT) != 0;
     }
-    public final GlobalWord codelinks(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~CODELINKS_MASK) | ((newValue << CODELINKS_SHIFT) & CODELINKS_MASK));
+    public final GlobalWord codelinks(boolean newValue) {
+        value = Types.toCARD16((value & ~CODELINKS_MASK) | (((newValue ? 1 : 0) << CODELINKS_SHIFT) & CODELINKS_MASK));
         return this;
     }
     

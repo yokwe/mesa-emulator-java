@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -49,18 +50,22 @@ public final class LocalWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is BYTE
     public final @Mesa.CARD16 int available() {
         return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final LocalWord available(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) BYTE.checkValue(newValue);
         value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is FSIndex
     public final @Mesa.CARD16 int fsi() {
         return Types.toCARD16((value & FSI_MASK) >>> FSI_SHIFT);
     }
     public final LocalWord fsi(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) FSIndex.checkValue(newValue);
         value = Types.toCARD16((value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK));
         return this;
     }

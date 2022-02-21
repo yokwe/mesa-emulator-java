@@ -1,5 +1,6 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
@@ -55,35 +56,41 @@ public final class Monitor extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
+    // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
     public final Monitor reserved(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int tail() {
         return Types.toCARD16((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
     public final Monitor tail(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
         value = Types.toCARD16((value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK));
         return this;
     }
     
+    // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int available() {
         return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
     public final Monitor available(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
         value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
         return this;
     }
     
-    public final @Mesa.CARD16 int locked() {
-        return Types.toCARD16((value & LOCKED_MASK) >>> LOCKED_SHIFT);
+    public final boolean locked() {
+        return ((value & LOCKED_MASK) >>> LOCKED_SHIFT) != 0;
     }
-    public final Monitor locked(@Mesa.CARD16 int newValue) {
-        value = Types.toCARD16((value & ~LOCKED_MASK) | ((newValue << LOCKED_SHIFT) & LOCKED_MASK));
+    public final Monitor locked(boolean newValue) {
+        value = Types.toCARD16((value & ~LOCKED_MASK) | (((newValue ? 1 : 0) << LOCKED_SHIFT) & LOCKED_MASK));
         return this;
     }
     
