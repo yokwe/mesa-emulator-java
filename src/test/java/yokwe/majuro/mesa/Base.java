@@ -63,10 +63,12 @@ public class Base {
 	private void initAV(int origin, int limit) {
 		if (FRAME_SIZE_MAP.length != FRAME_WEIGHT_MAP.length) throw new UnexpectedException();
 		
+		AVItem avItemEmpty = AVItem.value().data(0).tag(AVItemType.EMPTY);
+
 		AllocationVector av = AllocationVector.pointer(mAV, WRITE_READ);
 		
 		for(int i = 0; i <= FSIndex.MAX_VALUE; i++) {
-			av.get(i).write(AVItemType.EMPTY);
+			av.get(i).write(avItemEmpty.value);
 		}
 		
 		int p = origin;
@@ -89,7 +91,7 @@ public class Base {
 				lo.returnlink().write(0);
 				lo.globallink().write(0);
 				lo.pc().write(0);
-				lo.local().get(0).write(AVItemType.EMPTY);
+				lo.local().get(0).write(avItemEmpty.value);
 				
 				av.get(fsi).write(p + LocalOverhead.WORD_SIZE);
 				
