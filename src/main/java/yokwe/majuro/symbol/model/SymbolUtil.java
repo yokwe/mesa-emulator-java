@@ -105,9 +105,9 @@ public class SymbolUtil {
 			return new TypeReference(name, Type.LONG_POINTER.name);
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	
@@ -133,9 +133,9 @@ public class SymbolUtil {
 //		if (type.arrayType() != null){
 //			return SymbolUtil.getType(name, type.arrayType());
 //		}
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -151,9 +151,9 @@ public class SymbolUtil {
 			return new TypePointerLong(name, typeRef);
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -195,9 +195,9 @@ public class SymbolUtil {
 			return SymbolUtil.getType(name, (TypeArraySubrangeContext)type);
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -226,9 +226,9 @@ public class SymbolUtil {
 			return getType(name, type.referenceType());
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -272,9 +272,9 @@ public class SymbolUtil {
 			return new TypeBitField32(name, list);
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Type getType(String name, FieldTypeContext type) {
@@ -291,9 +291,9 @@ public class SymbolUtil {
 			return getType(name, type.pointerType());
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  name  %s", name);
-		Symbol.logger.error("  type  %s", type.getText());
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	private static TypeRecord.Field getField(String typeName, RecordFieldContext recordField) {
@@ -318,8 +318,8 @@ public class SymbolUtil {
 			return new TypeRecord.Field(name, offset, startBit, stopBit, type);
 		}
 		
-		Symbol.logger.error("Unexpected");
-		Symbol.logger.error("  type  %s", recordField.getText());
+		logger.error("Unexpected");
+		logger.error("  type  %s", recordField.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	
