@@ -82,6 +82,9 @@ public class ProcessDecl {
 			out.println("public static final %s value(@Mesa.CARD16 int value) {", javaFile.name);
 			out.println("return new %s(value);", javaFile.name);
 			out.println("}");
+			out.println("public static final %s value() {", javaFile.name);
+			out.println("return new %s(0);", javaFile.name);
+			out.println("}");
 			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(base, access);", javaFile.name);
 			out.println("}");
@@ -99,6 +102,9 @@ public class ProcessDecl {
 		} else if (parentClass.equals(MemoryData32.class)) {
 			out.println("public static final %s value(@Mesa.CARD32 int value) {", javaFile.name);
 			out.println("return new %s(value);", javaFile.name);
+			out.println("}");
+			out.println("public static final %s value() {", javaFile.name);
+			out.println("return new %s(0);", javaFile.name);
 			out.println("}");
 			out.println("public static final %s longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {", javaFile.name);
 			out.println("return new %s(base, access);", javaFile.name);
@@ -768,8 +774,9 @@ public class ProcessDecl {
 				out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
 				out.println("}");
 				
-				out.println("public final void %s(@Mesa.CARD16 int newValue) {", fieldName);
+				out.println("public final %s %s(@Mesa.CARD16 int newValue) {", javaFile.name, fieldName);
 				out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
+				out.println("return this;");
 				out.println("}");
 				out.println();
 			}
@@ -846,8 +853,9 @@ public class ProcessDecl {
 				out.println("return (value & %1$s_MASK) >>> %1$s_SHIFT;", fieldCons);
 				out.println("}");
 				
-				out.println("public final void %s(int newValue) {", fieldName);
+				out.println("public final %s %s(int newValue) {", javaFile.name, fieldName);
 				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
+				out.println("return this;");
 				out.println("}");
 				out.println();
 			}
