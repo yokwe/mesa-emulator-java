@@ -698,21 +698,75 @@ public class ProcessDecl {
 			out.println("//");
 			out.println("// Bit Field Access Methods");
 			out.println("//");
-			for(var e: type.fieldList) {
-				String fieldName = StringUtil.toJavaName(e.name);
-				String fieldCons = StringUtil.toJavaConstName(e.name);
+			for(var field: type.fieldList) {
+				String fieldName = StringUtil.toJavaName(field.name);
+				String fieldCons = StringUtil.toJavaConstName(field.name);
 				
 				// FIXME handle BOOLEAN, ENUM and Subrange field properly
+				Type   fieldType     = field.type.realType();
+				String fieldTypeName = StringUtil.toJavaName(fieldType.name);
+
+				if (fieldType instanceof TypeBoolean) {
+					out.println("public final boolean %s() {", fieldName);
+					out.println("return ((value & %1$s_MASK) >>> %1$s_SHIFT) != 0;", fieldCons);
+					out.println("}");
+					
+					out.println("public final %s %s(boolean newValue) {", javaFile.name, fieldName);
+					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | (((newValue ? 1 : 0) << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
+					out.println("return this;");
+					out.println("}");
+					out.println();
+					continue;
+				}
+				if (fieldType instanceof TypeEnum) {
+					out.println("// @Mesa.ENUM is %s", fieldTypeName);
+					
+					out.println("public final @Mesa.ENUM int %s() {", fieldName);
+					out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
+					out.println("}");
+					
+					out.println("public final %s %s(@Mesa.ENUM int newValue) {", javaFile.name, fieldName);
+					out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
+					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
+					out.println("return this;");
+					out.println("}");
+					out.println();
+					continue;
+				}
+				if (fieldType instanceof TypeSubrange) {
+					out.println("// @Mesa.CARD16 is %s", fieldTypeName);
+					
+					out.println("public final @Mesa.CARD16 int %s() {", fieldName);
+					out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
+					out.println("}");
+					
+					out.println("public final %s %s(@Mesa.CARD16 int newValue) {", javaFile.name, fieldName);
+					if (fieldType.needsRangeCheck()) {
+						out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
+					}
+					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
+					out.println("return this;");
+					out.println("}");
+					out.println();
+					continue;
+				}
+				if (fieldType instanceof TypeBitField16) {
+					out.println("// %s is BIT FIELD 16", fieldTypeName);
+					out.println("public final %s %s() {", fieldTypeName, fieldName);
+					out.println("return %1$s.value(Types.toCARD16((value & %2$s_MASK) >>> %2$s_SHIFT));", fieldTypeName, fieldCons);
+					out.println("}");
+					
+					out.println("public final %s %s(%s newValue) {", javaFile.name, fieldName, fieldTypeName);
+					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue.value << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
+					out.println("return this;");
+					out.println("}");
+					out.println();
+					continue;
+				}
 				
-				out.println("public final @Mesa.CARD16 int %s() {", fieldName);
-				out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
-				out.println("}");
-				
-				out.println("public final %s %s(@Mesa.CARD16 int newValue) {", javaFile.name, fieldName);
-				out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
-				out.println("return this;");
-				out.println("}");
-				out.println();
+				logger.error("Unexpected field type");
+				logger.error("  %s", field.toMesaType());
+				throw new UnexpectedException();
 			}
 			
 			// close class body
