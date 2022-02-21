@@ -37,16 +37,6 @@ public class ProcessDecl {
 	private static final boolean DEBUG_SHOW_TRACE = false;
 	
 	
-	// for java code generation
-	private static boolean javaDataClass(Type type) {
-		if (type instanceof TypeBoolean)    return true;
-		if (type instanceof TypeEnum)       return true;
-		if (type instanceof TypeSubrange)   return true;
-		if (type instanceof TypeBitField16) return true;
-		if (type instanceof TypeBitField32) return true;
-		return false;
-	}
-
 	private static void classPreamble(JavaFile javaFile, Class<?> parentClass) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE classPreamble");
 		final var out = javaFile.out;
@@ -173,23 +163,13 @@ public class ProcessDecl {
 			}
 		}
 		
-		if (javaDataClass(elementType)) {
-			out.println("public final %s get(int index) {", elementTypeName);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
-			out.println("return %s.longPointer(longPointer, access);", elementTypeName);
-			out.println("}");
-		} else {
-			out.println("public final %s get(int index) {", elementTypeName);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
-			out.println("return %s.longPointer(longPointer, access);", elementTypeName, elementTypeName);
-			out.println("}");
+		out.println("public final %s get(int index) {", elementTypeName);
+		if (indexType.needsRangeCheck()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 		}
+		out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
+		out.println("return %s.longPointer(longPointer, access);", elementTypeName);
+		out.println("}");
 	}	
 	private static void arrayElement(JavaFile javaFile, Type indexType) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE arrayElement 2");
@@ -205,23 +185,14 @@ public class ProcessDecl {
 		String elementTypeName = StringUtil.toJavaName(Type.POINTER.name);
 		String targetTypeName  = StringUtil.toJavaName(targetType.name);
 		
-		if (javaDataClass(targetType)) {
-			out.println("public final %s get(int index) {", targetTypeName);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
-			out.println("return %s.pointer(pointer, access);", targetTypeName);
-			out.println("}");
-		} else {
-			out.println("public final %s get(int index) {", targetTypeName);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
-			out.println("return %s.pointer(pointer, access);", targetTypeName);
-			out.println("}");
+		out.println("public final %s get(int index) {", targetTypeName);
+		if (indexType.needsRangeCheck()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 		}
+		out.println("int pointer = Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
+		out.println("return %s.pointer(pointer, access);", targetTypeName);
+		out.println("}");
+		
 		// FIXME getValue()  getValue(newValue)
 		out.println("public final @Mesa.SHORT_POINTER int getValue(int index) {", targetTypeName);
 		out.println("return Memory.read16(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -251,23 +222,14 @@ public class ProcessDecl {
 		String elementTypeName = StringUtil.toJavaName(Type.LONG_POINTER.name);
 		String targetTypeName  = StringUtil.toJavaName(targetType.name);
 		
-		if (javaDataClass(targetType)) {
-			out.println("public final %s get(int index) {", targetTypeName);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int longPointer = Memory.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
-			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
-			out.println("}");
-		} else {
-			out.println("public final %s get(int index) {", targetTypeName);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int longPointer = Memory.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
-			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
-			out.println("}");
+		out.println("public final %s get(int index) {", targetTypeName);
+		if (indexType.needsRangeCheck()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 		}
+		out.println("int longPointer = Memory.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
+		out.println("return %s.longPointer(longPointer, access);", targetTypeName);
+		out.println("}");
+		
 		// FIXME getValue()  getValue(newValue)
 		out.println("public final @Mesa.LONG_POINTER int getValue(int index) {", targetTypeName);
 		out.println("return Memory.read32(base + (%s.WORD_SIZE * index));", elementTypeName);
@@ -297,17 +259,10 @@ public class ProcessDecl {
 		String fieldName      = StringUtil.toJavaName(field.name);
 		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
 
-		if (javaDataClass(fieldType)) {
-			out.println("public %s %s() {", fieldTypeName, fieldName);
-			out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
-			out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
-			out.println("}");
-		} else {
-			out.println("public %s %s() {", fieldTypeName, fieldName);
-			out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
-			out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
-			out.println("}");
-		}
+		out.println("public %s %s() {", fieldTypeName, fieldName);
+		out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
+		out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
+		out.println("}");
 	}
 	private static void recordFieldIndirectLong(JavaFile javaFile, TypeRecord.Field field) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldIndirectLong");
@@ -318,17 +273,11 @@ public class ProcessDecl {
 		Type   targetType     = field.type.realType().pointerTarget().realType();
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
-		if (javaDataClass(targetType)) {
-			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("int longPointer = Memory.read32(base + OFFSET_%s);", fieldConstName);
-			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
-			out.println("}");
-		} else {
-			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("int longPointer = Memory.read32(base + OFFSET_%s);", fieldConstName);
-			out.println("return %s.longPointer(longPointer, access);", targetTypeName);
-			out.println("}");
-		}
+		out.println("public %s %s() {", targetTypeName, fieldName);
+		out.println("int longPointer = Memory.read32(base + OFFSET_%s);", fieldConstName);
+		out.println("return %s.longPointer(longPointer, access);", targetTypeName);
+		out.println("}");
+		
 		// FIXME %sValue()  %sValue(newValue)
 		out.println("public final @Mesa.LONG_POINTER int %sValue() {", fieldName);
 		out.println("return Memory.read32(base + OFFSET_%s);", fieldConstName);
@@ -346,17 +295,11 @@ public class ProcessDecl {
 		Type   targetType     = field.type.realType().pointerTarget().realType();
 		String targetTypeName = StringUtil.toJavaName(targetType.name);
 
-		if (javaDataClass(targetType)) {
-			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
-			out.println("return %s.pointer(pointer, access);", targetTypeName);
-			out.println("}");
-		} else {
-			out.println("public %s %s() {", targetTypeName, fieldName);
-			out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
-			out.println("return %s.pointer(pointer, access);", targetTypeName);
-			out.println("}");
-		}
+		out.println("public %s %s() {", targetTypeName, fieldName);
+		out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
+		out.println("return %s.pointer(pointer, access);", targetTypeName);
+		out.println("}");
+		
 		// FIXME %sValue()  %sValue(newValue)
 		out.println("public final @Mesa.SHORT_POINTER int %sValue() {", fieldName);
 		out.println("return Memory.read16(base + OFFSET_%s);", fieldConstName);
@@ -403,24 +346,13 @@ public class ProcessDecl {
 			}
 		}
 
-		
-		if (javaDataClass(elementType)) {
-			out.println("public final %s %s(int index) {", elementTypeName, field.name);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
-			out.println("return %s.longPointer(longPointer, access);", elementTypeName);
-			out.println("}");
-		} else {
-			out.println("public final %s %s(int index) {", elementTypeName, field.name);
-			if (indexType.needsRangeCheck()) {
-				out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
-			}
-			out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
-			out.println("return %s.longPointer(longPointer, access);", elementTypeName, elementTypeName);
-			out.println("}");
+		out.println("public final %s %s(int index) {", elementTypeName, field.name);
+		if (indexType.needsRangeCheck()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
 		}
+		out.println("int longPointer = base + OFFSET_%s + (%s.WORD_SIZE * index);", fieldConstName, elementTypeName);
+		out.println("return %s.longPointer(longPointer, access);", elementTypeName);
+		out.println("}");
 	}
 	
 	public static void generateFile(JavaFile javaFile) {
@@ -770,6 +702,8 @@ public class ProcessDecl {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 				
+				// FIXME handle BOOLEAN, ENUM and Subrange field properly
+				
 				out.println("public final @Mesa.CARD16 int %s() {", fieldName);
 				out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
 				out.println("}");
@@ -848,6 +782,8 @@ public class ProcessDecl {
 			for(var e: type.fieldList) {
 				String fieldName = StringUtil.toJavaName(e.name);
 				String fieldCons = StringUtil.toJavaConstName(e.name);
+				
+				// FIXME handle BOOLEAN, ENUM and Subrange field properly
 				
 				out.println("public final int %s() {", fieldName);
 				out.println("return (value & %1$s_MASK) >>> %1$s_SHIFT;", fieldCons);
@@ -1335,6 +1271,7 @@ public class ProcessDecl {
 		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
 			// RECORD FIELD is BOOLEAN
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is BOOLEAN");
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordField(javaFile, field);
 		}
 
@@ -1342,6 +1279,7 @@ public class ProcessDecl {
 		protected void processTypeEnum(Field field, TypeEnum fieldType) {
 			// RECORD FIELD is ENUM
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is ENUM");
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordField(javaFile, field);
 		}
 
@@ -1349,6 +1287,7 @@ public class ProcessDecl {
 		protected void processTypeSubrange(Field field, TypeSubrange fieldType) {
 			// RECORD FIELD is SUBRANGE
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SUBRANGE");
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordField(javaFile, field);
 		}
 
