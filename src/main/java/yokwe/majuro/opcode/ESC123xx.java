@@ -9,6 +9,7 @@ import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.util.FormatLogger;
+import yokwe.majuro.util.MesaUtil;
 
 public class ESC123xx {
 	private static final FormatLogger logger = FormatLogger.getLogger();
@@ -17,7 +18,7 @@ public class ESC123xx {
 	@Register(Opcode.WRPSB)
 	public static final void OP_WRPSB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRPSB.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.PSB = psbIndex(pop());
 	}
 
 	// 161 WRMDS
@@ -31,42 +32,44 @@ public class ESC123xx {
 	@Register(Opcode.WRWP)
 	public static final void OP_WRWP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRWP.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.WP = pop();
 	}
 
 	// 163 WRWDC
 	@Register(Opcode.WRWDC)
 	public static final void OP_WRWDC() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRWDC.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.WDC = pop();
 	}
 
 	// 164 WRPTC
 	@Register(Opcode.WRPTC)
 	public static final void OP_WRPTC() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRPTC.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.PTC = pop();
+		lastTimeoutTime = Processor.IT(); // FIXME
 	}
 
 	// 165 WRIT
 	@Register(Opcode.WRIT)
 	public static final void OP_WRIT() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRIT.name);
-		throw new UnexpectedException(); // FIXME
+		error();
 	}
 
 	// 166 WRXTS
 	@Register(Opcode.WRXTS)
 	public static final void OP_WRXTS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRXTS.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.XTS = pop();
 	}
 
 	// 167 WRMP
 	@Register(Opcode.WRMP)
 	public static final void OP_WRMP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WRMP.name);
-		throw new UnexpectedException(); // FIXME
+		Processor.MP = pop();
+		logger.info("%s", MesaUtil.getMPCodeMessage(Processor.MP));
 	}
 
 	// 170 RRPSB
