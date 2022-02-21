@@ -146,8 +146,20 @@ public class ESC123xx {
 	@Register(Opcode.A214)
 	public static final void OP_A214() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.A214.name);
-		throw new UnexpectedException(); // FIXME
+		// FIXME Implements OP_A214
+		popLong();
+		popLong();
+		popLong();
+		push(0);
 	}
+	//14:59:24.02 DEBUG block        TRACE   1426  zBLTL     307E7    AB63F     4
+	//14:59:24.02 DEBUG Opcode       TRACE   1427  zLLD1
+	//14:59:24.02 DEBUG Opcode       TRACE   1430  zLLD7
+	//14:59:24.02 DEBUG Opcode       TRACE   1431  zLLDB 09
+	//14:59:24.02 DEBUG guam         TRACE   1433  a214  <= ##
+	//14:59:24.02 DEBUG Opcode       TRACE   1435  zDIS
+	//14:59:24.02 DEBUG control      TRACE   1436  zRET
+
 
 	// 300 COLORBLT
 	@Register(Opcode.COLORBLT)
@@ -174,14 +186,25 @@ public class ESC123xx {
 	@Register(Opcode.A305)
 	public static final void OP_A305() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.A305.name);
-		throw new UnexpectedException(); // FIXME
+		// FIXME Implements OP_A305
 	}
 
 	// 306 A306
 	@Register(Opcode.A306)
 	public static final void OP_A306() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.A306.name);
-		throw new UnexpectedException(); // FIXME
+		// FIXME Implements OP_A306
+		pop();
+		push(0);
 	}
+	//13:02:26.01 DEBUG control      TRACE    222  zEFC2
+	//13:02:26.01 DEBUG Opcode       TRACE  13635  zSL0
+	//13:02:26.01 DEBUG Opcode       TRACE  13636  zSLD1
+	//13:02:26.01 DEBUG Opcode       TRACE  13637  zLI2
+	//13:02:26.01 DEBUG bootguam     TRACE  13640  a306  2
+	//13:02:26.01 DEBUG Opcode       TRACE  13642  zSL3     <= #1
+	//13:02:26.01 DEBUG Opcode       TRACE  13643  zLLD1
+	//13:02:26.01 DEBUG Opcode       TRACE  13644  zPLDB 04
+	//13:02:26.01 DEBUG Opcode       TRACE  13646  zIOR
 
 }
