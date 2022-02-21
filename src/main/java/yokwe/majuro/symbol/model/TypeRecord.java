@@ -1,7 +1,5 @@
 package yokwe.majuro.symbol.model;
 
-import static yokwe.majuro.mesa.Constants.WORD_BITS;
-
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -196,20 +194,18 @@ public abstract class TypeRecord extends Type {
 						Type type = e.type.realType();
 						
 						int fieldBitSize = e.bitSize;
-						
-						int typeBitSize = -1;
-						if (this instanceof TypeBitField16) typeBitSize = type.bitSize;
-						else if (this instanceof TypeBitField32) typeBitSize = type.bitSize;
-						else if (this instanceof TypeMultiWord)  typeBitSize = type.wordSize() * WORD_BITS;
-						else throw new UnexpectedException("found problem");
-						
 						if (fieldBitSize == 0) continue;
-						if (fieldBitSize != typeBitSize) {
+						
+						int typeBitSize = type.bitSize();
+						if (typeBitSize == fieldBitSize) {
+							// OK
+						} else {
 							// UNSPECIFIED and CARDINAL can have variable length
-							if (type == Type.UNSPECIFIED) continue;
-							if (type == Type.CARDINAL)    continue;
+							if (type == Type.UNSPECIFIED && fieldBitSize < typeBitSize) continue;
+							if (type == Type.CARDINAL    && fieldBitSize < typeBitSize) continue;
+							
 							foundProblem = true;
-							logger.error("field  %s  %s  fieldBitSize  %d  typeBitSize  %d", e.name, type.name, fieldBitSize, typeBitSize);
+							logger.error("field  %-16s  %-16s  fieldBitSize  %2d  typeBitSize  %2d", e.name, type.name, fieldBitSize, typeBitSize);
 						}
 					}
 					
@@ -217,7 +213,7 @@ public abstract class TypeRecord extends Type {
 						logger.error("found problem");
 						logger.error("  %s", name);
 						for(var e: fieldList) {
-							logger.error("  %-10s %-10s  field %2d  type %2d", e.name, e.type.realType().name, e.bitSize, e.type.bitSize);
+							logger.error("    %-16s %-16s  field %2d  type %2d", e.name, e.type.realType().name, e.bitSize, e.type.bitSize);
 						}
 						throw new UnexpectedException("found problem");
 					}
