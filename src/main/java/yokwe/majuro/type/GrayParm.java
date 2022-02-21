@@ -17,6 +17,9 @@ public final class GrayParm extends MemoryData16 {
     public static final GrayParm value(@Mesa.CARD16 int value) {
         return new GrayParm(value);
     }
+    public static final GrayParm value() {
+        return new GrayParm(0);
+    }
     public static final GrayParm longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new GrayParm(base, access);
     }
@@ -55,29 +58,33 @@ public final class GrayParm extends MemoryData16 {
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
-    public final void reserved(@Mesa.CARD16 int newValue) {
+    public final GrayParm reserved(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int yOffset() {
         return Types.toCARD16((value & Y_OFFSET_MASK) >>> Y_OFFSET_SHIFT);
     }
-    public final void yOffset(@Mesa.CARD16 int newValue) {
+    public final GrayParm yOffset(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~Y_OFFSET_MASK) | ((newValue << Y_OFFSET_SHIFT) & Y_OFFSET_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int widthMinusOne() {
         return Types.toCARD16((value & WIDTH_MINUS_ONE_MASK) >>> WIDTH_MINUS_ONE_SHIFT);
     }
-    public final void widthMinusOne(@Mesa.CARD16 int newValue) {
+    public final GrayParm widthMinusOne(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~WIDTH_MINUS_ONE_MASK) | ((newValue << WIDTH_MINUS_ONE_SHIFT) & WIDTH_MINUS_ONE_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int heightMinusOne() {
         return Types.toCARD16((value & HEIGHT_MINUS_ONE_MASK) >>> HEIGHT_MINUS_ONE_SHIFT);
     }
-    public final void heightMinusOne(@Mesa.CARD16 int newValue) {
+    public final GrayParm heightMinusOne(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~HEIGHT_MINUS_ONE_MASK) | ((newValue << HEIGHT_MINUS_ONE_SHIFT) & HEIGHT_MINUS_ONE_MASK));
+        return this;
     }
     
 }

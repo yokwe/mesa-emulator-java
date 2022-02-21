@@ -37,6 +37,9 @@ public final class DstFunc extends MemoryData16 {
     public static final DstFunc value(@Mesa.CARD16 int value) {
         return new DstFunc(value);
     }
+    public static final DstFunc value() {
+        return new DstFunc(0);
+    }
     public static final DstFunc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new DstFunc(base, access);
     }

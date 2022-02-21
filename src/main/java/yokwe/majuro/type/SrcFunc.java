@@ -35,6 +35,9 @@ public final class SrcFunc extends MemoryData16 {
     public static final SrcFunc value(@Mesa.CARD16 int value) {
         return new SrcFunc(value);
     }
+    public static final SrcFunc value() {
+        return new SrcFunc(0);
+    }
     public static final SrcFunc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new SrcFunc(base, access);
     }

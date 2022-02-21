@@ -17,6 +17,9 @@ public final class GlobalWord extends MemoryData16 {
     public static final GlobalWord value(@Mesa.CARD16 int value) {
         return new GlobalWord(value);
     }
+    public static final GlobalWord value() {
+        return new GlobalWord(0);
+    }
     public static final GlobalWord longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new GlobalWord(base, access);
     }
@@ -52,22 +55,25 @@ public final class GlobalWord extends MemoryData16 {
     public final @Mesa.CARD16 int gfi() {
         return Types.toCARD16((value & GFI_MASK) >>> GFI_SHIFT);
     }
-    public final void gfi(@Mesa.CARD16 int newValue) {
+    public final GlobalWord gfi(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int trapxfers() {
         return Types.toCARD16((value & TRAPXFERS_MASK) >>> TRAPXFERS_SHIFT);
     }
-    public final void trapxfers(@Mesa.CARD16 int newValue) {
+    public final GlobalWord trapxfers(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~TRAPXFERS_MASK) | ((newValue << TRAPXFERS_SHIFT) & TRAPXFERS_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int codelinks() {
         return Types.toCARD16((value & CODELINKS_MASK) >>> CODELINKS_SHIFT);
     }
-    public final void codelinks(@Mesa.CARD16 int newValue) {
+    public final GlobalWord codelinks(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~CODELINKS_MASK) | ((newValue << CODELINKS_SHIFT) & CODELINKS_MASK));
+        return this;
     }
     
 }

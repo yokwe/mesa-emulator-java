@@ -26,6 +26,9 @@ public final class GFTIndex extends MemoryData16 {
     public static final GFTIndex value(@Mesa.CARD16 int value) {
         return new GFTIndex(value);
     }
+    public static final GFTIndex value() {
+        return new GFTIndex(0);
+    }
     public static final GFTIndex longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new GFTIndex(base, access);
     }

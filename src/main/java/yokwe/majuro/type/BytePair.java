@@ -17,6 +17,9 @@ public final class BytePair extends MemoryData16 {
     public static final BytePair value(@Mesa.CARD16 int value) {
         return new BytePair(value);
     }
+    public static final BytePair value() {
+        return new BytePair(0);
+    }
     public static final BytePair longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BytePair(base, access);
     }
@@ -49,15 +52,17 @@ public final class BytePair extends MemoryData16 {
     public final @Mesa.CARD16 int left() {
         return Types.toCARD16((value & LEFT_MASK) >>> LEFT_SHIFT);
     }
-    public final void left(@Mesa.CARD16 int newValue) {
+    public final BytePair left(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int right() {
         return Types.toCARD16((value & RIGHT_MASK) >>> RIGHT_SHIFT);
     }
-    public final void right(@Mesa.CARD16 int newValue) {
+    public final BytePair right(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK));
+        return this;
     }
     
 }

@@ -17,6 +17,9 @@ public final class Monitor extends MemoryData16 {
     public static final Monitor value(@Mesa.CARD16 int value) {
         return new Monitor(value);
     }
+    public static final Monitor value() {
+        return new Monitor(0);
+    }
     public static final Monitor longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Monitor(base, access);
     }
@@ -55,29 +58,33 @@ public final class Monitor extends MemoryData16 {
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
-    public final void reserved(@Mesa.CARD16 int newValue) {
+    public final Monitor reserved(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int tail() {
         return Types.toCARD16((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
-    public final void tail(@Mesa.CARD16 int newValue) {
+    public final Monitor tail(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int available() {
         return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
-    public final void available(@Mesa.CARD16 int newValue) {
+    public final Monitor available(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int locked() {
         return Types.toCARD16((value & LOCKED_MASK) >>> LOCKED_SHIFT);
     }
-    public final void locked(@Mesa.CARD16 int newValue) {
+    public final Monitor locked(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~LOCKED_MASK) | ((newValue << LOCKED_SHIFT) & LOCKED_MASK));
+        return this;
     }
     
 }

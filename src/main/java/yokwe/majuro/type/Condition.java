@@ -17,6 +17,9 @@ public final class Condition extends MemoryData16 {
     public static final Condition value(@Mesa.CARD16 int value) {
         return new Condition(value);
     }
+    public static final Condition value() {
+        return new Condition(0);
+    }
     public static final Condition longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Condition(base, access);
     }
@@ -58,36 +61,41 @@ public final class Condition extends MemoryData16 {
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
-    public final void reserved(@Mesa.CARD16 int newValue) {
+    public final Condition reserved(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int tail() {
         return Types.toCARD16((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
-    public final void tail(@Mesa.CARD16 int newValue) {
+    public final Condition tail(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int available() {
         return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
-    public final void available(@Mesa.CARD16 int newValue) {
+    public final Condition available(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int abortable() {
         return Types.toCARD16((value & ABORTABLE_MASK) >>> ABORTABLE_SHIFT);
     }
-    public final void abortable(@Mesa.CARD16 int newValue) {
+    public final Condition abortable(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~ABORTABLE_MASK) | ((newValue << ABORTABLE_SHIFT) & ABORTABLE_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int wakeup() {
         return Types.toCARD16((value & WAKEUP_MASK) >>> WAKEUP_SHIFT);
     }
-    public final void wakeup(@Mesa.CARD16 int newValue) {
+    public final Condition wakeup(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~WAKEUP_MASK) | ((newValue << WAKEUP_SHIFT) & WAKEUP_MASK));
+        return this;
     }
     
 }

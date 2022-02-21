@@ -16,6 +16,9 @@ public final class BitField32 extends MemoryData32 {
     public static final BitField32 value(@Mesa.CARD32 int value) {
         return new BitField32(value);
     }
+    public static final BitField32 value() {
+        return new BitField32(0);
+    }
     public static final BitField32 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BitField32(base, access);
     }
@@ -51,22 +54,25 @@ public final class BitField32 extends MemoryData32 {
     public final int data() {
         return (value & DATA_MASK) >>> DATA_SHIFT;
     }
-    public final void data(int newValue) {
+    public final BitField32 data(int newValue) {
         value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
+        return this;
     }
     
     public final int tag() {
         return (value & TAG_MASK) >>> TAG_SHIFT;
     }
-    public final void tag(int newValue) {
+    public final BitField32 tag(int newValue) {
         value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);
+        return this;
     }
     
     public final int fill() {
         return (value & FILL_MASK) >>> FILL_SHIFT;
     }
-    public final void fill(int newValue) {
+    public final BitField32 fill(int newValue) {
         value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);
+        return this;
     }
     
 }

@@ -39,10 +39,10 @@ public final class RecPtr32Bit16 extends MemoryBase {
         int longPointer = Memory.read32(base + OFFSET_CARD_1);
         return BitField16.longPointer(longPointer, access);
     }
-    public final @Mesa.LONG_POINTER int card1Value(int index) {
+    public final @Mesa.LONG_POINTER int card1Value() {
         return Memory.read32(base + OFFSET_CARD_1);
     }
-    public final void card1Value(int index, @Mesa.LONG_POINTER int newValue) {
+    public final void card1Value(@Mesa.LONG_POINTER int newValue) {
         Memory.write32(base + OFFSET_CARD_1, newValue);
     }
 }

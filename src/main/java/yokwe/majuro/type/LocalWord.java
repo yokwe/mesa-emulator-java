@@ -17,6 +17,9 @@ public final class LocalWord extends MemoryData16 {
     public static final LocalWord value(@Mesa.CARD16 int value) {
         return new LocalWord(value);
     }
+    public static final LocalWord value() {
+        return new LocalWord(0);
+    }
     public static final LocalWord longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new LocalWord(base, access);
     }
@@ -49,15 +52,17 @@ public final class LocalWord extends MemoryData16 {
     public final @Mesa.CARD16 int available() {
         return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
     }
-    public final void available(@Mesa.CARD16 int newValue) {
+    public final LocalWord available(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int fsi() {
         return Types.toCARD16((value & FSI_MASK) >>> FSI_SHIFT);
     }
-    public final void fsi(@Mesa.CARD16 int newValue) {
+    public final LocalWord fsi(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~FSI_MASK) | ((newValue << FSI_SHIFT) & FSI_MASK));
+        return this;
     }
     
 }

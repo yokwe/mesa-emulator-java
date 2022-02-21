@@ -17,6 +17,9 @@ public final class AVItem extends MemoryData16 {
     public static final AVItem value(@Mesa.CARD16 int value) {
         return new AVItem(value);
     }
+    public static final AVItem value() {
+        return new AVItem(0);
+    }
     public static final AVItem longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new AVItem(base, access);
     }
@@ -49,15 +52,17 @@ public final class AVItem extends MemoryData16 {
     public final @Mesa.CARD16 int data() {
         return Types.toCARD16((value & DATA_MASK) >>> DATA_SHIFT);
     }
-    public final void data(@Mesa.CARD16 int newValue) {
+    public final AVItem data(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int tag() {
         return Types.toCARD16((value & TAG_MASK) >>> TAG_SHIFT);
     }
-    public final void tag(@Mesa.CARD16 int newValue) {
+    public final AVItem tag(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK));
+        return this;
     }
     
 }

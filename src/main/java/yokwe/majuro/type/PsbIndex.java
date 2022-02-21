@@ -26,6 +26,9 @@ public final class PsbIndex extends MemoryData16 {
     public static final PsbIndex value(@Mesa.CARD16 int value) {
         return new PsbIndex(value);
     }
+    public static final PsbIndex value() {
+        return new PsbIndex(0);
+    }
     public static final PsbIndex longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new PsbIndex(base, access);
     }

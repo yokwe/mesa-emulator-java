@@ -16,6 +16,9 @@ public final class LONG_UNSPECIFIED extends MemoryData32 {
     public static final LONG_UNSPECIFIED value(@Mesa.CARD32 int value) {
         return new LONG_UNSPECIFIED(value);
     }
+    public static final LONG_UNSPECIFIED value() {
+        return new LONG_UNSPECIFIED(0);
+    }
     public static final LONG_UNSPECIFIED longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new LONG_UNSPECIFIED(base, access);
     }

@@ -17,6 +17,9 @@ public final class BitField16 extends MemoryData16 {
     public static final BitField16 value(@Mesa.CARD16 int value) {
         return new BitField16(value);
     }
+    public static final BitField16 value() {
+        return new BitField16(0);
+    }
     public static final BitField16 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BitField16(base, access);
     }
@@ -49,15 +52,17 @@ public final class BitField16 extends MemoryData16 {
     public final @Mesa.CARD16 int left() {
         return Types.toCARD16((value & LEFT_MASK) >>> LEFT_SHIFT);
     }
-    public final void left(@Mesa.CARD16 int newValue) {
+    public final BitField16 left(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int right() {
         return Types.toCARD16((value & RIGHT_MASK) >>> RIGHT_SHIFT);
     }
-    public final void right(@Mesa.CARD16 int newValue) {
+    public final BitField16 right(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK));
+        return this;
     }
     
 }

@@ -17,6 +17,9 @@ public final class Queue extends MemoryData16 {
     public static final Queue value(@Mesa.CARD16 int value) {
         return new Queue(value);
     }
+    public static final Queue value() {
+        return new Queue(0);
+    }
     public static final Queue longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Queue(base, access);
     }
@@ -52,22 +55,25 @@ public final class Queue extends MemoryData16 {
     public final @Mesa.CARD16 int reserved1() {
         return Types.toCARD16((value & RESERVED_1_MASK) >>> RESERVED_1_SHIFT);
     }
-    public final void reserved1(@Mesa.CARD16 int newValue) {
+    public final Queue reserved1(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RESERVED_1_MASK) | ((newValue << RESERVED_1_SHIFT) & RESERVED_1_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int tail() {
         return Types.toCARD16((value & TAIL_MASK) >>> TAIL_SHIFT);
     }
-    public final void tail(@Mesa.CARD16 int newValue) {
+    public final Queue tail(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int reserved2() {
         return Types.toCARD16((value & RESERVED_2_MASK) >>> RESERVED_2_SHIFT);
     }
-    public final void reserved2(@Mesa.CARD16 int newValue) {
+    public final Queue reserved2(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RESERVED_2_MASK) | ((newValue << RESERVED_2_SHIFT) & RESERVED_2_MASK));
+        return this;
     }
     
 }

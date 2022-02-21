@@ -26,6 +26,9 @@ public final class InterruptLevel extends MemoryData16 {
     public static final InterruptLevel value(@Mesa.CARD16 int value) {
         return new InterruptLevel(value);
     }
+    public static final InterruptLevel value() {
+        return new InterruptLevel(0);
+    }
     public static final InterruptLevel longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new InterruptLevel(base, access);
     }

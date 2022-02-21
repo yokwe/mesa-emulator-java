@@ -39,10 +39,10 @@ public final class RecPtr16Bit16 extends MemoryBase {
         int pointer = Memory.read16(base + OFFSET_CARD_1);
         return BitField16.pointer(pointer, access);
     }
-    public final @Mesa.SHORT_POINTER int card1Value(int index) {
+    public final @Mesa.SHORT_POINTER int card1Value() {
         return Memory.read16(base + OFFSET_CARD_1);
     }
-    public final void card1Value(int index, @Mesa.SHORT_POINTER int newValue) {
+    public final void card1Value(@Mesa.SHORT_POINTER int newValue) {
         Memory.write16(base + OFFSET_CARD_1, newValue);
     }
 }

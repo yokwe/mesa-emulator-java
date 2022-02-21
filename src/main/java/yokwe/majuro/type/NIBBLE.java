@@ -26,6 +26,9 @@ public final class NIBBLE extends MemoryData16 {
     public static final NIBBLE value(@Mesa.CARD16 int value) {
         return new NIBBLE(value);
     }
+    public static final NIBBLE value() {
+        return new NIBBLE(0);
+    }
     public static final NIBBLE longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new NIBBLE(base, access);
     }

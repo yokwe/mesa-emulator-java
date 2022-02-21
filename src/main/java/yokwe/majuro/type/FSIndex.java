@@ -26,6 +26,9 @@ public final class FSIndex extends MemoryData16 {
     public static final FSIndex value(@Mesa.CARD16 int value) {
         return new FSIndex(value);
     }
+    public static final FSIndex value() {
+        return new FSIndex(0);
+    }
     public static final FSIndex longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FSIndex(base, access);
     }

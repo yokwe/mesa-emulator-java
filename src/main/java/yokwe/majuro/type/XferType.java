@@ -41,6 +41,9 @@ public final class XferType extends MemoryData16 {
     public static final XferType value(@Mesa.CARD16 int value) {
         return new XferType(value);
     }
+    public static final XferType value() {
+        return new XferType(0);
+    }
     public static final XferType longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new XferType(base, access);
     }

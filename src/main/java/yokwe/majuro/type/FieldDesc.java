@@ -17,6 +17,9 @@ public final class FieldDesc extends MemoryData16 {
     public static final FieldDesc value(@Mesa.CARD16 int value) {
         return new FieldDesc(value);
     }
+    public static final FieldDesc value() {
+        return new FieldDesc(0);
+    }
     public static final FieldDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FieldDesc(base, access);
     }
@@ -49,15 +52,17 @@ public final class FieldDesc extends MemoryData16 {
     public final @Mesa.CARD16 int offset() {
         return Types.toCARD16((value & OFFSET_MASK) >>> OFFSET_SHIFT);
     }
-    public final void offset(@Mesa.CARD16 int newValue) {
+    public final FieldDesc offset(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int field() {
         return Types.toCARD16((value & FIELD_MASK) >>> FIELD_SHIFT);
     }
-    public final void field(@Mesa.CARD16 int newValue) {
+    public final FieldDesc field(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~FIELD_MASK) | ((newValue << FIELD_SHIFT) & FIELD_MASK));
+        return this;
     }
     
 }

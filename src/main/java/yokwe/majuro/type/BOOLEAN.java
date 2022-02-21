@@ -16,6 +16,9 @@ public final class BOOLEAN extends MemoryData16 {
     public static final BOOLEAN value(@Mesa.CARD16 int value) {
         return new BOOLEAN(value);
     }
+    public static final BOOLEAN value() {
+        return new BOOLEAN(0);
+    }
     public static final BOOLEAN longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BOOLEAN(base, access);
     }

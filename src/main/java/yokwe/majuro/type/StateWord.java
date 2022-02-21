@@ -17,6 +17,9 @@ public final class StateWord extends MemoryData16 {
     public static final StateWord value(@Mesa.CARD16 int value) {
         return new StateWord(value);
     }
+    public static final StateWord value() {
+        return new StateWord(0);
+    }
     public static final StateWord longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new StateWord(base, access);
     }
@@ -49,15 +52,17 @@ public final class StateWord extends MemoryData16 {
     public final @Mesa.CARD16 int instByte() {
         return Types.toCARD16((value & INST_BYTE_MASK) >>> INST_BYTE_SHIFT);
     }
-    public final void instByte(@Mesa.CARD16 int newValue) {
+    public final StateWord instByte(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~INST_BYTE_MASK) | ((newValue << INST_BYTE_SHIFT) & INST_BYTE_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int stkPtr() {
         return Types.toCARD16((value & STK_PTR_MASK) >>> STK_PTR_SHIFT);
     }
-    public final void stkPtr(@Mesa.CARD16 int newValue) {
+    public final StateWord stkPtr(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~STK_PTR_MASK) | ((newValue << STK_PTR_SHIFT) & STK_PTR_MASK));
+        return this;
     }
     
 }

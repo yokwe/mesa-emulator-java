@@ -16,6 +16,9 @@ public final class NewProcDesc extends MemoryData32 {
     public static final NewProcDesc value(@Mesa.CARD32 int value) {
         return new NewProcDesc(value);
     }
+    public static final NewProcDesc value() {
+        return new NewProcDesc(0);
+    }
     public static final NewProcDesc longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new NewProcDesc(base, access);
     }
@@ -48,15 +51,17 @@ public final class NewProcDesc extends MemoryData32 {
     public final int taggedGFI() {
         return (value & TAGGED_GFI_MASK) >>> TAGGED_GFI_SHIFT;
     }
-    public final void taggedGFI(int newValue) {
+    public final NewProcDesc taggedGFI(int newValue) {
         value = (value & ~TAGGED_GFI_MASK) | ((newValue << TAGGED_GFI_SHIFT) & TAGGED_GFI_MASK);
+        return this;
     }
     
     public final int pc() {
         return (value & PC_MASK) >>> PC_SHIFT;
     }
-    public final void pc(int newValue) {
+    public final NewProcDesc pc(int newValue) {
         value = (value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK);
+        return this;
     }
     
 }

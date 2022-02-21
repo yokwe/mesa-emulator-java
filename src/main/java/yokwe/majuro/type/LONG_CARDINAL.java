@@ -16,6 +16,9 @@ public final class LONG_CARDINAL extends MemoryData32 {
     public static final LONG_CARDINAL value(@Mesa.CARD32 int value) {
         return new LONG_CARDINAL(value);
     }
+    public static final LONG_CARDINAL value() {
+        return new LONG_CARDINAL(0);
+    }
     public static final LONG_CARDINAL longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new LONG_CARDINAL(base, access);
     }

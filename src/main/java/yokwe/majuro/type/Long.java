@@ -16,6 +16,9 @@ public final class Long extends MemoryData32 {
     public static final Long value(@Mesa.CARD32 int value) {
         return new Long(value);
     }
+    public static final Long value() {
+        return new Long(0);
+    }
     public static final Long longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new Long(base, access);
     }
@@ -48,15 +51,17 @@ public final class Long extends MemoryData32 {
     public final int low() {
         return (value & LOW_MASK) >>> LOW_SHIFT;
     }
-    public final void low(int newValue) {
+    public final Long low(int newValue) {
         value = (value & ~LOW_MASK) | ((newValue << LOW_SHIFT) & LOW_MASK);
+        return this;
     }
     
     public final int high() {
         return (value & HIGH_MASK) >>> HIGH_SHIFT;
     }
-    public final void high(int newValue) {
+    public final Long high(int newValue) {
         value = (value & ~HIGH_MASK) | ((newValue << HIGH_SHIFT) & HIGH_MASK);
+        return this;
     }
     
 }

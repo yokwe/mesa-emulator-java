@@ -26,6 +26,9 @@ public final class CARDINAL extends MemoryData16 {
     public static final CARDINAL value(@Mesa.CARD16 int value) {
         return new CARDINAL(value);
     }
+    public static final CARDINAL value() {
+        return new CARDINAL(0);
+    }
     public static final CARDINAL longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new CARDINAL(base, access);
     }

@@ -26,6 +26,9 @@ public final class UNSPECIFIED extends MemoryData16 {
     public static final UNSPECIFIED value(@Mesa.CARD16 int value) {
         return new UNSPECIFIED(value);
     }
+    public static final UNSPECIFIED value() {
+        return new UNSPECIFIED(0);
+    }
     public static final UNSPECIFIED longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new UNSPECIFIED(base, access);
     }

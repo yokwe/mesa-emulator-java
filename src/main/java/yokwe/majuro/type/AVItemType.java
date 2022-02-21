@@ -37,6 +37,9 @@ public final class AVItemType extends MemoryData16 {
     public static final AVItemType value(@Mesa.CARD16 int value) {
         return new AVItemType(value);
     }
+    public static final AVItemType value() {
+        return new AVItemType(0);
+    }
     public static final AVItemType longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new AVItemType(base, access);
     }

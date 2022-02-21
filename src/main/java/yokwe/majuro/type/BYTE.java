@@ -26,6 +26,9 @@ public final class BYTE extends MemoryData16 {
     public static final BYTE value(@Mesa.CARD16 int value) {
         return new BYTE(value);
     }
+    public static final BYTE value() {
+        return new BYTE(0);
+    }
     public static final BYTE longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BYTE(base, access);
     }

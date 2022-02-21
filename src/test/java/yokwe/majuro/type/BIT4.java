@@ -26,6 +26,9 @@ public final class BIT4 extends MemoryData16 {
     public static final BIT4 value(@Mesa.CARD16 int value) {
         return new BIT4(value);
     }
+    public static final BIT4 value() {
+        return new BIT4(0);
+    }
     public static final BIT4 longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BIT4(base, access);
     }

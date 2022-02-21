@@ -26,6 +26,9 @@ public final class INTEGER extends MemoryData16 {
     public static final INTEGER value(@Mesa.CARD16 int value) {
         return new INTEGER(value);
     }
+    public static final INTEGER value() {
+        return new INTEGER(0);
+    }
     public static final INTEGER longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new INTEGER(base, access);
     }

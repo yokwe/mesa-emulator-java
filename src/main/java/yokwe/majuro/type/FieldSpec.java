@@ -17,6 +17,9 @@ public final class FieldSpec extends MemoryData16 {
     public static final FieldSpec value(@Mesa.CARD16 int value) {
         return new FieldSpec(value);
     }
+    public static final FieldSpec value() {
+        return new FieldSpec(0);
+    }
     public static final FieldSpec longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new FieldSpec(base, access);
     }
@@ -49,15 +52,17 @@ public final class FieldSpec extends MemoryData16 {
     public final @Mesa.CARD16 int pos() {
         return Types.toCARD16((value & POS_MASK) >>> POS_SHIFT);
     }
-    public final void pos(@Mesa.CARD16 int newValue) {
+    public final FieldSpec pos(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~POS_MASK) | ((newValue << POS_SHIFT) & POS_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int size() {
         return Types.toCARD16((value & SIZE_MASK) >>> SIZE_SHIFT);
     }
-    public final void size(@Mesa.CARD16 int newValue) {
+    public final FieldSpec size(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~SIZE_MASK) | ((newValue << SIZE_SHIFT) & SIZE_MASK));
+        return this;
     }
     
 }

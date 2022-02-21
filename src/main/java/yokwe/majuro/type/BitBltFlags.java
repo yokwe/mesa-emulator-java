@@ -17,6 +17,9 @@ public final class BitBltFlags extends MemoryData16 {
     public static final BitBltFlags value(@Mesa.CARD16 int value) {
         return new BitBltFlags(value);
     }
+    public static final BitBltFlags value() {
+        return new BitBltFlags(0);
+    }
     public static final BitBltFlags longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
         return new BitBltFlags(base, access);
     }
@@ -64,50 +67,57 @@ public final class BitBltFlags extends MemoryData16 {
     public final @Mesa.CARD16 int direction() {
         return Types.toCARD16((value & DIRECTION_MASK) >>> DIRECTION_SHIFT);
     }
-    public final void direction(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags direction(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~DIRECTION_MASK) | ((newValue << DIRECTION_SHIFT) & DIRECTION_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int disjoint() {
         return Types.toCARD16((value & DISJOINT_MASK) >>> DISJOINT_SHIFT);
     }
-    public final void disjoint(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags disjoint(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~DISJOINT_MASK) | ((newValue << DISJOINT_SHIFT) & DISJOINT_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int disjointItems() {
         return Types.toCARD16((value & DISJOINT_ITEMS_MASK) >>> DISJOINT_ITEMS_SHIFT);
     }
-    public final void disjointItems(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags disjointItems(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~DISJOINT_ITEMS_MASK) | ((newValue << DISJOINT_ITEMS_SHIFT) & DISJOINT_ITEMS_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int gray() {
         return Types.toCARD16((value & GRAY_MASK) >>> GRAY_SHIFT);
     }
-    public final void gray(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags gray(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~GRAY_MASK) | ((newValue << GRAY_SHIFT) & GRAY_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int srcFunc() {
         return Types.toCARD16((value & SRC_FUNC_MASK) >>> SRC_FUNC_SHIFT);
     }
-    public final void srcFunc(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags srcFunc(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~SRC_FUNC_MASK) | ((newValue << SRC_FUNC_SHIFT) & SRC_FUNC_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int dstFunc() {
         return Types.toCARD16((value & DST_FUNC_MASK) >>> DST_FUNC_SHIFT);
     }
-    public final void dstFunc(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags dstFunc(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~DST_FUNC_MASK) | ((newValue << DST_FUNC_SHIFT) & DST_FUNC_MASK));
+        return this;
     }
     
     public final @Mesa.CARD16 int reserved() {
         return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
     }
-    public final void reserved(@Mesa.CARD16 int newValue) {
+    public final BitBltFlags reserved(@Mesa.CARD16 int newValue) {
         value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+        return this;
     }
     
 }
