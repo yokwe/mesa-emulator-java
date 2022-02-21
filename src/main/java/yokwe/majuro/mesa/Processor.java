@@ -1,6 +1,7 @@
 package yokwe.majuro.mesa;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.util.MesaUtil;
 
 public final class Processor {
 	//
@@ -26,7 +27,11 @@ public final class Processor {
 	public static final @Mesa.CARD16 int[] PID = new int[4];
 	
 	public static @Mesa.CARD16 int MP;
-	public static @Mesa.CARD32 int IT;
+//	public static @Mesa.CARD32 int IT;
+	public static @Mesa.CARD32 int IT() {
+		return MesaUtil.getMicroTime();
+	}
+	
 	//public static char WM;
 	public static @Mesa.CARD16 int WP;
 	public static @Mesa.CARD16 int WDC;
@@ -39,6 +44,8 @@ public final class Processor {
 	public static int     savedSP;
 	public static boolean running;
 	
+	// 10.4.3 Timeouts
+	public static int lastTimeoutTime; // time
 	
 	//
 	// Methods
@@ -59,7 +66,7 @@ public final class Processor {
 		// 3.3.3 Data and Status Registers
 		for(int i = 0; i < PID.length; i++) PID[i] = 0;
 		MP  = 0;
-		IT  = 0;
+//		IT  = 0;
 		WP  = 0;
 		WDC = 0;
 		PTC = 0;
