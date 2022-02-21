@@ -17,7 +17,7 @@ import yokwe.majuro.symbol.antlr.SymbolParser.SymbolContext;
 import yokwe.majuro.util.StringUtil;
 
 public class Symbol {
-	static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Symbol.class);
+	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	public static final String  PATH_RULE_FILE_TYPE = "data/type/Type.symbol";
 	public static final String  PATH_RULE_FILE_TEST = "data/type/Test.symbol";
