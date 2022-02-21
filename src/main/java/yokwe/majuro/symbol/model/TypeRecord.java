@@ -201,8 +201,10 @@ public abstract class TypeRecord extends Type {
 							// OK
 						} else {
 							// UNSPECIFIED and CARDINAL can have variable length
-							if (type == Type.UNSPECIFIED && fieldBitSize < typeBitSize) continue;
-							if (type == Type.CARDINAL    && fieldBitSize < typeBitSize) continue;
+							if (type == Type.UNSPECIFIED) continue;
+							if (type == Type.CARDINAL)    continue;
+							if (type instanceof TypeEnum     && typeBitSize <= fieldBitSize) continue;
+							if (type instanceof TypeSubrange && typeBitSize <= fieldBitSize) continue;
 							
 							foundProblem = true;
 							logger.error("field  %-16s  %-16s  fieldBitSize  %2d  typeBitSize  %2d", e.name, type.name, fieldBitSize, typeBitSize);
