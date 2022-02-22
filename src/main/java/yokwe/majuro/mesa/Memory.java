@@ -508,20 +508,20 @@ public final class Memory {
 //			0b1111_1111_1111_1111,
 //	};
 	
-	public static @Mesa.CARD16 int readField(@Mesa.CARD16 int source, @Mesa.CARD8 int spec8) {
-		FieldSpec spec = FieldSpec.value(Types.toCARD8(spec8));
-		
+	public static @Mesa.CARD16 int readField(@Mesa.CARD16 int source, FieldSpec spec) {
+		int pos  = spec.pos();
 		int size = spec.size();
-		int shift = WORD_BITS - (spec.pos() + size - 1);
+		
+		int shift = WORD_BITS - (pos + size - 1);
 		if (shift < 0) error();
 		
 		return Types.toCARD16((source >>> shift) & maskTable(size));
 	}
-	public static @Mesa.CARD16 int writeField(@Mesa.CARD16 int dest, @Mesa.CARD8 int spec8, @Mesa.CARD16 int data) {
-		FieldSpec spec = FieldSpec.value(Types.toCARD8(spec8));
+	public static @Mesa.CARD16 int writeField(@Mesa.CARD16 int dest, FieldSpec spec, @Mesa.CARD16 int data) {
+		int pos  = spec.pos();
+		int size = spec.size();
 		
-		int size  = spec.size();
-		int shift = WORD_BITS - (spec.pos() + size - 1);
+		int shift = WORD_BITS - (pos + size - 1);
 		if (shift < 0) error();
 		int mask = maskTable(size) << shift;
 		
