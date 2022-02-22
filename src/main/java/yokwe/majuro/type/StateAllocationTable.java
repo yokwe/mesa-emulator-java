@@ -33,9 +33,12 @@ public final class StateAllocationTable extends MemoryBase {
         return StateVector.pointer(pointer, access);
     }
     public final @Mesa.SHORT_POINTER int getValue(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(index);
         return Memory.read16(base + (POINTER.WORD_SIZE * index));
     }
-    public final void getValue(int index, @Mesa.SHORT_POINTER int newValue) {
+    public final StateAllocationTable getValue(int index, @Mesa.SHORT_POINTER int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(index);
         Memory.write16(base + (POINTER.WORD_SIZE * index), newValue);
+        return this;
     }
 }

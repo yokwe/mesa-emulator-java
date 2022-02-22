@@ -42,7 +42,8 @@ public final class RecPtr32BIt32 extends MemoryBase {
     public final @Mesa.LONG_POINTER int card1Value() {
         return Memory.read32(base + OFFSET_CARD_1);
     }
-    public final void card1Value(@Mesa.LONG_POINTER int newValue) {
+    public final RecPtr32BIt32 card1Value(@Mesa.LONG_POINTER int newValue) {
         Memory.write32(base + OFFSET_CARD_1, newValue);
+        return this;
     }
 }

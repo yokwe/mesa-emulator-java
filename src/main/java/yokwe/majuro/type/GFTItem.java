@@ -36,8 +36,9 @@ public final class GFTItem extends MemoryBase {
     public final @Mesa.LONG_POINTER int globalFrameValue() {
         return Memory.read32(base + OFFSET_GLOBAL_FRAME);
     }
-    public final void globalFrameValue(@Mesa.LONG_POINTER int newValue) {
+    public final GFTItem globalFrameValue(@Mesa.LONG_POINTER int newValue) {
         Memory.write32(base + OFFSET_GLOBAL_FRAME, newValue);
+        return this;
     }
     // codebase (2:0..31): LONG POINTER TO CodeSegment
     private static final int OFFSET_CODEBASE = 2;
@@ -48,7 +49,8 @@ public final class GFTItem extends MemoryBase {
     public final @Mesa.LONG_POINTER int codebaseValue() {
         return Memory.read32(base + OFFSET_CODEBASE);
     }
-    public final void codebaseValue(@Mesa.LONG_POINTER int newValue) {
+    public final GFTItem codebaseValue(@Mesa.LONG_POINTER int newValue) {
         Memory.write32(base + OFFSET_CODEBASE, newValue);
+        return this;
     }
 }

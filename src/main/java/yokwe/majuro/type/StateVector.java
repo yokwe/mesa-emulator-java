@@ -56,8 +56,9 @@ public final class StateVector extends MemoryBase {
     public final @Mesa.SHORT_POINTER int frameValue() {
         return Memory.read16(base + OFFSET_FRAME);
     }
-    public final void frameValue(@Mesa.SHORT_POINTER int newValue) {
+    public final StateVector frameValue(@Mesa.SHORT_POINTER int newValue) {
         Memory.write16(base + OFFSET_FRAME, newValue);
+        return this;
     }
     // data (16): BLOCK
     private static final int OFFSET_DATA = 16;

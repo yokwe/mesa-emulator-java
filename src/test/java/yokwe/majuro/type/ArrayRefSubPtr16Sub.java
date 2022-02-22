@@ -33,9 +33,12 @@ public final class ArrayRefSubPtr16Sub extends MemoryBase {
         return Sub.pointer(pointer, access);
     }
     public final @Mesa.SHORT_POINTER int getValue(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         return Memory.read16(base + (POINTER.WORD_SIZE * index));
     }
-    public final void getValue(int index, @Mesa.SHORT_POINTER int newValue) {
+    public final ArrayRefSubPtr16Sub getValue(int index, @Mesa.SHORT_POINTER int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         Memory.write16(base + (POINTER.WORD_SIZE * index), newValue);
+        return this;
     }
 }

@@ -33,9 +33,12 @@ public final class ArrayRefSubPtr32Bit16 extends MemoryBase {
         return BitField16.longPointer(longPointer, access);
     }
     public final @Mesa.LONG_POINTER int getValue(int index) {
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         return Memory.read32(base + (LONG_POINTER.WORD_SIZE * index));
     }
-    public final void getValue(int index, @Mesa.LONG_POINTER int newValue) {
+    public final ArrayRefSubPtr32Bit16 getValue(int index, @Mesa.LONG_POINTER int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) Sub.checkValue(index);
         Memory.write32(base + (LONG_POINTER.WORD_SIZE * index), newValue);
+        return this;
     }
 }
