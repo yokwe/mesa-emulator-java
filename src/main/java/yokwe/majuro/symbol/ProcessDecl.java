@@ -264,6 +264,87 @@ public class ProcessDecl {
 		out.println("return %s.longPointer(longPointer, access);", fieldTypeName);
 		out.println("}");
 	}
+	private static void recordFieldBoolean(JavaFile javaFile, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldBoolean");
+		final var out = javaFile.out;
+
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+
+		out.println("public final boolean %s() {", fieldName);
+		out.println("return ((value & %1$s_MASK) >>> %1$s_SHIFT) != 0;", fieldConstName);
+		out.println("}");
+		
+		out.println("public final %s %s(boolean newValue) {", javaFile.name, fieldName);
+		out.println("value = Types.toCARD16((value & ~%1$s_MASK) | (((newValue ? 1 : 0) << %1$s_SHIFT) & %1$s_MASK));", fieldConstName);
+		out.println("return this;");
+		out.println("}");
+	}
+	private static void recordFieldEnum(JavaFile javaFile, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldEnum");
+		final var out = javaFile.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		
+		out.println("// @Mesa.ENUM is %s", fieldTypeName);
+		
+		out.println("public final @Mesa.ENUM int %s() {", fieldName);
+		out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldConstName);
+		out.println("}");
+		
+		out.println("public final %s %s(@Mesa.ENUM int newValue) {", javaFile.name, fieldName);
+		out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
+		out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldConstName);
+		out.println("return this;");
+		out.println("}");
+	}
+	private static void recordFieldSubrange(JavaFile javaFile, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldSubrange");
+		final var out = javaFile.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		
+		out.println("// @Mesa.CARD16 is %s", fieldTypeName);
+		
+		out.println("public final @Mesa.CARD16 int %s() {", fieldName);
+		out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldConstName);
+		out.println("}");
+		
+		out.println("public final %s %s(@Mesa.CARD16 int newValue) {", javaFile.name, fieldName);
+		if (fieldType.needsRangeCheck()) {
+			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
+		}
+		out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldConstName);
+		out.println("return this;");
+		out.println("}");
+	}
+	private static void recordFieldBitField16(JavaFile javaFile, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldBitField");
+		final var out = javaFile.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		
+		out.println("// %s is BIT FIELD 16", fieldTypeName);
+		out.println("public final %s %s() {", fieldTypeName, fieldName);
+		out.println("return %1$s.value(Types.toCARD16((value & %2$s_MASK) >>> %2$s_SHIFT));", fieldTypeName, fieldConstName);
+		out.println("}");
+		
+		out.println("public final %s %s(%s newValue) {", javaFile.name, fieldName, fieldTypeName);
+		out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue.value << %1$s_SHIFT) & %1$s_MASK));", fieldConstName);
+		out.println("return this;");
+		out.println("}");
+	}
+	
+	
 	private static void recordFieldIndirectLong(JavaFile javaFile, TypeRecord.Field field) {
 		if (DEBUG_SHOW_TRACE) javaFile.out.println("// TRACE recordFieldIndirectLong");
 		final var out = javaFile.out;
@@ -642,216 +723,14 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is BIT FIELD 16
-			final var out         = javaFile.out;
-			final var parentClass = MemoryData16.class;
-			
-			classPreamble(javaFile, parentClass);
-			out.prepareLayout();
-			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
-			out.println();
-
-			// single word bit field
-			constructor(javaFile, parentClass);
-			out.println();
-
-			out.println("//");
-			out.println("// Bit Field");
-			out.println("//");
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				out.println("// %s", e.toMesaType());
-			}
-			out.layout(LEFT, LEFT, LEFT, LEFT);
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-
-				final int offset = e.offset;
-				final int start;
-				final int stop;
-				if (offset == 0) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else {
-					logger.error("field %s", e);
-					throw new UnexpectedException("Unexpected");
-				}
-				
-				int bits  = stop - start + 1;
-				int pat   = (1 << bits) - 1;
-				int shift = type.bitSize() - stop - 1;
-				int mask  = (pat << shift);
-				
-				out.println("private static final int %s_MASK  = %s;",
-					fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
-				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-			}
-			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
-			out.println();
-			
-			out.println("//");
-			out.println("// Bit Field Access Methods");
-			out.println("//");
-			for(var field: type.fieldList) {
-				String fieldName = StringUtil.toJavaName(field.name);
-				String fieldCons = StringUtil.toJavaConstName(field.name);
-				
-				// FIXME handle BOOLEAN, ENUM and Subrange field properly
-				Type   fieldType     = field.type.realType();
-				String fieldTypeName = StringUtil.toJavaName(fieldType.name);
-
-				if (fieldType instanceof TypeBoolean) {
-					out.println("public final boolean %s() {", fieldName);
-					out.println("return ((value & %1$s_MASK) >>> %1$s_SHIFT) != 0;", fieldCons);
-					out.println("}");
-					
-					out.println("public final %s %s(boolean newValue) {", javaFile.name, fieldName);
-					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | (((newValue ? 1 : 0) << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
-					out.println("return this;");
-					out.println("}");
-					out.println();
-					continue;
-				}
-				if (fieldType instanceof TypeEnum) {
-					out.println("// @Mesa.ENUM is %s", fieldTypeName);
-					
-					out.println("public final @Mesa.ENUM int %s() {", fieldName);
-					out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
-					out.println("}");
-					
-					out.println("public final %s %s(@Mesa.ENUM int newValue) {", javaFile.name, fieldName);
-					out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
-					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
-					out.println("return this;");
-					out.println("}");
-					out.println();
-					continue;
-				}
-				if (fieldType instanceof TypeSubrange) {
-					out.println("// @Mesa.CARD16 is %s", fieldTypeName);
-					
-					out.println("public final @Mesa.CARD16 int %s() {", fieldName);
-					out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldCons);
-					out.println("}");
-					
-					out.println("public final %s %s(@Mesa.CARD16 int newValue) {", javaFile.name, fieldName);
-					if (fieldType.needsRangeCheck()) {
-						out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
-					}
-					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
-					out.println("return this;");
-					out.println("}");
-					out.println();
-					continue;
-				}
-				if (fieldType instanceof TypeBitField16) {
-					out.println("// %s is BIT FIELD 16", fieldTypeName);
-					out.println("public final %s %s() {", fieldTypeName, fieldName);
-					out.println("return %1$s.value(Types.toCARD16((value & %2$s_MASK) >>> %2$s_SHIFT));", fieldTypeName, fieldCons);
-					out.println("}");
-					
-					out.println("public final %s %s(%s newValue) {", javaFile.name, fieldName, fieldTypeName);
-					out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue.value << %1$s_SHIFT) & %1$s_MASK));", fieldCons);
-					out.println("return this;");
-					out.println("}");
-					out.println();
-					continue;
-				}
-				
-				logger.error("Unexpected field type");
-				logger.error("  %s", field.toMesaType());
-				throw new UnexpectedException();
-			}
-			
-			// close class body
-			out.println("}");
+			var processType = new ProcessTypeBitField(javaFile);
+			processType.processBitField16();
 		}
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is BIT FIELD 32
-			final var out         = javaFile.out;
-			final var parentClass = MemoryData32.class;
-			
-			classPreamble(javaFile, parentClass);
-			out.prepareLayout();
-			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
-			out.println();
-
-			// double word bit field
-			constructor(javaFile, parentClass);
-			out.println();
-
-			out.println("//");
-			out.println("// Bit Field");
-			out.println("//");
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				out.println("// %s", e.toMesaType());
-			}
-			out.layout(LEFT, LEFT, LEFT, LEFT);
-			out.println();
-
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-
-				final int offset = e.offset;
-				final int start;
-				final int stop;
-				// need to swap first word and second word
-				if (offset == 0) {
-					start  = WORD_BITS + e.startBit;
-					stop   = WORD_BITS + e.stopBit;
-				} else if (offset == 1) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else {
-					throw new UnexpectedException("Unexpected");
-				}
-				
-				int bits  = stop - start + 1;
-				int pat   = (1 << bits) - 1;
-				int shift = type.bitSize() - stop - 1;
-				int mask  = (pat << shift);
-				
-				out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
-				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-			}
-			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
-			out.println();
-			
-			out.println("//");
-			out.println("// Bit Field Access Methods");
-			out.println("//");
-			for(var e: type.fieldList) {
-				String fieldName = StringUtil.toJavaName(e.name);
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-				
-				// FIXME handle BOOLEAN, ENUM and Subrange field properly
-				
-				out.println("public final int %s() {", fieldName);
-				out.println("return (value & %1$s_MASK) >>> %1$s_SHIFT;", fieldCons);
-				out.println("}");
-				
-				out.println("public final %s %s(int newValue) {", javaFile.name, fieldName);
-				out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldCons);
-				out.println("return this;");
-				out.println("}");
-				out.println();
-			}
-			
-			// close class body
-			out.println("}");
+			var processType = new ProcessTypeBitField(javaFile);
+			processType.processBitField32();
 		}
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
@@ -1262,6 +1141,227 @@ public class ProcessDecl {
 			// ARRAY of LONG POINTER to REFERENCE
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - ARRAY of LONG POINTER to REFERENCE");
 			unexpected(type);
+		}
+	}
+
+	
+	//
+	// ProcessTypeBitField
+	//
+	private static class ProcessTypeBitField extends ProcessField {
+		ProcessTypeBitField(JavaFile javaFile) {
+			super(javaFile);
+		}
+		
+		//
+		// Entry Point
+		//
+		@Override
+		public void process() {
+			throw new UnexpectedException();
+		}
+
+		private void processBitField16() {
+			final var type        = javaFile.type.toTypeBitField16();
+			final var out         = javaFile.out;
+			final var parentClass = MemoryData16.class;
+			
+			classPreamble(javaFile, parentClass);
+			out.prepareLayout();
+			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
+			out.println();
+
+			// single word bit field
+			constructor(javaFile, parentClass);
+			out.println();
+
+			out.println("//");
+			out.println("// Bit Field");
+			out.println("//");
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				out.println("// %s", e.toMesaType());
+			}
+			out.layout(LEFT, LEFT, LEFT, LEFT);
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				String fieldCons = StringUtil.toJavaConstName(e.name);
+
+				final int offset = e.offset;
+				final int start;
+				final int stop;
+				if (offset == 0) {
+					start  = e.startBit;
+					stop   = e.stopBit;
+				} else {
+					logger.error("field %s", e);
+					throw new UnexpectedException("Unexpected");
+				}
+				
+				int bits  = stop - start + 1;
+				int pat   = (1 << bits) - 1;
+				int shift = type.bitSize() - stop - 1;
+				int mask  = (pat << shift);
+				
+				out.println("private static final int %s_MASK  = %s;",
+					fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
+				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+			}
+			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
+			out.println();
+			
+			out.println("//");
+			out.println("// Bit Field Access Methods");
+			out.println("//");
+			for(var field: type.fieldList) {
+				accept(field);
+				out.println();
+			}
+			
+			// close class body
+			out.println("}");
+		}
+		
+		public void processBitField32() {
+			final var type        = javaFile.type.toTypeBitField32();
+			final var out         = javaFile.out;
+			final var parentClass = MemoryData32.class;
+			
+			classPreamble(javaFile, parentClass);
+			out.prepareLayout();
+			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
+			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
+			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
+			out.println();
+
+			// double word bit field
+			constructor(javaFile, parentClass);
+			out.println();
+
+			out.println("//");
+			out.println("// Bit Field");
+			out.println("//");
+			out.println();
+			
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				out.println("// %s", e.toMesaType());
+			}
+			out.layout(LEFT, LEFT, LEFT, LEFT);
+			out.println();
+
+			out.prepareLayout();
+			for(var e: type.fieldList) {
+				String fieldCons = StringUtil.toJavaConstName(e.name);
+
+				final int offset = e.offset;
+				final int start;
+				final int stop;
+				// need to swap first word and second word
+				if (offset == 0) {
+					start  = WORD_BITS + e.startBit;
+					stop   = WORD_BITS + e.stopBit;
+				} else if (offset == 1) {
+					start  = e.startBit;
+					stop   = e.stopBit;
+				} else {
+					throw new UnexpectedException("Unexpected");
+				}
+				
+				int bits  = stop - start + 1;
+				int pat   = (1 << bits) - 1;
+				int shift = type.bitSize() - stop - 1;
+				int mask  = (pat << shift);
+				
+				out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
+				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+			}
+			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
+			out.println();
+			
+			out.println("//");
+			out.println("// Bit Field Access Methods");
+			out.println("//");
+			for(var field: type.fieldList) {
+				accept(field);
+				out.println();
+			}
+			
+			// close class body
+			out.println("}");
+		}
+			
+		@Override
+		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
+			// RECORD FIELD is BOOLEAN
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is BOOLEAN");
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
+			recordFieldBoolean(javaFile, field);
+		}
+
+		@Override
+		protected void processTypeEnum(Field field, TypeEnum fieldType) {
+			// RECORD FIELD is ENUM
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is ENUM");
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
+			recordFieldEnum(javaFile, field);
+		}
+
+		@Override
+		protected void processTypeSubrange(Field field, TypeSubrange fieldType) {
+			// RECORD FIELD is SUBRANGE
+			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SUBRANGE");
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
+			recordFieldSubrange(javaFile, field);
+		}
+
+		@Override
+		protected void processTypeArrayReference(Field field, TypeArrayRef fieldType) {
+			// RECORD FIELD is ARRAY-REFERENCE
+			throw new UnexpectedException();
+		}
+
+		@Override
+		protected void processTypeArraySubrange(Field field, TypeArraySub fieldType) {
+			// RECORD FIELD is ARRAY-SUBRANGE
+			throw new UnexpectedException();
+		}
+
+		@Override
+		protected void processTypePointeShort(Field field, TypePointerShort fieldType) {
+			// RECORD FIELD is SHORT POINTER
+			throw new UnexpectedException();
+		}
+
+		@Override
+		protected void processTypePointeLong(Field field, TypePointerLong fieldType) {
+			// RECORD FIELD is LONG POINTER
+			throw new UnexpectedException();
+		}
+
+		@Override
+		protected void processTypeBitField16(Field field, TypeBitField16 fieldType) {
+			// RECORD FIELD is BIT FIELD 16
+			// FIXME handle BOOLEAN, ENUM and Subrange field properly
+			recordFieldBitField16(javaFile, field);
+		}
+
+		@Override
+		protected void processTypeBitField32(Field field, TypeBitField32 fieldType) {
+			// RECORD FIELD is BIT FIELD 32
+			throw new UnexpectedException();
+		}
+
+		@Override
+		protected void processTypeMultiWord(Field field, TypeMultiWord fieldType) {
+			// RECORD FIELD is MULTI WORD RECORD
+			throw new UnexpectedException();
 		}
 	}
 
