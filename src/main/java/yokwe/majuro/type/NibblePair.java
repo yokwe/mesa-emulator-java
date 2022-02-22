@@ -3,7 +3,6 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
-import yokwe.majuro.mesa.Types;
 
 // NibblePair: TYPE = RECORD[left (0:0..3): NIBBLE, right (0:4..7): NIBBLE];
 public final class NibblePair extends MemoryData16 {
@@ -50,23 +49,23 @@ public final class NibblePair extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    // @Mesa.CARD16 is NIBBLE
-    public final @Mesa.CARD16 int left() {
-        return Types.toCARD16((value & LEFT_MASK) >>> LEFT_SHIFT);
+    // @Mesa.CARD8 is NIBBLE
+    public final @Mesa.CARD8 int left() {
+        return (value & LEFT_MASK) >>> LEFT_SHIFT;
     }
-    public final NibblePair left(@Mesa.CARD16 int newValue) {
+    public final NibblePair left(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
-        value = Types.toCARD16((value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK));
+        value = (value & ~LEFT_MASK) | ((newValue << LEFT_SHIFT) & LEFT_MASK);
         return this;
     }
     
-    // @Mesa.CARD16 is NIBBLE
-    public final @Mesa.CARD16 int right() {
-        return Types.toCARD16((value & RIGHT_MASK) >>> RIGHT_SHIFT);
+    // @Mesa.CARD8 is NIBBLE
+    public final @Mesa.CARD8 int right() {
+        return (value & RIGHT_MASK) >>> RIGHT_SHIFT;
     }
-    public final NibblePair right(@Mesa.CARD16 int newValue) {
+    public final NibblePair right(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
-        value = Types.toCARD16((value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK));
+        value = (value & ~RIGHT_MASK) | ((newValue << RIGHT_SHIFT) & RIGHT_MASK);
         return this;
     }
     

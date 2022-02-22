@@ -61,31 +61,31 @@ public final class PsbFlags extends MemoryData16 {
     //
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int available() {
-        return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
+        return (value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT;
     }
     public final PsbFlags available(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
+        value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int cleanup() {
-        return Types.toCARD16((value & CLEANUP_MASK) >>> CLEANUP_SHIFT);
+        return (value & CLEANUP_MASK) >>> CLEANUP_SHIFT;
     }
     public final PsbFlags cleanup(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
-        value = Types.toCARD16((value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK));
+        value = (value & ~CLEANUP_MASK) | ((newValue << CLEANUP_SHIFT) & CLEANUP_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int reserved() {
-        return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
+        return (value & RESERVED_MASK) >>> RESERVED_SHIFT;
     }
     public final PsbFlags reserved(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+        value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
         return this;
     }
     

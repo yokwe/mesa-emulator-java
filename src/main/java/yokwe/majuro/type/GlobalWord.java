@@ -55,11 +55,11 @@ public final class GlobalWord extends MemoryData16 {
     //
     // @Mesa.CARD16 is GFTIndex
     public final @Mesa.CARD16 int gfi() {
-        return Types.toCARD16((value & GFI_MASK) >>> GFI_SHIFT);
+        return (value & GFI_MASK) >>> GFI_SHIFT;
     }
     public final GlobalWord gfi(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) GFTIndex.checkValue(newValue);
-        value = Types.toCARD16((value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK));
+        value = (value & ~GFI_MASK) | ((newValue << GFI_SHIFT) & GFI_MASK);
         return this;
     }
     

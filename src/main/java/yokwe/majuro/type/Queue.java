@@ -3,7 +3,6 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
-import yokwe.majuro.mesa.Types;
 
 // Queue: TYPE = RECORD[reserved1 (0:0..2): UNSPECIFIED, tail (0:3..12): PsbIndex, reserved2 (0:13..15): UNSPECIFIED];
 public final class Queue extends MemoryData16 {
@@ -55,31 +54,31 @@ public final class Queue extends MemoryData16 {
     //
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int reserved1() {
-        return Types.toCARD16((value & RESERVED_1_MASK) >>> RESERVED_1_SHIFT);
+        return (value & RESERVED_1_MASK) >>> RESERVED_1_SHIFT;
     }
     public final Queue reserved1(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~RESERVED_1_MASK) | ((newValue << RESERVED_1_SHIFT) & RESERVED_1_MASK));
+        value = (value & ~RESERVED_1_MASK) | ((newValue << RESERVED_1_SHIFT) & RESERVED_1_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int tail() {
-        return Types.toCARD16((value & TAIL_MASK) >>> TAIL_SHIFT);
+        return (value & TAIL_MASK) >>> TAIL_SHIFT;
     }
     public final Queue tail(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
-        value = Types.toCARD16((value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK));
+        value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int reserved2() {
-        return Types.toCARD16((value & RESERVED_2_MASK) >>> RESERVED_2_SHIFT);
+        return (value & RESERVED_2_MASK) >>> RESERVED_2_SHIFT;
     }
     public final Queue reserved2(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~RESERVED_2_MASK) | ((newValue << RESERVED_2_SHIFT) & RESERVED_2_MASK));
+        value = (value & ~RESERVED_2_MASK) | ((newValue << RESERVED_2_SHIFT) & RESERVED_2_MASK);
         return this;
     }
     

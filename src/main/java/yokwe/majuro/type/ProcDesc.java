@@ -3,7 +3,6 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
-import yokwe.majuro.mesa.Types;
 
 // ProcDesc: TYPE = RECORD32[taggedGF (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
 public final class ProcDesc extends MemoryData32 {
@@ -52,21 +51,21 @@ public final class ProcDesc extends MemoryData32 {
     //
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int taggedGF() {
-        return Types.toCARD16((value & TAGGED_GF_MASK) >>> TAGGED_GF_SHIFT);
+        return (value & TAGGED_GF_MASK) >>> TAGGED_GF_SHIFT;
     }
     public final ProcDesc taggedGF(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~TAGGED_GF_MASK) | ((newValue << TAGGED_GF_SHIFT) & TAGGED_GF_MASK));
+        value = (value & ~TAGGED_GF_MASK) | ((newValue << TAGGED_GF_SHIFT) & TAGGED_GF_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is CARDINAL
     public final @Mesa.CARD16 int pc() {
-        return Types.toCARD16((value & PC_MASK) >>> PC_SHIFT);
+        return (value & PC_MASK) >>> PC_SHIFT;
     }
     public final ProcDesc pc(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) CARDINAL.checkValue(newValue);
-        value = Types.toCARD16((value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK));
+        value = (value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK);
         return this;
     }
     

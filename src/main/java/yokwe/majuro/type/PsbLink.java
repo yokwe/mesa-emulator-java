@@ -59,23 +59,23 @@ public final class PsbLink extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    // @Mesa.CARD16 is Priority
-    public final @Mesa.CARD16 int priority() {
-        return Types.toCARD16((value & PRIORITY_MASK) >>> PRIORITY_SHIFT);
+    // @Mesa.CARD8 is Priority
+    public final @Mesa.CARD8 int priority() {
+        return (value & PRIORITY_MASK) >>> PRIORITY_SHIFT;
     }
-    public final PsbLink priority(@Mesa.CARD16 int newValue) {
+    public final PsbLink priority(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) Priority.checkValue(newValue);
-        value = Types.toCARD16((value & ~PRIORITY_MASK) | ((newValue << PRIORITY_SHIFT) & PRIORITY_MASK));
+        value = (value & ~PRIORITY_MASK) | ((newValue << PRIORITY_SHIFT) & PRIORITY_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int next() {
-        return Types.toCARD16((value & NEXT_MASK) >>> NEXT_SHIFT);
+        return (value & NEXT_MASK) >>> NEXT_SHIFT;
     }
     public final PsbLink next(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
-        value = Types.toCARD16((value & ~NEXT_MASK) | ((newValue << NEXT_SHIFT) & NEXT_MASK));
+        value = (value & ~NEXT_MASK) | ((newValue << NEXT_SHIFT) & NEXT_MASK);
         return this;
     }
     

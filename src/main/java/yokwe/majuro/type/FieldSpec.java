@@ -3,7 +3,6 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
-import yokwe.majuro.mesa.Types;
 
 // FieldSpec: TYPE = RECORD[pos (0:0..3): NIBBLE, size (0:4..7): NIBBLE];
 public final class FieldSpec extends MemoryData16 {
@@ -50,23 +49,23 @@ public final class FieldSpec extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    // @Mesa.CARD16 is NIBBLE
-    public final @Mesa.CARD16 int pos() {
-        return Types.toCARD16((value & POS_MASK) >>> POS_SHIFT);
+    // @Mesa.CARD8 is NIBBLE
+    public final @Mesa.CARD8 int pos() {
+        return (value & POS_MASK) >>> POS_SHIFT;
     }
-    public final FieldSpec pos(@Mesa.CARD16 int newValue) {
+    public final FieldSpec pos(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
-        value = Types.toCARD16((value & ~POS_MASK) | ((newValue << POS_SHIFT) & POS_MASK));
+        value = (value & ~POS_MASK) | ((newValue << POS_SHIFT) & POS_MASK);
         return this;
     }
     
-    // @Mesa.CARD16 is NIBBLE
-    public final @Mesa.CARD16 int size() {
-        return Types.toCARD16((value & SIZE_MASK) >>> SIZE_SHIFT);
+    // @Mesa.CARD8 is NIBBLE
+    public final @Mesa.CARD8 int size() {
+        return (value & SIZE_MASK) >>> SIZE_SHIFT;
     }
-    public final FieldSpec size(@Mesa.CARD16 int newValue) {
+    public final FieldSpec size(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) NIBBLE.checkValue(newValue);
-        value = Types.toCARD16((value & ~SIZE_MASK) | ((newValue << SIZE_SHIFT) & SIZE_MASK));
+        value = (value & ~SIZE_MASK) | ((newValue << SIZE_SHIFT) & SIZE_MASK);
         return this;
     }
     

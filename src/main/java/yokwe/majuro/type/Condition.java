@@ -61,31 +61,31 @@ public final class Condition extends MemoryData16 {
     //
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int reserved() {
-        return Types.toCARD16((value & RESERVED_MASK) >>> RESERVED_SHIFT);
+        return (value & RESERVED_MASK) >>> RESERVED_SHIFT;
     }
     public final Condition reserved(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK));
+        value = (value & ~RESERVED_MASK) | ((newValue << RESERVED_SHIFT) & RESERVED_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is PsbIndex
     public final @Mesa.CARD16 int tail() {
-        return Types.toCARD16((value & TAIL_MASK) >>> TAIL_SHIFT);
+        return (value & TAIL_MASK) >>> TAIL_SHIFT;
     }
     public final Condition tail(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(newValue);
-        value = Types.toCARD16((value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK));
+        value = (value & ~TAIL_MASK) | ((newValue << TAIL_SHIFT) & TAIL_MASK);
         return this;
     }
     
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int available() {
-        return Types.toCARD16((value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT);
+        return (value & AVAILABLE_MASK) >>> AVAILABLE_SHIFT;
     }
     public final Condition available(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK));
+        value = (value & ~AVAILABLE_MASK) | ((newValue << AVAILABLE_SHIFT) & AVAILABLE_MASK);
         return this;
     }
     

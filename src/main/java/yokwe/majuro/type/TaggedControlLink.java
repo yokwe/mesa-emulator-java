@@ -55,11 +55,11 @@ public final class TaggedControlLink extends MemoryData32 {
     //
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int data() {
-        return Types.toCARD16((value & DATA_MASK) >>> DATA_SHIFT);
+        return (value & DATA_MASK) >>> DATA_SHIFT;
     }
     public final TaggedControlLink data(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK));
+        value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
         return this;
     }
     
@@ -75,11 +75,11 @@ public final class TaggedControlLink extends MemoryData32 {
     
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int fill() {
-        return Types.toCARD16((value & FILL_MASK) >>> FILL_SHIFT);
+        return (value & FILL_MASK) >>> FILL_SHIFT;
     }
     public final TaggedControlLink fill(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK));
+        value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);
         return this;
     }
     

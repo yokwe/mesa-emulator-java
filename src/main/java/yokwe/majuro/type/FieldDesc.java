@@ -50,13 +50,13 @@ public final class FieldDesc extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    // @Mesa.CARD16 is BYTE
-    public final @Mesa.CARD16 int offset() {
-        return Types.toCARD16((value & OFFSET_MASK) >>> OFFSET_SHIFT);
+    // @Mesa.CARD8 is BYTE
+    public final @Mesa.CARD8 int offset() {
+        return (value & OFFSET_MASK) >>> OFFSET_SHIFT;
     }
-    public final FieldDesc offset(@Mesa.CARD16 int newValue) {
+    public final FieldDesc offset(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) BYTE.checkValue(newValue);
-        value = Types.toCARD16((value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK));
+        value = (value & ~OFFSET_MASK) | ((newValue << OFFSET_SHIFT) & OFFSET_MASK);
         return this;
     }
     

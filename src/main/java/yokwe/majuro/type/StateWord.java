@@ -3,7 +3,6 @@ package yokwe.majuro.type;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
-import yokwe.majuro.mesa.Types;
 
 // StateWord: TYPE = RECORD[instByte (0:0..7): BYTE, stkPtr (0:8..15): BYTE];
 public final class StateWord extends MemoryData16 {
@@ -50,23 +49,23 @@ public final class StateWord extends MemoryData16 {
     //
     // Bit Field Access Methods
     //
-    // @Mesa.CARD16 is BYTE
-    public final @Mesa.CARD16 int instByte() {
-        return Types.toCARD16((value & INST_BYTE_MASK) >>> INST_BYTE_SHIFT);
+    // @Mesa.CARD8 is BYTE
+    public final @Mesa.CARD8 int instByte() {
+        return (value & INST_BYTE_MASK) >>> INST_BYTE_SHIFT;
     }
-    public final StateWord instByte(@Mesa.CARD16 int newValue) {
+    public final StateWord instByte(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) BYTE.checkValue(newValue);
-        value = Types.toCARD16((value & ~INST_BYTE_MASK) | ((newValue << INST_BYTE_SHIFT) & INST_BYTE_MASK));
+        value = (value & ~INST_BYTE_MASK) | ((newValue << INST_BYTE_SHIFT) & INST_BYTE_MASK);
         return this;
     }
     
-    // @Mesa.CARD16 is BYTE
-    public final @Mesa.CARD16 int stkPtr() {
-        return Types.toCARD16((value & STK_PTR_MASK) >>> STK_PTR_SHIFT);
+    // @Mesa.CARD8 is BYTE
+    public final @Mesa.CARD8 int stkPtr() {
+        return (value & STK_PTR_MASK) >>> STK_PTR_SHIFT;
     }
-    public final StateWord stkPtr(@Mesa.CARD16 int newValue) {
+    public final StateWord stkPtr(@Mesa.CARD8 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) BYTE.checkValue(newValue);
-        value = Types.toCARD16((value & ~STK_PTR_MASK) | ((newValue << STK_PTR_SHIFT) & STK_PTR_MASK));
+        value = (value & ~STK_PTR_MASK) | ((newValue << STK_PTR_SHIFT) & STK_PTR_MASK);
         return this;
     }
     

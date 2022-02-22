@@ -52,11 +52,11 @@ public final class AVItem extends MemoryData16 {
     //
     // @Mesa.CARD16 is UNSPECIFIED
     public final @Mesa.CARD16 int data() {
-        return Types.toCARD16((value & DATA_MASK) >>> DATA_SHIFT);
+        return (value & DATA_MASK) >>> DATA_SHIFT;
     }
     public final AVItem data(@Mesa.CARD16 int newValue) {
         if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-        value = Types.toCARD16((value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK));
+        value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
         return this;
     }
     
