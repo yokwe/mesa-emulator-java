@@ -68,7 +68,7 @@ public class Base {
 		AllocationVector av = AllocationVector.pointer(mAV, WRITE_READ);
 		
 		for(int i = 0; i <= FSIndex.MAX_VALUE; i++) {
-			av.get(i).write(avItemEmpty.value);
+			av.get(i).write(avItemEmpty);
 		}
 		
 		int p = origin;
@@ -91,7 +91,7 @@ public class Base {
 				lo.returnlink().write(0);
 				lo.globallink().write(0);
 				lo.pc().write(0);
-				lo.local().get(0).write(avItemEmpty.value);
+				lo.local().get(0).write(avItemEmpty);
 				
 				av.get(fsi).write(p + LocalOverhead.WORD_SIZE);
 				
@@ -106,22 +106,18 @@ public class Base {
 	private void initSD() {
 		SystemData  sd   = SystemData.pointer(mSD, WRITE);
 		BLOCK       cb   = BLOCK.longPointer(Memory.CB(), WRITE);
-		NewProcDesc item = NewProcDesc.value(0);
-		
-		item.taggedGFI(GFI_SD | LinkType.NEW_PROCEDURE);
+		NewProcDesc item = NewProcDesc.value().taggedGFI(GFI_SD | LinkType.NEW_PROCEDURE);
 
 		for(int i = 0; i < 256; i++) {
 			item.pc(pc_SD | i);
-			sd.get(i).write(item.value);
+			sd.get(i).write(item);
 			cb.get(item.pc() / 2).write(0);
 		}
 	}
 	private void initETT() {
 		EscTrapTable ett  = EscTrapTable.pointer(mETT, WRITE);
 		BLOCK        cb   = BLOCK.longPointer(Memory.CB(), WRITE);
-		NewProcDesc  item = NewProcDesc.value(0);
-		
-		item.taggedGFI(GFI_ETT | LinkType.NEW_PROCEDURE);
+		NewProcDesc  item = NewProcDesc.value().taggedGFI(GFI_ETT | LinkType.NEW_PROCEDURE);
 
 		for(int i = 0; i < 256; i++) {
 			item.pc(pc_ETT | i);
@@ -132,35 +128,17 @@ public class Base {
 	private void initGFT() {
 		GlobalFrameTable gft = GlobalFrameTable.longPointer(mGFT, WRITE);
 		for(int i = 0; i < GFTIndex.MAX_VALUE; i++) {
-			GFTItem item = gft.get(i);
-			item.codebaseValue(0);
-			item.globalFrameValue(0);
+			gft.get(i).codebaseValue(0).globalFrameValue(0);
 		}
 		
 		// GFI_GF
-		{
-			GFTItem item = gft.get(GFI_GF);
-			item.globalFrameValue(Processor.GF);
-			item.codebaseValue(Memory.CB());
-		}
+		gft.get(GFI_GF).globalFrameValue(Processor.GF).codebaseValue(Memory.CB());
 		// GFI_SD
-		{
-			GFTItem item = gft.get(GFI_SD);
-			item.globalFrameValue(Processor.GF);
-			item.codebaseValue(Memory.CB());
-		}
+		gft.get(GFI_SD).globalFrameValue(Processor.GF).codebaseValue(Memory.CB());
 		// GFI_ETT
-		{
-			GFTItem item = gft.get(GFI_ETT);
-			item.globalFrameValue(Processor.GF);
-			item.codebaseValue(Memory.CB());
-		}
+		gft.get(GFI_ETT).globalFrameValue(Processor.GF).codebaseValue(Memory.CB());
 		// GFI_EFC
-		{
-			GFTItem item = gft.get(GFI_EFC);
-			item.globalFrameValue(Processor.GF);
-			item.codebaseValue(Memory.CB());
-		}
+		gft.get(GFI_EFC).globalFrameValue(Processor.GF).codebaseValue(Memory.CB());
 	}
 	
 	
