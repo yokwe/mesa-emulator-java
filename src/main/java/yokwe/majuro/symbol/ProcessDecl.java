@@ -324,17 +324,21 @@ public class ProcessDecl {
 		String fieldName      = StringUtil.toJavaName(field.name);
 		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
 		
-		out.println("// @Mesa.CARD16 is %s", fieldTypeName);
+		String mesaType = "CARD16";
+		if (fieldType.bitSize() <= 8) mesaType = "CARD8";
+		if (16 < fieldType.bitSize()) mesaType = "CARD32";
 		
-		out.println("public final @Mesa.CARD16 int %s() {", fieldName);
-		out.println("return Types.toCARD16((value & %1$s_MASK) >>> %1$s_SHIFT);", fieldConstName);
+		out.println("// @Mesa.%s is %s", mesaType, fieldTypeName);
+		
+		out.println("public final @Mesa.%s int %s() {", mesaType, fieldName);
+		out.println("return (value & %1$s_MASK) >>> %1$s_SHIFT;", fieldConstName);
 		out.println("}");
 		
-		out.println("public final %s %s(@Mesa.CARD16 int newValue) {", javaFile.name, fieldName);
+		out.println("public final %s %s(@Mesa.%s int newValue) {", javaFile.name, fieldName, mesaType);
 		if (fieldType.needsRangeCheck()) {
 			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(newValue);", fieldTypeName);
 		}
-		out.println("value = Types.toCARD16((value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK));", fieldConstName);
+		out.println("value = (value & ~%1$s_MASK) | ((newValue << %1$s_SHIFT) & %1$s_MASK);", fieldConstName);
 		out.println("return this;");
 		out.println("}");
 	}
