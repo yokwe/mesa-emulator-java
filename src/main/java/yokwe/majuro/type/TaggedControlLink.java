@@ -1,7 +1,9 @@
 package yokwe.majuro.type;
 
+import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
+import yokwe.majuro.mesa.Types;
 
 // TaggedControlLink: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
 public final class TaggedControlLink extends MemoryData32 {
@@ -51,27 +53,33 @@ public final class TaggedControlLink extends MemoryData32 {
     //
     // Bit Field Access Methods
     //
-    public final int data() {
-        return (value & DATA_MASK) >>> DATA_SHIFT;
+    // @Mesa.CARD16 is UNSPECIFIED
+    public final @Mesa.CARD16 int data() {
+        return Types.toCARD16((value & DATA_MASK) >>> DATA_SHIFT);
     }
-    public final TaggedControlLink data(int newValue) {
-        value = (value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK);
+    public final TaggedControlLink data(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
+        value = Types.toCARD16((value & ~DATA_MASK) | ((newValue << DATA_SHIFT) & DATA_MASK));
         return this;
     }
     
-    public final int tag() {
-        return (value & TAG_MASK) >>> TAG_SHIFT;
+    // @Mesa.ENUM is LinkType
+    public final @Mesa.ENUM int tag() {
+        return Types.toCARD16((value & TAG_MASK) >>> TAG_SHIFT);
     }
-    public final TaggedControlLink tag(int newValue) {
-        value = (value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK);
+    public final TaggedControlLink tag(@Mesa.ENUM int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) LinkType.checkValue(newValue);
+        value = Types.toCARD16((value & ~TAG_MASK) | ((newValue << TAG_SHIFT) & TAG_MASK));
         return this;
     }
     
-    public final int fill() {
-        return (value & FILL_MASK) >>> FILL_SHIFT;
+    // @Mesa.CARD16 is UNSPECIFIED
+    public final @Mesa.CARD16 int fill() {
+        return Types.toCARD16((value & FILL_MASK) >>> FILL_SHIFT);
     }
-    public final TaggedControlLink fill(int newValue) {
-        value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);
+    public final TaggedControlLink fill(@Mesa.CARD16 int newValue) {
+        if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
+        value = Types.toCARD16((value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK));
         return this;
     }
     
