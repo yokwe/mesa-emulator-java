@@ -414,7 +414,7 @@ public class MOP1xx {
 	@Register(Opcode.R0F)
 	public static final void OP_R0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.R0F.name);
-		int field = getCodeByte();
+		FieldSpec field = FieldSpec.value(getCodeByte());
 		RFnm(0, field);
 	}
 
@@ -426,16 +426,16 @@ public class MOP1xx {
 		RFnm(desc.offset(), desc.field());
 	}
 	
-	private static void RFnm(int offset, int field) {
+	private static void RFnm(int offset, FieldSpec spec) {
 		int ptr = pop();
-		push(readField(read16MDS(ptr + offset), field));
+		push(readField(read16MDS(ptr + offset), spec));
 	}
 
 	// 147 RL0F
 	@Register(Opcode.RL0F)
 	public static final void OP_RL0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RL0F.name);
-		int field = getCodeByte();
+		FieldSpec field = FieldSpec.value(getCodeByte());
 		RLFnm(0, field);
 	}
 
@@ -447,9 +447,9 @@ public class MOP1xx {
 		RLFnm(desc.offset(), desc.field());
 	}
 
-	private static void RLFnm(int offset, int field) {
+	private static void RLFnm(int offset, FieldSpec spec) {
 		int ptr = popLong();
-		push(readField(read16(ptr + offset), field));
+		push(readField(read16(ptr + offset), spec));
 	}
 
 	// 151 RLFS
