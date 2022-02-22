@@ -61,6 +61,10 @@ public class MemoryData32 {
     	value = newValue;
     	write();
     }
+    public void write(MemoryData32 newValue) {
+    	value = newValue.value;
+    	write();
+    }
     
     public @Mesa.CARD32 int read() {
         switch(access) {

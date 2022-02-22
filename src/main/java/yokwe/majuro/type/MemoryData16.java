@@ -57,6 +57,10 @@ public class MemoryData16 {
     	value = Types.toCARD16(newValue);
     	write();
     }
+    public void write(MemoryData16 newValue) {
+    	value = newValue.value;
+    	write();
+    }
     
     public @Mesa.CARD16 int read() {
         switch(access) {
