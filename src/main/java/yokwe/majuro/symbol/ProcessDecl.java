@@ -193,7 +193,6 @@ public class ProcessDecl {
 		out.println("return %s.pointer(pointer, access);", targetTypeName);
 		out.println("}");
 		
-		// FIXME getValue()  getValue(newValue)
 		out.println("public final @Mesa.SHORT_POINTER int getValue(int index) {");
 		if (indexType.needsRangeCheck()) {
 			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
@@ -237,7 +236,6 @@ public class ProcessDecl {
 		out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 		out.println("}");
 		
-		// FIXME getValue()  getValue(newValue)
 		out.println("public final @Mesa.LONG_POINTER int getValue(int index) {");
 		if (indexType.needsRangeCheck()) {
 			out.println("if (Debug.ENABLE_CHECK_VALUE) %s.checkValue(index);", indexTypeName);
@@ -377,7 +375,6 @@ public class ProcessDecl {
 		out.println("return %s.longPointer(longPointer, access);", targetTypeName);
 		out.println("}");
 		
-		// FIXME %sValue()  %sValue(newValue)
 		out.println("public final @Mesa.LONG_POINTER int %sValue() {", fieldName);
 		out.println("return Memory.read32(base + OFFSET_%s);", fieldConstName);
 		out.println("}");
@@ -400,7 +397,6 @@ public class ProcessDecl {
 		out.println("return %s.pointer(pointer, access);", targetTypeName);
 		out.println("}");
 		
-		// FIXME %sValue()  %sValue(newValue)
 		out.println("public final @Mesa.SHORT_POINTER int %sValue() {", fieldName);
 		out.println("return Memory.read16(base + OFFSET_%s);", fieldConstName);
 		out.println("}");
@@ -1321,7 +1317,6 @@ public class ProcessDecl {
 		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
 			// RECORD FIELD is BOOLEAN
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is BOOLEAN");
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordFieldBoolean(javaFile, field);
 		}
 
@@ -1329,7 +1324,6 @@ public class ProcessDecl {
 		protected void processTypeEnum(Field field, TypeEnum fieldType) {
 			// RECORD FIELD is ENUM
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is ENUM");
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordFieldEnum(javaFile, field);
 		}
 
@@ -1337,7 +1331,6 @@ public class ProcessDecl {
 		protected void processTypeSubrange(Field field, TypeSubrange fieldType) {
 			// RECORD FIELD is SUBRANGE
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SUBRANGE");
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordFieldSubrange(javaFile, field);
 		}
 
@@ -1368,7 +1361,6 @@ public class ProcessDecl {
 		@Override
 		protected void processTypeBitField16(Field field, TypeBitField16 fieldType) {
 			// RECORD FIELD is BIT FIELD 16
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordFieldBitField16(javaFile, field);
 		}
 
@@ -1445,7 +1437,6 @@ public class ProcessDecl {
 		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
 			// RECORD FIELD is BOOLEAN
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is BOOLEAN");
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordField(javaFile, field);
 		}
 
@@ -1453,7 +1444,6 @@ public class ProcessDecl {
 		protected void processTypeEnum(Field field, TypeEnum fieldType) {
 			// RECORD FIELD is ENUM
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is ENUM");
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordField(javaFile, field);
 		}
 
@@ -1461,7 +1451,6 @@ public class ProcessDecl {
 		protected void processTypeSubrange(Field field, TypeSubrange fieldType) {
 			// RECORD FIELD is SUBRANGE
 			if (DEBUG_SHOW_TYPE) javaFile.out.println("// TYPE - RECORD FIELD is SUBRANGE");
-			// FIXME handle BOOLEAN, ENUM and Subrange field properly
 			recordField(javaFile, field);
 		}
 
