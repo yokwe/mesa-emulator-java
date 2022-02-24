@@ -1,5 +1,7 @@
 package yokwe.majuro.mesa;
 
+import static yokwe.majuro.mesa.Processor.*;
+
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.type.XferType;
 
@@ -20,10 +22,10 @@ public final class ControlTransfers {
 
 	// 9.5.1 Trap Routines
 	public static void boundsTrap() {
-		throw new UnexpectedException("NO IMPL"); // FIXME
+		abort("boundsTrap"); // FIXME
 	}
 	public static void breakTrap() {
-		throw new UnexpectedException("NO IMPL"); // FIXME
+		abort("breakTrap"); // FIXME
 	}
 	public static void codeTrap(int gfi) {
 		throw new UnexpectedException("NO IMPL"); // FIXME
