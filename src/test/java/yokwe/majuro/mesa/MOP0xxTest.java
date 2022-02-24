@@ -1,6 +1,8 @@
 package yokwe.majuro.mesa;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static yokwe.majuro.mesa.Memory.*;
+import static yokwe.majuro.mesa.Processor.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,303 +13,243 @@ import yokwe.majuro.util.StackUtil;
 public class MOP0xxTest extends Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
+	private void LLn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int sa    = LF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16MDS(sa, value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(read16MDS(sa), stack[0]);
+		// memory
+	}
 	@Test
 	public void LL0() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 0;
-		var opcode = Opcode.LL0;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL0, 0);
 	}
-	
 	@Test
 	public void LL1() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 1;
-		var opcode = Opcode.LL1;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL1, 1);
 	}
-	
 	@Test
 	public void LL2() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 2;
-		var opcode = Opcode.LL2;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL2, 2);
 	}
-	
 	@Test
 	public void LL3() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 3;
-		var opcode = Opcode.LL3;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL3, 3);
 	}
-	
 	@Test
 	public void LL4() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 4;
-		var opcode = Opcode.LL4;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL4, 4);
 	}
-
 	@Test
 	public void LL5() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 5;
-		var opcode = Opcode.LL5;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL5, 5);
 	}
-
 	@Test
 	public void LL6() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 6;
-		var opcode = Opcode.LL6;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL6, 6);
 	}
-
 	@Test
 	public void LL7() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 7;
-		var opcode = Opcode.LL7;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL7, 7);
 	}
-
 	@Test
 	public void LL8() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 8;
-		var opcode = Opcode.LL8;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL8, 8);
 	}
-
 	@Test
 	public void LL9() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 9;
-		var opcode = Opcode.LL9;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL9, 9);
 	}
-
 	@Test
 	public void LL10() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 10;
-		var opcode = Opcode.LL10;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL10, 10);
 	}
-
 	@Test
 	public void LL11() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 11;
-		var opcode = Opcode.LL11;
-		
-		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
-		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
-		// execute
-		Interpreter.execute();
-		// check result
-		// pc
-		assertEquals(Processor.savedPC + 1, Memory.PC());
-		// sp
-		assertEquals(1, Processor.SP);
-		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
-		// memory
+		LLn(Opcode.LL11, 11);
 	}
-
 	@Test
 	public void LLB() {
 		logger.info(StackUtil.getCallerMethodName());
-
-		int n = 20;
-		var opcode = Opcode.LLB;
-		
+		LLn(Opcode.LLB, 20);
+	}
+	
+	private void LLDn(Opcode opcode, int n) {
+		int value = 0xCAFEBABE;
+		int sa    = LF + n;
 		// opcode
-		Memory.writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
 		// data
-		Memory.writeReal16(ra_LF + n, 0xCAFE);
+		write16MDS(sa + 0, Types.lowHalf(value));
+		write16MDS(sa + 1, Types.highHalf(value));
 		// execute
 		Interpreter.execute();
 		// check result
 		// pc
-		assertEquals(Processor.savedPC + 2, Memory.PC());
+		assertEquals(savedPC + opcode.len, PC());
 		// sp
-		assertEquals(1, Processor.SP);
+		assertEquals(2, SP);
 		// stack contents
-		assertEquals(Memory.readReal16(ra_LF + n), Processor.stack[0]);
+		assertEquals(read16MDS(sa + 0), stack[0]);
+		assertEquals(read16MDS(sa + 1), stack[1]);
 		// memory
 	}
+	@Test
+	public void LLD0() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD0, 0);
+	}
+	@Test
+	public void LLD1() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD1, 1);
+	}
+	@Test
+	public void LLD2() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD2, 2);
+	}
+	@Test
+	public void LLD3() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD3, 3);
+	}
+	@Test
+	public void LLD4() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD4, 4);
+	}
+	@Test
+	public void LLD5() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD5, 5);
+	}
+	@Test
+	public void LLD6() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD6, 6);
+	}
+	@Test
+	public void LLD7() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD7, 7);
+	}
+	@Test
+	public void LLD8() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD8, 8);
+	}
+	@Test
+	public void LLD10() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLD10, 10);
+	}
+	@Test
+	public void LLDB() {
+		logger.info(StackUtil.getCallerMethodName());
+		LLDn(Opcode.LLDB, 20);
+	}
 	
+	private void SLn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int sa    = LF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		push(value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		assertEquals(read16MDS(sa), stack[0]);
+		// memory
+	}
+	@Test
+	public void SL0() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL0, 0);
+	}
+	@Test
+	public void SL1() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL1, 1);
+	}
+	@Test
+	public void SL2() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL2, 2);
+	}
+	@Test
+	public void SL3() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL3, 3);
+	}
+	@Test
+	public void SL4() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL4, 4);
+	}
+	@Test
+	public void SL5() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL5, 5);
+	}
+	@Test
+	public void SL6() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL6, 6);
+	}
+	@Test
+	public void SL7() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL7, 7);
+	}
+	@Test
+	public void SL8() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL8, 8);
+	}
+	@Test
+	public void SL9() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL9, 9);
+	}
+	@Test
+	public void SL10() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SL10, 10);
+	}
+	@Test
+	public void SLB() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLn(Opcode.SLB, 20);
+	}
+
 }
