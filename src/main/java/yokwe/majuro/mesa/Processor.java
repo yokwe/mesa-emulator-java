@@ -124,17 +124,27 @@ public final class Processor {
 
 	@SuppressWarnings("serial")
 	public static final class AbortRuntimeException extends RuntimeException {
-		AbortRuntimeException() {
+		public AbortRuntimeException() {
 			//    message
 			//          cause
 			//                enableSuppression
 			//                       writableStackTrace
 			super(null, null, true, Debug.ENABLE_ABORT_STACK_TRACE);
 		}
+		public AbortRuntimeException(String message) {
+			//    message
+			//          cause
+			//                enableSuppression
+			//                       writableStackTrace
+			super(message, null, true, Debug.ENABLE_ABORT_STACK_TRACE);
+		}
 	};
 	
 	public static void abort() {
 		throw new AbortRuntimeException();
+	}
+	public static void abort(String message) {
+		throw new AbortRuntimeException(message);
 	}
 	
 	public static void error() {
