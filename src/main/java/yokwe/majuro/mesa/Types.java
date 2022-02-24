@@ -34,7 +34,7 @@ public final class Types {
 		return value & 0xFFFF;
 	}
 	public static @Mesa.CARD16 int toCARD16(@Mesa.CARD8 int left, @Mesa.CARD8 int right) {
-		return ((left & BYTE_MASK) << BYTE_BITS) | (right & BYTE_MASK);
+		return toCARD16((left << BYTE_BITS) | (right & BYTE_MASK));
 	}
 
 }
