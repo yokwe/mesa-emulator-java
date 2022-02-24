@@ -359,14 +359,14 @@ public final class Memory {
 	//
 	// bit field data
 	//
-	private static int maskTable(int n) {
+	public static int maskTable(int n) {
 		return ((1 << (n + 1)) - 1) & 0xFFFF;
 	}
 	public static @Mesa.CARD16 int readField(@Mesa.CARD16 int source, FieldSpec spec) {
 		int pos  = spec.pos();
 		int size = spec.size();
 		
-		int shift = WORD_BITS - (pos + size - 1);
+		int shift = WORD_BITS - (pos + size + 1);
 		if (shift < 0) error();
 		
 		return Types.toCARD16((source >>> shift) & maskTable(size));
@@ -375,7 +375,7 @@ public final class Memory {
 		int pos  = spec.pos();
 		int size = spec.size();
 		
-		int shift = WORD_BITS - (pos + size - 1);
+		int shift = WORD_BITS - (pos + size + 1);
 		if (shift < 0) error();
 		int mask = maskTable(size) << shift;
 		
