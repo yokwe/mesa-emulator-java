@@ -149,13 +149,12 @@ public final class Memory {
 	
 	
 	//
-	// low level memory access
-	//   fetch store mapFlag readReal writeReal
+	// REAL MEMORY
+	//
 	public static Map map(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.map++;
 		return maps[va >>> PAGE_BITS];
 	}
-	// fetch returns real address == offset of realMemory
 	public static @Mesa.REAL_POINTER int fetch(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.fetch++;
 		
@@ -192,7 +191,6 @@ public final class Memory {
 		}
 		return ra | (va & PAGE_MASK);
 	}
-	// store returns real address == offset of realMemory
 	public static @Mesa.REAL_POINTER int store(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.store++;
 
@@ -237,7 +235,7 @@ public final class Memory {
 		}
 		return ra | (va & PAGE_MASK);
 	}
-	// realAddress returns real address without changing of cache and flags of map
+	// realAddress returns real address without changing cache and map flag
 	public static @Mesa.REAL_POINTER int realAddress(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.realAddress++;
 		
@@ -257,7 +255,7 @@ public final class Memory {
 		return ra | (va & PAGE_MASK);
 	}
 	//
-	// real memory access
+	// 16 bit data
 	//
 	public static @Mesa.CARD16 int readReal16(@Mesa.REAL_POINTER int ra) {
 		if (Perf.ENABLED) Perf.readReal16++;
@@ -267,6 +265,9 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.writeReal16++;
 		realMemory[ra] = (short)newValue;
 	}
+	//
+	// 32 bit data
+	//
 	public static @Mesa.CARD32 int readReal32(@Mesa.REAL_POINTER int ra0, @Mesa.REAL_POINTER int ra1) {
 		// ra0 -- low order  16 bit
 		// ra1 -- high order 16 bit
@@ -284,7 +285,10 @@ public final class Memory {
 	
 	
 	//
-	// memory read and write
+	// VIRTUAL MEMORY
+	//
+	//
+	// 16 bit data
 	//
 	public static @Mesa.CARD16 int read16(@Mesa.LONG_POINTER int va) {
 		if (Perf.ENABLED) Perf.read16++;
@@ -294,37 +298,9 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.write16++;
 		writeReal16(store(va), newValue);
 	}
-	private static final int BYTE_LEFT_MASK = BYTE_MASK << BYTE_BITS;
-	public static @Mesa.CARD8 int read8(@Mesa.LONG_POINTER int ptr, int offset) {
-		int word = read16(ptr + offset / 2);
-		if ((offset & 1) == 0) {
-			// returns left
-			return Types.toCARD8((word >> BYTE_BITS) & BYTE_MASK);
-		} else {
-			// returns right
-			return Types.toCARD8(word & BYTE_MASK);
-		}
-	}
-	public static void write8(@Mesa.LONG_POINTER int ptr, int offset, @Mesa.CARD8 int data) {
-		int ra = fetch(ptr + offset / 2);
-		int word = readReal16(ra);
-		
-		if ((offset & 1) == 0) {
-			// modify left
-			writeReal16(ra, ((data << 8) & BYTE_LEFT_MASK) | (word & BYTE_MASK));
-		} else {
-			// modify right
-			writeReal16(ra, (word & BYTE_LEFT_MASK) | (data & BYTE_MASK));
-		}
-	}
-	
-
-	// 2.3.1 Long Types
-	// When these types are stored in memory, the low-order (least significant) sixteen bits
-	// occupy the first memory word (at the lower numbered address), and the high-order (most
-	// significant) sixteen bits occupy the second memory word(at the higher memory address).
-	//         |15    31|0   15|
-	// address  n        n+1    n+2
+	//
+	// 32 bit data
+	//
 	public static boolean isSamePage(@Mesa.LONG_POINTER int a, @Mesa.LONG_POINTER int b) {
 		return (a & ~PAGE_MASK) == (b & ~PAGE_MASK);
 	}
@@ -355,19 +331,68 @@ public final class Memory {
 		}
 		writeReal32(ra0, ra1, newValue);
 	}
-	
-	
 	//
-	// MDS
+	// 8 bit data
 	//
-	// treat sa as short pointer
+	public static @Mesa.CARD8 int read8(@Mesa.LONG_POINTER int ptr, int offset) {
+		int word = read16(ptr + offset / 2);
+		if ((offset & 1) == 0) {
+			// returns left
+			return Types.toCARD8((word >> BYTE_BITS) & BYTE_MASK);
+		} else {
+			// returns right
+			return Types.toCARD8(word & BYTE_MASK);
+		}
+	}
+	public static void write8(@Mesa.LONG_POINTER int ptr, int offset, @Mesa.CARD8 int data) {
+		int ra = fetch(ptr + offset / 2);
+		int word = readReal16(ra);
+		
+		if ((offset & 1) == 0) {
+			// modify left
+			writeReal16(ra, Types.toCARD16(data, word));
+		} else {
+			// modify right
+			writeReal16(ra, Types.toCARD16(word >> 8, data));
+		}
+	}
+	//
+	// bit field data
+	//
+	private static int maskTable(int n) {
+		return ((1 << (n + 1)) - 1) & 0xFFFF;
+	}
+	public static @Mesa.CARD16 int readField(@Mesa.CARD16 int source, FieldSpec spec) {
+		int pos  = spec.pos();
+		int size = spec.size();
+		
+		int shift = WORD_BITS - (pos + size - 1);
+		if (shift < 0) error();
+		
+		return Types.toCARD16((source >>> shift) & maskTable(size));
+	}
+	public static @Mesa.CARD16 int writeField(@Mesa.CARD16 int dest, FieldSpec spec, @Mesa.CARD16 int data) {
+		int pos  = spec.pos();
+		int size = spec.size();
+		
+		int shift = WORD_BITS - (pos + size - 1);
+		if (shift < 0) error();
+		int mask = maskTable(size) << shift;
+		
+		return Types.toCARD16((dest & ~mask) | ((data << shift) & mask));
+	}
+
+
+	//
+	// MAIN DATA SPACE
+	//
 	public static int lengthenMDS(@Mesa.SHORT_POINTER int sa) {
 		if (Perf.ENABLED) Perf.lengthenMDS++;
 		return Processor.MDS + Types.toCARD16(sa);
 	}
-	
-	// convenience methods for MDS data access
-	// treat sa as short pointer
+	//
+	// real memory 16 bit data
+	//
 	public static @Mesa.REAL_POINTER int fetchMDS(@Mesa.SHORT_POINTER int sa) {
 		if (Perf.ENABLED) Perf.fetchMDS++;
 		return fetch(lengthenMDS(sa));
@@ -376,6 +401,9 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.storeMDS++;
 		return store(lengthenMDS(sa));
 	}
+	//
+	// virtual memory 16 bit data
+	//
 	public static @Mesa.CARD16 int read16MDS(@Mesa.SHORT_POINTER int sa) {
 		if (Perf.ENABLED) Perf.read16MDS++;
 		return read16(lengthenMDS(sa));
@@ -384,6 +412,9 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.write16MDS++;
 		write16(lengthenMDS(sa), newValue);
 	}
+	//
+	// virtual memory 32 bit data
+	//
 	public static @Mesa.CARD32 int read32MDS(@Mesa.SHORT_POINTER int sa) {
 		if (Perf.ENABLED) Perf.read32MDS++;
 		return read32(lengthenMDS(sa));
@@ -392,6 +423,9 @@ public final class Memory {
 		if (Perf.ENABLED) Perf.write32MDS++;
 		write32(lengthenMDS(sa), newValue);
 	}
+	//
+	// virtual memory 8 bit data
+	//
 	public static @Mesa.CARD8 int read8MDS(@Mesa.SHORT_POINTER int sa, int offset) {
 		return read8(lengthenMDS(sa), offset);
 	}
@@ -414,12 +448,13 @@ public final class Memory {
 		return psbHandle / ProcessStateBlock.WORD_SIZE;
 	}
 	
+	
 	//
-	// CodeCache
+	// CB and PC
 	//
 	private static int cb;
 	private static int pc;
-
+	// read and write CB
 	public static int CB() {
 		return cb;
 	}
@@ -430,7 +465,7 @@ public final class Memory {
 		vaPCLast = ~0; // make (va == vaLast) false
 		vaPCPage = ~0; // make Memory.isSamePage(vaPage, va) false
 	}
-	
+	// read and write PC
 	public static int PC() {
 		return pc;
 	}
@@ -446,6 +481,8 @@ public final class Memory {
 	private static int vaPCLast;
 	private static int wordLast;
 	
+	// getCodeByte returns one byte pointed by PC and CB
+	// increment PC by 1
 	public static @Mesa.CARD8 int getCodeByte() {
 		if (Perf.ENABLED) Perf.codeCacheCodeByte++;
 		vaPC = cb + (pc / 2);
@@ -473,6 +510,8 @@ public final class Memory {
 		//       even means odd   right       left        
 		return Types.toCARD8(((pc & 1) == 0) ? wordLast : (wordLast >>> 8));
 	}
+	// getCodeByte return one word pointed bye PC and CB
+	// increment PC by 2
 	public static @Mesa.CARD16 int getCodeWord() {
 		if (Perf.ENABLED) Perf.codeCacheCodeWord++;
 		int left  = getCodeByte();
@@ -480,52 +519,5 @@ public final class Memory {
 		
 		return Types.toCARD16((left << 8) | right);
 	}
-
 	
-	//
-	// Field
-	//
-	
-	private static int maskTable(int n) {
-		return ((1 << (n + 1)) - 1) & 0xFFFF;
-	}
-//	private static final int[] MASK_TABLE = {
-//			0b0000_0000_0000_0001,
-//			0b0000_0000_0000_0011,
-//			0b0000_0000_0000_0111,
-//			0b0000_0000_0000_1111,
-//			0b0000_0000_0001_1111,
-//			0b0000_0000_0011_1111,
-//			0b0000_0000_0111_1111,
-//			0b0000_0000_1111_1111,
-//			0b0000_0001_1111_1111,
-//			0b0000_0011_1111_1111,
-//			0b0000_0111_1111_1111,
-//			0b0000_1111_1111_1111,
-//			0b0001_1111_1111_1111,
-//			0b0011_1111_1111_1111,
-//			0b0111_1111_1111_1111,
-//			0b1111_1111_1111_1111,
-//	};
-	
-	public static @Mesa.CARD16 int readField(@Mesa.CARD16 int source, FieldSpec spec) {
-		int pos  = spec.pos();
-		int size = spec.size();
-		
-		int shift = WORD_BITS - (pos + size - 1);
-		if (shift < 0) error();
-		
-		return Types.toCARD16((source >>> shift) & maskTable(size));
-	}
-	public static @Mesa.CARD16 int writeField(@Mesa.CARD16 int dest, FieldSpec spec, @Mesa.CARD16 int data) {
-		int pos  = spec.pos();
-		int size = spec.size();
-		
-		int shift = WORD_BITS - (pos + size - 1);
-		if (shift < 0) error();
-		int mask = maskTable(size) << shift;
-		
-		return Types.toCARD16((dest & ~mask) | ((data << shift) & mask));
-	}
-
 }
