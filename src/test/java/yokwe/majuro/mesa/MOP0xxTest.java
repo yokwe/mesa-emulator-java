@@ -251,5 +251,365 @@ public class MOP0xxTest extends Base {
 		logger.info(StackUtil.getCallerMethodName());
 		SLn(Opcode.SLB, 20);
 	}
+	
+	private void SLDn(Opcode opcode, int n) {
+		int value = 0xCAFEBABE;
+		int sa    = LF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		push(Types.lowHalf(value));
+		push(Types.highHalf(value));
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		assertEquals(read16MDS(sa + 0), stack[0]);
+		assertEquals(read16MDS(sa + 1), stack[1]);
+		// memory
+	}
+	@Test
+	public void SLD0() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD0, 0);
+	}
+	@Test
+	public void SLD1() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD1, 1);
+	}
+	@Test
+	public void SLD2() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD2, 2);
+	}
+	@Test
+	public void SLD3() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD3, 3);
+	}
+	@Test
+	public void SLD4() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD4, 4);
+	}
+	@Test
+	public void SLD5() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD5, 5);
+	}
+	@Test
+	public void SLD6() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD6, 6);
+	}
+	@Test
+	public void SLD8() {
+		logger.info(StackUtil.getCallerMethodName());
+		SLDn(Opcode.SLD8, 8);
+	}
+	
+	@Test
+	private void PLn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int sa    = LF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		push(value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(read16MDS(sa), stack[0]);
+		assertEquals(value, stack[0]);
+		// memory
+	}
+	@Test
+	public void PL0() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLn(Opcode.PL0, 0);
+	}
+	@Test
+	public void PL1() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLn(Opcode.PL1, 1);
+	}
+	@Test
+	public void PL2() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLn(Opcode.PL2, 2);
+	}
+	@Test
+	public void PL3() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLn(Opcode.PL3, 3);
+	}
+	@Test
+	public void PLB() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLn(Opcode.PLB, 20);
+	}
+	
+	private void PLDn(Opcode opcode, int n) {
+		int value = 0xCAFEBABE;
+		int sa    = LF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		push(Types.lowHalf(value));
+		push(Types.highHalf(value));
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(2, SP);
+		// stack contents
+		assertEquals(read16MDS(sa + 0), stack[0]);
+		assertEquals(read16MDS(sa + 1), stack[1]);
+		assertEquals(Types.lowHalf (value), stack[0]);
+		assertEquals(Types.highHalf(value), stack[1]);
+		// memory
+	}
+	@Test
+	public void PLD0() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLDn(Opcode.PLD0, 0);
+	}
+	@Test
+	public void PLDB() {
+		logger.info(StackUtil.getCallerMethodName());
+		PLDn(Opcode.PLDB, 20);
+	}
+
+	private void LGn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int va    = GF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16(va, value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(read16(va), stack[0]);
+		// memory
+	}
+	@Test
+	public void LG0() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGn(Opcode.LG0, 0);
+	}
+	@Test
+	public void LG1() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGn(Opcode.LG1, 1);
+	}
+	@Test
+	public void LG2() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGn(Opcode.LG2, 2);
+	}
+	@Test
+	public void LGB() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGn(Opcode.LGB, 20);
+	}
+
+	private void LGDn(Opcode opcode, int n) {
+		int value = 0xCAFEBABE;
+		int va    = GF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16(va + 0, Types.lowHalf(value));
+		write16(va + 1, Types.highHalf(value));
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(2, SP);
+		// stack contents
+		assertEquals(read16(va + 0), stack[0]);
+		assertEquals(read16(va + 1), stack[1]);
+		// memory
+	}
+	@Test
+	public void LGD0() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGDn(Opcode.LGD0, 0);
+	}
+	@Test
+	public void LGD2() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGDn(Opcode.LGD2, 2);
+	}
+	@Test
+	public void LGDB() {
+		logger.info(StackUtil.getCallerMethodName());
+		LGDn(Opcode.LGDB, 20);
+	}
+	
+	private void SGn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int va    = GF + n;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		push(value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		assertEquals(read16(va), stack[0]);
+		// memory
+	}
+	@Test
+	public void SGB() {
+		logger.info(StackUtil.getCallerMethodName());
+		SGn(Opcode.SGB, 20);
+	}
+
+	private void BNDCK(int range, int index) {
+		Opcode opcode = Opcode.BNDCK;
+		
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
+		// data
+		push(index);
+		push(range);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(index, stack[0]);
+		// memory
+	}
+	@Test
+	public void BNDCK_OK() {
+		logger.info(StackUtil.getCallerMethodName());
+		int range = 10;
+		int index = 1;
+		
+		boolean abortObserved = false;
+		String message = null;
+		try {
+			BNDCK(range, index);
+		} catch(AbortRuntimeException e) {
+			abortObserved = true;
+			message = e.getMessage();
+		}
+		assertEquals(false, abortObserved);
+		assertEquals(null, message); // FIXME
+	}
+	@Test
+	public void BNDCK_NG() {
+		logger.info(StackUtil.getCallerMethodName());
+		int range = 10;
+		int index = 20;
+
+		boolean abortObserved = false;
+		String message = null;
+		try {
+			BNDCK(range, index);
+		} catch(AbortRuntimeException e) {
+			abortObserved = true;
+			message = e.getMessage();
+		}
+		assertEquals(true, abortObserved);
+		assertEquals("boundsTrap", message); // FIXME
+	}
+
+	@Test
+	public void BRK_OK() {
+		Opcode opcode = Opcode.BRK;
+
+		int value = 0xCAFE;
+		int sa    = LF + 0;
+
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
+		// data
+		breakByte = Opcode.LL0.code;
+		write16MDS(sa, value); // LL0
+		// execute
+		boolean abortObserved = false;
+		String message = null;
+		try {
+			Interpreter.execute();
+		} catch(AbortRuntimeException e) {
+			abortObserved = true;
+			message = e.getMessage();
+		}
+		assertEquals(false, abortObserved);
+		assertEquals(null, message); // FIXME
+
+		// pc
+		assertEquals(savedPC + opcode.len, PC()); // LL0
+		// sp
+		assertEquals(1, SP); // LL0
+		// stack contents
+		assertEquals(read16MDS(sa), stack[0]); // LL0
+		// memory
+		assertEquals(0, breakByte);
+	}
+	@Test
+	public void BRK_NG() {
+		Opcode opcode = Opcode.BRK;
+
+		int value = 0xCAFE;
+		int sa    = LF + 0;
+
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, 0));
+		// data
+		breakByte = 0;
+		write16MDS(sa, value); // LL0
+		// execute
+		boolean abortObserved = false;
+		String message = null;
+		try {
+			Interpreter.execute();
+		} catch(AbortRuntimeException e) {
+			abortObserved = true;
+			message = e.getMessage();
+		}
+		assertEquals(true, abortObserved);
+		assertEquals("breakTrap", message); // FIXME
+
+		// pc
+		assertEquals(savedPC + opcode.len, PC()); // LL0
+		// sp
+//		assertEquals(1, SP); // LL0
+		// stack contents
+//		assertEquals(read16MDS(sa), stack[0]); // LL0
+		// memory
+		assertEquals(0, breakByte);
+	}
 
 }
