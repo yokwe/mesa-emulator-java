@@ -13,6 +13,7 @@ public class StackUtil {
 	}
 	
 	public static String getCallerMethodName() {
-		return getCallerStackFrame().getMethodName();
+		var list = StackWalker.getInstance().walk(o -> o.collect(Collectors.toList()));
+		return list.get(1).getMethodName();
 	}
 }
