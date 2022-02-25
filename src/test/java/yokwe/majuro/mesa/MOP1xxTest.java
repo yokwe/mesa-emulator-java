@@ -411,4 +411,69 @@ public class MOP1xxTest extends Base {
 	public void RLIIP() {
 		RLInm(Opcode.RLIP, 7, 5);
 	}
+	
+	private void RLDInm(Opcode opcode, int left, int right) {
+		int value = 0xCAFEBABE;
+		int base  = 0x1000;
+		int sa    = LF + left;
+		int sb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write16MDS(sa, base);
+		write16MDS(sb + 0, Types.lowHalf(value));
+		write16MDS(sb + 1, Types.highHalf(value));
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(2, SP);
+		// stack contents
+		assertEquals(Types.lowHalf(value),  stack[0]);
+		assertEquals(Types.highHalf(value), stack[1]);
+		// memory
+		assertEquals(read16MDS(sb + 0), stack[0]);
+		assertEquals(read16MDS(sb + 1), stack[1]);
+	}
+	@Test
+	public void RLDI00() {
+		RLDInm(Opcode.RLDI00, 0, 0);
+	}
+	@Test
+	public void RLDIP() {
+		RLDInm(Opcode.RLDIP, 7, 5);
+	}
+
+	private void RLDILnm(Opcode opcode, int left, int right) {
+		int value = 0xCAFEBABE;
+		int base  = 0x30_0000;
+		int sa    = LF + left;
+		int sb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write32MDS(sa, base);
+		write16(sb + 0, Types.lowHalf(value));
+		write16(sb + 1, Types.highHalf(value));
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(2, SP);
+		// stack contents
+		assertEquals(Types.lowHalf(value),  stack[0]);
+		assertEquals(Types.highHalf(value), stack[1]);
+		// memory
+		assertEquals(read16(sb + 0), stack[0]);
+		assertEquals(read16(sb + 1), stack[1]);
+	}
+	@Test
+	public void RLDILP() {
+		RLDILnm(Opcode.RLDILP, 7, 5);
+	}
+
 }
