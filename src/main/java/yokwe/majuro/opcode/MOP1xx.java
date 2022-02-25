@@ -118,7 +118,7 @@ public class MOP1xx {
 	
 	private static void Wn(int arg) {
 		int ptr = pop();
-		write16MDS(ptr, pop());
+		write16MDS(ptr + arg, pop());
 		// NO PAGE FAULT AFTER HERE
 	}
 
@@ -170,8 +170,10 @@ public class MOP1xx {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WDB.name);
 		int alpha = getCodeByte();
 		int ptr   = pop();
-		write16MDS(ptr + alpha + 1, pop());
-		write16MDS(ptr + alpha + 0, pop());
+		int v     = pop();
+		int u     = pop();
+		write16MDS(ptr + alpha + 1, v);
+		write16MDS(ptr + alpha + 0, u);
 		// NO PAGE FAULT AFTER HERE
 	}
 
@@ -206,8 +208,10 @@ public class MOP1xx {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WDLB.name);
 		int alpha = getCodeByte();
 		int ptr   = popLong();
-		write16(ptr + alpha + 1, pop());
-		write16(ptr + alpha + 0, pop());
+		int v     = pop();
+		int u     = pop();
+		write16(ptr + alpha + 1, v);
+		write16(ptr + alpha + 0, u);
 		// NO PAGE FAULT AFTER HERE
 	}
 
