@@ -309,7 +309,7 @@ public class MOP1xx {
 	@Register(Opcode.RLDILP)
 	public static final void OP_RLDILP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLDILP.name);
-		var alpha = BytePair.value(getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read32MDS(LF + alpha.left());
 		int right = alpha.right();
 		int u     = read16(ptr + right + 0);
@@ -323,7 +323,7 @@ public class MOP1xx {
 	@Register(Opcode.RGIP)
 	public static final void OP_RGIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RGIP.name);
-		var alpha = BytePair.value(getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read16(GF + alpha.left());
 		push(read16MDS(ptr + alpha.right()));
 		// NO PAGE FAULT AFTER HERE
@@ -343,7 +343,7 @@ public class MOP1xx {
 	@Register(Opcode.WLIP)
 	public static final void OP_WLIP() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLIP.name);
-		var alpha = BytePair.value(getCodeByte());
+		var alpha = NibblePair.value(getCodeByte());
 		int ptr   = read16MDS(LF + alpha.left());
 		write16MDS(ptr + alpha.right(), pop());
 		// NO PAGE FAULT AFTER HERE
