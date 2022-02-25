@@ -49,9 +49,8 @@ public class MOP1xx {
 	
 	private static void RLn(int arg) {
 		int ptr = popLong();
-		int t   = read16(ptr + arg);
+		push(read16(ptr + arg));
 		// NO PAGE FAULT AFTER HERE
-		push(t);
 	}
 	
 	// 104 RLB
