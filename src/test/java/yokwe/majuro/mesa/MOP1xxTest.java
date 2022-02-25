@@ -368,5 +368,47 @@ public class MOP1xxTest extends Base {
 		logger.info(StackUtil.getCallerMethodName());
 		PSDLn(Opcode.PSDLB, 20);
 	}
-
+	
+	private void RLInm(Opcode opcode, int left, int right) {
+		int value = 0xCAFE;
+		int base  = 0x1000;
+		int sa    = LF + left;
+		int sb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write16MDS(sa, base);
+		write16MDS(sb, value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(value, stack[0]);
+		// memory
+		assertEquals(read16MDS(sb), stack[0]);
+	}
+	@Test
+	public void RLI00() {
+		RLInm(Opcode.RLI00, 0, 0);
+	}
+	@Test
+	public void RLI01() {
+		RLInm(Opcode.RLI01, 0, 1);
+	}
+	@Test
+	public void RLI02() {
+		RLInm(Opcode.RLI02, 0, 2);
+	}
+	@Test
+	public void RLI03() {
+		RLInm(Opcode.RLI03, 0, 3);
+	}
+	@Test
+	public void RLIIP() {
+		RLInm(Opcode.RLIP, 7, 5);
+	}
 }
