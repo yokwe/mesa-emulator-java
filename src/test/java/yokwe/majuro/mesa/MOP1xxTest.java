@@ -189,6 +189,7 @@ public class MOP1xxTest extends Base {
 	}
 	@Test
 	public void PSB() {
+		logger.info(StackUtil.getCallerMethodName());
 		PSn(Opcode.PSB, 20);
 	}
 	
@@ -393,22 +394,27 @@ public class MOP1xxTest extends Base {
 	}
 	@Test
 	public void RLI00() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLInm(Opcode.RLI00, 0, 0);
 	}
 	@Test
 	public void RLI01() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLInm(Opcode.RLI01, 0, 1);
 	}
 	@Test
 	public void RLI02() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLInm(Opcode.RLI02, 0, 2);
 	}
 	@Test
 	public void RLI03() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLInm(Opcode.RLI03, 0, 3);
 	}
 	@Test
 	public void RLIIP() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLInm(Opcode.RLIP, 7, 5);
 	}
 	
@@ -439,10 +445,12 @@ public class MOP1xxTest extends Base {
 	}
 	@Test
 	public void RLDI00() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLDInm(Opcode.RLDI00, 0, 0);
 	}
 	@Test
 	public void RLDIP() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLDInm(Opcode.RLDIP, 7, 5);
 	}
 
@@ -473,7 +481,154 @@ public class MOP1xxTest extends Base {
 	}
 	@Test
 	public void RLDILP() {
+		logger.info(StackUtil.getCallerMethodName());
 		RLDILnm(Opcode.RLDILP, 7, 5);
 	}
 
+	private void RGInm(Opcode opcode, int left, int right) {
+		int value = 0xCAFE;
+		int base  = 0x1000;
+		int va    = GF + left;
+		int sb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write16   (va, base);
+		write16MDS(sb, value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(value, stack[0]);
+		// memory
+		assertEquals(read16MDS(sb), stack[0]);
+	}
+	@Test
+	public void RGIP() {
+		logger.info(StackUtil.getCallerMethodName());
+		RGInm(Opcode.RGIP, 7, 5);
+	}
+	
+	private void RGILnm(Opcode opcode, int left, int right) {
+		int value = 0xCAFE;
+		int base  = 0x30_0000;
+		int va    = GF + left;
+		int vb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write32(va, base);
+		write16(vb, value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(value, stack[0]);
+		// memory
+		assertEquals(read16(vb), stack[0]);
+	}
+	@Test
+	public void RGILP() {
+		logger.info(StackUtil.getCallerMethodName());
+		RGILnm(Opcode.RGILP, 7, 5);
+	}
+	
+	private void WLInm(Opcode opcode, int left, int right) {
+		int value = 0xCAFE;
+		int base  = 0x1000;
+		int sa    = LF + left;
+		int sb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write16MDS(sa, base);
+		push(value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		// memory
+		assertEquals(value, read16MDS(sb));
+	}
+	@Test
+	public void WLIP() {
+		logger.info(StackUtil.getCallerMethodName());
+		WLInm(Opcode.WLIP, 7, 5);
+	}
+	
+	private void WLILnm(Opcode opcode, int left, int right) {
+		int value = 0xCAFE;
+		int base  = 0x30_0000;
+		int sa    = LF + left;
+		int vb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write32MDS(sa, base);
+		push(value);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		// memory
+		assertEquals(value, read16(vb));
+	}
+	@Test
+	public void WLILP() {
+		logger.info(StackUtil.getCallerMethodName());
+		WLILnm(Opcode.WLILP, 7, 5);
+	}
+	
+	private void WLDILnm(Opcode opcode, int left, int right) {
+//		var alpha = NibblePair.value(getCodeByte());
+//		int ptr   = read32MDS(LF + alpha.left());
+//		int right = alpha.right();
+//		write16(ptr + right + 1, pop());
+//		write16(ptr + right + 0, pop());
+
+		int value = 0xCAFEBABE;
+		int base  = 0x30_0000;
+		int sa    = LF + left;
+		int vb    = base + right;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, Types.toCARD8(left, right)));
+		// data
+		write32MDS(sa, base);
+		push(Types.lowHalf(value));
+		push(Types.highHalf(value));
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		// memory
+		assertEquals(Types.lowHalf(value),  read16(vb + 0));
+		assertEquals(Types.highHalf(value), read16(vb + 1));
+	}
+	@Test
+	public void WLDILP() {
+		logger.info(StackUtil.getCallerMethodName());
+		WLDILnm(Opcode.WLDILP, 7, 5);
+	}
+	
+	
 }
