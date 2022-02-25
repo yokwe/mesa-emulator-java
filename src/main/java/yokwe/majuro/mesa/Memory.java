@@ -507,7 +507,7 @@ public final class Memory {
 		pc = Types.toCARD16(pc + 1);
 		
 		// pc is already incremented, so even is odd and odd is even
-		//       even means odd   right       left        
+		//                    even means odd   right       left        
 		return Types.toCARD8(((pc & 1) == 0) ? wordLast : (wordLast >>> 8));
 	}
 	// getCodeByte return one word pointed bye PC and CB
@@ -517,7 +517,7 @@ public final class Memory {
 		int left  = getCodeByte();
 		int right = getCodeByte();
 		
-		return Types.toCARD16((left << 8) | right);
+		return Types.toCARD16(left, right);
 	}
 	
 }
