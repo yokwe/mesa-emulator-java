@@ -34,7 +34,6 @@ public class MemoryTest extends Base {
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
 	}
-	
 	@Test
 	public void store() {
 		logger.info(StackUtil.getCallerMethodName());
@@ -72,7 +71,6 @@ public class MemoryTest extends Base {
 		// check result
 		assertEquals(value, actual);
 	}
-
 	@Test
 	public void writeReal16() {
 		logger.info(StackUtil.getCallerMethodName());
@@ -108,7 +106,6 @@ public class MemoryTest extends Base {
 		// check result
 		assertEquals(value, actual);
 	}
-
 	@Test
 	public void writeReal32() {
 		logger.info(StackUtil.getCallerMethodName());
@@ -149,7 +146,6 @@ public class MemoryTest extends Base {
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
 	}
-
 	@Test
 	public void write16() {
 		logger.info(StackUtil.getCallerMethodName());
@@ -183,7 +179,6 @@ public class MemoryTest extends Base {
 		assertEquals(true,  Memory.isSamePage(0x0012_3400, 0x0012_3456));
 		assertEquals(false, Memory.isSamePage(0x0012_3500, 0x0012_3456));
 	}
-	
 	@Test
 	public void read32() {
 		logger.info(StackUtil.getCallerMethodName());
@@ -206,7 +201,6 @@ public class MemoryTest extends Base {
 		assertEquals(true,  map.isReferenced());
 		assertEquals(false, map.isProtect());
 	}
-
 	@Test
 	public void write32() {
 		logger.info(StackUtil.getCallerMethodName());
@@ -354,4 +348,29 @@ public class MemoryTest extends Base {
 	}
 
 	// CB and PC
+	@Test
+	public void getCodeByte() {
+		logger.info(StackUtil.getCallerMethodName());
+		int value  = 0xCAFE;
+		int offset = 0x10;
+		PC(offset);
+		int va = CB() + (PC() / 2);
+		// data
+		Memory.write16(va, value);
+		// execute
+		assertEquals((value >>> 8) & 0xFF, Memory.getCodeByte());
+		assertEquals(value & 0xFF, Memory.getCodeByte());
+	}
+	@Test
+	public void getCodeWord() {
+		logger.info(StackUtil.getCallerMethodName());
+		int value  = 0xCAFE;
+		int offset = 0x10;
+		PC(offset);
+		int va = CB() + (PC() / 2);
+		// data
+		Memory.write16(va, value);
+		// execute
+		assertEquals(value, Memory.getCodeWord());
+	}
 }
