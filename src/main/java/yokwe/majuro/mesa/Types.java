@@ -26,6 +26,14 @@ public final class Types {
 	//
 	// toCARD8
 	//
+	// returns low order byte of word
+	public static @Mesa.CARD8 int lowByte(@Mesa.CARD16 int value) {
+		return toCARD8(value);
+	}
+	// returns high order byte of word
+	public static @Mesa.CARD8 int highByte(@Mesa.CARD16 int value) {
+		return toCARD8(value >>> BYTE_BITS);
+	}
 	public static @Mesa.CARD8 int toCARD8(int value) {
 		return value & 0xFF;
 	}

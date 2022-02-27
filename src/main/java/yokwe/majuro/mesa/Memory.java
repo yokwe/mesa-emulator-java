@@ -338,10 +338,10 @@ public final class Memory {
 		int word = read16(ptr + offset / 2);
 		if ((offset & 1) == 0) {
 			// returns left
-			return Types.toCARD8((word >> BYTE_BITS) & BYTE_MASK);
+			return Types.highByte(word);
 		} else {
 			// returns right
-			return Types.toCARD8(word & BYTE_MASK);
+			return Types.lowByte(word);
 		}
 	}
 	public static void write8(@Mesa.LONG_POINTER int ptr, int offset, @Mesa.CARD8 int data) {
