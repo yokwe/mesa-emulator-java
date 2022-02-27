@@ -1,13 +1,24 @@
 package yokwe.majuro.mesa;
 
+import static yokwe.majuro.mesa.Memory.*;
 import static yokwe.majuro.mesa.Processor.*;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.type.GlobalOverhead;
+import yokwe.majuro.type.GlobalWord;
+import yokwe.majuro.type.MemoryAccess;
 import yokwe.majuro.type.XferType;
 
 public final class ControlTransfers {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
+	// 9.4.2 External Function Calls
+	public static @Mesa.CARD32 int fetchLink(@Mesa.CARD8 int offset) {
+		GlobalWord word = GlobalOverhead.longPointer(Processor.GF, MemoryAccess.READ).word();
+		int ptr = word.codelinks() ? CB() : globalBase(Processor.GF);
+		return read32(ptr - (offset + 1) * 2);
+	}
+	
 	// 9.5.3 Trap Handlers
 	public static void SaveStack(int state) {
 		throw new UnexpectedException("NO IMPL"); // FIXME
