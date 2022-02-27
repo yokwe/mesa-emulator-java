@@ -1,14 +1,17 @@
 package yokwe.majuro.opcode;
 
-import static yokwe.majuro.mesa.Constants.*;
+import static yokwe.majuro.mesa.ControlTransfers.fetchLink;
 import static yokwe.majuro.mesa.Memory.*;
 import static yokwe.majuro.mesa.Processor.*;
+import static yokwe.majuro.mesa.Types.*;
 
-import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.mesa.Types;
 import yokwe.majuro.opcode.Opcode.Register;
-import yokwe.majuro.type.*;
+import yokwe.majuro.type.FieldDesc;
+import yokwe.majuro.type.FieldSpec;
+import yokwe.majuro.type.NibblePair;
 
 public class MOP1xx {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
@@ -380,6 +383,7 @@ public class MOP1xx {
 		int index = pop();
 		int ptr   = pop();
 		push(read8MDS(ptr, alpha + index));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 142 RLS
@@ -390,6 +394,7 @@ public class MOP1xx {
 		int index = pop();
 		int ptr   = popLong();
 		push(read8(ptr, alpha + index));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 143 WS
@@ -401,6 +406,7 @@ public class MOP1xx {
 		int ptr   = pop();
 		int data  = Types.toCARD8(pop());
 		write8MDS(ptr, alpha + index, data);
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 144 WLS
@@ -412,6 +418,7 @@ public class MOP1xx {
 		int ptr   = popLong();
 		int data  = Types.toCARD8(pop());
 		write8(ptr, alpha + index, data);
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 145 R0F
@@ -454,6 +461,7 @@ public class MOP1xx {
 	private static void RLFnm(int offset, FieldSpec spec) {
 		int ptr = popLong();
 		push(readField(read16(ptr + offset), spec));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 151 RLFS
@@ -468,77 +476,128 @@ public class MOP1xx {
 	@Register(Opcode.RLIPF)
 	public static final void OP_RLIPF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLIPF.name);
-		throw new UnexpectedException(); // FIXME
+		NibblePair pair = NibblePair.value(getCodeByte());
+		FieldSpec  spec = FieldSpec.value(getCodeByte());
+		int        base = read16MDS(LF + pair.left());
+		push(readField(read16MDS(base + pair.right()), spec));
+		// NO PAGE FAULT AFTER HERE
 	}
-
+	
 	// 153 RLILPF
 	@Register(Opcode.RLILPF)
 	public static final void OP_RLILPF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RLILPF.name);
-		throw new UnexpectedException(); // FIXME
+		NibblePair pair = NibblePair.value(getCodeByte());
+		FieldSpec  spec = FieldSpec.value(getCodeByte());
+		int base = read32MDS(LF + pair.left());
+		push(readField(read16(base + pair.right()), spec));
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 154 W0F
 	@Register(Opcode.W0F)
 	public static final void OP_W0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.W0F.name);
-		throw new UnexpectedException(); // FIXME
+		FieldSpec spec = FieldSpec.value(getCodeByte());
+		Wnm(0, spec);
 	}
+	
+	private static void Wnm(int offset, FieldSpec spec) {
+		int base = pop();
+		int data = pop();
+		int ra   = storeMDS(base + offset);
+		W(ra, data, spec);
+		// NO PAGE FAULT AFTER HERE
+	}
+	private static void W(int ra, int data, FieldSpec spec) {
+		writeReal16(ra, writeField(readReal16(ra), spec, data));
+	}
+
 
 	// 155 WF
 	@Register(Opcode.WF)
 	public static final void OP_WF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WF.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(getCodeWord());
+		Wnm(desc.offset(), desc.field());
 	}
 
 	// 156 PSF
 	@Register(Opcode.PSF)
 	public static final void OP_PSF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.PSF.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(getCodeWord());
+		Wnm(desc.offset(), desc.field());
+		SP++; // recover();
 	}
 
 	// 157 PS0F
 	@Register(Opcode.PS0F)
 	public static final void OP_PS0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.PS0F.name);
-		throw new UnexpectedException(); // FIXME
+		FieldSpec spec = FieldSpec.value(getCodeByte());
+		Wnm(0, spec);
+		SP++; // recover();
 	}
 
 	// 160 WS0F
 	@Register(Opcode.WS0F)
 	public static final void OP_WS0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WS0F.name);
-		throw new UnexpectedException(); // FIXME
+		FieldSpec spec = FieldSpec.value(getCodeByte());
+		int data = pop();
+		int base = pop();
+		int ra   = storeMDS(base);
+		// NO PAGE FAULT AFTER HERE
+		W(ra, data, spec);
 	}
 
 	// 161 WL0F
 	@Register(Opcode.WL0F)
 	public static final void OP_WL0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WL0F.name);
-		throw new UnexpectedException(); // FIXME
+		FieldSpec spec = FieldSpec.value(getCodeByte());
+		WLnm(0, spec);
 	}
 
 	// 162 WLF
 	@Register(Opcode.WLF)
 	public static final void OP_WLF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLF.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(getCodeWord());
+		WLnm(desc.offset(), desc.field());
+	}
+	
+	private static void WLnm(int offset, FieldSpec spec) {
+		int base = popLong();
+		int data = pop();
+		int ra   = store(base + offset);
+		// NO PAGE FAULT AFTER HERE
+		W(ra, data, spec);
 	}
 
 	// 163 PSLF
 	@Register(Opcode.PSLF)
 	public static final void OP_PSLF() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.PSLF.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(getCodeWord());
+		int data = pop();
+		int base = popLong();
+		int ra   = store(base + desc.offset());
+		// NO PAGE FAULT AFTER HERE
+		W(ra, data, desc.field());
 	}
 
 	// 164 WLFS
 	@Register(Opcode.WLFS)
 	public static final void OP_WLFS() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.WLFS.name);
-		throw new UnexpectedException(); // FIXME
+		FieldDesc desc = FieldDesc.value(pop());
+		int base = popLong();
+		int data = pop();
+		int ra   = store(base + desc.offset());
+		// NO PAGE FAULT AFTER HERE
+		W(ra, data, desc.field());
 	}
 
 	// 165 SLDB
@@ -553,49 +612,66 @@ public class MOP1xx {
 	@Register(Opcode.SGDB)
 	public static final void OP_SGDB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.SGDB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = getCodeByte();
+		write16(Processor.GF + alpha + 1, pop());
+		write16(Processor.GF + alpha + 0, pop());
+		// NO PAGE FAULT AFTER HERE
 	}
 
 	// 167 LLKB
 	@Register(Opcode.LLKB)
 	public static final void OP_LLKB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.LLKB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = getCodeByte();
+		pushLong(fetchLink(alpha));
 	}
 
 	// 170 RKIB
 	@Register(Opcode.RKIB)
 	public static final void OP_RKIB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RKIB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = getCodeByte();
+		int va    = fetchLink(alpha);
+		push(read16(va));
 	}
 
 	// 171 RKDIB
 	@Register(Opcode.RKDIB)
 	public static final void OP_RKDIB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.RKDIB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = getCodeByte();
+		int va    = fetchLink(alpha);
+		push(read16(va + 0));
+		push(read16(va + 1));
 	}
 
 	// 172 LKB
 	@Register(Opcode.LKB)
 	public static final void OP_LKB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.LKB.name);
-		throw new UnexpectedException(); // FIXME
+		int alpha = getCodeByte();
+		SP++; // recover();
+		int link = pop();
+		write16MDS(Processor.LF, (link - alpha));
 	}
 
 	// 173 SHIFT
 	@Register(Opcode.SHIFT)
 	public static final void OP_SHIFT() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.SHIFT.name);
-		throw new UnexpectedException(); // FIXME
+		int shift = pop();
+		int u     = pop();
+		push(shift(u, shift));
 	}
 
 	// 174 SHIFTSB
 	@Register(Opcode.SHIFTSB)
 	public static final void OP_SHIFTSB() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.SHIFTSB.name);
-		throw new UnexpectedException(); // FIXME
+		int shift = signExtend(getCodeByte());
+		int u     = pop();
+		if (shift < -15 || 15 < shift) error();
+		push(shift(u, shift));
 	}
 
 }
