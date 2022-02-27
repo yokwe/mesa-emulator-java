@@ -418,8 +418,8 @@ public class MOP1xx {
 	@Register(Opcode.R0F)
 	public static final void OP_R0F() {
 		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.R0F.name);
-		FieldSpec field = FieldSpec.value(getCodeByte());
-		RFnm(0, field);
+		FieldSpec spec = FieldSpec.value(getCodeByte());
+		RFnm(0, spec);
 	}
 
 	// 146 RF
