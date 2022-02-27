@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import yokwe.majuro.opcode.Interpreter;
 import yokwe.majuro.opcode.Opcode;
+import yokwe.majuro.type.BytePair;
 import yokwe.majuro.util.StackUtil;
 
 public class MOP1xxTest extends Base {
@@ -630,5 +631,157 @@ public class MOP1xxTest extends Base {
 		WLDILnm(Opcode.WLDILP, 7, 5);
 	}
 	
+	private void RSn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int index = 0x30;
+		int base  = 0x1000;
+		int sa    = base + (n + index) / 2;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16MDS(sa, value);
+		push(base);
+		push(index);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		int expect = ((n + index) & 1) == 0 ? Types.highByte(value) : Types.lowByte(value);
+		assertEquals(expect, stack[0]);
+		// memory
+	}
+	@Test
+	public void RS_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		RSn(Opcode.RS, 20);
+	}
+	@Test
+	public void RS_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		RSn(Opcode.RS, 21);
+	}
 	
+	private void RLSn(Opcode opcode, int n) {
+		int value = 0xCAFE;
+		int index = 0x30;
+		int base  = 0x30_0000;
+		int va    = base + (n + index) / 2;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16(va, value);
+		pushLong(base);
+		push(index);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		int expect = ((n + index) & 1) == 0 ? Types.highByte(value) : Types.lowByte(value);
+		assertEquals(expect, stack[0]);
+		// memory
+	}
+	@Test
+	public void RLS_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		RLSn(Opcode.RLS, 20);
+	}
+	@Test
+	public void RLS_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		RLSn(Opcode.RLS, 21);
+	}
+	
+	private void WSn(Opcode opcode, int n) {
+		BytePair word = BytePair.value(0xCAFE);
+		int data  = 0xAABB;
+		int index = 0x30;
+		int base  = 0x1000;
+		int sa    = base + (n + index) / 2;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16MDS(sa, word.value);
+		push(data);
+		push(base);
+		push(index);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		if (((n + index) & 1) == 0) {
+			// left
+			word.left(data);
+		} else {
+			// right
+			word.right(data);
+		}
+		assertEquals(word.value, read16MDS(sa));
+		// memory
+	}
+	@Test
+	public void WS_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		WSn(Opcode.WS, 20);
+	}
+	@Test
+	public void WS_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		WSn(Opcode.WS, 21);
+	}
+
+	private void WLSn(Opcode opcode, int n) {
+		BytePair word = BytePair.value(0xCAFE);
+		int data  = 0xAABB;
+		int index = 0x30;
+		int base  = 0x30_0000;
+		int va    = base + (n + index) / 2;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, n));
+		// data
+		write16(va, word.value);
+		push(data);
+		pushLong(base);
+		push(index);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(0, SP);
+		// stack contents
+		if (((n + index) & 1) == 0) {
+			// left
+			word.left(data);
+		} else {
+			// right
+			word.right(data);
+		}
+		assertEquals(word.value, read16(va));
+		// memory
+	}
+	@Test
+	public void WLS_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		WLSn(Opcode.WLS, 20);
+	}
+	@Test
+	public void WLS_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		WLSn(Opcode.WLS, 21);
+	}
+
+
 }
