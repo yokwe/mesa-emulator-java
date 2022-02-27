@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import yokwe.majuro.opcode.Interpreter;
 import yokwe.majuro.opcode.Opcode;
-import yokwe.majuro.type.BytePair;
+import yokwe.majuro.type.*;
 import yokwe.majuro.util.StackUtil;
 
 public class MOP1xxTest extends Base {
@@ -783,5 +783,133 @@ public class MOP1xxTest extends Base {
 		WLSn(Opcode.WLS, 21);
 	}
 
+	private void R0F(Opcode opcode, int field, int expect) {
+		logger.info("expect %X", expect);
+
+		int value = 0xCAFE;
+		int base  = 0x1000;
+		int sa    = base;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, field));
+		// data
+		write16MDS(sa, value);
+		push(base);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(expect, stack[0]);
+		// memory
+	}
+	@Test
+	public void R0F_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		R0F(Opcode.R0F, FieldSpec.value().pos( 0).size(3).value, 0xC);
+	}
+	@Test
+	public void R0F_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		R0F(Opcode.R0F, FieldSpec.value().pos( 4).size(3).value, 0xA);
+	}
+	@Test
+	public void R0F_C() {
+		logger.info(StackUtil.getCallerMethodName());
+		R0F(Opcode.R0F, FieldSpec.value().pos( 8).size(3).value, 0xF);
+	}
+	@Test
+	public void R0F_D() {
+		logger.info(StackUtil.getCallerMethodName());
+		R0F(Opcode.R0F, FieldSpec.value().pos(12).size(3).value, 0xE);
+	}
+	
+	private void RF(Opcode opcode, int offset, int field, int expect) {
+		int value = 0xCAFE;
+		int base  = 0x1000;
+		int sa    = base;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, offset));
+		writeReal16(ra_PC + 1, Types.toCARD16(field, 0));
+		// data
+		write16MDS(sa + offset, value);
+		push(base);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(expect, stack[0]);
+		// memory
+	}
+	@Test
+	public void RF_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		RF(Opcode.RF, 20, FieldSpec.value().pos( 0).size(3).value, 0xC);
+	}
+	@Test
+	public void RF_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		RF(Opcode.RF, 20, FieldSpec.value().pos( 4).size(3).value, 0xA);
+	}
+	@Test
+	public void RF_C() {
+		logger.info(StackUtil.getCallerMethodName());
+		RF(Opcode.RF, 20, FieldSpec.value().pos( 8).size(3).value, 0xF);
+	}
+	@Test
+	public void RF_D() {
+		logger.info(StackUtil.getCallerMethodName());
+		RF(Opcode.RF, 20, FieldSpec.value().pos(12).size(3).value, 0xE);
+	}
+	
+	private void RL0F(Opcode opcode, int field, int expect) {
+		logger.info("expect %X", expect);
+
+		int value = 0xCAFE;
+		int base  = 0x30_0000;
+		int va    = base;
+		// opcode
+		writeReal16(ra_PC + 0, Types.toCARD16(opcode.code, field));
+		// data
+		write16(va, value);
+		pushLong(base);
+		// execute
+		Interpreter.execute();
+		// check result
+		// pc
+		assertEquals(savedPC + opcode.len, PC());
+		// sp
+		assertEquals(1, SP);
+		// stack contents
+		assertEquals(expect, stack[0]);
+		// memory
+	}
+	@Test
+	public void RL0F_A() {
+		logger.info(StackUtil.getCallerMethodName());
+		RL0F(Opcode.RL0F, FieldSpec.value().pos( 0).size(3).value, 0xC);
+	}
+	@Test
+	public void RL0F_B() {
+		logger.info(StackUtil.getCallerMethodName());
+		RL0F(Opcode.RL0F, FieldSpec.value().pos( 4).size(3).value, 0xA);
+	}
+	@Test
+	public void RL0F_C() {
+		logger.info(StackUtil.getCallerMethodName());
+		RL0F(Opcode.RL0F, FieldSpec.value().pos( 8).size(3).value, 0xF);
+	}
+	@Test
+	public void RL0F_D() {
+		logger.info(StackUtil.getCallerMethodName());
+		RL0F(Opcode.RL0F, FieldSpec.value().pos(12).size(3).value, 0xE);
+	}
+	
 
 }
