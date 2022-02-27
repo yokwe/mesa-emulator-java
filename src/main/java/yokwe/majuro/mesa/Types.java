@@ -114,4 +114,8 @@ public final class Types {
 		return data;
 	}
 
+	public static @Mesa.INT16 int signExtend(@Mesa.CARD8 int z) {
+		return (byte)z;
+	}
+
 }
