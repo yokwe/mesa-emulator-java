@@ -4,6 +4,7 @@ import static yokwe.majuro.mesa.Constants.*;
 import static yokwe.majuro.mesa.Processor.*;
 
 import yokwe.majuro.type.FieldSpec;
+import yokwe.majuro.type.GlobalOverhead;
 import yokwe.majuro.type.ProcessStateBlock;
 import yokwe.majuro.util.FormatLogger;
 
@@ -448,6 +449,14 @@ public final class Memory {
 		return psbHandle / ProcessStateBlock.WORD_SIZE;
 	}
 	
+	
+	//
+	// LF and GF
+	//
+	public static @Mesa.LONG_POINTER int globalBase(@Mesa.LONG_POINTER int frame) {
+		return frame - GlobalOverhead.WORD_SIZE;
+	}
+
 	
 	//
 	// CB and PC
