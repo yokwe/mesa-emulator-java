@@ -6,6 +6,7 @@ import static yokwe.majuro.mesa.Processor.*;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
+import yokwe.majuro.mesa.Types;
 import yokwe.majuro.opcode.Opcode.Register;
 import yokwe.majuro.type.*;
 
@@ -398,7 +399,7 @@ public class MOP1xx {
 		int alpha = getCodeByte();
 		int index = pop();
 		int ptr   = pop();
-		int data  = pop() & BYTE_MASK;
+		int data  = Types.toCARD8(pop());
 		write8MDS(ptr, alpha + index, data);
 	}
 
@@ -409,7 +410,7 @@ public class MOP1xx {
 		int alpha = getCodeByte();
 		int index = pop();
 		int ptr   = popLong();
-		int data  = pop() & BYTE_MASK;
+		int data  = Types.toCARD8(pop());
 		write8(ptr, alpha + index, data);
 	}
 
