@@ -53,25 +53,27 @@ public final class Types {
 	
 	// 2.1.3.1 Basic Logical Operators
 	public static int shift(@Mesa.CARD16 int data, int count) {
+		data = toCARD16(data);
 		if (0 < count) {
-			if (16 <= count) return 0;
+			if (16 < count) count = 16;
 			return toCARD16(data << count);
 		}
 		if (count < 0) {
-			if (count <= -16) return 0;
+			if (count < -16) count = -16;
 			return toCARD16(data >>> (-count));
 		}
 		return data;
 	}
 	
 	public static int rotate(@Mesa.CARD16 int data, int count) {
+		data = toCARD16(data);
 		if (0 < count) {
-			if (16 <= count) count = count % 16;
+			count = count % 16;
 			int t = data << count;
 			return toCARD16(t) | toCARD16(t >> 16);
 		}
 		if (count < 0) {
-			if (count <= -16) count = -(-count % 16);
+			count = -(-count % 16);
 			int t = data << (16 + count);
 			return toCARD16(t) | toCARD16(t >> 16);
 		}
@@ -79,16 +81,20 @@ public final class Types {
 	}
 	
 	// 2.1.3.2 Basic Arithmetic Operator
+	// This operation is similar to logical shift, except that
+	// when shifting right, a copy of bit zero (the sign bit) is shifted into the left of data;
+	// when shifting left, bit zero is undisturbed
 	public static @Mesa.INT16 int arithShift(@Mesa.INT16 int data, int count) {
+		data = (short)data; // extends sign bit as short
 		if (0 < count) {
-			if (16 <= count) return 0;
-			return toCARD16(((data << count) & 0x7fff) | (data & 0x8000));
+			if (15 < count) count = 15;
+			return toCARD16(((data << count) & 0x7FFF) | (data & 0x8000));  // keep sign bit
 		}
 		if (count < 0) {
-			if (count <= -16) return 0;
-			return toCARD16(data >> (-count));
+			if (count < -15) count = -15;
+			return toCARD16(data >> (-count)); // operator >> keeps sign bit
 		}
-		return data;
+		return toCARD16(data);
 	}
 	
 	public static @Mesa.CARD32 int longShift(@Mesa.CARD32 int data, int count) {
@@ -104,18 +110,18 @@ public final class Types {
 	}
 	public static @Mesa.INT32 int longArithShift(@Mesa.INT32 int data, int count) {
 		if (0 < count) {
-			if (32 <= count) return 0;
-			return ((data << count) & 0x7fffffff) | (data & 0x80000000);
+			if (31 < count) count = 31;
+			return ((data << count) & 0x7FFF_FFFF) | (data & 0x8000_0000);  // keep sign bit
 		}
 		if (count < 0) {
-			if (count <= -32) return 0;
-			return data >> -count;
+			if (count < -31) count = -31;
+			return data >> -count; // operator >> keeps sign bit
 		}
 		return data;
 	}
 
 	public static @Mesa.INT16 int signExtend(@Mesa.CARD8 int z) {
-		return (byte)z;
+		return toCARD16((byte)z);
 	}
 
 }
