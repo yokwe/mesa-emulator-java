@@ -51,6 +51,14 @@ public final class Types {
 		return toCARD16((left << BYTE_BITS) | (right & BYTE_MASK));
 	}
 	
+	//
+	// toINT16
+	//
+	public static @Mesa.INT16 int toINT16(@Mesa.CARD16 int value) {
+		return (short)toCARD16(value);
+	}
+	
+	
 	// 2.1.3.1 Basic Logical Operators
 	public static int shift(@Mesa.CARD16 int data, int count) {
 		data = toCARD16(data);
