@@ -529,4 +529,7 @@ public final class Memory {
 		return Types.toCARD16(left, right);
 	}
 	
+	public static @Mesa.CARD16 int readCode(@Mesa.CARD16 int offset) {
+		return read16(CB() + offset);
+	}
 }
