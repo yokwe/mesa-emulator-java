@@ -13,7 +13,7 @@ import yokwe.majuro.type.FieldDesc;
 import yokwe.majuro.type.FieldSpec;
 import yokwe.majuro.type.NibblePair;
 
-public class MOP1xx {
+public final class MOP1xx {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	// 100 R0
