@@ -3,7 +3,6 @@ package yokwe.majuro.mesa;
 import static org.junit.jupiter.api.Assertions.*;
 import static yokwe.majuro.mesa.Constants.*;
 import static yokwe.majuro.mesa.Memory.*;
-import static yokwe.majuro.mesa.Processor.*;
 
 import org.junit.jupiter.api.Test;
 
