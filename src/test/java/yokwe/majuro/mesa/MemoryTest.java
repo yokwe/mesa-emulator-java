@@ -373,4 +373,16 @@ public class MemoryTest extends Base {
 		// execute
 		assertEquals(value, Memory.getCodeWord());
 	}
+	@Test
+	public void readCode() {
+		logger.info(StackUtil.getCallerMethodName());
+		int value  = 0xCAFE;
+		int offset = 0x10;
+		PC(offset);
+		int va = CB() + offset;
+		// data
+		Memory.write16(va, value);
+		// execute
+		assertEquals(value, Memory.readCode(offset));
+	}
 }
