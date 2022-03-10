@@ -231,12 +231,23 @@ declConstant
 constantType
     :   constantTypeNumeric
     |   pointerType
+    |   referenceType
     ;
 
 constantTypeNumeric
-    :   CARDINAL # ConstantTypeNumericCARDINAL
+    :   CARDINAL      # ConstantTypeNumericCardinal
+    |   LONG CARDINAL # ConstantTypeNumericLongCardinal
     ;
 
 constantValue
+    :   constantValueQName
+    |   constantValueConstant
+    ;
+    
+constantValueQName
     :   name+=ID ('.' name+=ID)* // name of qualified field name of public static final int or long
+    ;
+
+constantValueConstant
+    :   constant
     ;
