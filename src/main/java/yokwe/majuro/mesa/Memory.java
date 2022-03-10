@@ -1,11 +1,15 @@
 package yokwe.majuro.mesa;
 
-import static yokwe.majuro.mesa.Constants.*;
-import static yokwe.majuro.mesa.Processor.*;
+import static yokwe.majuro.mesa.Constants.MAX_REALMEMORY_PAGE_SIZE;
+import static yokwe.majuro.mesa.Constants.PAGE_BITS;
+import static yokwe.majuro.mesa.Constants.PAGE_MASK;
+import static yokwe.majuro.mesa.Constants.PAGE_SIZE;
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
+import static yokwe.majuro.mesa.Processor.error;
 
-import yokwe.majuro.type.FieldSpec;
-import yokwe.majuro.type.GlobalOverhead;
-import yokwe.majuro.type.ProcessStateBlock;
+import yokwe.majuro.type.PrincOps.FieldSpec;
+import yokwe.majuro.type.PrincOps.GlobalOverhead;
+import yokwe.majuro.type.PrincOps.ProcessStateBlock;
 import yokwe.majuro.util.FormatLogger;
 
 
@@ -148,6 +152,13 @@ public final class Memory {
 		}
 	}
 	
+	//
+	// Memory Limits
+	//
+	public static @Mesa.CARD32 int getVPSize() {
+		// returns number of virtual page
+		return vpSize;
+	}
 	
 	//
 	// REAL MEMORY

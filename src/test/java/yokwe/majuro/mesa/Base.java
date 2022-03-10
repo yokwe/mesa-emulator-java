@@ -1,7 +1,14 @@
 package yokwe.majuro.mesa;
 
-import static yokwe.majuro.mesa.Constants.*;
-import static yokwe.majuro.type.MemoryAccess.*;
+import static yokwe.majuro.mesa.Constants.PAGE_MASK;
+import static yokwe.majuro.mesa.Constants.PAGE_SIZE;
+import static yokwe.majuro.mesa.Constants.mAV;
+import static yokwe.majuro.mesa.Constants.mETT;
+import static yokwe.majuro.mesa.Constants.mGFT;
+import static yokwe.majuro.mesa.Constants.mPDA;
+import static yokwe.majuro.mesa.Constants.mSD;
+import static yokwe.majuro.type.MemoryAccess.WRITE;
+import static yokwe.majuro.type.MemoryAccess.WRITE_READ;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -10,7 +17,19 @@ import org.junit.jupiter.api.BeforeEach;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.opcode.Interpreter;
-import yokwe.majuro.type.*;
+import yokwe.majuro.type.PrincOps.AVItem;
+import yokwe.majuro.type.PrincOps.AVItemType;
+import yokwe.majuro.type.PrincOps.AllocationVector;
+import yokwe.majuro.type.PrincOps.BLOCK;
+import yokwe.majuro.type.PrincOps.EscTrapTable;
+import yokwe.majuro.type.PrincOps.FSIndex;
+import yokwe.majuro.type.PrincOps.GFTIndex;
+import yokwe.majuro.type.PrincOps.GlobalFrameTable;
+import yokwe.majuro.type.PrincOps.GlobalOverhead;
+import yokwe.majuro.type.PrincOps.LinkType;
+import yokwe.majuro.type.PrincOps.LocalOverhead;
+import yokwe.majuro.type.PrincOps.NewProcDesc;
+import yokwe.majuro.type.PrincOps.SystemData;
 
 public class Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();

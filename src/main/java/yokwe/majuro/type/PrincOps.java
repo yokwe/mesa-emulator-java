@@ -5,7 +5,7 @@ import yokwe.majuro.mesa.Memory;
 import yokwe.majuro.mesa.Mesa;
 import yokwe.majuro.mesa.Types;
 
-public final class Type {
+public final class PrincOps {
     
     //
     // BOOLEAN: TYPE = BOOLEAN;
@@ -223,6 +223,8 @@ public final class Type {
             super(base, access);
         }
     }
+    // IGNORE PageCount: TYPE = LONG CARDINAL;
+    // IGNORE PageNumber: TYPE = LONG CARDINAL;
     
     //
     // UNSPECIFIED: TYPE = UNSPECIFIED;

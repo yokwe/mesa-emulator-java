@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import yokwe.majuro.opcode.Interpreter;
 import yokwe.majuro.opcode.Opcode;
+import yokwe.majuro.type.PrincOps.*;
 
 public class ESC0xxTest extends Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();

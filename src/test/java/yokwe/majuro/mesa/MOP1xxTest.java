@@ -1,15 +1,31 @@
 package yokwe.majuro.mesa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static yokwe.majuro.mesa.Memory.*;
-import static yokwe.majuro.mesa.Processor.*;
+import static yokwe.majuro.mesa.Memory.PC;
+import static yokwe.majuro.mesa.Memory.read16;
+import static yokwe.majuro.mesa.Memory.read16MDS;
+import static yokwe.majuro.mesa.Memory.write16;
+import static yokwe.majuro.mesa.Memory.write16MDS;
+import static yokwe.majuro.mesa.Memory.write32;
+import static yokwe.majuro.mesa.Memory.write32MDS;
+import static yokwe.majuro.mesa.Memory.writeReal16;
+import static yokwe.majuro.mesa.Processor.GF;
+import static yokwe.majuro.mesa.Processor.LF;
+import static yokwe.majuro.mesa.Processor.SP;
+import static yokwe.majuro.mesa.Processor.push;
+import static yokwe.majuro.mesa.Processor.pushLong;
+import static yokwe.majuro.mesa.Processor.savedPC;
+import static yokwe.majuro.mesa.Processor.stack;
 
 import org.junit.jupiter.api.Test;
 
 import yokwe.majuro.opcode.Interpreter;
 import yokwe.majuro.opcode.Opcode;
-import yokwe.majuro.type.*;
+import yokwe.majuro.type.PrincOps.BytePair;
+import yokwe.majuro.type.PrincOps.FieldDesc;
+import yokwe.majuro.type.PrincOps.FieldSpec;
 import yokwe.majuro.util.StackUtil;
+
 
 public class MOP1xxTest extends Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();

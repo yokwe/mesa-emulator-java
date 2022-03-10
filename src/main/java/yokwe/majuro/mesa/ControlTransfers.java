@@ -1,13 +1,15 @@
 package yokwe.majuro.mesa;
 
-import static yokwe.majuro.mesa.Memory.*;
-import static yokwe.majuro.mesa.Processor.*;
+import static yokwe.majuro.mesa.Memory.CB;
+import static yokwe.majuro.mesa.Memory.globalBase;
+import static yokwe.majuro.mesa.Memory.read32;
+import static yokwe.majuro.mesa.Processor.abort;
 
 import yokwe.majuro.UnexpectedException;
-import yokwe.majuro.type.GlobalOverhead;
-import yokwe.majuro.type.GlobalWord;
 import yokwe.majuro.type.MemoryAccess;
-import yokwe.majuro.type.XferType;
+import yokwe.majuro.type.PrincOps.GlobalOverhead;
+import yokwe.majuro.type.PrincOps.GlobalWord;
+import yokwe.majuro.type.PrincOps.XferType;
 
 public final class ControlTransfers {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();

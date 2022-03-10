@@ -1,17 +1,43 @@
 package yokwe.majuro.opcode;
 
 import static yokwe.majuro.mesa.ControlTransfers.fetchLink;
-import static yokwe.majuro.mesa.Memory.*;
-import static yokwe.majuro.mesa.Processor.*;
-import static yokwe.majuro.mesa.Types.*;
+import static yokwe.majuro.mesa.Memory.getCodeByte;
+import static yokwe.majuro.mesa.Memory.getCodeWord;
+import static yokwe.majuro.mesa.Memory.read16;
+import static yokwe.majuro.mesa.Memory.read16MDS;
+import static yokwe.majuro.mesa.Memory.read32;
+import static yokwe.majuro.mesa.Memory.read32MDS;
+import static yokwe.majuro.mesa.Memory.read8;
+import static yokwe.majuro.mesa.Memory.read8MDS;
+import static yokwe.majuro.mesa.Memory.readField;
+import static yokwe.majuro.mesa.Memory.readReal16;
+import static yokwe.majuro.mesa.Memory.store;
+import static yokwe.majuro.mesa.Memory.storeMDS;
+import static yokwe.majuro.mesa.Memory.write16;
+import static yokwe.majuro.mesa.Memory.write16MDS;
+import static yokwe.majuro.mesa.Memory.write8;
+import static yokwe.majuro.mesa.Memory.write8MDS;
+import static yokwe.majuro.mesa.Memory.writeField;
+import static yokwe.majuro.mesa.Memory.writeReal16;
+import static yokwe.majuro.mesa.Processor.GF;
+import static yokwe.majuro.mesa.Processor.LF;
+import static yokwe.majuro.mesa.Processor.SP;
+import static yokwe.majuro.mesa.Processor.error;
+import static yokwe.majuro.mesa.Processor.pop;
+import static yokwe.majuro.mesa.Processor.popLong;
+import static yokwe.majuro.mesa.Processor.push;
+import static yokwe.majuro.mesa.Processor.pushLong;
+import static yokwe.majuro.mesa.Processor.savedPC;
+import static yokwe.majuro.mesa.Types.shift;
+import static yokwe.majuro.mesa.Types.signExtend;
 
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Processor;
 import yokwe.majuro.mesa.Types;
 import yokwe.majuro.opcode.Opcode.Register;
-import yokwe.majuro.type.FieldDesc;
-import yokwe.majuro.type.FieldSpec;
-import yokwe.majuro.type.NibblePair;
+import yokwe.majuro.type.PrincOps.FieldDesc;
+import yokwe.majuro.type.PrincOps.FieldSpec;
+import yokwe.majuro.type.PrincOps.NibblePair;
 
 public final class MOP1xx {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();

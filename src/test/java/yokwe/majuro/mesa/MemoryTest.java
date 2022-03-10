@@ -1,13 +1,14 @@
 package yokwe.majuro.mesa;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static yokwe.majuro.mesa.Constants.*;
-import static yokwe.majuro.mesa.Memory.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static yokwe.majuro.mesa.Constants.WORD_BITS;
+import static yokwe.majuro.mesa.Memory.CB;
+import static yokwe.majuro.mesa.Memory.PC;
 
 import org.junit.jupiter.api.Test;
 
-import yokwe.majuro.type.BytePair;
-import yokwe.majuro.type.FieldSpec;
+import yokwe.majuro.type.PrincOps.BytePair;
+import yokwe.majuro.type.PrincOps.FieldSpec;
 import yokwe.majuro.util.StackUtil;
 
 public class MemoryTest extends Base {

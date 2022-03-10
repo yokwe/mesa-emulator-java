@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 
-import yokwe.majuro.type.CARDINAL;
+import yokwe.majuro.type.PrincOps.*;
 import yokwe.majuro.type.MemoryAccess;
 
 public class CARDINALTest extends Base {

@@ -1,11 +1,11 @@
 package yokwe.majuro.mesa;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
-import yokwe.majuro.type.Long;
 import yokwe.majuro.type.MemoryAccess;
+import yokwe.majuro.type.PrincOps.Long;
 
 public class LongTest extends Base {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();

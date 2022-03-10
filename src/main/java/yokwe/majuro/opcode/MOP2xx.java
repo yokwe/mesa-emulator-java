@@ -1,15 +1,25 @@
 package yokwe.majuro.opcode;
 
-import static yokwe.majuro.mesa.Constants.*;
-import static yokwe.majuro.mesa.Memory.*;
-import static yokwe.majuro.mesa.Processor.*;
+import static yokwe.majuro.mesa.Memory.PC;
+import static yokwe.majuro.mesa.Memory.getCodeByte;
+import static yokwe.majuro.mesa.Memory.getCodeWord;
+import static yokwe.majuro.mesa.Memory.read16MDS;
+import static yokwe.majuro.mesa.Memory.readCode;
+import static yokwe.majuro.mesa.Processor.LF;
+import static yokwe.majuro.mesa.Processor.discard;
+import static yokwe.majuro.mesa.Processor.pop;
+import static yokwe.majuro.mesa.Processor.popLong;
+import static yokwe.majuro.mesa.Processor.push;
+import static yokwe.majuro.mesa.Processor.pushLong;
+import static yokwe.majuro.mesa.Processor.recover;
+import static yokwe.majuro.mesa.Processor.savedPC;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.mesa.Debug;
 import yokwe.majuro.mesa.Types;
 import yokwe.majuro.opcode.Opcode.Register;
-import yokwe.majuro.type.BytePair;
-import yokwe.majuro.type.NibblePair;
+import yokwe.majuro.type.PrincOps.BytePair;
+import yokwe.majuro.type.PrincOps.NibblePair;
 import yokwe.majuro.util.FormatLogger;
 
 public final class MOP2xx {
@@ -582,7 +592,124 @@ public final class MOP2xx {
 	// 277 VMFIND
 	@Register(Opcode.VMFIND)
 	public static final void OP_VMFIND() {
-		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.VMFIND.name);
-		throw new UnexpectedException(); // FIXME
+		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  %-6s", savedPC, Opcode.UDCMP.name);
+		throw new UnexpectedException();
+		
+/*		
+		
+		int pRunTop = pop();
+		int rBase   = popLong();
+		int page    = popLong();
+		if (Debug.ENABLE_TRACE_OPCODE) logger.debug("TRACE %6o  VMFIND  %06X  %08X  %04X", savedPC, page, rBase, pRunTop);
+
+		boolean found = false;
+		int     pRun  = 0;
+
+
+		// CARD32 pageTop = 0 + Memory::getVPSize();
+		int pageTop = Memory.getVPSize();
+
+		// const CARD16 indexRunFirst = (VMDataInternal::pRunFirst - 0) / SIZE(VMDataInternal::Run);
+		int indexRunFirst = VMDataInternal.pRunFirst / VMDataInternal.Run.WOD_SIZE;
+
+
+		//IF page >= pageTop THEN Bug[beyondVM];
+		if (pageTop <= page) ERROR();
+
+		{
+			//vmDatabaseFullSearches = vmDatabaseFullSearches.SUCC;
+			//indexRunLow = indexRunFirst;
+			CARD16 indexRunLow = indexRunFirst;
+//			logger.debug("%s  indexRunLow  = %d", __FUNCTION__, indexRunLow);
+
+			//indexRunHigh = (pRunTop - FIRST[PRun])/SIZE[Run];
+			CARD16 indexRunHigh = (pRunTop - 0) / SIZE(VMDataInternal::Run);
+//			logger.debug("%s  indexRunHigh = %d", __FUNCTION__, indexRunHigh);
+
+			//DO  --UNTIL search terminates--
+			for(;;) {
+				//  indexRun = (indexRunLow + indexRunHigh)/2;
+				CARD16 indexRun = (indexRunLow + indexRunHigh) / 2;
+//				logger.debug("%s  indexRun = %d", __FUNCTION__, indexRun);
+
+				//pageComp = rBase[FIRST[PRun] + indexRun*SIZE[Run]].interval.page;
+				CARD32 pageComp  = ReadDbl(rBase + 0 + (indexRun * SIZE(VMDataInternal::Run)) + OFFSET(VMDataInternal::Run, interval.page));
+//				CARD32 countComp = ReadDbl(rBase + 0 + (indexRun * SIZE(VMDataInternal::Run)) + OFFSET(VMDataInternal::Run, interval.count));
+//				logger.debug("%s  pageComp  = %08X", __FUNCTION__, pageComp);
+//				logger.debug("%s  countComp = %d",   __FUNCTION__, countComp);
+
+				//IF pageComp > page
+				//  THEN indexRunHigh = indexRun - 1
+				//    -- note that indexRunHigh, a CARDINAL, might be indexDescLow-1 here.
+				//  ELSE
+				//    IF page > pageComp
+				//      THEN indexRunLow = indexRun + 1
+				//      ELSE GO TO Exact;
+				if (page < pageComp)
+					indexRunHigh = indexRun - 1;
+				else
+					if (pageComp < page) indexRunLow = indexRun + 1;
+					else {
+						// Exact => {pRun = FIRST[PRun] + indexRun*SIZE[Run]; found = TRUE};
+//						logger.debug("%s  Exact", __FUNCTION__);
+						pRun = 0 + indexRun * SIZE(VMDataInternal::Run);
+						found = 1;
+						break;
+					}
+
+//				logger.debug("%s  indexRunHigh = %d", __FUNCTION__, indexRunHigh);
+//				logger.debug("%s  indexRunLow  = %d", __FUNCTION__, indexRunLow);
+				//  IF indexRunHigh < indexRunLow THEN GO TO NotExact;
+				if (indexRunHigh < indexRunLow) {
+					//  NotExact =>
+					//    -- Assert: page>"indexRunHigh".page AND page<"indexRunHigh+1".page AND indexRunHigh+1 = indexRunLow.
+					//    IF indexRunLow = indexRunFirst THEN {pRun = pRunFirst; found = FALSE}
+					//    ELSE
+					//      BEGIN
+					//      pRun = FIRST[PRun] + indexRunHigh*SIZE[Run];
+					//      IF page < rBase[pRun].interval.page + rBase[pRun].interval.count THEN
+					//        found = TRUE
+					//      ELSE {pRun = pRun + SIZE[Run]; found = FALSE};
+					//      END;
+					if (indexRunLow == indexRunFirst) {
+						pRun = VMDataInternal::pRunFirst;
+						found = 0;
+					} else {
+						pRun = 0 + indexRunHigh * SIZE(VMDataInternal::Run);
+						const CARD32 intervalPage  = ReadDbl(rBase + pRun + OFFSET(VMDataInternal::Run, interval.page));
+						const CARD32 intervalCount = ReadDbl(rBase + pRun + OFFSET(VMDataInternal::Run, interval.count));
+//						logger.debug("%s  inervalPage = %08X  intervalCount = %d", __FUNCTION__, intervalPage, intervalCount);
+						if (page < (intervalPage + intervalCount)) {
+							found = 1;
+						} else {
+							pRun = pRun + SIZE(VMDataInternal::Run);
+							found = 0;
+						}
+					}
+					break;
+				}
+			}
+		}
+		//ENDLOOP;  --DO UNTIL search terminates--
+		//EXITS
+		//  Exact => {pRun = FIRST[PRun] + indexRun*SIZE[Run]; found = TRUE};
+		//  NotExact =>
+		//    -- Assert: page>"indexRunHigh".page AND page<"indexRunHigh+1".page AND indexRunHigh+1 = indexRunLow.
+		//    IF indexRunLow = indexRunFirst THEN {pRun = pRunFirst; found = FALSE}
+		//    ELSE
+		//      BEGIN
+		//      pRun = FIRST[PRun] + indexRunHigh*SIZE[Run];
+		//      IF page < rBase[pRun].interval.page + rBase[pRun].interval.count THEN
+		//        found = TRUE
+		//      ELSE {pRun = pRun + SIZE[Run]; found = FALSE};
+		//      END;
+		//END;  --scope of SameAsLastTime--
+
+		Push(found);
+		Push(pRun);
+//		logger.debug("%s  found %d  pRun %04X", __FUNCTION__, found, pRun);
+		
+		
+*/
 	}
 }

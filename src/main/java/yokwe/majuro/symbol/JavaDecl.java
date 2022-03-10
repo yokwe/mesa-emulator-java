@@ -1944,13 +1944,13 @@ public class JavaDecl {
 	//
 	// generate
 	//
-	public static void generate(String symbolDirPath, String outputDirPath, String packageName, boolean addPredefinedType) {
+	public static void generate(String symbolDirPath, String outputDirPath, String packageName) {
 		File symbolDir = new File(symbolDirPath);
 		
-		String[] array = symbolDir.list((d, n) -> n.endsWith(".symbol"));
-		Arrays.sort(array);
-		for(var e: array) {
-			generateFile(e, outputDirPath, packageName, addPredefinedType);
+		File[] files = symbolDir.listFiles((d, n) -> n.endsWith(".symbol"));
+		Arrays.sort(files);
+		for(var e: files) {
+			generateFile(e.getAbsolutePath(), outputDirPath, packageName, e.getName().equals("PrincOps.symbol"));
 		}
 	}
 	public static void generateFile(String symbolFilePath, String outputDirPath, String packageName, boolean addPredefinedType) {
@@ -1973,6 +1973,7 @@ public class JavaDecl {
 			out.println("import yokwe.majuro.mesa.Memory;");
 			out.println("import yokwe.majuro.mesa.Mesa;");
 			out.println("import yokwe.majuro.mesa.Types;");
+			out.println("import yokwe.majuro.type.PrincOps.*;");
 			out.println();
 			
 			out.println("public final class %s {", StringUtil.toJavaName(name));
@@ -1986,14 +1987,11 @@ public class JavaDecl {
 		javaDecl.moveFile();
 	}
 
-	public static final String  TYPE_RULE_FILE_PATH      = Symbol.PATH_RULE_FILE_TYPE;
-	public static final String  TYPE_OUTPUT_DIR_PATH     = "src/main/java";
-	public static final String  TYPE_PACKAGE_NAME        = "yokwe.majuro.type";
-	public static final boolean TYPE_ADD_PREDEFINED_TYPE = true;
 	public static void main(String[] args) {
 		logger.info("START");
 		
-		generateFile(TYPE_RULE_FILE_PATH, TYPE_OUTPUT_DIR_PATH, TYPE_PACKAGE_NAME, TYPE_ADD_PREDEFINED_TYPE);
+		generate("data/type/main", "src/main/java", "yokwe.majuro.type");
+		generate("data/type/test", "src/test/java", "yokwe.majuro.type");
 		
 		logger.info("STOP");
 	}

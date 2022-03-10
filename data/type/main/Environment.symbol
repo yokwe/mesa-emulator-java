@@ -1,0 +1,10 @@
+Environment: SYMBOL =
+BEGIN
+    PageNumber: TYPE = LONG CARDINAL; // [0..2**24-2]
+    firstPageNumber: PageNumber = 0;
+    lastPageNumber:  PageNumber = 16777214; // 2**24-2
+    
+    PageCount: TYPE = LONG CARDINAL; // [0..2**24-1]
+    firstPageCount: PageCount = 0;
+    lastPageCount:  PageCount = 16777215; // 2**24-2
+END.

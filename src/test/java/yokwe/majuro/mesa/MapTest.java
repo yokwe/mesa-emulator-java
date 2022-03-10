@@ -1,8 +1,8 @@
 package yokwe.majuro.mesa;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 public class MapTest extends Base {	
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
