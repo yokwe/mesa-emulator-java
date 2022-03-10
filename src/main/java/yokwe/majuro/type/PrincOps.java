@@ -839,9 +839,13 @@ public final class PrincOps {
             return BLOCK.longPointer(longPointer, access);
         }
     }
+    
     //
     // GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constants.mGFT;
     //
+    public static final GlobalFrameTable GFT(MemoryAccess access) {
+        return GlobalFrameTable.longPointer(yokwe.majuro.mesa.Constants.mGFT, access);
+    }
     
     //
     // GlobalFrameTable: TYPE = ARRAY GFTIndex OF GFTItem;
@@ -1985,9 +1989,13 @@ public final class PrincOps {
         }
         
     }
+    
     //
     // AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constants.mAV;
     //
+    public static final AllocationVector AV(MemoryAccess access) {
+        return AllocationVector.pointer(yokwe.majuro.mesa.Constants.mAV, access);
+    }
     
     //
     // AllocationVector: TYPE = ARRAY FSIndex OF AVItem;
@@ -2290,9 +2298,13 @@ public final class PrincOps {
             return LONG_UNSPECIFIED.longPointer(longPointer, access);
         }
     }
+    
     //
     // SD: POINTER TO SystemData = yokwe.majuro.mesa.Constants.mSD;
     //
+    public static final SystemData SD(MemoryAccess access) {
+        return SystemData.pointer(yokwe.majuro.mesa.Constants.mSD, access);
+    }
     
     //
     // SystemData: TYPE = ARRAY SDIndex OF ControlLink;
@@ -2363,9 +2375,13 @@ public final class PrincOps {
             super(base, access);
         }
     }
+    
     //
     // ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constants.mETT;
     //
+    public static final EscTrapTable ETT(MemoryAccess access) {
+        return EscTrapTable.pointer(yokwe.majuro.mesa.Constants.mETT, access);
+    }
     
     //
     // EscTrapTable: TYPE = ARRAY BYTE OF ControlLink;
@@ -2464,9 +2480,11 @@ public final class PrincOps {
         }
         
     }
+    
     //
     // StackDepth: CARDINAL = yokwe.majuro.mesa.Constants.cSS;
     //
+    public static final @Mesa.CARD16 int StackDepth = yokwe.majuro.mesa.Constants.cSS;
     
     //
     // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): LocalFrameHandle, data (16): BLOCK];
@@ -2575,9 +2593,13 @@ public final class PrincOps {
             return LONG_UNSPECIFIED.longPointer(longPointer, access);
         }
     }
+    
     //
     // PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constants.mPDA;
     //
+    public static final ProcessDataArea PDA(MemoryAccess access) {
+        return ProcessDataArea.longPointer(yokwe.majuro.mesa.Constants.mPDA, access);
+    }
     
     //
     // ProcessDataArea: TYPE = RECORD[ready (0:0..15): Queue, count (1:0..15): CARDINAL, unused (2:0..15): UNSPECIFIED, available (3:0..79): ARRAY [0..4] OF UNSPECIFIED, state (8:0..127): StateAllocationTable, interrupt (16:0..511): InterruptVector, fault (48:0..255): FaultVector, block (0): ARRAY PsbIndex OF ProcessStateBlock];
