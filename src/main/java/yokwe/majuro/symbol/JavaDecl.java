@@ -49,6 +49,10 @@ public class JavaDecl {
 			logger.error("type %s", type.toMesaDecl());
 			throw new UnexpectedException("Unexpected");
 		}
+		public static void unexpected(Constant cons) {
+			logger.error("const %s", cons.toMesaDecl());
+			throw new UnexpectedException("Unexpected");
+		}
 		
 		protected final JavaDecl javaDecl;
 		
@@ -636,73 +640,112 @@ public class JavaDecl {
 	// ProcessConsTop
 	//
 	private static class ProcessConsTop extends ProcessType {
+		Constant cons;
+		Type     type;
 		protected ProcessConsTop(JavaDecl javaDecl) {
 			super(javaDecl);
+			cons = javaDecl.cons;
+			type = javaDecl.cons.type.realType();
 		}
 
 		@Override
 		public void process() {
 			final var out = javaDecl.out;
+			out.println();
 			out.println("//");
 			out.println("// %s", javaDecl.cons.toMesaDecl());
 			out.println("//");
 			// FIXME
-			// accept(javaDecl.type);
+			accept(type);
 		}
 
 		@Override
 		protected void processTypeBoolean(TypeBoolean type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - BOOLEAN");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeEnum(TypeEnum type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - ENUM");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeSubrange(TypeSubrange type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - SUBRANGE");
+			
+			final var out = javaDecl.out;
+
+			if (type.name.equals(Type.CARDINAL.name)) {
+				out.println("public static final @Mesa.CARD16 int %s = %s;", StringUtil.toJavaName(cons.name), cons.valueString);
+				return;
+			}
+			
+			if (type.name.equals(Type.LONG_CARDINAL.name)) {
+				out.println("public static final @Mesa.CARD32 int %s = %s;", StringUtil.toJavaConstName(cons.name), cons.valueString);
+				return;
+			}
+			
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - ARRAY REF");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - ARRAY SUBRANGE");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypePointeShort(TypePointerShort type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - SHORT POINTER");
+			final var out = javaDecl.out;
+			
+			String targetTypeName = StringUtil.toJavaName(type.pointerTarget().realType().name);
+			out.println("public static final %s %s(MemoryAccess access) {", targetTypeName, StringUtil.toJavaName(cons.name));
+			out.println("return %s.pointer(%s, access);", targetTypeName, cons.valueString);
+			out.println("}");
 		}
 
 		@Override
 		protected void processTypePointeLong(TypePointerLong type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - LONG POINTER");
+			final var out = javaDecl.out;
+			
+			String targetTypeName = StringUtil.toJavaName(type.pointerTarget().realType().name);
+			out.println("public static final %s %s(MemoryAccess access) {", targetTypeName, StringUtil.toJavaName(cons.name));
+			out.println("return %s.longPointer(%s, access);", targetTypeName, cons.valueString);
+			out.println("}");
 		}
 
 		@Override
 		protected void processTypeBitField16(TypeBitField16 type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - BIT FIELD 16");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - BIT FIELD 32");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - MULTI WORD");
+			unexpected(cons);
 		}
 
 		@Override
 		protected void processTypeReference(TypeReference type) {
-			// TODO Auto-generated method stub
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - REFERENCE");
+			unexpected(cons);
 		}
 		
 	}
@@ -885,7 +928,9 @@ public class JavaDecl {
 				// close class body
 				out.println("}");
 			} else {
-				javaDecl.out.println("// IGNORE %s", type.toMesaDecl());
+				if (!type.name.contains("#")) {
+					javaDecl.out.println("// IGNORE %s", type.toMesaDecl());
+				}
 			}
 		}
 		@Override
@@ -920,7 +965,9 @@ public class JavaDecl {
 		// REFERENCE
 		@Override
 		protected void processTypeReference(TypeReference type) {
-			javaDecl.out.println("// IGNORE %s", type.toMesaDecl());
+			if (!type.name.contains("#")) {
+				javaDecl.out.println("// IGNORE %s", type.toMesaDecl());
+			}
 		}
 	}
 	

@@ -97,7 +97,7 @@ public class Constant implements Comparable<Constant> {
 					logger.error("  cons %s", cons);
 					throw new UnexpectedException("cons needs fix");
 				}
-				return cons.numericValue;
+				return getNumericValue(cons.valueString);
 			} else {
 				// constant is defined in java class file
 				return ClassUtil.getStaticNumericValue(string);
@@ -108,44 +108,31 @@ public class Constant implements Comparable<Constant> {
 	public final String name;
 	public final Type   type;
 	public final String valueString;
-	
-	public long numericValue;
 
 	public boolean needsFix;
 	public void fix() {
 		if (needsFix) {
 			type.fix();
-			Long value = Constant.getNumericValue(valueString);
-			if (!type.needsFix && value != null) {
-				numericValue = value.intValue();
+			if (!type.needsFix) {
 				needsFix = false;
 				
-				// sanity check
-				if (type instanceof TypeSubrange) {
-					TypeSubrange typeSubrange = type.toTypeSubrange();
-					typeSubrange.checkValue(numericValue);
-				} else if (type instanceof TypePointerShort) {
-					TypePointerShort typePointerShort = type.toTypePointerShort();
-					typePointerShort.checkValue(numericValue);
-				} else if (type instanceof TypePointerLong) {
-					TypePointerLong typePointerLong = type.toTypePointerLong();
-					typePointerLong.checkValue(numericValue);
-				} else {
-					logger.error("Unexpected");
-					logger.error("  this  %s", this);
-					throw new UnexpectedException("Unexpected");
-				}
+				Type realType = type.realType();
+				if (realType instanceof TypeSubrange)     return;
+				if (realType instanceof TypePointerShort) return;
+				if (realType instanceof TypePointerLong)  return;
+				
+				logger.error("Unexpected");
+				logger.error("  this      %s", this);
+				logger.error("  realType  %s", realType.getClass().getSimpleName());
+				throw new UnexpectedException("Unexpected");
 			}
 		}
-
 	}
 	
 	public Constant(String name, Type type, String valueString) {
 		this.name        = name;
 		this.type        = type;
 		this.valueString = valueString;
-		
-		this.numericValue = 0;
 		
 		this.needsFix = true;
 		

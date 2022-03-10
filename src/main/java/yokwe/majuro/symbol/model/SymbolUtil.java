@@ -7,8 +7,10 @@ import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolParser.ArrayElementTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.ArrayTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeNumericCARDINALContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeNumericCardinalContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeNumericContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ConstantTypeNumericLongCardinalContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.ConstantValueContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclConstantContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.DeclTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.EnumTypeContext;
@@ -329,7 +331,17 @@ public class SymbolUtil {
 	//
 	static Constant getConstant(DeclConstantContext declConstant) {
 		String name = declConstant.name.getText();
-		String value = String.join(".", declConstant.constantValue().name.stream().map(o -> o.getText()).toArray(String[]::new));
+// FIXME		String value = String.join(".", declConstant.constantValue().name.stream().map(o -> o.getText()).toArray(String[]::new));
+		ConstantValueContext valueContext = declConstant.constantValue();
+		String value;
+
+		if (valueContext.constantValueQName() != null) {
+			value = String.join(".", valueContext.constantValueQName().name.stream().map(o -> o.getText()).toArray(String[]::new));
+		} else if (valueContext.constantValueConstant() != null) {
+			value = valueContext.constantValueConstant().getText();
+		} else {
+			throw new UnexpectedException();
+		}
 
 		ConstantTypeContext type = declConstant.constantType();
 		if (type.constantTypeNumeric() != null) {
@@ -338,14 +350,19 @@ public class SymbolUtil {
 		if (type.pointerType() != null) {
 			return getConstant(name, type.pointerType(), value);			
 		}
+		if (type.referenceType() != null) {
+			return getConstant(name, type.referenceType(), value);			
+		}
 		
 		logger.error("Unexpected");
 		logger.error("  declConstant  %s", declConstant.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Constant getConstant(String name, ConstantTypeNumericContext type, String value) {
-		// FIXME
-		if (type instanceof ConstantTypeNumericCARDINALContext) {
+		if (type instanceof ConstantTypeNumericCardinalContext) {
+			return new Constant(name, Type.CARDINAL, value);
+		}
+		if (type instanceof ConstantTypeNumericLongCardinalContext) {
 			return new Constant(name, Type.CARDINAL, value);
 		}
 		
@@ -356,8 +373,11 @@ public class SymbolUtil {
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Constant getConstant(String name, PointerTypeContext type, String value) {
-		// FIXME
 		Type pointerType = SymbolUtil.getType(name + "#pointer", type);
 		return new Constant(name, pointerType, value);
+	}
+	private static Constant getConstant(String name, ReferenceTypeContext type, String value) {
+		Type referenceType = SymbolUtil.getType(name + "#reference", type);
+		return new Constant(name, referenceType, value);
 	}
 }
