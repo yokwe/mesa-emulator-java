@@ -20,13 +20,3 @@ build-yokwe:
 
 build:
 	mvn clean ant:ant install
-
-#
-# ANTLR
-#
-compile-antlr-symbol:
-	rm    -rf tmp/antlr
-	mkdir -p  tmp/antlr
-	ant       compile-antlr-symbol
-	rm    -rf src/yokwe/majuro/symbol/antlr/*
-	cp    -p  tmp/antlr/*.java src/yokwe/majuro/symbol/antlr
