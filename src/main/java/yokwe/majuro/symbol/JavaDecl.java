@@ -1997,15 +1997,16 @@ public class JavaDecl {
 		File[] files = symbolDir.listFiles((d, n) -> n.endsWith(".symbol"));
 		Arrays.sort(files);
 		for(var e: files) {
-			generateFile(e.getAbsolutePath(), outputDirPath, packageName, e.getName().equals("PrincOps.symbol"));
+			boolean outputPredefinedType = e.getName().equals("PrincOps.symbol");
+			generateFile(e.getAbsolutePath(), outputDirPath, packageName, outputPredefinedType);
 		}
 	}
-	public static void generateFile(String symbolFilePath, String outputDirPath, String packageName, boolean addPredefinedType) {
+	public static void generateFile(String symbolFilePath, String outputDirPath, String packageName, boolean outputPredefinedType) {
 		logger.info("symbolFilePath  %s", symbolFilePath);
 		logger.info("outputDirPath   %s", outputDirPath);
 		logger.info("packageName     %s", packageName);
 		
-		Symbol symbol = Symbol.getInstance(symbolFilePath, addPredefinedType);		
+		Symbol symbol = Symbol.getInstance(symbolFilePath, outputPredefinedType);		
 		
 		String name = StringUtil.toJavaName(symbol.name);
 		String path = String.format("%s/%s/%s.java", outputDirPath, packageName.replace('.', '/'), name);
