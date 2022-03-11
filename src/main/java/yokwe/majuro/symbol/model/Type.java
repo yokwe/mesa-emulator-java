@@ -59,6 +59,18 @@ public abstract class Type implements Comparable<Type> {
 			map.put(name, type);
 		}
 	}
+	public static void clearMap() {
+		map.clear();
+		// add predefined type
+		add(Type.BOOLEAN);
+		add(Type.INTEGER);
+		add(Type.CARDINAL);
+		add(Type.UNSPECIFIED);
+		add(Type.LONG_CARDINAL);
+		add(Type.LONG_UNSPECIFIED);
+		add(Type.POINTER);
+		add(Type.LONG_POINTER);
+	}
 	public static int fixAll() {
 		int countNeedsFixLast = -1;
 		int countNeedsFix     = -1;

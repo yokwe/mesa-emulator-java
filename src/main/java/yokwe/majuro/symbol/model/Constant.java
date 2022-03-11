@@ -24,6 +24,9 @@ public class Constant implements Comparable<Constant> {
 			map.put(name, cons);
 		}
 	}
+	public static void clearMap() {
+		map.clear();
+	}
 	public static int fixAll() {
 		int countNeedsFixLast = -1;
 		int countNeedsFix     = -1;

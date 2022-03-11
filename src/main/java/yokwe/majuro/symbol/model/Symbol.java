@@ -61,7 +61,7 @@ public class Symbol {
 		}
 	}
 	
-	public static Symbol getInstance(String filePath, boolean addPredefinedType) {
+	public static Symbol getInstance(String filePath, boolean outputPredefinedType) {
 		final SymbolContext symbolContext;
 		// build symbolContext
 		try {
@@ -82,10 +82,12 @@ public class Symbol {
 			throw new UnexpectedException(exceptionName, e);
 		}
 		
+		Constant.clearMap();
+		Type.clearMap();
 		final List<Decl> declList = new ArrayList<>();
 		// build declList
 		{
-			if (addPredefinedType) {
+			if (outputPredefinedType) {
 				for(var e: Type.map.values()) {
 					logger.info("add predefined type  %s", e.name);
 					declList.add(new DeclType(e));
