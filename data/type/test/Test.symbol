@@ -31,10 +31,10 @@ BEGIN
         right (0: 8..15): BIT8];
     
     // single 32 bit field
-    BitField32: TYPE = RECORD32 [  // RECORD32
+    BitField32: TYPE = RECORD[
         data (0: 0..13): UNSPECIFIED,
         tag  (0:14..15): Enum,
-        fill (1: 0..15): UNSPECIFIED];
+        fill (0:16..31): UNSPECIFIED];
     
 
     // ARRAY

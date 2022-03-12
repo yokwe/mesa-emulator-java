@@ -27,14 +27,9 @@ BEGIN
         right (0: 8..15): BYTE];
 
     // 2.3.1 Long Types
-    // When these types are stored in memory, the low-order (least significant) sixteen bits
-    // occupy the first memory word (at the lower numbered address), and the high-order (most
-    // significant) sixteen bits occupy the second memory word(at the higher memory address).
-    //         |15    31|0   15|
-    // address  n        n+1    n+2
-    Long: TYPE = RECORD32 [        // RECORD32
-      low (0:0..15): UNSPECIFIED,
-      high(1:0..15): UNSPECIFIED];
+    Long: TYPE = RECORD[
+      high(0: 0..15): UNSPECIFIED,
+      low (0:16..31): UNSPECIFIED]
 
     // 3.1.4.3 Code Segments
     CodeSegment: TYPE = RECORD [ 
@@ -156,27 +151,27 @@ BEGIN
     // LinkType: TYPE  =  {frame(0), procedure(1), indirect(2)};
     // changed chapter
     LinkType: TYPE = {frame(0), oldProcedure(1), indirect(2), newProcedure(3)};
-    TaggedControlLink: TYPE = RECORD32 [  // RECORD32
-        data (0: 0..13): UNSPECIFIED,
-        tag  (0:14..15): LinkType,
-        fill (1: 0..15): UNSPECIFIED];
-
+    TaggedControlLink: TYPE = RECORD[
+        fill (0: 0..15): UNSPECIFIED,
+        data (0:16..29): UNSPECIFIED,
+        tag  (0:30..31): LinkType];
+ 
     // 9.1.1 Frame Control Links
     FrameLink : TYPE = LocalFrameHandle;
     
     // 9.1.3 Procedure Descriptor
-    ProcDesc: TYPE =  RECORD32 [        // RECORD32
-        taggedGF(0:0..15): UNSPECIFIED,
-        pc      (1:0..15): CARDINAL];
-
+    ProcDesc: TYPE =  RECORD[
+        pc      (0: 0..15): CARDINAL,
+        taggedGF(0:16..31): UNSPECIFIED]
+ 
     // 9.1.4 New Procedure descriptors
     // GFI = And[proc.taggedGF, 177774B];
     // GF  = ReadDbl[@GFT[GFI].globalFrame];
     // CB  = ReadDbl[@GFT[GFI].codebase];
-    NewProcDesc: TYPE = RECORD32 [       // RECORD32
-        taggedGFI(0:0..15): UNSPECIFIED, 
-        pc       (1:0..15): CARDINAL];
-
+    NewProcDesc: TYPE = RECORD[
+        pc       (0: 0..15): CARDINAL,
+        taggedGFI(0:16..31): UNSPECIFIED];
+ 
     // 9.2.1 Frame Allocation Vector
     // AV: POINTER TO AllocationVector = LOOPHOLsE[mAV];
     AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constants.mAV;
