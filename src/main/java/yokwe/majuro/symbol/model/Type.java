@@ -297,6 +297,13 @@ public abstract class Type implements Comparable<Type> {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
+	public TypeRecord toTypeRecord() {
+		if (this instanceof TypeRecord) {
+			return (TypeRecord)this;
+		} else {
+			throw new UnexpectedException("Unexpected");
+		}
+	}
 	public TypeBitField16 toTypeBitField16() {
 		if (this instanceof TypeBitField16) {
 			return (TypeBitField16)this;
