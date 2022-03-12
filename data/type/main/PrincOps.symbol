@@ -29,7 +29,7 @@ BEGIN
     // 2.3.1 Long Types
     Long: TYPE = RECORD[
       high(0: 0..15): UNSPECIFIED,
-      low (0:16..31): UNSPECIFIED]
+      low (0:16..31): UNSPECIFIED];
 
     // 3.1.4.3 Code Segments
     CodeSegment: TYPE = RECORD [ 
@@ -162,7 +162,7 @@ BEGIN
     // 9.1.3 Procedure Descriptor
     ProcDesc: TYPE =  RECORD[
         pc      (0: 0..15): CARDINAL,
-        taggedGF(0:16..31): UNSPECIFIED]
+        taggedGF(0:16..31): UNSPECIFIED];
  
     // 9.1.4 New Procedure descriptors
     // GFI = And[proc.taggedGF, 177774B];
