@@ -121,6 +121,17 @@ public abstract class Type implements Comparable<Type> {
 	public static final Type POINTER          = new TypePointerShort(TypePointerShort.NAME);
 	public static final Type LONG_POINTER     = new TypePointerLong (TypePointerLong.NAME);
 	
+	public boolean isPredefiled() {
+		if (this.equals(BOOLEAN))          return true;
+		if (this.equals(INTEGER))          return true;
+		if (this.equals(CARDINAL))         return true;
+		if (this.equals(UNSPECIFIED))      return true;
+		if (this.equals(LONG_CARDINAL))    return true;
+		if (this.equals(LONG_UNSPECIFIED)) return true;
+		if (this.equals(POINTER))          return true;
+		if (this.equals(LONG_POINTER))     return true;
+		return false;
+	}
 	
 	public final String name;
 	
@@ -176,7 +187,11 @@ public abstract class Type implements Comparable<Type> {
 	abstract public String toMesaType();	
 	
 	public String toMesaDecl() {
-		return String.format("%s: TYPE = %s;", name, toMesaType());
+		if (isPredefiled()) {
+			return name;
+		} else {
+			return String.format("%s: TYPE = %s;", name, toMesaType());
+		}
 	}
 	
 	//
