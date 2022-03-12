@@ -18,7 +18,6 @@ OVERLAID     : 'OVERLAID';
 PACKED       : 'PACKED';
 POINTER      : 'POINTER';
 RECORD       : 'RECORD';
-RECORD32     : 'RECORD32';
 SELECT       : 'SELECT';
 SYMBOL       : 'SYMBOL';
 TO           : 'TO';
@@ -195,8 +194,7 @@ eumElement
 // RECORD
 //
 recordType
-    :   RECORD   '[' recordFieldList ']' # TypeRecord16
-    |   RECORD32 '[' recordFieldList ']' # TypeRecord32
+    :   RECORD   '[' recordFieldList ']'
     ;
 
 recordFieldList
