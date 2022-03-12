@@ -1,7 +1,10 @@
 package yokwe.majuro.symbol.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.antlr.SymbolParser.ArrayElementTypeContext;
@@ -37,10 +40,9 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongUnspecifiedContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerLongContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerShortContext;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeRecord16Context;
-import yokwe.majuro.symbol.antlr.SymbolParser.TypeRecord32Context;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
+import yokwe.majuro.symbol.model.TypeRecord.Field;
 
 public class SymbolUtil {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
@@ -239,45 +241,48 @@ public class SymbolUtil {
 	// Record
 	//
 	static Type getType(String name, RecordTypeContext type) {
-		if (type instanceof TypeRecord16Context) {
-			TypeRecord16Context typeRecord = (TypeRecord16Context)type;
-			
-			List<TypeRecord.Field> list = new ArrayList<>();
-			for(var e: typeRecord.recordFieldList().elements) {
-				list.add(getField(name, e));
-			}
-			
-			boolean bitField16 = true;
-			for(var e: list) {
-				if (e.offset != 0)   bitField16 = false;
-				if (16 <= e.stopBit) bitField16 = false;
-				// FIXME if field is open array, record is not BitField16
-				if (e.type instanceof TypeArraySub) {
-					TypeArraySub typeArraySub = e.type.toTypeArraySub();
-					if (typeArraySub.typeSubrange.openSubrange()) bitField16 = false;
-				}
-			}
-			if (bitField16) {
-				return new TypeBitField16(name, list);
-			} else {
-				return new TypeMultiWord(name, list);
-			}
-		}
-		if (type instanceof TypeRecord32Context) {
-			TypeRecord32Context typeRecord = (TypeRecord32Context)type;
-			
-			List<TypeRecord.Field> list = new ArrayList<>();
-			for(var e: typeRecord.recordFieldList().elements) {
-				list.add(getField(name, e));
-			}
-			
-			return new TypeBitField32(name, list);
+		List<Field> list = new ArrayList<>();
+		for(var e: type.recordFieldList().elements) {
+			list.add(getField(name, e));
 		}
 		
-		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
-		throw new UnexpectedException("Unexpected");
+		Map<Integer, List<Field>> fieldMap = new TreeMap<>();
+		{
+			List<Field> fieldList;
+			for(var e: list) {
+				if (fieldMap.containsKey(e.offset)) {
+					fieldList = fieldMap.get(e.offset);
+				} else {
+					fieldList = new ArrayList<>();
+					fieldMap.put(e.offset, fieldList);
+				}
+				fieldList.add(e);
+			}
+			for(var e: fieldMap.entrySet()) {
+				Collections.sort(e.getValue());
+			}
+		}
+		if (fieldMap.size() == 1) {
+			var fieldList = fieldMap.get(0);
+			Field last = fieldList.get(fieldList.size() - 1);
+			
+			if (!last.hasStartBit()) {
+				return new TypeMultiWord(name, list);
+			}
+			if (last.stopBit <= 15) {
+				return new TypeBitField16(name, list);
+			}
+			if (last.stopBit <= 31) {
+				return new TypeBitField32(name, list);
+			}
+			
+			logger.error("Unexpected");
+			logger.error("  name  %s", name);
+			logger.error("  type  %s", type.getText());
+			throw new UnexpectedException("Unexpected");
+		} else {
+			return new TypeMultiWord(name, list);
+		}
 	}
 	private static Type getType(String name, FieldTypeContext type) {
 		if (type.simpleType() != null) {
@@ -298,7 +303,7 @@ public class SymbolUtil {
 		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
-	private static TypeRecord.Field getField(String typeName, RecordFieldContext recordField) {
+	private static Field getField(String typeName, RecordFieldContext recordField) {
 		FieldNameContext fieldName = recordField.fieldName();
 		FieldTypeContext fieldType = recordField.fieldType();
 		
@@ -307,7 +312,7 @@ public class SymbolUtil {
 			String name   = typeFieldName.name.getText();
 			String offset = typeFieldName.offset.getText();
 			Type   type   = getType(typeName + "#" + name, fieldType);
-			return new TypeRecord.Field(name, offset, type);
+			return new Field(name, offset, type);
 			
 		}
 		if (fieldName instanceof TypeFieldNameBitContext) {
@@ -317,7 +322,7 @@ public class SymbolUtil {
 			String startBit = typeFieldName.startBit.getText();
 			String stopBit  = typeFieldName.stopBit.getText();
 			Type   type     = getType(typeName + "#" + name, fieldType);
-			return new TypeRecord.Field(name, offset, startBit, stopBit, type);
+			return new Field(name, offset, startBit, stopBit, type);
 		}
 		
 		logger.error("Unexpected");
