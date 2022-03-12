@@ -321,7 +321,7 @@ public final class Test {
     }
     
     //
-    // BitField32: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): Enum, fill (1:0..15): UNSPECIFIED];
+    // BitField32: TYPE = RECORD[data (0:0..13): UNSPECIFIED, tag (0:14..15): Enum, fill (0:16..31): UNSPECIFIED];
     //
     public static final class BitField32 extends MemoryData32 {
         public static final String NAME = "BitField32";
@@ -356,14 +356,14 @@ public final class Test {
         
         // data (0:0..13):  UNSPECIFIED
         // tag  (0:14..15): Enum
-        // fill (1:0..15):  UNSPECIFIED
+        // fill (0:16..31): UNSPECIFIED
         
-        private static final int DATA_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1100;
-        private static final int DATA_SHIFT =                                         2;
-        private static final int TAG_MASK   = 0b0000_0000_0000_0000_0000_0000_0000_0011;
-        private static final int TAG_SHIFT  =                                         0;
-        private static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-        private static final int FILL_SHIFT =                                        16;
+        private static final int DATA_MASK  = 0b1111_1111_1111_1100_0000_0000_0000_0000;
+        private static final int DATA_SHIFT =                                        18;
+        private static final int TAG_MASK   = 0b0000_0000_0000_0011_0000_0000_0000_0000;
+        private static final int TAG_SHIFT  =                                        16;
+        private static final int FILL_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+        private static final int FILL_SHIFT =                                         0;
         
         //
         // Bit Field Access Methods

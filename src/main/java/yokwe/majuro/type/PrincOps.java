@@ -223,8 +223,6 @@ public final class PrincOps {
             super(base, access);
         }
     }
-    // IGNORE PageCount: TYPE = LONG CARDINAL;
-    // IGNORE PageNumber: TYPE = LONG CARDINAL;
     
     //
     // UNSPECIFIED: TYPE = UNSPECIFIED;
@@ -550,7 +548,7 @@ public final class PrincOps {
     }
     
     //
-    // Long: TYPE = RECORD32[low (0:0..15): UNSPECIFIED, high (1:0..15): UNSPECIFIED];
+    // Long: TYPE = RECORD[high (0:0..15): UNSPECIFIED, low (0:16..31): UNSPECIFIED];
     //
     public static final class Long extends MemoryData32 {
         public static final String NAME = "Long";
@@ -583,27 +581,17 @@ public final class PrincOps {
         // Bit Field
         //
         
-        // low  (0:0..15): UNSPECIFIED
-        // high (1:0..15): UNSPECIFIED
+        // high (0:0..15):  UNSPECIFIED
+        // low  (0:16..31): UNSPECIFIED
         
-        private static final int LOW_MASK   = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-        private static final int LOW_SHIFT  =                                         0;
         private static final int HIGH_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
         private static final int HIGH_SHIFT =                                        16;
+        private static final int LOW_MASK   = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+        private static final int LOW_SHIFT  =                                         0;
         
         //
         // Bit Field Access Methods
         //
-        // @Mesa.CARD16 is UNSPECIFIED
-        public final @Mesa.CARD16 int low() {
-            return (value & LOW_MASK) >>> LOW_SHIFT;
-        }
-        public final Long low(@Mesa.CARD16 int newValue) {
-            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-            value = (value & ~LOW_MASK) | ((newValue << LOW_SHIFT) & LOW_MASK);
-            return this;
-        }
-        
         // @Mesa.CARD16 is UNSPECIFIED
         public final @Mesa.CARD16 int high() {
             return (value & HIGH_MASK) >>> HIGH_SHIFT;
@@ -611,6 +599,16 @@ public final class PrincOps {
         public final Long high(@Mesa.CARD16 int newValue) {
             if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
             value = (value & ~HIGH_MASK) | ((newValue << HIGH_SHIFT) & HIGH_MASK);
+            return this;
+        }
+        
+        // @Mesa.CARD16 is UNSPECIFIED
+        public final @Mesa.CARD16 int low() {
+            return (value & LOW_MASK) >>> LOW_SHIFT;
+        }
+        public final Long low(@Mesa.CARD16 int newValue) {
+            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
+            value = (value & ~LOW_MASK) | ((newValue << LOW_SHIFT) & LOW_MASK);
             return this;
         }
         
@@ -1776,7 +1774,7 @@ public final class PrincOps {
     }
     
     //
-    // TaggedControlLink: TYPE = RECORD32[data (0:0..13): UNSPECIFIED, tag (0:14..15): LinkType, fill (1:0..15): UNSPECIFIED];
+    // TaggedControlLink: TYPE = RECORD[fill (0:0..15): UNSPECIFIED, data (0:16..29): UNSPECIFIED, tag (0:30..31): LinkType];
     //
     public static final class TaggedControlLink extends MemoryData32 {
         public static final String NAME = "TaggedControlLink";
@@ -1809,20 +1807,30 @@ public final class PrincOps {
         // Bit Field
         //
         
-        // data (0:0..13):  UNSPECIFIED
-        // tag  (0:14..15): LinkType
-        // fill (1:0..15):  UNSPECIFIED
+        // fill (0:0..15):  UNSPECIFIED
+        // data (0:16..29): UNSPECIFIED
+        // tag  (0:30..31): LinkType
         
+        private static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
+        private static final int FILL_SHIFT =                                        16;
         private static final int DATA_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1100;
         private static final int DATA_SHIFT =                                         2;
         private static final int TAG_MASK   = 0b0000_0000_0000_0000_0000_0000_0000_0011;
         private static final int TAG_SHIFT  =                                         0;
-        private static final int FILL_MASK  = 0b1111_1111_1111_1111_0000_0000_0000_0000;
-        private static final int FILL_SHIFT =                                        16;
         
         //
         // Bit Field Access Methods
         //
+        // @Mesa.CARD16 is UNSPECIFIED
+        public final @Mesa.CARD16 int fill() {
+            return (value & FILL_MASK) >>> FILL_SHIFT;
+        }
+        public final TaggedControlLink fill(@Mesa.CARD16 int newValue) {
+            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
+            value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);
+            return this;
+        }
+        
         // @Mesa.CARD16 is UNSPECIFIED
         public final @Mesa.CARD16 int data() {
             return (value & DATA_MASK) >>> DATA_SHIFT;
@@ -1843,21 +1851,11 @@ public final class PrincOps {
             return this;
         }
         
-        // @Mesa.CARD16 is UNSPECIFIED
-        public final @Mesa.CARD16 int fill() {
-            return (value & FILL_MASK) >>> FILL_SHIFT;
-        }
-        public final TaggedControlLink fill(@Mesa.CARD16 int newValue) {
-            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-            value = (value & ~FILL_MASK) | ((newValue << FILL_SHIFT) & FILL_MASK);
-            return this;
-        }
-        
     }
     // IGNORE FrameLink: TYPE = LocalFrameHandle;
     
     //
-    // ProcDesc: TYPE = RECORD32[taggedGF (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
+    // ProcDesc: TYPE = RECORD[pc (0:0..15): CARDINAL, taggedGF (0:16..31): UNSPECIFIED];
     //
     public static final class ProcDesc extends MemoryData32 {
         public static final String NAME = "ProcDesc";
@@ -1890,27 +1888,17 @@ public final class PrincOps {
         // Bit Field
         //
         
-        // taggedGF (0:0..15): UNSPECIFIED
-        // pc       (1:0..15): CARDINAL
+        // pc       (0:0..15):  CARDINAL
+        // taggedGF (0:16..31): UNSPECIFIED
         
-        private static final int TAGGED_GF_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-        private static final int TAGGED_GF_SHIFT =                                         0;
         private static final int PC_MASK         = 0b1111_1111_1111_1111_0000_0000_0000_0000;
         private static final int PC_SHIFT        =                                        16;
+        private static final int TAGGED_GF_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+        private static final int TAGGED_GF_SHIFT =                                         0;
         
         //
         // Bit Field Access Methods
         //
-        // @Mesa.CARD16 is UNSPECIFIED
-        public final @Mesa.CARD16 int taggedGF() {
-            return (value & TAGGED_GF_MASK) >>> TAGGED_GF_SHIFT;
-        }
-        public final ProcDesc taggedGF(@Mesa.CARD16 int newValue) {
-            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-            value = (value & ~TAGGED_GF_MASK) | ((newValue << TAGGED_GF_SHIFT) & TAGGED_GF_MASK);
-            return this;
-        }
-        
         // @Mesa.CARD16 is CARDINAL
         public final @Mesa.CARD16 int pc() {
             return (value & PC_MASK) >>> PC_SHIFT;
@@ -1921,10 +1909,20 @@ public final class PrincOps {
             return this;
         }
         
+        // @Mesa.CARD16 is UNSPECIFIED
+        public final @Mesa.CARD16 int taggedGF() {
+            return (value & TAGGED_GF_MASK) >>> TAGGED_GF_SHIFT;
+        }
+        public final ProcDesc taggedGF(@Mesa.CARD16 int newValue) {
+            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
+            value = (value & ~TAGGED_GF_MASK) | ((newValue << TAGGED_GF_SHIFT) & TAGGED_GF_MASK);
+            return this;
+        }
+        
     }
     
     //
-    // NewProcDesc: TYPE = RECORD32[taggedGFI (0:0..15): UNSPECIFIED, pc (1:0..15): CARDINAL];
+    // NewProcDesc: TYPE = RECORD[pc (0:0..15): CARDINAL, taggedGFI (0:16..31): UNSPECIFIED];
     //
     public static final class NewProcDesc extends MemoryData32 {
         public static final String NAME = "NewProcDesc";
@@ -1957,27 +1955,17 @@ public final class PrincOps {
         // Bit Field
         //
         
-        // taggedGFI (0:0..15): UNSPECIFIED
-        // pc        (1:0..15): CARDINAL
+        // pc        (0:0..15):  CARDINAL
+        // taggedGFI (0:16..31): UNSPECIFIED
         
-        private static final int TAGGED_GFI_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
-        private static final int TAGGED_GFI_SHIFT =                                         0;
         private static final int PC_MASK          = 0b1111_1111_1111_1111_0000_0000_0000_0000;
         private static final int PC_SHIFT         =                                        16;
+        private static final int TAGGED_GFI_MASK  = 0b0000_0000_0000_0000_1111_1111_1111_1111;
+        private static final int TAGGED_GFI_SHIFT =                                         0;
         
         //
         // Bit Field Access Methods
         //
-        // @Mesa.CARD16 is UNSPECIFIED
-        public final @Mesa.CARD16 int taggedGFI() {
-            return (value & TAGGED_GFI_MASK) >>> TAGGED_GFI_SHIFT;
-        }
-        public final NewProcDesc taggedGFI(@Mesa.CARD16 int newValue) {
-            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
-            value = (value & ~TAGGED_GFI_MASK) | ((newValue << TAGGED_GFI_SHIFT) & TAGGED_GFI_MASK);
-            return this;
-        }
-        
         // @Mesa.CARD16 is CARDINAL
         public final @Mesa.CARD16 int pc() {
             return (value & PC_MASK) >>> PC_SHIFT;
@@ -1985,6 +1973,16 @@ public final class PrincOps {
         public final NewProcDesc pc(@Mesa.CARD16 int newValue) {
             if (Debug.ENABLE_CHECK_VALUE) CARDINAL.checkValue(newValue);
             value = (value & ~PC_MASK) | ((newValue << PC_SHIFT) & PC_MASK);
+            return this;
+        }
+        
+        // @Mesa.CARD16 is UNSPECIFIED
+        public final @Mesa.CARD16 int taggedGFI() {
+            return (value & TAGGED_GFI_MASK) >>> TAGGED_GFI_SHIFT;
+        }
+        public final NewProcDesc taggedGFI(@Mesa.CARD16 int newValue) {
+            if (Debug.ENABLE_CHECK_VALUE) UNSPECIFIED.checkValue(newValue);
+            value = (value & ~TAGGED_GFI_MASK) | ((newValue << TAGGED_GFI_SHIFT) & TAGGED_GFI_MASK);
             return this;
         }
         
