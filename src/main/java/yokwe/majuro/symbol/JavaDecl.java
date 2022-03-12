@@ -1419,13 +1419,10 @@ public class JavaDecl {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 
 				final int offset = e.offset;
-				final int start;
-				final int stop;
-				if (offset == 0) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else {
-					logger.error("field %s", e);
+				final int start  = e.startBit;
+				final int stop   = e.stopBit;
+				if (offset != 0) {
+					logger.error("field %s", e.toMesaType());
 					throw new UnexpectedException("Unexpected");
 				}
 				
@@ -1486,16 +1483,11 @@ public class JavaDecl {
 				String fieldCons = StringUtil.toJavaConstName(e.name);
 
 				final int offset = e.offset;
-				final int start;
-				final int stop;
+				final int start  = e.startBit;
+				final int stop   = e.stopBit;
 				// need to swap first word and second word
-				if (offset == 0) {
-					start  = WORD_BITS + e.startBit;
-					stop   = WORD_BITS + e.stopBit;
-				} else if (offset == 1) {
-					start  = e.startBit;
-					stop   = e.stopBit;
-				} else {
+				if (offset != 0) {
+					logger.error("field %s", e.toMesaType());
 					throw new UnexpectedException("Unexpected");
 				}
 				
