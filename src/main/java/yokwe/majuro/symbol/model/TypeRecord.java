@@ -6,12 +6,13 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import yokwe.majuro.UnexpectedException;
+import yokwe.majuro.mesa.Constants;
 import yokwe.majuro.util.StringUtil;
 
 public abstract class TypeRecord extends Type {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
-	public static class Field {
+	public static class Field implements Comparable<Field> {
 		public static final int    NO_VALUE = -1;
 		public static final String NO_VALUE_STRING = Integer.toString(NO_VALUE);
 		
@@ -55,15 +56,22 @@ public abstract class TypeRecord extends Type {
 				return String.format("%s (%d:%d..%d): %s", name, offset, startBit, stopBit, type.toMesaType());
 			}
 		}
+		
+		public int order() {
+			return (offset * Constants.WORD_BITS) + (hasStartBit() ? startBit : 0);
+		}
+		
+		@Override
+		public int compareTo(Field that) {
+			return this.order() - that.order();
+		}
 	}
 
-	public final String      typeName;
 	public final List<Field> fieldList;
 	
-	protected TypeRecord(String name, String typeName, List<Field> fieldList) {
+	protected TypeRecord(String name, List<Field> fieldList) {
 		super(name);
 		
-		this.typeName  = typeName;
 		this.fieldList = fieldList;
 		
 		{
@@ -227,6 +235,6 @@ public abstract class TypeRecord extends Type {
 	@Override
 	public String toMesaType() {
 		List<String> list = fieldList.stream().map(o -> o.toMesaType()).collect(Collectors.toList());
-		return String.format("%s[%s]", typeName, String.join(", ", list));
+		return String.format("RECORD[%s]", String.join(", ", list));
 	}
 }
