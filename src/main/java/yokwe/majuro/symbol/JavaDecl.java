@@ -655,7 +655,6 @@ public class JavaDecl {
 			out.println("//");
 			out.println("// %s", javaDecl.cons.toMesaDecl());
 			out.println("//");
-			// FIXME
 			accept(type);
 		}
 
@@ -1619,6 +1618,7 @@ public class JavaDecl {
 				} else if (field.startBit == Field.NO_VALUE) {
 					//
 				} else {
+					// FIXME
 					out.println("// FIXME  Field is not aligned");
 					logger.warn("Field is not aligned");
 					logger.warn("  name %s.%s", type.name, field.name);
