@@ -1386,73 +1386,14 @@ public class JavaDecl {
 		}
 
 		private void processBitField16() {
-			final var type        = javaDecl.type.toTypeBitField16();
-			final var out         = javaDecl.out;
-			final var parentClass = MemoryData16.class;
-			
-			classPreamble(javaDecl, parentClass);
-			out.prepareLayout();
-			out.println("public static final int    WORD_SIZE = %d;",     type.wordSize());
-			out.println("public static final int    BIT_SIZE  = %d;",     type.bitSize());
-			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
-			out.println();
-
-			// single word bit field
-			constructor(javaDecl, parentClass);
-			out.println();
-
-			out.println("//");
-			out.println("// Bit Field");
-			out.println("//");
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				out.println("// %s", e.toMesaType());
-			}
-			out.layout(LEFT, LEFT, LEFT, LEFT);
-			out.println();
-			
-			out.prepareLayout();
-			for(var e: type.fieldList) {
-				String fieldCons = StringUtil.toJavaConstName(e.name);
-
-				final int offset = e.offset;
-				final int start  = e.startBit;
-				final int stop   = e.stopBit;
-				if (offset != 0) {
-					logger.error("field %s", e.toMesaType());
-					throw new UnexpectedException("Unexpected");
-				}
-				
-				int bits  = stop - start + 1;
-				int pat   = (1 << bits) - 1;
-				int shift = type.bitSize() - stop - 1;
-				int mask  = (pat << shift);
-				
-				out.println("private static final int %s_MASK  = %s;",
-					fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), type.bitSize()));
-				out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
-			}
-			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
-			out.println();
-			
-			out.println("//");
-			out.println("// Bit Field Access Methods");
-			out.println("//");
-			for(var field: type.fieldList) {
-				accept(field);
-				out.println();
-			}
-			
-			// close class body
-			out.println("}");
+			processBitField(MemoryData16.class);
 		}
-		
-		public void processBitField32() {
-			final var type        = javaDecl.type.toTypeBitField32();
+		private void processBitField32() {
+			processBitField(MemoryData32.class);
+		}
+		private void processBitField(Class<?> parentClass) {
+			final var type        = javaDecl.type.toTypeRecord();
 			final var out         = javaDecl.out;
-			final var parentClass = MemoryData32.class;
 			
 			classPreamble(javaDecl, parentClass);
 			out.prepareLayout();
@@ -1461,7 +1402,6 @@ public class JavaDecl {
 			out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
 			out.println();
 
-			// double word bit field
 			constructor(javaDecl, parentClass);
 			out.println();
 
@@ -1484,7 +1424,6 @@ public class JavaDecl {
 				final int offset = e.offset;
 				final int start  = e.startBit;
 				final int stop   = e.stopBit;
-				// need to swap first word and second word
 				if (offset != 0) {
 					logger.error("field %s", e.toMesaType());
 					throw new UnexpectedException("Unexpected");
@@ -1512,7 +1451,7 @@ public class JavaDecl {
 			// close class body
 			out.println("}");
 		}
-			
+
 		@Override
 		protected void processTypeBoolean(Field field, TypeBoolean fieldType) {
 			// RECORD FIELD is BOOLEAN
