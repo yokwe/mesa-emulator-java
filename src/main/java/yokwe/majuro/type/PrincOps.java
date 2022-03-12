@@ -8,7 +8,7 @@ import yokwe.majuro.mesa.Types;
 public final class PrincOps {
     
     //
-    // BOOLEAN: TYPE = BOOLEAN;
+    // BOOLEAN
     //
     public static final class BOOLEAN extends MemoryData16 {
         public static final String NAME = "BOOLEAN";
@@ -39,7 +39,7 @@ public final class PrincOps {
     }
     
     //
-    // CARDINAL: TYPE = CARDINAL;
+    // CARDINAL
     //
     public static final class CARDINAL extends MemoryData16 {
         public static final String NAME = "CARDINAL";
@@ -79,7 +79,7 @@ public final class PrincOps {
     }
     
     //
-    // INTEGER: TYPE = INTEGER;
+    // INTEGER
     //
     public static final class INTEGER extends MemoryData16 {
         public static final String NAME = "INTEGER";
@@ -119,7 +119,7 @@ public final class PrincOps {
     }
     
     //
-    // LONG CARDINAL: TYPE = LONG CARDINAL;
+    // LONG CARDINAL
     //
     public static final class LONG_CARDINAL extends MemoryData32 {
         public static final String NAME = "LONG_CARDINAL";
@@ -150,7 +150,7 @@ public final class PrincOps {
     }
     
     //
-    // LONG POINTER: TYPE = LONG POINTER;
+    // LONG POINTER
     //
     public static final class LONG_POINTER extends MemoryBase {
         public static final String NAME = "LONG_POINTER";
@@ -172,7 +172,7 @@ public final class PrincOps {
     }
     
     //
-    // LONG UNSPECIFIED: TYPE = LONG UNSPECIFIED;
+    // LONG UNSPECIFIED
     //
     public static final class LONG_UNSPECIFIED extends MemoryData32 {
         public static final String NAME = "LONG_UNSPECIFIED";
@@ -203,7 +203,7 @@ public final class PrincOps {
     }
     
     //
-    // POINTER: TYPE = POINTER;
+    // POINTER
     //
     public static final class POINTER extends MemoryBase {
         public static final String NAME = "POINTER";
@@ -225,7 +225,7 @@ public final class PrincOps {
     }
     
     //
-    // UNSPECIFIED: TYPE = UNSPECIFIED;
+    // UNSPECIFIED
     //
     public static final class UNSPECIFIED extends MemoryData16 {
         public static final String NAME = "UNSPECIFIED";
