@@ -122,14 +122,17 @@ public abstract class Type implements Comparable<Type> {
 	public static final Type LONG_POINTER     = new TypePointerLong (TypePointerLong.NAME);
 	
 	public boolean isPredefiled() {
-		if (this.equals(BOOLEAN))          return true;
-		if (this.equals(INTEGER))          return true;
-		if (this.equals(CARDINAL))         return true;
-		if (this.equals(UNSPECIFIED))      return true;
-		if (this.equals(LONG_CARDINAL))    return true;
-		if (this.equals(LONG_UNSPECIFIED)) return true;
-		if (this.equals(POINTER))          return true;
-		if (this.equals(LONG_POINTER))     return true;
+		return isPredefined(name);
+	}
+	public static boolean isPredefined(String name) {
+		if (name.equals(BOOLEAN.name))          return true;
+		if (name.equals(INTEGER.name))          return true;
+		if (name.equals(CARDINAL.name))         return true;
+		if (name.equals(UNSPECIFIED.name))      return true;
+		if (name.equals(LONG_CARDINAL.name))    return true;
+		if (name.equals(LONG_UNSPECIFIED.name)) return true;
+		if (name.equals(POINTER.name))          return true;
+		if (name.equals(LONG_POINTER.name))     return true;
 		return false;
 	}
 	
