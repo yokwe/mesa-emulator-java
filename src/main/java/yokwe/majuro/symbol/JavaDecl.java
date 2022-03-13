@@ -690,14 +690,21 @@ public class JavaDecl {
 			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - SUBRANGE");
 			
 			final var out = javaDecl.out;
+			
+			String valueString;
+			if (cons.valueString.matches("^(\\+|-)?\\d+[bBxDdD]?$")) {
+				valueString = StringUtil.toJavaString(Long.parseLong(cons.valueString));
+			} else {
+				valueString = cons.valueString;
+			}
 
 			if (type.name.equals(Type.CARDINAL.name)) {
-				out.println("public static final @Mesa.CARD16 int %s = %s;", StringUtil.toJavaName(cons.name), cons.valueString);
+				out.println("public static final @Mesa.CARD16 int %s = %s;", StringUtil.toJavaName(cons.name), valueString);
 				return;
 			}
 			
 			if (type.name.equals(Type.LONG_CARDINAL.name)) {
-				out.println("public static final @Mesa.CARD32 int %s = %s;", StringUtil.toJavaConstName(cons.name), cons.valueString);
+				out.println("public static final @Mesa.CARD32 int %s = %s;", StringUtil.toJavaConstName(cons.name), valueString);
 				return;
 			}
 			
