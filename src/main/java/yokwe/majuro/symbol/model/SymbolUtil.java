@@ -55,25 +55,25 @@ public class SymbolUtil {
 		TypeTypeContext type = declType.typeType();
 		
 		if (type.simpleType() != null) {
-			return SymbolUtil.getType(name, type.simpleType());
+			return getType(name, type.simpleType());
 		}
 		if (type.referenceType() != null) {
-			return SymbolUtil.getType(name, type.referenceType());
+			return getType(name, type.referenceType());
 		}
 		if (type.pointerType() != null) {
-			return SymbolUtil.getType(name, type.pointerType());
+			return getType(name, type.pointerType());
 		}
 		if (type.subrangeType() != null) {
-			return SymbolUtil.getType(name, type.subrangeType());
+			return getType(name, type.subrangeType());
 		}
 		if (type.enumType() != null) {
-			return SymbolUtil.getType(name, type.enumType());
+			return getType(name, type.enumType());
 		}
 		if (type.arrayType() != null) {
-			return SymbolUtil.getType(name, type.arrayType());
+			return getType(name, type.arrayType());
 		}
 		if (type.recordType() != null) {
-			return SymbolUtil.getType(name, type.recordType());
+			return getType(name, type.recordType());
 		}
 
 		logger.error("Unexpected");
@@ -135,7 +135,7 @@ public class SymbolUtil {
 			return getType(name, type.referenceType());
 		}
 //		if (type.arrayType() != null){
-//			return SymbolUtil.getType(name, type.arrayType());
+//			return getType(name, type.arrayType());
 //		}
 		logger.error("Unexpected");
 		logger.error("  name  %s", name);
@@ -193,10 +193,10 @@ public class SymbolUtil {
 	//
 	static Type getType(String name, ArrayTypeContext type) {
 		if (type instanceof TypeArrayReferenceContext) {
-			return SymbolUtil.getType(name, (TypeArrayReferenceContext)type);
+			return getType(name, (TypeArrayReferenceContext)type);
 		}
 		if (type instanceof TypeArraySubrangeContext) {
-			return SymbolUtil.getType(name, (TypeArraySubrangeContext)type);
+			return getType(name, (TypeArraySubrangeContext)type);
 		}
 		
 		logger.error("Unexpected");
@@ -207,14 +207,14 @@ public class SymbolUtil {
 
 	private static Type getType(String name, TypeArrayReferenceContext type) {
 		TypeReference typeReference = getType(name + "#index", type.referenceType());
-		Type arrayElement = SymbolUtil.getType(name + "#element", type.arrayElementType());
+		Type arrayElement = getType(name + "#element", type.arrayElementType());
 	
 		return new TypeArrayRef(name, typeReference, arrayElement);
 	}
 
 	private static Type getType(String name, TypeArraySubrangeContext type) {
 		TypeSubrange typeSubrange = getType(name + "#index", type.subrangeType());
-		Type arrayElement = SymbolUtil.getType(name + "#element", type.arrayElementType());
+		Type arrayElement = getType(name + "#element", type.arrayElementType());
 		
 		return new TypeArraySub(name, typeSubrange, arrayElement);
 	}
@@ -378,11 +378,11 @@ public class SymbolUtil {
 		throw new UnexpectedException("Unexpected");
 	}
 	private static Constant getConstant(String name, PointerTypeContext type, String value) {
-		Type pointerType = SymbolUtil.getType(name + "#pointer", type);
+		Type pointerType = getType(name + "#pointer", type);
 		return new Constant(name, pointerType, value);
 	}
 	private static Constant getConstant(String name, ReferenceTypeContext type, String value) {
-		Type referenceType = SymbolUtil.getType(name + "#reference", type);
+		Type referenceType = getType(name + "#reference", type);
 		return new Constant(name, referenceType, value);
 	}
 }
