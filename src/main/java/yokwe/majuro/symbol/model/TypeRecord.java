@@ -94,7 +94,7 @@ public abstract class TypeRecord extends Type {
 			
 			if (subType == SubType.BIT_FIELD_32 && bitSize != 32) {
 				foundProblem = true;
-				logger.error("bitSize is not 32 for BIT_FIELD_32u");
+				logger.error("bitSize is not 32 for BIT_FIELD_32");
 			}
 			
 			if (8 < bitSize && (bitSize % 16) != 0) {
