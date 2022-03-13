@@ -53,6 +53,8 @@ public final class StringUtil {
 		// usual pattern
 		numberStringMap.put(       0xFFL,        "0xFF");
 		numberStringMap.put(     0xFFFFL,      "0xFFFF");
+		numberStringMap.put(  0xFF_FFFEL,   "0xFF_FFFE");
+		numberStringMap.put(  0xFF_FFFFL,   "0xFF_FFFF");
 		numberStringMap.put(0xFFFF_FFFFL, "0xFFFF_FFFFL");
 
 		// Java constant
