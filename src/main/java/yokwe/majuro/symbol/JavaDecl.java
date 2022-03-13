@@ -7,6 +7,8 @@ import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import yokwe.majuro.UnexpectedException;
@@ -29,6 +31,7 @@ import yokwe.majuro.symbol.model.TypePointerLong;
 import yokwe.majuro.symbol.model.TypePointerShort;
 import yokwe.majuro.symbol.model.TypeRecord;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
+import yokwe.majuro.symbol.model.TypeRecord.SubType;
 import yokwe.majuro.symbol.model.TypeReference;
 import yokwe.majuro.symbol.model.TypeSubrange;
 import yokwe.majuro.type.MemoryBase;
@@ -946,13 +949,13 @@ public class JavaDecl {
 		protected void processTypeBitField16(TypeBitField16 type) {
 			// RECORD FIELD is BIT FIELD 16
 			var processType = new ProcessTypeBitField(javaDecl);
-			processType.processBitField16();
+			processType.process();
 		}
 		@Override
 		protected void processTypeBitField32(TypeBitField32 type) {
 			// RECORD FIELD is BIT FIELD 32
 			var processType = new ProcessTypeBitField(javaDecl);
-			processType.processBitField32();
+			processType.process();
 		}
 		@Override
 		protected void processTypeMultiWord(TypeMultiWord type) {
@@ -1380,20 +1383,25 @@ public class JavaDecl {
 		//
 		// Entry Point
 		//
+		private static Map<TypeRecord.SubType, Class<?>> parentClassMap = new TreeMap<>();
+		static {
+			parentClassMap.put(SubType.BIT_FIELD_16, MemoryData16.class);
+			parentClassMap.put(SubType.BIT_FIELD_32, MemoryData32.class);
+		}
+		
 		@Override
 		public void process() {
-			throw new UnexpectedException();
-		}
-
-		private void processBitField16() {
-			processBitField(MemoryData16.class);
-		}
-		private void processBitField32() {
-			processBitField(MemoryData32.class);
-		}
-		private void processBitField(Class<?> parentClass) {
-			final var type        = javaDecl.type.toTypeRecord();
-			final var out         = javaDecl.out;
+			final var type = javaDecl.type.toTypeRecord();
+			final var out  = javaDecl.out;
+			
+			final Class<?> parentClass;
+			if (parentClassMap.containsKey(type.subType)) {
+				parentClass = parentClassMap.get(type.subType);
+			} else {
+				logger.error("type    %s", type.toMesaDecl());
+				logger.error("subType %s", type.subType);
+				throw new UnexpectedException();
+			}
 			
 			classPreamble(javaDecl, parentClass);
 			out.prepareLayout();
