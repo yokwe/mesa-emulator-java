@@ -21,8 +21,7 @@ import yokwe.majuro.symbol.model.Type;
 import yokwe.majuro.symbol.model.TypeArray;
 import yokwe.majuro.symbol.model.TypeArrayRef;
 import yokwe.majuro.symbol.model.TypeArraySub;
-import yokwe.majuro.symbol.model.TypeBitField16;
-import yokwe.majuro.symbol.model.TypeBitField32;
+import yokwe.majuro.symbol.model.TypeBitField;
 import yokwe.majuro.symbol.model.TypeBoolean;
 import yokwe.majuro.symbol.model.TypeEnum;
 import yokwe.majuro.symbol.model.TypeMultiWord;
@@ -86,10 +85,8 @@ public class JavaDecl {
 				processTypePointeShort(type.toTypePointerShort());
 			} else if (type instanceof TypePointerLong) {
 				processTypePointeLong(type.toTypePointerLong());
-			} else if (type instanceof TypeBitField16) {
-				processTypeBitField16(type.toTypeBitField16());
-			} else if (type instanceof TypeBitField32) {
-				processTypeBitField32(type.toTypeBitField32());
+			} else if (type instanceof TypeBitField) {
+				processTypeBitField(type.toTypeBitField());
 			} else if (type instanceof TypeMultiWord) {
 				processTypeMultiWord(type.toTypeMultiWord());
 			} else if (type instanceof TypeReference) {
@@ -111,9 +108,8 @@ public class JavaDecl {
 		protected abstract void processTypePointeShort   (TypePointerShort type);
 		protected abstract void processTypePointeLong    (TypePointerLong  type);
 		
-		protected abstract void processTypeBitField16    (TypeBitField16 type);
-		protected abstract void processTypeBitField32    (TypeBitField32 type);
-		protected abstract void processTypeMultiWord     (TypeMultiWord  type);
+		protected abstract void processTypeBitField      (TypeBitField  type);
+		protected abstract void processTypeMultiWord     (TypeMultiWord type);
 
 		// misc type
 		protected abstract void processTypeReference     (TypeReference type);
@@ -158,10 +154,8 @@ public class JavaDecl {
 				processTypePointeShort(field, fieldType.toTypePointerShort());
 			} else if (fieldType instanceof TypePointerLong) {
 				processTypePointeLong(field, fieldType.toTypePointerLong());
-			} else if (fieldType instanceof TypeBitField16) {
-				processTypeBitField16(field, fieldType.toTypeBitField16());
-			} else if (fieldType instanceof TypeBitField32) {
-				processTypeBitField32(field, fieldType.toTypeBitField32());
+			} else if (fieldType instanceof TypeBitField) {
+				processTypeBitField(field, fieldType.toTypeBitField());
 			} else if (fieldType instanceof TypeMultiWord){
 				processTypeMultiWord(field, fieldType.toTypeMultiWord());
 			} else {
@@ -181,9 +175,8 @@ public class JavaDecl {
 		protected abstract void processTypePointeShort   (Field field, TypePointerShort fieldType);
 		protected abstract void processTypePointeLong    (Field field, TypePointerLong  fieldType);
 		
-		protected abstract void processTypeBitField16    (Field field, TypeBitField16 fieldType);
-		protected abstract void processTypeBitField32    (Field field, TypeBitField32 fieldType);
-		protected abstract void processTypeMultiWord     (Field field, TypeMultiWord  fieldType);
+		protected abstract void processTypeBitField      (Field field, TypeBitField  fieldType);
+		protected abstract void processTypeMultiWord     (Field field, TypeMultiWord fieldType);
 	}
 
 	
@@ -546,6 +539,25 @@ public class JavaDecl {
 		out.println("return this;");
 		out.println("}");
 	}
+	private static void recordFieldBitField32(JavaDecl javaDecl, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField");
+		final var out = javaDecl.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		
+		out.println("// %s is BIT FIELD 32", fieldTypeName);
+		out.println("public final %s %s() {", fieldTypeName, fieldName);
+		out.println("return %1$s.value((value & %2$s_MASK) >>> %2$s_SHIFT);", fieldTypeName, fieldConstName);
+		out.println("}");
+		
+		out.println("public final %s %s(%s newValue) {", javaDecl.name, fieldName, fieldTypeName);
+		out.println("value = (value & ~%1$s_MASK) | ((newValue.value << %1$s_SHIFT) & %1$s_MASK);", fieldConstName);
+		out.println("return this;");
+		out.println("}");
+	}
 	
 	
 	private static void recordFieldIndirectLong(JavaDecl javaDecl, TypeRecord.Field field) {
@@ -727,14 +739,8 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - BIT FIELD 16");
-			unexpected(cons);
-		}
-
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - BIT FIELD 32");
+		protected void processTypeBitField(TypeBitField type) {
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - BIT FIELD");
 			unexpected(cons);
 		}
 
@@ -946,14 +952,8 @@ public class JavaDecl {
 		
 		// RECORD
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			// RECORD FIELD is BIT FIELD 16
-			var processType = new ProcessTypeBitField(javaDecl);
-			processType.process();
-		}
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			// RECORD FIELD is BIT FIELD 32
+		protected void processTypeBitField(TypeBitField type) {
+			// RECORD FIELD is BIT FIELD
 			var processType = new ProcessTypeBitField(javaDecl);
 			processType.process();
 		}
@@ -1132,16 +1132,9 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			// ARRAY of BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of BIT FIELD 16");
-			arrayElement(javaDecl, indexType);
-		}
-
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			// ARRAY of BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of BIT FIELD 32");
+		protected void processTypeBitField(TypeBitField type) {
+			// ARRAY of BIT FIELD
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of BIT FIELD");
 			arrayElement(javaDecl, indexType);
 		}
 
@@ -1237,16 +1230,9 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			// ARRAY of SHORT POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of SHORT POINTER to BIT FIELD 16");
-			arrayIndirectShort(javaDecl, indexType);
-		}
-
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			// ARRAY of SHORT POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of SHORT POINTER to BIT FIELD 32");
+		protected void processTypeBitField(TypeBitField type) {
+			// ARRAY of SHORT POINTER to BIT FIELD
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of SHORT POINTER to BIT FIELD");
 			arrayIndirectShort(javaDecl, indexType);
 		}
 
@@ -1343,16 +1329,9 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			// ARRAY of LONG POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of LONG POINTER to BIT FIELD 16");
-			arrayIndirectLong(javaDecl, indexType);
-		}
-
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			// ARRAY of LONG POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of LONG POINTER to BIT FIELD 32");
+		protected void processTypeBitField(TypeBitField type) {
+			// ARRAY of LONG POINTER to BIT FIELD
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of LONG POINTER to BIT FIELD");
 			arrayIndirectLong(javaDecl, indexType);
 		}
 
@@ -1506,15 +1485,18 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(Field field, TypeBitField16 fieldType) {
-			// RECORD FIELD is BIT FIELD 16
-			recordFieldBitField16(javaDecl, field);
-		}
-
-		@Override
-		protected void processTypeBitField32(Field field, TypeBitField32 fieldType) {
-			// RECORD FIELD is BIT FIELD 32
-			throw new UnexpectedException();
+		protected void processTypeBitField(Field field, TypeBitField fieldType) {
+			// RECORD FIELD is BIT FIELD
+			switch(fieldType.subType) {
+			case BIT_FIELD_16:
+				recordFieldBitField16(javaDecl, field);
+				break;
+			case BIT_FIELD_32:
+				recordFieldBitField32(javaDecl, field);
+				break;
+			default:
+				throw new UnexpectedException();
+			}
 		}
 
 		@Override
@@ -1667,29 +1649,15 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(Field field, TypeBitField16 fieldType) {
-			// RECORD FIELD is BIT FIELD 16
+		protected void processTypeBitField(Field field, TypeBitField fieldType) {
+			// RECORD FIELD is BIT FIELD
 			if (field.type instanceof TypeReference) {
-				// RECORD FIELD is REFERENCE of BIT FIELD 16
-				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is REFERENCE of BIT FIELD 16");
+				// RECORD FIELD is REFERENCE of BIT FIELD
+				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is REFERENCE of BIT FIELD");
 				recordField(javaDecl, field);
 			} else {
 				// RECORD FIELD is IMMEDIATE BIT FIELD 16
-				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is IMMEDIATE BIT FIELD 16");
-				throw new UnexpectedException("unexpected");
-			}
-		}
-
-		@Override
-		protected void processTypeBitField32(Field field, TypeBitField32 fieldType) {
-			// RECORD FIELD is BIT FIELD 32
-			if (field.type instanceof TypeReference) {
-				// RECORD FIELD is REFERENCE of BIT FIELD 32
-				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is REFERNCE of BIT FIELD 32");
-				recordField(javaDecl, field);
-			} else {
-				// RECORD FIELD is IMMEDIATE BIT FIELD 32
-				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is IMMEDIATE BIT FIELD 32");
+				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is IMMEDIATE BIT FIELD");
 				throw new UnexpectedException("unexpected");
 			}
 		}
@@ -1790,16 +1758,9 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			// RECORD FIELD is SHORT POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to BIT FIELD 16");
-			recordFieldIndirectShort(javaDecl, field);
-		}
-
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			// RECORD FIELD is SHORT POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to BIT FIELD 32");
+		protected void processTypeBitField(TypeBitField type) {
+			// RECORD FIELD is SHORT POINTER to BIT FIELD
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to BIT FIELD");
 			recordFieldIndirectShort(javaDecl, field);
 		}
 
@@ -1898,16 +1859,9 @@ public class JavaDecl {
 		}
 
 		@Override
-		protected void processTypeBitField16(TypeBitField16 type) {
-			// RECORD FIELD is LONG POINTER to BIT FIELD 16
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is LONG POINTER to BIT FIELD 16");
-			recordFieldIndirectLong(javaDecl, field);
-		}
-
-		@Override
-		protected void processTypeBitField32(TypeBitField32 type) {
-			// RECORD FIELD is LONG POINTER to BIT FIELD 32
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is LONG POINTER to BIT FIELD 32");
+		protected void processTypeBitField(TypeBitField type) {
+			// RECORD FIELD is LONG POINTER to BIT FIELD
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is LONG POINTER to BIT FIELD");
 			recordFieldIndirectLong(javaDecl, field);
 		}
 

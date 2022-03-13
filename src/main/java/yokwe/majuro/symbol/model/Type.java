@@ -304,16 +304,9 @@ public abstract class Type implements Comparable<Type> {
 			throw new UnexpectedException("Unexpected");
 		}
 	}
-	public TypeBitField16 toTypeBitField16() {
-		if (this instanceof TypeBitField16) {
-			return (TypeBitField16)this;
-		} else {
-			throw new UnexpectedException("Unexpected");
-		}
-	}
-	public TypeBitField32 toTypeBitField32() {
-		if (this instanceof TypeBitField32) {
-			return (TypeBitField32)this;
+	public TypeBitField toTypeBitField() {
+		if (this instanceof TypeBitField) {
+			return (TypeBitField)this;
 		} else {
 			throw new UnexpectedException("Unexpected");
 		}

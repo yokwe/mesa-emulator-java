@@ -270,10 +270,10 @@ public class SymbolUtil {
 				return new TypeMultiWord(name, list);
 			}
 			if (last.stopBit <= 15) {
-				return new TypeBitField16(name, list);
+				return new TypeBitField(name, TypeRecord.SubType.BIT_FIELD_16, list);
 			}
 			if (last.stopBit <= 31) {
-				return new TypeBitField32(name, list);
+				return new TypeBitField(name, TypeRecord.SubType.BIT_FIELD_32, list);
 			}
 			
 			logger.error("Unexpected");
