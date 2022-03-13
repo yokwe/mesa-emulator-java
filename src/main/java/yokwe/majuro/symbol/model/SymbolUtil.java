@@ -40,6 +40,8 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypeLongUnspecifiedContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerLongContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypePointerShortContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeReferenceNameContext;
+import yokwe.majuro.symbol.antlr.SymbolParser.TypeReferenceQNameContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
@@ -120,7 +122,21 @@ public class SymbolUtil {
 	// Reference
 	//
 	static TypeReference getType(String name, ReferenceTypeContext type) {
-		return new TypeReference(name, type.name.getText());
+		if (type instanceof TypeReferenceNameContext) {
+			TypeReferenceNameContext typeReference = (TypeReferenceNameContext)type;
+			String typeString = typeReference.name.getText();
+			return new TypeReference(name, typeString);
+		}
+		if (type instanceof TypeReferenceQNameContext) {
+			TypeReferenceQNameContext typeReference = (TypeReferenceQNameContext)type;
+			String typeString = typeReference.module.getText() + "." + typeReference.name.getText();
+			return new TypeReference(name, typeString);
+		}
+		
+		logger.error("Unexpected");
+		logger.error("  name  %s", name);
+		logger.error("  type  %s", type.getText());
+		throw new UnexpectedException("Unexpected");
 	}
 	
 	

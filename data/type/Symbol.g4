@@ -133,7 +133,8 @@ simpleType
 // REFERENCE
 //
 referenceType
-    :    name=ID  // name of other type
+    :    name=ID             # TypeReferenceName
+    |    module=ID . name=ID # TypeReferenceQName
     ;
 
 
