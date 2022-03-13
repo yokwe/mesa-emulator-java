@@ -4,6 +4,6 @@ import java.util.List;
 
 public final class TypeBitField16 extends TypeRecord {
 	public TypeBitField16(String name, List<Field> fieldList) {
-		super(name, fieldList);
+		super(name, SubType.BIT_FIELD_16, fieldList);
 	}
 }

@@ -4,6 +4,6 @@ import java.util.List;
 
 public final class TypeMultiWord extends TypeRecord {
 	public TypeMultiWord(String name, List<Field> fieldList) {
-		super(name, fieldList);
+		super(name, SubType.MULTI_WORD, fieldList);
 	}
 }

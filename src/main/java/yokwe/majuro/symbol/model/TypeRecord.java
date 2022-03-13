@@ -67,11 +67,17 @@ public abstract class TypeRecord extends Type {
 		}
 	}
 
+	public enum SubType {
+		BIT_FIELD_16, BIT_FIELD_32, MULTI_WORD,
+	}
+	
+	public final SubType     subType;
 	public final List<Field> fieldList;
 	
-	protected TypeRecord(String name, List<Field> fieldList) {
+	protected TypeRecord(String name, SubType subType, List<Field> fieldList) {
 		super(name);
 		
+		this.subType   = subType;
 		this.fieldList = fieldList;
 		
 		{
