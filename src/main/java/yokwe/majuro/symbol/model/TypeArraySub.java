@@ -7,8 +7,8 @@ import yokwe.majuro.util.StringUtil;
 public class TypeArraySub extends TypeArray {
 	public TypeSubrange typeSubrange;
 	
-	public TypeArraySub(String name, TypeSubrange typeSubrange, Type arrayElement) {
-		super(name, arrayElement);
+	public TypeArraySub(QName qName, TypeSubrange typeSubrange, Type arrayElement) {
+		super(qName, arrayElement);
 		this.typeSubrange = typeSubrange;
 		
 		fix();

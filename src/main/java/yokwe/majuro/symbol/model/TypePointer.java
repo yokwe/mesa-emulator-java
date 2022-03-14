@@ -12,8 +12,8 @@ public abstract class TypePointer extends Type {
 	
 	public final Type   pointerTarget;
 	
-	protected TypePointer(String name, int bits, String typeName, Type pointerTarget) {
-		super(name);
+	protected TypePointer(QName qName, int bits, String typeName, Type pointerTarget) {
+		super(qName);
 		
 		this.bits          = bits;
 		this.maxValue      = (1L << bits) - 1;
@@ -21,8 +21,8 @@ public abstract class TypePointer extends Type {
 		this.pointerTarget = pointerTarget;
 		fix();
 	}
-	protected TypePointer(String name, int bits, String typeName) {
-		this(name, bits, typeName, null);
+	protected TypePointer(QName qName, int bits, String typeName) {
+		this(qName, bits, typeName, null);
 	}
 	
 	@Override

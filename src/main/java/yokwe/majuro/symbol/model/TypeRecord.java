@@ -74,8 +74,8 @@ public abstract class TypeRecord extends Type {
 	public final SubType     subType;
 	public final List<Field> fieldList;
 	
-	protected TypeRecord(String name, SubType subType, List<Field> fieldList) {
-		super(name);
+	protected TypeRecord(QName qName, SubType subType, List<Field> fieldList) {
+		super(qName);
 		
 		this.subType   = subType;
 		this.fieldList = fieldList;
@@ -100,7 +100,7 @@ public abstract class TypeRecord extends Type {
 			if (8 < bitSize && (bitSize % 16) != 0) {
 				foundProblem = true;
 				logger.error("bitSize is not multiple of 16");
-				logger.error("  %-30s  %4d:%2d", name, bitSize / 16, bitSize % 16);						
+				logger.error("  %-30s  %4d:%2d", qName, bitSize / 16, bitSize % 16);						
 			}
 			
 			// check duplicate filed name
@@ -170,7 +170,7 @@ public abstract class TypeRecord extends Type {
 								if (map.containsKey(j)) break;
 								stop = j;
 							}
-							logger.error("hole  %s  %d  %d:%d - %d:%d", name, bitSize, start / 16, start % 16, stop / 16, stop % 16);
+							logger.error("hole  %s  %d  %d:%d - %d:%d", qName, bitSize, start / 16, start % 16, stop / 16, stop % 16);
 						}
 					}
 				}
@@ -178,7 +178,7 @@ public abstract class TypeRecord extends Type {
 
 			if (foundProblem) {
 				logger.error("found problem");
-				logger.error("  name %s", name);
+				logger.error("  qName %s", qName);
 				throw new UnexpectedException("found problem");
 			}
 		}
@@ -219,17 +219,18 @@ public abstract class TypeRecord extends Type {
 							if (type == Type.CARDINAL)    continue;
 							if (type instanceof TypeEnum     && typeBitSize <= fieldBitSize) continue;
 							if (type instanceof TypeSubrange && typeBitSize <= fieldBitSize) continue;
+							if (type instanceof TypeBoolean  && typeBitSize <= fieldBitSize) continue;
 							
 							foundProblem = true;
-							logger.error("field  %-16s  %-16s  fieldBitSize  %2d  typeBitSize  %2d", e.name, type.name, fieldBitSize, typeBitSize);
+							logger.error("field  %-16s  %-16s  fieldBitSize  %2d  typeBitSize  %2d", e.name, type.qName, fieldBitSize, typeBitSize);
 						}
 					}
 					
 					if (foundProblem) {
 						logger.error("found problem");
-						logger.error("  %s", name);
+						logger.error("  %s", qName);
 						for(var e: fieldList) {
-							logger.error("    %-16s %-16s  field %2d  type %2d", e.name, e.type.realType().name, e.bitSize, e.type.bitSize);
+							logger.error("    %-16s %-40s  field %3d  type %3d", e.name, e.type.realType().qName, e.bitSize, e.type.bitSize);
 						}
 						throw new UnexpectedException("found problem");
 					}

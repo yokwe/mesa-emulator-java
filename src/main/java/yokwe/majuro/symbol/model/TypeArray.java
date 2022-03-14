@@ -11,8 +11,8 @@ public abstract class TypeArray extends Type {
 	public long maxValue;
 	public long size;
 
-	protected TypeArray(String name, Type arrayElement) {
-		super(name);
+	protected TypeArray(QName qName, Type arrayElement) {
+		super(qName);
 		
 		this.arrayElement = arrayElement;
 		

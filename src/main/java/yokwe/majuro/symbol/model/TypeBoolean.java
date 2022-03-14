@@ -6,10 +6,11 @@ import yokwe.majuro.util.StringUtil;
 public class TypeBoolean extends Type {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
-	public static final String NAME = "BOOLEAN";
+	public static final String NAME  = "BOOLEAN";
+	public static final QName  QNAME = new QName(NAME);
 
-	public TypeBoolean(String name) {
-		super(name);
+	public TypeBoolean(QName qName) {
+		super(qName);
 		fix();
 	}
 	
@@ -26,7 +27,7 @@ public class TypeBoolean extends Type {
 
 	@Override
 	public String toMesaType() {
-		if (name.equals(Type.BOOLEAN.name)) return "BOOLEAN";
+		if (qName.equals(NAME)) return "BOOLEAN";
 		
 		logger.error("Unexpected");
 		logger.error("  this  %s", this);

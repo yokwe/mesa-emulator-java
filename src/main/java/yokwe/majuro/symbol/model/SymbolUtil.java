@@ -45,6 +45,7 @@ import yokwe.majuro.symbol.antlr.SymbolParser.TypeReferenceQNameContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeTypeContext;
 import yokwe.majuro.symbol.antlr.SymbolParser.TypeUnspecifiedContext;
 import yokwe.majuro.symbol.model.TypeRecord.Field;
+import yokwe.majuro.util.StringUtil;
 
 public class SymbolUtil {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
@@ -52,30 +53,30 @@ public class SymbolUtil {
 	//
 	// Type
 	//
-	static Type getType(DeclTypeContext declType) {
-		String name = declType.name.getText();
+	static Type getType(String module, DeclTypeContext declType) {
+		QName qName = new QName(module, declType.name.getText());
 		TypeTypeContext type = declType.typeType();
 		
 		if (type.simpleType() != null) {
-			return getType(name, type.simpleType());
+			return getType(qName, type.simpleType());
 		}
 		if (type.referenceType() != null) {
-			return getType(name, type.referenceType());
+			return getType(qName, type.referenceType());
 		}
 		if (type.pointerType() != null) {
-			return getType(name, type.pointerType());
+			return getType(qName, type.pointerType());
 		}
 		if (type.subrangeType() != null) {
-			return getType(name, type.subrangeType());
+			return getType(qName, type.subrangeType());
 		}
 		if (type.enumType() != null) {
-			return getType(name, type.enumType());
+			return getType(qName, type.enumType());
 		}
 		if (type.arrayType() != null) {
-			return getType(name, type.arrayType());
+			return getType(qName, type.arrayType());
 		}
 		if (type.recordType() != null) {
-			return getType(name, type.recordType());
+			return getType(qName, type.recordType());
 		}
 
 		logger.error("Unexpected");
@@ -85,34 +86,34 @@ public class SymbolUtil {
 	//
 	// Simple
 	//
-	static Type getType(String name, SimpleTypeContext type) {
+	static Type getType(QName qName, SimpleTypeContext type) {
 		if (type instanceof TypeBooleanContext) {
-			return new TypeReference(name, Type.BOOLEAN.name);
+			return new TypeReference(qName, Type.BOOLEAN.qName.qName);
 		}
 		if (type instanceof TypeIntegerContext) {
-			return new TypeReference(name, Type.INTEGER.name);
+			return new TypeReference(qName, Type.INTEGER.qName.qName);
 		}
 		if (type instanceof TypeCardinalContext) {
-			return new TypeReference(name, Type.CARDINAL.name);
+			return new TypeReference(qName, Type.CARDINAL.qName.qName);
 		}
 		if (type instanceof TypeLongCardinalContext) {
-			return new TypeReference(name, Type.LONG_CARDINAL.name);
+			return new TypeReference(qName, Type.LONG_CARDINAL.qName.qName);
 		}
 		if (type instanceof TypeUnspecifiedContext) {
-			return new TypeReference(name, Type.UNSPECIFIED.name);
+			return new TypeReference(qName, Type.UNSPECIFIED.qName.qName);
 		}
 		if (type instanceof TypeLongUnspecifiedContext) {
-			return new TypeReference(name, Type.LONG_UNSPECIFIED.name);
+			return new TypeReference(qName, Type.LONG_UNSPECIFIED.qName.qName);
 		}
 		if (type instanceof TypePointerContext) {
-			return new TypeReference(name, Type.POINTER.name);
+			return new TypeReference(qName, Type.POINTER.qName.qName);
 		}
 		if (type instanceof TypeLongPointerContext) {
-			return new TypeReference(name, Type.LONG_POINTER.name);
+			return new TypeReference(qName, Type.LONG_POINTER.qName.qName);
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
+		logger.error("  name  %s", qName);
 		logger.error("  type  %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
@@ -121,21 +122,21 @@ public class SymbolUtil {
 	//
 	// Reference
 	//
-	static TypeReference getType(String name, ReferenceTypeContext type) {
+	static TypeReference getType(QName qName, ReferenceTypeContext type) {
 		if (type instanceof TypeReferenceNameContext) {
 			TypeReferenceNameContext typeReference = (TypeReferenceNameContext)type;
 			String typeString = typeReference.name.getText();
-			return new TypeReference(name, typeString);
+			return new TypeReference(qName, typeString);
 		}
 		if (type instanceof TypeReferenceQNameContext) {
 			TypeReferenceQNameContext typeReference = (TypeReferenceQNameContext)type;
 			String typeString = typeReference.module.getText() + "." + typeReference.name.getText();
-			return new TypeReference(name, typeString);
+			return new TypeReference(qName, typeString);
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 	
@@ -143,55 +144,57 @@ public class SymbolUtil {
 	//
 	// Pointer
 	//
-	static Type getType(String name, PointerRefTypeContext type) {
+	static Type getType(QName qName, PointerRefTypeContext type) {
 		if (type.simpleType() != null){
-			return getType(name, type.simpleType());
+			return getType(qName, type.simpleType());
 		}
 		if (type.referenceType() != null) {
-			return getType(name, type.referenceType());
+			return getType(qName, type.referenceType());
 		}
 //		if (type.arrayType() != null){
 //			return getType(name, type.arrayType());
 //		}
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
-	static Type getType(String name, PointerTypeContext type) {
+	static Type getType(QName qName, PointerTypeContext type) {
 		if (type instanceof TypePointerShortContext) {
 			TypePointerShortContext typePointerShort = (TypePointerShortContext)type;
-			Type typeRef = getType(name + "#ref", typePointerShort.pointerRefType());
-			return new TypePointerShort(name, typeRef);
+			Type typeRef = getType(qName.appendSuffix("#ref"), typePointerShort.pointerRefType());
+			
+			
+			return new TypePointerShort(qName, typeRef);
 		}
 		if (type instanceof TypePointerLongContext) {
 			TypePointerLongContext typePointerLong = (TypePointerLongContext)type;
-			Type typeRef = getType(name + "#ref", typePointerLong.pointerRefType());
-			return new TypePointerLong(name, typeRef);
+			Type typeRef = getType(qName.appendSuffix("#ref"), typePointerLong.pointerRefType());
+			return new TypePointerLong(qName, typeRef);
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
 	//
 	// Subrange
 	//
-	static TypeSubrange getType(String name, SubrangeTypeContext context) {
+	static TypeSubrange getType(QName qName, SubrangeTypeContext context) {
 		String minValue  = context.minValue.getText();
 		String maxValue  = context.maxValue.getText();
 		String closeChar = context.closeChar.getText();
 		
-		return new TypeSubrange(name, minValue, maxValue, closeChar);
+		return new TypeSubrange(qName, minValue, maxValue, closeChar);
 	}
 
 	//
 	// Enum
 	//
-	static Type getType(String name, EnumTypeContext type) {
+	static Type getType(QName qName, EnumTypeContext type) {
 		List<TypeEnum.Item> list = new ArrayList<>();
 		
 		for(EumElementContext enumElement: type.enumElementList().elements) {
@@ -201,54 +204,54 @@ public class SymbolUtil {
 			list.add(new TypeEnum.Item(itemName, itemValue));
 		}
 		
-		return new TypeEnum(name, list);
+		return new TypeEnum(qName, list);
 	}
 
 	//
 	// Array
 	//
-	static Type getType(String name, ArrayTypeContext type) {
+	static Type getType(QName qName, ArrayTypeContext type) {
 		if (type instanceof TypeArrayReferenceContext) {
-			return getType(name, (TypeArrayReferenceContext)type);
+			return getType(qName, (TypeArrayReferenceContext)type);
 		}
 		if (type instanceof TypeArraySubrangeContext) {
-			return getType(name, (TypeArraySubrangeContext)type);
+			return getType(qName, (TypeArraySubrangeContext)type);
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
-	private static Type getType(String name, TypeArrayReferenceContext type) {
-		TypeReference typeReference = getType(name + "#index", type.referenceType());
-		Type arrayElement = getType(name + "#element", type.arrayElementType());
+	private static Type getType(QName qName, TypeArrayReferenceContext type) {
+		TypeReference typeReference = getType(qName.appendSuffix("#index"), type.referenceType());
+		Type arrayElement = getType(qName.appendSuffix("#element"), type.arrayElementType());
 	
-		return new TypeArrayRef(name, typeReference, arrayElement);
+		return new TypeArrayRef(qName, typeReference, arrayElement);
 	}
 
-	private static Type getType(String name, TypeArraySubrangeContext type) {
-		TypeSubrange typeSubrange = getType(name + "#index", type.subrangeType());
-		Type arrayElement = getType(name + "#element", type.arrayElementType());
+	private static Type getType(QName qName, TypeArraySubrangeContext type) {
+		TypeSubrange typeSubrange = getType(qName.appendSuffix("#index"), type.subrangeType());
+		Type arrayElement = getType(qName.appendSuffix("#element"), type.arrayElementType());
 		
-		return new TypeArraySub(name, typeSubrange, arrayElement);
+		return new TypeArraySub(qName, typeSubrange, arrayElement);
 	}
 
-	private static Type getType(String name, ArrayElementTypeContext type) {
+	private static Type getType(QName qName, ArrayElementTypeContext type) {
 		if (type.simpleType() != null) {
-			return getType(name, type.simpleType());
+			return getType(qName, type.simpleType());
 		}
 		if (type.pointerType() != null) {
-			return getType(name, type.pointerType());
+			return getType(qName, type.pointerType());
 		}
 		if (type.referenceType() != null) {
-			return getType(name, type.referenceType());
+			return getType(qName, type.referenceType());
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
 
@@ -256,10 +259,10 @@ public class SymbolUtil {
 	//
 	// Record
 	//
-	static Type getType(String name, RecordTypeContext type) {
+	static Type getType(QName qName, RecordTypeContext type) {
 		List<Field> list = new ArrayList<>();
 		for(var e: type.recordFieldList().elements) {
-			list.add(getField(name, e));
+			list.add(getField(qName, e));
 		}
 		
 		Map<Integer, List<Field>> fieldMap = new TreeMap<>();
@@ -283,43 +286,43 @@ public class SymbolUtil {
 			Field last = fieldList.get(fieldList.size() - 1);
 			
 			if (!last.hasStartBit()) {
-				return new TypeMultiWord(name, list);
+				return new TypeMultiWord(qName, list);
 			}
 			if (last.stopBit <= 15) {
-				return new TypeBitField(name, TypeRecord.SubType.BIT_FIELD_16, list);
+				return new TypeBitField(qName, TypeRecord.SubType.BIT_FIELD_16, list);
 			}
 			if (last.stopBit <= 31) {
-				return new TypeBitField(name, TypeRecord.SubType.BIT_FIELD_32, list);
+				return new TypeBitField(qName, TypeRecord.SubType.BIT_FIELD_32, list);
 			}
 			
 			logger.error("Unexpected");
-			logger.error("  name  %s", name);
+			logger.error("  name  %s", qName);
 			logger.error("  type  %s", type.getText());
 			throw new UnexpectedException("Unexpected");
 		} else {
-			return new TypeMultiWord(name, list);
+			return new TypeMultiWord(qName, list);
 		}
 	}
-	private static Type getType(String name, FieldTypeContext type) {
+	private static Type getType(QName qName, FieldTypeContext type) {
 		if (type.simpleType() != null) {
-			return getType(name, type.simpleType());
+			return getType(qName, type.simpleType());
 		}
 		if (type.referenceType() != null) {
-			return getType(name, type.referenceType());
+			return getType(qName, type.referenceType());
 		}
 		if (type.arrayType() != null) {
-			return getType(name, type.arrayType());
+			return getType(qName, type.arrayType());
 		}
 		if (type.pointerType() != null) {
-			return getType(name, type.pointerType());
+			return getType(qName, type.pointerType());
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type.getText());
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type.getText());
 		throw new UnexpectedException("Unexpected");
 	}
-	private static Field getField(String typeName, RecordFieldContext recordField) {
+	private static Field getField(QName typeName, RecordFieldContext recordField) {
 		FieldNameContext fieldName = recordField.fieldName();
 		FieldTypeContext fieldType = recordField.fieldType();
 		
@@ -327,7 +330,7 @@ public class SymbolUtil {
 			TypeFieldNameContext typeFieldName = (TypeFieldNameContext)recordField.fieldName();
 			String name   = typeFieldName.name.getText();
 			String offset = typeFieldName.offset.getText();
-			Type   type   = getType(typeName + "#" + name, fieldType);
+			Type   type   = getType(typeName.appendSuffix("#" + name), fieldType);
 			return new Field(name, offset, type);
 			
 		}
@@ -337,7 +340,7 @@ public class SymbolUtil {
 			String offset   = typeFieldName.offset.getText();
 			String startBit = typeFieldName.startBit.getText();
 			String stopBit  = typeFieldName.stopBit.getText();
-			Type   type     = getType(typeName + "#" + name, fieldType);
+			Type   type     = getType(typeName.appendSuffix("#" + name), fieldType);
 			return new Field(name, offset, startBit, stopBit, type);
 		}
 		
@@ -350,9 +353,9 @@ public class SymbolUtil {
 	//
 	// Constant
 	//
-	static Constant getConstant(DeclConstantContext declConstant) {
-		String name = declConstant.name.getText();
-// FIXME		String value = String.join(".", declConstant.constantValue().name.stream().map(o -> o.getText()).toArray(String[]::new));
+	static Constant getConstant(String module, DeclConstantContext declConstant) {
+		QName qName = new QName(module, StringUtil.toJavaConstName(declConstant.name.getText()));
+		
 		ConstantValueContext valueContext = declConstant.constantValue();
 		String value;
 
@@ -366,39 +369,39 @@ public class SymbolUtil {
 
 		ConstantTypeContext type = declConstant.constantType();
 		if (type.constantTypeNumeric() != null) {
-			return getConstant(name, type.constantTypeNumeric(), value);
+			return getConstant(qName, type.constantTypeNumeric(), value);
 		}
 		if (type.pointerType() != null) {
-			return getConstant(name, type.pointerType(), value);			
+			return getConstant(qName, type.pointerType(), value);			
 		}
 		if (type.referenceType() != null) {
-			return getConstant(name, type.referenceType(), value);			
+			return getConstant(qName, type.referenceType(), value);			
 		}
 		
 		logger.error("Unexpected");
 		logger.error("  declConstant  %s", declConstant.getText());
 		throw new UnexpectedException("Unexpected");
 	}
-	private static Constant getConstant(String name, ConstantTypeNumericContext type, String value) {
+	private static Constant getConstant(QName qName, ConstantTypeNumericContext type, String value) {
 		if (type instanceof ConstantTypeNumericCardinalContext) {
-			return new Constant(name, Type.CARDINAL, value);
+			return new Constant(qName, Type.CARDINAL, value);
 		}
 		if (type instanceof ConstantTypeNumericLongCardinalContext) {
-			return new Constant(name, Type.CARDINAL, value);
+			return new Constant(qName, Type.LONG_CARDINAL, value);
 		}
 		
 		logger.error("Unexpected");
-		logger.error("  name  %s", name);
-		logger.error("  type  %s", type);
-		logger.error("  value %s", value);
+		logger.error("  qName  %s", qName);
+		logger.error("  type   %s", type);
+		logger.error("  value  %s", value);
 		throw new UnexpectedException("Unexpected");
 	}
-	private static Constant getConstant(String name, PointerTypeContext type, String value) {
-		Type pointerType = getType(name + "#pointer", type);
-		return new Constant(name, pointerType, value);
+	private static Constant getConstant(QName qName, PointerTypeContext type, String value) {
+		Type pointerType = getType(qName.appendSuffix("#pointer"), type);
+		return new Constant(qName, pointerType, value);
 	}
-	private static Constant getConstant(String name, ReferenceTypeContext type, String value) {
-		Type referenceType = getType(name + "#reference", type);
-		return new Constant(name, referenceType, value);
+	private static Constant getConstant(QName qName, ReferenceTypeContext type, String value) {
+		Type referenceType = getType(qName.appendSuffix("#reference"), type);
+		return new Constant(qName, referenceType, value);
 	}
 }

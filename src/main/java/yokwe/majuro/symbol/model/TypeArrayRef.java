@@ -8,8 +8,8 @@ import yokwe.majuro.util.StringUtil;
 public class TypeArrayRef extends TypeArray {
 	public TypeReference typeReference;
 	
-	public TypeArrayRef(String name, TypeReference typeReference, Type arrayElement) {
-		super(name, arrayElement);
+	public TypeArrayRef(QName qName, TypeReference typeReference, Type arrayElement) {
+		super(qName, arrayElement);
 		this.typeReference = typeReference;
 		
 		fix();

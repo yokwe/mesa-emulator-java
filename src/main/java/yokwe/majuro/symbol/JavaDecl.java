@@ -5,7 +5,6 @@ import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.LEFT;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,6 +12,7 @@ import java.util.stream.Collectors;
 
 import yokwe.majuro.UnexpectedException;
 import yokwe.majuro.symbol.model.Constant;
+import yokwe.majuro.symbol.model.QName;
 import yokwe.majuro.symbol.model.Symbol;
 import yokwe.majuro.symbol.model.Symbol.Decl;
 import yokwe.majuro.symbol.model.Symbol.DeclConstant;
@@ -183,11 +183,12 @@ public class JavaDecl {
 	private final File outputFile;
 	private final File tempFile;
 	
-	private String                name;
 	private AutoIndentPrintWriter out;
 	
 	private Constant cons;
 	private Type     type;
+	private String   module;
+	private String   name;
 
 	private JavaDecl(String path) {
 		outputFile = new File(path);
@@ -203,18 +204,24 @@ public class JavaDecl {
 		}
 	}
 
+	private String simpleName(QName qName) {
+		return qName.simpleName(module);
+	}
+	
 	void generate(Decl decl) {
 		if (decl instanceof DeclConstant) {
-			this.cons = decl.toCons();
-			this.type = null;
-			this.name = StringUtil.toJavaConstName(cons.name);
+			this.cons   = decl.toCons();
+			this.type   = null;
+			this.module = cons.qName.module;
+			this.name   = StringUtil.toJavaConstName(simpleName(cons.qName));
 			
 			var processCons = new ProcessConsTop(this);
 			processCons.process();
 		} else if (decl instanceof DeclType) {
-			this.cons = null;
-			this.type = decl.toType();
-			this.name = StringUtil.toJavaName(type.name);
+			this.cons   = null;
+			this.type   = decl.toType();
+			this.module = type.qName.module;
+			this.name   = StringUtil.toJavaName(simpleName(type.qName));
 			
 			var processType = new ProcessTypeTop(this);
 			processType.process();
@@ -312,14 +319,14 @@ public class JavaDecl {
 		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE arrayElement 3");
 		final var out = javaDecl.out;
 		
-		String elementTypeName = StringUtil.toJavaName(elementType.name);
-		String indexTypeName   = StringUtil.toJavaName(indexType.name);
+		String elementTypeName = StringUtil.toJavaName(javaDecl.simpleName(elementType.qName));
+		String indexTypeName   = StringUtil.toJavaName(javaDecl.simpleName(indexType.qName));
 		
 		if (indexTypeName.contains("#")) {
 			// fix indexTypeName like ArraySubFixed#index
 			String[] tokens = indexTypeName.split("#");
 			if (tokens.length == 2) {
-				if (tokens[0].equals(javaDecl.type.name) && tokens[1].equals("index")) {
+				if (tokens[0].equals(javaDecl.type.qName.name) && tokens[1].equals("index")) {
 					indexTypeName = "ArrayIndex";
 					
 					if (indexType.needsRangeCheck()) {					
@@ -336,6 +343,8 @@ public class JavaDecl {
 						out.println("}");
 					}
 				} else {
+					logger.error("indexTypeName %s", indexTypeName);
+					logger.error("tokens %d", tokens.length);
 					throw new UnexpectedException("Unexpected");
 				}
 			} else {
@@ -361,9 +370,9 @@ public class JavaDecl {
 		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE arrayIndirectShort 3");
 		final var out = javaDecl.out;
 		
-		String indexTypeName   = StringUtil.toJavaName(indexType.name);
-		String elementTypeName = StringUtil.toJavaName(Type.POINTER.name);
-		String targetTypeName  = StringUtil.toJavaName(targetType.name);
+		String indexTypeName   = StringUtil.toJavaName(javaDecl.simpleName(indexType.qName));
+		String elementTypeName = StringUtil.toJavaName(Type.POINTER.qName.name);
+		String targetTypeName  = StringUtil.toJavaName(javaDecl.simpleName(targetType.qName));
 		
 		out.println("public final %s get(int index) {", targetTypeName);
 		if (indexType.needsRangeCheck()) {
@@ -404,9 +413,9 @@ public class JavaDecl {
 		
 		final var out = javaDecl.out;
 		
-		String indexTypeName   = StringUtil.toJavaName(indexType.name);
-		String elementTypeName = StringUtil.toJavaName(Type.LONG_POINTER.name);
-		String targetTypeName  = StringUtil.toJavaName(targetType.name);
+		String indexTypeName   = StringUtil.toJavaName(javaDecl.simpleName(indexType.qName));
+		String elementTypeName = StringUtil.toJavaName(Type.LONG_POINTER.qName.name);
+		String targetTypeName  = StringUtil.toJavaName(javaDecl.simpleName(targetType.qName));
 		
 		out.println("public final %s get(int index) {", targetTypeName);
 		if (indexType.needsRangeCheck()) {
@@ -449,7 +458,7 @@ public class JavaDecl {
 		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
 
 		out.println("public %s %s() {", fieldTypeName, fieldName);
 		out.println("int longPointer = base + OFFSET_%s;", fieldConstName);
@@ -479,7 +488,7 @@ public class JavaDecl {
 		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
 		
 		out.println("// @Mesa.ENUM is %s", fieldTypeName);
 		
@@ -500,7 +509,7 @@ public class JavaDecl {
 		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
 		
 		String mesaType = "CARD16";
 		if (fieldType.bitSize() <= 8) mesaType = "CARD8";
@@ -527,7 +536,7 @@ public class JavaDecl {
 		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
 		
 		out.println("// %s is BIT FIELD 16", fieldTypeName);
 		out.println("public final %s %s() {", fieldTypeName, fieldName);
@@ -546,7 +555,7 @@ public class JavaDecl {
 		Type   fieldType      = field.type.realType();
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
-		String fieldTypeName  = StringUtil.toJavaName(fieldType.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
 		
 		out.println("// %s is BIT FIELD 32", fieldTypeName);
 		out.println("public final %s %s() {", fieldTypeName, fieldName);
@@ -567,7 +576,7 @@ public class JavaDecl {
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
 		Type   targetType     = field.type.realType().pointerTarget().realType();
-		String targetTypeName = StringUtil.toJavaName(targetType.name);
+		String targetTypeName = StringUtil.toJavaName(javaDecl.simpleName(targetType.qName));
 
 		out.println("public %s %s() {", targetTypeName, fieldName);
 		out.println("int longPointer = Memory.read32(base + OFFSET_%s);", fieldConstName);
@@ -589,7 +598,7 @@ public class JavaDecl {
 		String fieldConstName = StringUtil.toJavaConstName(field.name);
 		String fieldName      = StringUtil.toJavaName(field.name);
 		Type   targetType     = field.type.realType().pointerTarget().realType();
-		String targetTypeName = StringUtil.toJavaName(targetType.name);
+		String targetTypeName = StringUtil.toJavaName(javaDecl.simpleName(targetType.qName));
 
 		out.println("public %s %s() {", targetTypeName, fieldName);
 		out.println("int pointer = Memory.read16(base + OFFSET_%s);", fieldConstName);
@@ -611,14 +620,14 @@ public class JavaDecl {
 		
 		String fieldConstName  = StringUtil.toJavaConstName(field.name);
 		
-		String indexTypeName   = StringUtil.toJavaName(indexType.name);
-		String elementTypeName = StringUtil.toJavaName(elementType.name);
+		String indexTypeName   = StringUtil.toJavaName(javaDecl.simpleName(indexType.qName));
+		String elementTypeName = StringUtil.toJavaName(javaDecl.simpleName(elementType.qName));
 		
 		if (indexTypeName.contains("#")) {
 			// fix indexTypeName like RecArraySubFixed#card1#index
 			String[] tokens = indexTypeName.split("#");
 			if (tokens.length == 3) {
-				if (tokens[0].equals(javaDecl.type.name) && tokens[1].equals(field.name) && tokens[2].equals("index")) {
+				if (tokens[0].equals(javaDecl.type.qName.name) && tokens[1].equals(field.name) && tokens[2].equals("index")) {
 					indexTypeName = StringUtil.toJavaClassName(field.name) + "Index";
 					
 					if (indexType.needsRangeCheck()) {					
@@ -698,13 +707,15 @@ public class JavaDecl {
 				valueString = cons.valueString;
 			}
 
-			if (type.name.equals(Type.CARDINAL.name)) {
-				out.println("public static final @Mesa.CARD16 int %s = %s;", StringUtil.toJavaName(cons.name), valueString);
+			if (type.equals(null)) {}
+			
+			if (type.equals(Type.CARDINAL)) {
+				out.println("public static final @Mesa.CARD16 int %s = %s;", StringUtil.toJavaName(javaDecl.simpleName(cons.qName)), valueString);
 				return;
 			}
 			
-			if (type.name.equals(Type.LONG_CARDINAL.name)) {
-				out.println("public static final @Mesa.CARD32 int %s = %s;", StringUtil.toJavaConstName(cons.name), valueString);
+			if (type.equals(Type.LONG_CARDINAL)) {
+				out.println("public static final @Mesa.CARD32 int %s = %s;", StringUtil.toJavaConstName(javaDecl.simpleName(cons.qName)), valueString);
 				return;
 			}
 			
@@ -728,8 +739,8 @@ public class JavaDecl {
 			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - SHORT POINTER");
 			final var out = javaDecl.out;
 			
-			String targetTypeName = StringUtil.toJavaName(type.pointerTarget().realType().name);
-			out.println("public static final %s %s(MemoryAccess access) {", targetTypeName, StringUtil.toJavaName(cons.name));
+			String targetTypeName = StringUtil.toJavaName(javaDecl.simpleName(type.pointerTarget().realType().qName));
+			out.println("public static final %s %s(MemoryAccess access) {", targetTypeName, StringUtil.toJavaName(cons.qName.name));
 			out.println("return %s.pointer(%s, access);", targetTypeName, cons.valueString);
 			out.println("}");
 		}
@@ -739,8 +750,8 @@ public class JavaDecl {
 			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// CONS - LONG POINTER");
 			final var out = javaDecl.out;
 			
-			String targetTypeName = StringUtil.toJavaName(type.pointerTarget().realType().name);
-			out.println("public static final %s %s(MemoryAccess access) {", targetTypeName, StringUtil.toJavaName(cons.name));
+			String targetTypeName = StringUtil.toJavaName(javaDecl.simpleName(type.pointerTarget().realType().qName));
+			out.println("public static final %s %s(MemoryAccess access) {", targetTypeName, StringUtil.toJavaName(cons.qName.name));
 			out.println("return %s.longPointer(%s, access);", targetTypeName, cons.valueString);
 			out.println("}");
 		}
@@ -943,7 +954,7 @@ public class JavaDecl {
 				// close class body
 				out.println("}");
 			} else {
-				if (!type.name.contains("#")) {
+				if (!type.qName.name.contains("#")) {
 					javaDecl.out.println("// IGNORE %s", type.toMesaDecl());
 				}
 			}
@@ -974,7 +985,7 @@ public class JavaDecl {
 		// REFERENCE
 		@Override
 		protected void processTypeReference(TypeReference type) {
-			if (!type.name.contains("#")) {
+			if (!type.qName.name.contains("#")) {
 				javaDecl.out.println("// IGNORE %s", type.toMesaDecl());
 			}
 		}
@@ -1557,7 +1568,7 @@ public class JavaDecl {
 					// FIXME
 					out.println("// FIXME  Field is not aligned");
 					logger.warn("Field is not aligned");
-					logger.warn("  name %s.%s", type.name, field.name);
+					logger.warn("  name %s.%s", type.qName, field.name);
 					logger.warn("  mesa %s", field.toMesaType());
 					continue;
 				}
@@ -1891,24 +1902,11 @@ public class JavaDecl {
 	//
 	// generate
 	//
-	public static void generate(String symbolDirPath, String outputDirPath, String packageName) {
-		File symbolDir = new File(symbolDirPath);
-		
-		File[] files = symbolDir.listFiles((d, n) -> n.endsWith(".symbol"));
-		Arrays.sort(files);
-		for(var e: files) {
-			boolean outputPredefinedType = e.getName().equals("PrincOps.symbol");
-			generateFile(e.getAbsolutePath(), outputDirPath, packageName, outputPredefinedType);
-		}
-	}
-	public static void generateFile(String symbolFilePath, String outputDirPath, String packageName, boolean outputPredefinedType) {
-		logger.info("symbolFilePath  %s", symbolFilePath);
+	public static void generateFile(Symbol symbol, String outputDirPath, String packageName) {
 		logger.info("outputDirPath   %s", outputDirPath);
 		logger.info("packageName     %s", packageName);
 		
-		Symbol symbol = Symbol.getInstance(symbolFilePath, outputPredefinedType);		
-		
-		String name = StringUtil.toJavaName(symbol.name);
+		String name = StringUtil.toJavaName(symbol.module);
 		String path = String.format("%s/%s/%s.java", outputDirPath, packageName.replace('.', '/'), name);
 		
 		JavaDecl javaDecl = new JavaDecl(path);
@@ -1934,15 +1932,5 @@ public class JavaDecl {
 		}
 		javaDecl.moveFile();
 	}
-
-	public static void main(String[] args) {
-		logger.info("START");
-		
-		generate("data/type/main", "src/main/java", "yokwe.majuro.type");
-		generate("data/type/test", "src/test/java", "yokwe.majuro.type");
-		
-		logger.info("STOP");
-	}
-
 
 }

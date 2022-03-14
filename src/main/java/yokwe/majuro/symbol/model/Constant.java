@@ -11,21 +11,19 @@ public class Constant implements Comparable<Constant> {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	public static Map<String, Constant> map = new TreeMap<>();
-	//                name
+	//                qName.qName
 	private static void add(Constant cons) {
-		String name = cons.name;
+		String key = cons.qName.qName;
 		// add to map
-		if (map.containsKey(name)) {
-			logger.error("duplicate name");
-			logger.error("  old  %s", map.get(name));
+		if (map.containsKey(key)) {
+			logger.error("duplicate key");
+			logger.error("  key  %s", key);
+			logger.error("  old  %s", map.get(key));
 			logger.error("  new  %s", cons);
-			throw new UnexpectedException("duplicate name");
+			throw new UnexpectedException("duplicate key");
 		} else {
-			map.put(name, cons);
+			map.put(key, cons);
 		}
-	}
-	public static void clearMap() {
-		map.clear();
 	}
 	public static int fixAll() {
 		int countNeedsFixLast = -1;
@@ -108,7 +106,7 @@ public class Constant implements Comparable<Constant> {
 		}
 	}
 
-	public final String name;
+	public final QName  qName;
 	public final Type   type;
 	public final String valueString;
 
@@ -132,8 +130,8 @@ public class Constant implements Comparable<Constant> {
 		}
 	}
 	
-	public Constant(String name, Type type, String valueString) {
-		this.name        = name;
+	public Constant(QName qName, Type type, String valueString) {
+		this.qName       = qName;
 		this.type        = type;
 		this.valueString = valueString;
 		
@@ -151,10 +149,10 @@ public class Constant implements Comparable<Constant> {
 
 	@Override
 	public int compareTo(Constant that) {
-		return this.name.compareTo(that.name);
+		return this.qName.compareTo(that.qName);
 	}
 	
 	public String toMesaDecl() {
-		return String.format("%s: %s = %s;", name, type.toMesaType(), valueString);
+		return String.format("%s: %s = %s;", qName, type.toMesaType(), valueString);
 	}
 }

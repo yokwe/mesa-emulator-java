@@ -31,8 +31,8 @@ public class TypeEnum extends Type {
 	public final long maxValue;
 	public final long size;
 	
-	public TypeEnum(String name, List<Item> itemList) {
-		super(name);
+	public TypeEnum(QName qName, List<Item> itemList) {
+		super(qName);
 		this.itemList = itemList;
 		
 		{

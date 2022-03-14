@@ -11,14 +11,15 @@ import yokwe.majuro.util.StringUtil;
 public abstract class Type implements Comparable<Type> {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 
-	public static Type findRealType(String name) {
-		if (map.containsKey(name)) {
-			Type realType = map.get(name);
+	public static Type findRealType(String module, String name) {
+		String key = QName.getQName(module, name);
+		if (map.containsKey(key)) {
+			Type realType = map.get(key);
 			while(realType instanceof TypeReference) {
 				TypeReference typeReference = (TypeReference)realType;
-				String typeString = typeReference.typeString;
-				if (map.containsKey(typeString)) {
-					realType = map.get(typeString);
+				key = QName.getQName(typeReference, typeReference.typeString);
+				if (map.containsKey(key)) {
+					realType = map.get(key);
 				} else {
 					return null;
 				}
@@ -46,30 +47,19 @@ public abstract class Type implements Comparable<Type> {
 	}
 	
 	public static Map<String, Type> map = new TreeMap<>();
-	//                name
+	//                name.qName
 	private static void add(Type type) {
-		String name = type.name;
+		String key = type.qName.qName;
 		// add to map
-		if (map.containsKey(name)) {
-			logger.error("duplicate name");
-			logger.error("  old  %s", map.get(name));
+		if (map.containsKey(key)) {
+			logger.error("duplicate key");
+			logger.error("  key  %s", key);
+			logger.error("  old  %s", map.get(key));
 			logger.error("  new  %s", type);
-			throw new UnexpectedException("duplicate name");
+			throw new UnexpectedException("duplicate key");
 		} else {
-			map.put(name, type);
+			map.put(key, type);
 		}
-	}
-	public static void clearMap() {
-		map.clear();
-		// add predefined type
-		add(Type.BOOLEAN);
-		add(Type.INTEGER);
-		add(Type.CARDINAL);
-		add(Type.UNSPECIFIED);
-		add(Type.LONG_CARDINAL);
-		add(Type.LONG_UNSPECIFIED);
-		add(Type.POINTER);
-		add(Type.LONG_POINTER);
 	}
 	public static int fixAll() {
 		int countNeedsFixLast = -1;
@@ -109,38 +99,37 @@ public abstract class Type implements Comparable<Type> {
 	//
 	// Define predefined type
 	//
-	public static final Type BOOLEAN          = new TypeBoolean (TypeBoolean.NAME);
-	public static final Type INTEGER          = new TypeSubrange(TypeSubrange.NAME_INTEGER, Short.MIN_VALUE, Short.MAX_VALUE);
+	public static final Type BOOLEAN          = new TypeBoolean (TypeBoolean.QNAME);
+	public static final Type INTEGER          = new TypeSubrange(TypeSubrange.QNAME_INTEGER, Short.MIN_VALUE, Short.MAX_VALUE);
 	
-	public static final Type CARDINAL         = new TypeSubrange(TypeSubrange.NAME_CARDINAL,         0, 0xFFFF);
-	public static final Type UNSPECIFIED      = new TypeSubrange(TypeSubrange.NAME_UNSPECIFIED,      0, 0xFFFF);
+	public static final Type CARDINAL         = new TypeSubrange(TypeSubrange.QNAME_CARDINAL,         0, 0xFFFF);
+	public static final Type UNSPECIFIED      = new TypeSubrange(TypeSubrange.QNAME_UNSPECIFIED,      0, 0xFFFF);
 	
-	public static final Type LONG_CARDINAL    = new TypeSubrange(TypeSubrange.NAME_LONG_CARDINAL,    0, 0xFFFF_FFFFL);
-	public static final Type LONG_UNSPECIFIED = new TypeSubrange(TypeSubrange.NAME_LONG_UNSPECIFIED, 0, 0xFFFF_FFFFL);
+	public static final Type LONG_CARDINAL    = new TypeSubrange(TypeSubrange.QNAME_LONG_CARDINAL,    0, 0xFFFF_FFFFL);
+	public static final Type LONG_UNSPECIFIED = new TypeSubrange(TypeSubrange.QNAME_LONG_UNSPECIFIED, 0, 0xFFFF_FFFFL);
 	
-	public static final Type POINTER          = new TypePointerShort(TypePointerShort.NAME);
-	public static final Type LONG_POINTER     = new TypePointerLong (TypePointerLong.NAME);
+	public static final Type POINTER          = new TypePointerShort(TypePointerShort.QNAME);
+	public static final Type LONG_POINTER     = new TypePointerLong (TypePointerLong.QNAME);
 	
 	public boolean isPredefiled() {
-		return isPredefined(name);
+		return isPredefined(qName.qName);
 	}
 	public static boolean isPredefined(String name) {
-		if (name.equals(BOOLEAN.name))          return true;
-		if (name.equals(INTEGER.name))          return true;
-		if (name.equals(CARDINAL.name))         return true;
-		if (name.equals(UNSPECIFIED.name))      return true;
-		if (name.equals(LONG_CARDINAL.name))    return true;
-		if (name.equals(LONG_UNSPECIFIED.name)) return true;
-		if (name.equals(POINTER.name))          return true;
-		if (name.equals(LONG_POINTER.name))     return true;
+		if (name.equals(TypeBoolean.NAME))                   return true;
+		if (name.equals(TypeSubrange.NAME_INTEGER))          return true;
+		if (name.equals(TypeSubrange.NAME_CARDINAL))         return true;
+		if (name.equals(TypeSubrange.NAME_UNSPECIFIED))      return true;
+		if (name.equals(TypeSubrange.NAME_LONG_CARDINAL))    return true;
+		if (name.equals(TypeSubrange.NAME_LONG_UNSPECIFIED)) return true;
+		if (name.equals(TypePointerShort.NAME))              return true;
+		if (name.equals(TypePointerLong.NAME))               return true;
 		return false;
 	}
 	
-	public final String name;
+	public final QName qName;
 	
-	protected Type(String name) {
-		this.name = name;
-		
+	protected Type(QName qName) {
+		this.qName    = qName;
 		this.needsFix = true;
 		
 		add(this);
@@ -153,7 +142,7 @@ public abstract class Type implements Comparable<Type> {
 	
 	@Override
 	public int compareTo(Type that) {
-		return this.name.compareTo(that.name);
+		return this.qName.compareTo(that.qName);
 	}
 	
 	@Override
@@ -177,7 +166,7 @@ public abstract class Type implements Comparable<Type> {
 		if (needsFix) throw new UnexpectedException("Unexpected");
 		if (bitSize == NO_VALUE) {
 			logger.error("bitSize == NO_VALUE");
-			logger.error("name  %s", name);
+			logger.error("name  %s", qName);
 			logger.error("type  %s", this);
 			throw new UnexpectedException("Unexpected");
 		}
@@ -191,9 +180,9 @@ public abstract class Type implements Comparable<Type> {
 	
 	public String toMesaDecl() {
 		if (isPredefiled()) {
-			return name;
+			return qName.qName;
 		} else {
-			return String.format("%s: TYPE = %s;", name, toMesaType());
+			return String.format("%s: TYPE = %s;", qName.name, toMesaType());
 		}
 	}
 	

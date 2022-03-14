@@ -7,12 +7,18 @@ public class TypeSubrange extends Type {
 	private static final yokwe.majuro.util.FormatLogger logger = yokwe.majuro.util.FormatLogger.getLogger();
 	
 	public static final String NAME_INTEGER          = "INTEGER";
-	
 	public static final String NAME_CARDINAL         = "CARDINAL";
-	public static final String NAME_LONG_CARDINAL    = "LONG CARDINAL";
-	
+	public static final String NAME_LONG_CARDINAL    = "LONG_CARDINAL";
 	public static final String NAME_UNSPECIFIED      = "UNSPECIFIED";
 	public static final String NAME_LONG_UNSPECIFIED = "LONG UNSPECIFIED";
+	
+	public static final QName QNAME_INTEGER          = new QName(NAME_INTEGER);
+	
+	public static final QName QNAME_CARDINAL         = new QName(NAME_CARDINAL);
+	public static final QName QNAME_LONG_CARDINAL    = new QName(NAME_LONG_CARDINAL);
+	
+	public static final QName QNAME_UNSPECIFIED      = new QName(NAME_UNSPECIFIED);
+	public static final QName QNAME_LONG_UNSPECIFIED = new QName(NAME_LONG_UNSPECIFIED);
 	
 
 	public static final String CLOSE_CHAR_INCLUSIVE = "]";
@@ -26,8 +32,8 @@ public class TypeSubrange extends Type {
 	public long maxValue;
 	public long size;
 
-	public TypeSubrange(String name, String minString, String maxString, String closeChar) {
-		super(name);
+	public TypeSubrange(QName qName, String minString, String maxString, String closeChar) {
+		super(qName);
 		
 		this.minString       = minString;
 		this.maxString       = maxString;
@@ -35,8 +41,8 @@ public class TypeSubrange extends Type {
 		
 		fix();
 	}
-	public TypeSubrange(String name, long minValue, long maxValue) {
-		this(name, Long.toString(minValue), Long.toString(maxValue), CLOSE_CHAR_INCLUSIVE);
+	public TypeSubrange(QName qName, long minValue, long maxValue) {
+		this(qName, Long.toString(minValue), Long.toString(maxValue), CLOSE_CHAR_INCLUSIVE);
 	}
 
 	@Override
@@ -88,10 +94,8 @@ public class TypeSubrange extends Type {
 	@Override
 	public String toMesaType() {
 		// special for predefined class
-		if (equals(Type.INTEGER) ||
-			equals(Type.CARDINAL) || equals(Type.LONG_CARDINAL) ||
-			equals(Type.UNSPECIFIED) || equals(Type.LONG_UNSPECIFIED)) {
-			return name;
+		if (isPredefiled()) {
+			return qName.qName;
 		} else {
 			return String.format("[%s..%s%s", minString, maxString, closeChar);
 		}

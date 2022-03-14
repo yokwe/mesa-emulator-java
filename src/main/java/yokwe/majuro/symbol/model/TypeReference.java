@@ -7,8 +7,8 @@ public class TypeReference extends Type {
 	
 	public Type realType;
 	
-	public TypeReference(String name, String typeString) {
-		super(name);
+	public TypeReference(QName qName, String typeString) {
+		super(qName);
 		
 		this.typeString = typeString;
 		this.realType   = null;
@@ -23,7 +23,7 @@ public class TypeReference extends Type {
 	public void fix() {
 		if (needsFix) {
 			if (realType == null) {
-				realType = Type.findRealType(typeString);
+				realType = Type.findRealType(qName.module, typeString);
 			}
 			if (realType != null) {
 				realType.fix();
