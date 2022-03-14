@@ -211,7 +211,8 @@ BEGIN
 
     StackDepth: CARDINAL = yokwe.majuro.mesa.Constants.cSS;
     StateVector: TYPE = RECORD [
-        stack( 0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, // StackDepth = 14
+//        stack( 0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, // StackDepth = 14
+        stack( 0:0..223): ARRAY [0..14) OF UNSPECIFIED, // StackDepth = 14
         word (14:0.. 15): StateWord,
         frame(15:0.. 15): LocalFrameHandle,
         data (16): BLOCK];

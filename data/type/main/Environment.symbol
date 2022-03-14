@@ -7,4 +7,9 @@ BEGIN
     PageCount: TYPE = LONG CARDINAL; // [0..2**24-1]
     firstPageCount: PageCount = 0;
     lastPageCount:  PageCount = 16777215; // 2**24-2
+    
+    PageOffset: TYPE = PageNumber;
+    firstPageOffset: PageOffset = 0;
+    lastPageOffset:  PageOffset = 16777214; // 2**24-2
+    
 END.

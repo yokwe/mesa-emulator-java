@@ -1,0 +1,11 @@
+VM: SYMBOL =
+BEGIN
+    nullPage: LONG CARDINAL = 4294967295;
+    
+    PageCount:  TYPE = Environment.PageCount;
+    PageOffset: TYPE = Environment.PageOffset;
+    
+    Interval: TYPE = RECORD [
+        page (0:0..31): Environment.PageNumber,
+        count (2:0..31): PageCount];
+END.

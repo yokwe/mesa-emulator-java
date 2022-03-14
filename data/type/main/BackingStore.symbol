@@ -1,0 +1,12 @@
+BackingStore: SYMBOL =
+BEGIN
+
+    Data: TYPE = ARRAY [0..7) OF UNSPECIFIED;
+//    Data: TYPE = RECORD [
+//        data: ARRAY [0..7) OF UNSPECIFIED];
+
+// Describes backing storage of a run of virtual memory pages.
+// (Multiple coexisting implementations of this interface preclude the use of
+//  an opaque type.)
+
+END.

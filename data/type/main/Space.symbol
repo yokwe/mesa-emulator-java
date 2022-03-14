@@ -1,0 +1,10 @@
+Space: SYMBOL =
+BEGIN
+
+    Usage: TYPE = [0..2048);
+
+    Class: TYPE = {
+        unknown(0), code(1), globalFrame(2), localFrame(3), zone(4), file(5), data(6),
+        spareA(7), spareB(8), pilotResident(31)};
+
+END.
