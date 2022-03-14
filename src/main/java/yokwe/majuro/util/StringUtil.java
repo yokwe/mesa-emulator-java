@@ -55,7 +55,7 @@ public final class StringUtil {
 		numberStringMap.put(     0xFFFFL,      "0xFFFF");
 		numberStringMap.put(  0xFF_FFFEL,   "0xFF_FFFE");
 		numberStringMap.put(  0xFF_FFFFL,   "0xFF_FFFF");
-		numberStringMap.put(0xFFFF_FFFFL, "0xFFFF_FFFFL");
+		numberStringMap.put(0xFFFF_FFFFL, "0xFFFF_FFFF");
 
 		// Java constant
 		numberStringMap.put((long)Short.MIN_VALUE,   "Short.MIN_VALUE");
@@ -68,14 +68,7 @@ public final class StringUtil {
 		if (numberStringMap.containsKey(value)) {
 			return numberStringMap.get(value);
 		} else {
-			final String suffix;
-			if (Integer.MAX_VALUE < value) {
-				// add L suffix
-				suffix = "L";
-			} else {
-				suffix = "";
-			}
-			return Long.toString(value) + suffix;
+			return Long.toString(value);
 		}
 	}
 
@@ -167,6 +160,8 @@ public final class StringUtil {
 				}
 				lastCharKind = CharKind.UPPER;
 			} else if (c == '-') {
+				ret.append('_');
+			} else if (c == '_') {
 				ret.append('_');
 			} else {
 				logger.error("{}", String.format("Unknown character type = %c - %04X", c, (int)c));
