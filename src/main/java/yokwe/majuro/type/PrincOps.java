@@ -39,46 +39,6 @@ public final class PrincOps {
     }
     
     //
-    // CARDINAL
-    //
-    public static final class CARDINAL extends MemoryData16 {
-        public static final String NAME = "CARDINAL";
-        
-        public static final int WORD_SIZE =      1;
-        public static final int BIT_SIZE  =     16;
-                                                   
-        public static final int MIN_VALUE =      0;
-        public static final int MAX_VALUE = 0xFFFF;
-        
-        private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
-        
-        public static final void checkValue(int value) {
-            if (Debug.ENABLE_CHECK_VALUE) context.check(value);
-        }
-        
-        // Constructor
-        public static final CARDINAL value(@Mesa.CARD16 int value) {
-            return new CARDINAL(value);
-        }
-        public static final CARDINAL value() {
-            return new CARDINAL(0);
-        }
-        public static final CARDINAL longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
-            return new CARDINAL(base, access);
-        }
-        public static final CARDINAL pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
-            return new CARDINAL(Memory.lengthenMDS(base), access);
-        }
-        
-        private CARDINAL(@Mesa.CARD16 int value) {
-            super(value);
-        }
-        private CARDINAL(@Mesa.LONG_POINTER int base, MemoryAccess access) {
-            super(base, access);
-        }
-    }
-    
-    //
     // INTEGER
     //
     public static final class INTEGER extends MemoryData16 {
@@ -119,7 +79,87 @@ public final class PrincOps {
     }
     
     //
-    // LONG CARDINAL
+    // CARDINAL
+    //
+    public static final class CARDINAL extends MemoryData16 {
+        public static final String NAME = "CARDINAL";
+        
+        public static final int WORD_SIZE =      1;
+        public static final int BIT_SIZE  =     16;
+                                                   
+        public static final int MIN_VALUE =      0;
+        public static final int MAX_VALUE = 0xFFFF;
+        
+        private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
+        
+        public static final void checkValue(int value) {
+            if (Debug.ENABLE_CHECK_VALUE) context.check(value);
+        }
+        
+        // Constructor
+        public static final CARDINAL value(@Mesa.CARD16 int value) {
+            return new CARDINAL(value);
+        }
+        public static final CARDINAL value() {
+            return new CARDINAL(0);
+        }
+        public static final CARDINAL longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+            return new CARDINAL(base, access);
+        }
+        public static final CARDINAL pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+            return new CARDINAL(Memory.lengthenMDS(base), access);
+        }
+        
+        private CARDINAL(@Mesa.CARD16 int value) {
+            super(value);
+        }
+        private CARDINAL(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+            super(base, access);
+        }
+    }
+    
+    //
+    // UNSPECIFIED
+    //
+    public static final class UNSPECIFIED extends MemoryData16 {
+        public static final String NAME = "UNSPECIFIED";
+        
+        public static final int WORD_SIZE =      1;
+        public static final int BIT_SIZE  =     16;
+                                                   
+        public static final int MIN_VALUE =      0;
+        public static final int MAX_VALUE = 0xFFFF;
+        
+        private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
+        
+        public static final void checkValue(int value) {
+            if (Debug.ENABLE_CHECK_VALUE) context.check(value);
+        }
+        
+        // Constructor
+        public static final UNSPECIFIED value(@Mesa.CARD16 int value) {
+            return new UNSPECIFIED(value);
+        }
+        public static final UNSPECIFIED value() {
+            return new UNSPECIFIED(0);
+        }
+        public static final UNSPECIFIED longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+            return new UNSPECIFIED(base, access);
+        }
+        public static final UNSPECIFIED pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+            return new UNSPECIFIED(Memory.lengthenMDS(base), access);
+        }
+        
+        private UNSPECIFIED(@Mesa.CARD16 int value) {
+            super(value);
+        }
+        private UNSPECIFIED(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+            super(base, access);
+        }
+    }
+    
+    //
+    // LONG_CARDINAL
     //
     public static final class LONG_CARDINAL extends MemoryData32 {
         public static final String NAME = "LONG_CARDINAL";
@@ -145,28 +185,6 @@ public final class PrincOps {
             super(value);
         }
         private LONG_CARDINAL(@Mesa.LONG_POINTER int base, MemoryAccess access) {
-            super(base, access);
-        }
-    }
-    
-    //
-    // LONG POINTER
-    //
-    public static final class LONG_POINTER extends MemoryBase {
-        public static final String NAME = "LONG_POINTER";
-        
-        public static final int WORD_SIZE =  2;
-        public static final int BIT_SIZE  = 32;
-        
-        // Constructor
-        public static final LONG_POINTER longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
-            return new LONG_POINTER(base, access);
-        }
-        public static final LONG_POINTER pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
-            return new LONG_POINTER(Memory.lengthenMDS(base), access);
-        }
-        
-        private LONG_POINTER(@Mesa.LONG_POINTER int base, MemoryAccess access) {
             super(base, access);
         }
     }
@@ -225,41 +243,23 @@ public final class PrincOps {
     }
     
     //
-    // UNSPECIFIED
+    // LONG POINTER
     //
-    public static final class UNSPECIFIED extends MemoryData16 {
-        public static final String NAME = "UNSPECIFIED";
+    public static final class LONG_POINTER extends MemoryBase {
+        public static final String NAME = "LONG_POINTER";
         
-        public static final int WORD_SIZE =      1;
-        public static final int BIT_SIZE  =     16;
-                                                   
-        public static final int MIN_VALUE =      0;
-        public static final int MAX_VALUE = 0xFFFF;
-        
-        private static final ContextSubrange context = new ContextSubrange(NAME, MIN_VALUE, MAX_VALUE);
-        
-        public static final void checkValue(int value) {
-            if (Debug.ENABLE_CHECK_VALUE) context.check(value);
-        }
+        public static final int WORD_SIZE =  2;
+        public static final int BIT_SIZE  = 32;
         
         // Constructor
-        public static final UNSPECIFIED value(@Mesa.CARD16 int value) {
-            return new UNSPECIFIED(value);
+        public static final LONG_POINTER longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+            return new LONG_POINTER(base, access);
         }
-        public static final UNSPECIFIED value() {
-            return new UNSPECIFIED(0);
-        }
-        public static final UNSPECIFIED longPointer(@Mesa.LONG_POINTER int base, MemoryAccess access) {
-            return new UNSPECIFIED(base, access);
-        }
-        public static final UNSPECIFIED pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
-            return new UNSPECIFIED(Memory.lengthenMDS(base), access);
+        public static final LONG_POINTER pointer(@Mesa.SHORT_POINTER int base, MemoryAccess access) {
+            return new LONG_POINTER(Memory.lengthenMDS(base), access);
         }
         
-        private UNSPECIFIED(@Mesa.CARD16 int value) {
-            super(value);
-        }
-        private UNSPECIFIED(@Mesa.LONG_POINTER int base, MemoryAccess access) {
+        private LONG_POINTER(@Mesa.LONG_POINTER int base, MemoryAccess access) {
             super(base, access);
         }
     }
@@ -839,7 +839,7 @@ public final class PrincOps {
     }
     
     //
-    // GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constants.mGFT;
+    // PrincOps.GFT: LONG POINTER TO GlobalFrameTable = yokwe.majuro.mesa.Constants.mGFT;
     //
     public static final GlobalFrameTable GFT(MemoryAccess access) {
         return GlobalFrameTable.longPointer(yokwe.majuro.mesa.Constants.mGFT, access);
@@ -1989,7 +1989,7 @@ public final class PrincOps {
     }
     
     //
-    // AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constants.mAV;
+    // PrincOps.AV: POINTER TO AllocationVector = yokwe.majuro.mesa.Constants.mAV;
     //
     public static final AllocationVector AV(MemoryAccess access) {
         return AllocationVector.pointer(yokwe.majuro.mesa.Constants.mAV, access);
@@ -2298,7 +2298,7 @@ public final class PrincOps {
     }
     
     //
-    // SD: POINTER TO SystemData = yokwe.majuro.mesa.Constants.mSD;
+    // PrincOps.SD: POINTER TO SystemData = yokwe.majuro.mesa.Constants.mSD;
     //
     public static final SystemData SD(MemoryAccess access) {
         return SystemData.pointer(yokwe.majuro.mesa.Constants.mSD, access);
@@ -2375,7 +2375,7 @@ public final class PrincOps {
     }
     
     //
-    // ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constants.mETT;
+    // PrincOps.ETT: POINTER TO EscTrapTable = yokwe.majuro.mesa.Constants.mETT;
     //
     public static final EscTrapTable ETT(MemoryAccess access) {
         return EscTrapTable.pointer(yokwe.majuro.mesa.Constants.mETT, access);
@@ -2480,12 +2480,12 @@ public final class PrincOps {
     }
     
     //
-    // StackDepth: CARDINAL = yokwe.majuro.mesa.Constants.cSS;
+    // PrincOps.STACK_DEPTH: CARDINAL = yokwe.majuro.mesa.Constants.cSS;
     //
-    public static final @Mesa.CARD16 int StackDepth = yokwe.majuro.mesa.Constants.cSS;
+    public static final @Mesa.CARD16 int STACK_DEPTH = yokwe.majuro.mesa.Constants.cSS;
     
     //
-    // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): LocalFrameHandle, data (16): BLOCK];
+    // StateVector: TYPE = RECORD[stack (0:0..223): ARRAY [0..14) OF UNSPECIFIED, word (14:0..15): StateWord, frame (15:0..15): LocalFrameHandle, data (16): BLOCK];
     //
     public static final class StateVector extends MemoryBase {
         public static final String NAME = "StateVector";
@@ -2508,7 +2508,7 @@ public final class PrincOps {
         //
         // Access to Field of Record
         //
-        // stack (0:0..223): ARRAY [0..StackDepth) OF UNSPECIFIED
+        // stack (0:0..223): ARRAY [0..14) OF UNSPECIFIED
         private static final int OFFSET_STACK = 0;
         private static final class StackIndex {
             private static final ContextSubrange context = new ContextSubrange("StateVector", 0, 13);
@@ -2593,7 +2593,7 @@ public final class PrincOps {
     }
     
     //
-    // PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constants.mPDA;
+    // PrincOps.PDA: LONG POINTER TO ProcessDataArea = yokwe.majuro.mesa.Constants.mPDA;
     //
     public static final ProcessDataArea PDA(MemoryAccess access) {
         return ProcessDataArea.longPointer(yokwe.majuro.mesa.Constants.mPDA, access);
