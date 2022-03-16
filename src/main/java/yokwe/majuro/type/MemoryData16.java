@@ -41,8 +41,22 @@ public class MemoryData16 {
             throw new UnexpectedException("Unexpected");
         }
     }
+    
+    public final MemoryAccess access() {
+    	return access;
+    }
+    public final boolean writable() {
+        switch(access) {
+        case READ_WRITE:
+        case WRITE:
+        case WRITE_READ:
+        	return true;
+        default:
+            return false;
+        }
+    }
 
-    public void write() {
+    public final void write() {
         switch(access) {
         case READ_WRITE:
         case WRITE:
@@ -53,16 +67,16 @@ public class MemoryData16 {
             throw new UnexpectedException("Unexpected");
         }
     }
-    public void write(@Mesa.CARD16 int newValue) {
+    public final void write(@Mesa.CARD16 int newValue) {
     	value = Types.toCARD16(newValue);
     	write();
     }
-    public void write(MemoryData16 newValue) {
+    public final void write(MemoryData16 newValue) {
     	value = newValue.value;
     	write();
     }
     
-    public @Mesa.CARD16 int read() {
+    public final @Mesa.CARD16 int read() {
         switch(access) {
         case READ:
         case READ_WRITE:
