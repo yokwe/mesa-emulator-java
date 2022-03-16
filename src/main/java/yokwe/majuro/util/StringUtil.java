@@ -77,6 +77,7 @@ public final class StringUtil {
 	//
 	private static Map<String, String> javaKeywordMap = new TreeMap<>();
 	static {
+		javaKeywordMap.put("class",            "clazz");
 		javaKeywordMap.put("null",             "null_");
 		javaKeywordMap.put("LONG CARDINAL",    "LONG_CARDINAL");
 		javaKeywordMap.put("LONG UNSPECIFIED", "LONG_UNSPECIFIED");
