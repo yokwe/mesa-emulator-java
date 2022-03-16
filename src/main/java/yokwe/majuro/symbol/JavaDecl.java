@@ -1,10 +1,11 @@
 package yokwe.majuro.symbol;
 
-import static yokwe.majuro.mesa.Constants.WORD_BITS;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.LEFT;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -329,7 +330,7 @@ public class JavaDecl {
 				if (tokens[0].equals(javaDecl.type.qName.name) && tokens[1].equals("index")) {
 					indexTypeName = "ArrayIndex";
 					
-					if (indexType.needsRangeCheck()) {					
+					if (indexType.needsRangeCheck()) {
 						TypeSubrange typeSubrange = indexType.toTypeSubrange();
 						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
 						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
@@ -359,7 +360,7 @@ public class JavaDecl {
 		out.println("int longPointer = base + (%s.WORD_SIZE * index);", elementTypeName);
 		out.println("return %s.longPointer(longPointer, access);", elementTypeName);
 		out.println("}");
-	}	
+	}
 	private static void arrayElement(JavaDecl javaDecl, Type indexType) {
 		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE arrayElement 2");
 		Type elementType = javaDecl.type.arrayElement().realType();
@@ -530,7 +531,7 @@ public class JavaDecl {
 		out.println("}");
 	}
 	private static void recordFieldBitField16(JavaDecl javaDecl, TypeRecord.Field field) {
-		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField");
+		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField16");
 		final var out = javaDecl.out;
 
 		Type   fieldType      = field.type.realType();
@@ -549,7 +550,7 @@ public class JavaDecl {
 		out.println("}");
 	}
 	private static void recordFieldBitField32(JavaDecl javaDecl, TypeRecord.Field field) {
-		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField");
+		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField32");
 		final var out = javaDecl.out;
 
 		Type   fieldType      = field.type.realType();
@@ -568,6 +569,57 @@ public class JavaDecl {
 		out.println("}");
 	}
 	
+	private static void recordFieldBitField16MultiWord(JavaDecl javaDecl, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField16MultiWord");
+		final var out = javaDecl.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
+		
+		String dataName   = String.format("u%d", field.offset);
+		String dataOffset = "OFFSET_" + dataName.toUpperCase();
+
+		out.println("// %s is BIT FIELD 16", fieldName);
+		out.println("public final %s %s() {", fieldTypeName, fieldName);
+        out.println("if (%1$s == null) %1$s = new MemoryData16(base + %2$s, access);", dataName, dataOffset);
+		out.println("return %1$s.value(Types.toCARD16((%3$s.value & %2$s_MASK) >>> %2$s_SHIFT));", fieldTypeName, fieldConstName, dataName);
+		out.println("}");
+		
+		out.println("public final %s %s(%s newValue) {", javaDecl.name, fieldName, fieldTypeName);
+        out.println("if (%1$s == null) %1$s = new MemoryData16(base + %2$s, access);", dataName, dataOffset);
+		out.println("%2$s.value = Types.toCARD16((%2$s.value & ~%1$s_MASK) | ((newValue.value << %1$s_SHIFT) & %1$s_MASK));", fieldConstName, dataName);
+		out.println("if (%1$s.writable()) %1$s.write();", dataName);
+		out.println("return this;");
+		out.println("}");
+	}
+	private static void recordFieldBitField32MultiWord(JavaDecl javaDecl, TypeRecord.Field field) {
+		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldBitField32MultiWord");
+		final var out = javaDecl.out;
+
+		Type   fieldType      = field.type.realType();
+		String fieldConstName = StringUtil.toJavaConstName(field.name);
+		String fieldName      = StringUtil.toJavaName(field.name);
+		String fieldTypeName  = StringUtil.toJavaName(javaDecl.simpleName(fieldType.qName));
+		
+		String dataName   = String.format("u%d", field.offset);
+		String dataOffset = "OFFSET_" + dataName.toUpperCase();
+
+		out.println("// %s is BIT FIELD 32", fieldName);
+		out.println("public final %s %s() {", fieldTypeName, fieldName);
+        out.println("if (%1$s == null) %1$s = new MemoryData16(base + %2$s, access);", dataName, dataOffset);
+		out.println("return %1$s.value((%3$s.value & %2$s_MASK) >>> %2$s_SHIFT);", fieldTypeName, fieldConstName, dataName);
+		out.println("}");
+		
+		out.println("public final %s %s(%s newValue) {", javaDecl.name, fieldName, fieldTypeName);
+        out.println("if (%1$s == null) %1$s = new MemoryData16(base + %2$s, access);", dataName, dataOffset);
+		out.println("%2$s.value = (%2$s.value & ~%1$s_MASK) | ((newValue.value << %1$s_SHIFT) & %1$s_MASK);", fieldConstName, dataName);
+		out.println("if (%1$s.writable()) %1$s.write();", dataName);
+		out.println("return this;");
+		out.println("}");
+	}
+
 	
 	private static void recordFieldIndirectLong(JavaDecl javaDecl, TypeRecord.Field field) {
 		if (DEBUG_SHOW_TRACE) javaDecl.out.println("// TRACE recordFieldIndirectLong");
@@ -630,7 +682,7 @@ public class JavaDecl {
 				if (tokens[0].equals(javaDecl.type.qName.name) && tokens[1].equals(field.name) && tokens[2].equals("index")) {
 					indexTypeName = StringUtil.toJavaClassName(field.name) + "Index";
 					
-					if (indexType.needsRangeCheck()) {					
+					if (indexType.needsRangeCheck()) {
 						TypeSubrange typeSubrange = indexType.toTypeSubrange();
 						String minValueString = StringUtil.toJavaString(typeSubrange.minValue);
 						String maxValueString = StringUtil.toJavaString(typeSubrange.maxValue);
@@ -1030,7 +1082,7 @@ public class JavaDecl {
 				
 			}
 			
-			constructor(javaDecl, parentClass);		
+			constructor(javaDecl, parentClass);
 			
 			//
 			// output element access method
@@ -1069,7 +1121,7 @@ public class JavaDecl {
 				throw new UnexpectedException("Unexpected");
 			}
 			
-			constructor(javaDecl, parentClass);		
+			constructor(javaDecl, parentClass);
 			
 			//
 			// output element access method
@@ -1131,7 +1183,7 @@ public class JavaDecl {
 				if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - ARRAY of SHORT POINTER");
 				var processType = new ProcessTypeArrayShortPointer(javaDecl, indexType);
 				processType.accept(type.pointerTarget.realType());
-			}			
+			}
 		}
 
 		@Override
@@ -1554,29 +1606,131 @@ public class JavaDecl {
 			
 			out.println("//");
 			out.println("// Access to Field of Record");
-			out.println("//");			
-			for(TypeRecord.Field field: type.fieldList) {
-				String fieldConstName = StringUtil.toJavaConstName(field.name);
+			out.println("//");
+			
+			Map<Integer, List<Field>> fieldMap = new TreeMap<>();
+			//  offset
+			{
+				List<Field> fieldList;
+				for(var e: type.fieldList) {
+					if (fieldMap.containsKey(e.offset)) {
+						fieldList = fieldMap.get(e.offset);
+					} else {
+						fieldList = new ArrayList<>();
+						fieldMap.put(e.offset, fieldList);
+					}
+					fieldList.add(e);
+				}
+				for(var e: fieldMap.entrySet()) {
+					Collections.sort(e.getValue());
+				}
+			}
+			for(var e: fieldMap.entrySet()) {
+				List<Field> fieldList = e.getValue();
+				int offset = e.getKey();
+				
+				{
+					Field field = fieldList.get(0);
+					// if first entry has no start bit, this field needs handle specially
+					if (!field.hasStartBit()) {
+						// special case
+						String fieldConstName = StringUtil.toJavaConstName(field.name);
 
-				out.println("// %s", field.toMesaType());
-				// sanity check
-				if ((field.startBit % WORD_BITS) == 0 && (field.bitSize % WORD_BITS) == 0) {
-					//
-				} else if (field.startBit == Field.NO_VALUE) {
-					//
-				} else {
-					// FIXME
-					out.println("// FIXME  Field is not aligned");
-					logger.warn("Field is not aligned");
-					logger.warn("  name %s.%s", type.qName, field.name);
-					logger.warn("  mesa %s", field.toMesaType());
-					continue;
+						out.println("// %s", field.toMesaType());
+						
+						out.println("private static final int OFFSET_%s = %d;", fieldConstName, offset);
+						
+						accept(field);
+						fieldList.remove(0);
+						if (fieldList.isEmpty()) continue;
+					}
 				}
 				
-				out.println("private static final int OFFSET_%s = %d;", fieldConstName, field.offset);
-				accept(field);
+				if (fieldList.size() == 1) {
+					// simple case
+					Field field = fieldList.get(0);
+					
+					String fieldConstName = StringUtil.toJavaConstName(field.name);
+
+					out.println("// %s", field.toMesaType());
+					
+					out.println("private static final int OFFSET_%s = %d;", fieldConstName, offset);
+					accept(field);
+				} else {
+					// complex case
+					// set dataSize
+					final int dataSize;
+					{
+						Field last = fieldList.get(fieldList.size() - 1); // last is to distinguish 16 or 32
+						if (last.stopBit == 15) {
+							dataSize = 16;
+						} else if (last.startBit == 31) {
+							dataSize = 32;
+						} else {
+							logger.error("type %s", type.toMesaDecl());
+							for(var field: fieldList) {
+								logger.error("  field %s", field.toMesaType());
+							}
+							logger.error("last %s", last.toMesaType());
+							throw new UnexpectedException();
+						}
+					}
+					
+					out.println("// BIT FIELD %d in MULTI WORD", dataSize);
+					
+					String name = String.format("u%d", offset);
+					String constName = name.toUpperCase();
+					out.println("private static final int OFFSET_%s = %d;", constName, offset);
+					out.println("public MemoryData%d %s = null;", dataSize, name);
+					
+					out.prepareLayout();
+					for(var field: fieldList) {
+						out.println("// %s", field.toMesaType());
+					}
+					out.layout(LEFT, LEFT, LEFT, LEFT);
+					out.println();
+
+					out.prepareLayout();
+					for(var field: fieldList) {
+						String fieldCons = StringUtil.toJavaConstName(field.name);
+
+						final int start  = field.startBit;
+						final int stop   = field.stopBit;
+						
+						int bits  = stop - start + 1;
+						int pat   = (1 << bits) - 1;
+						int shift = dataSize - stop - 1;
+						int mask  = (pat << shift);
+						
+						logger.info("dataSize %d", dataSize);
+						logger.info("bits  %d", bits);
+						logger.info("pat   %X", pat);
+						logger.info("shift %d", shift);
+						logger.info("mask  %X", mask);
+						
+						out.println("private static final int %s_MASK  = %s;", fieldCons, StringUtil.toJavaBinaryString(Integer.toUnsignedLong(mask), dataSize));
+						out.println("private static final int %s_SHIFT = %d;", fieldCons, shift);
+					}
+					out.layout(LEFT, LEFT, LEFT, LEFT, LEFT, LEFT, RIGHT);
+					out.println();
+
+					out.println("//");
+					out.println("// Bit Field Access Methods");
+					out.println("//");
+					for(var field: fieldList) {
+						if (dataSize == 16) {
+							recordFieldBitField16MultiWord(javaDecl, field);
+						} else if (dataSize == 32) {
+							recordFieldBitField32MultiWord(javaDecl, field);
+						} else {
+							throw new UnexpectedException();
+						}
+						out.println();
+					}
+
+				}
 			}
-			
+						
 			// close class body
 			out.println("}");
 		}
@@ -1732,7 +1886,7 @@ public class JavaDecl {
 		@Override
 		protected void processTypeArrayReference(TypeArrayRef type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE");			
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-REFERENCE");
 			Type targetType = field.type.realType().pointerTarget();
 			if (targetType instanceof TypeReference) {
 				// RECORD FIELD is SHORT POINTER to REFERENCE of ARRAY-REFERENCE
@@ -1748,7 +1902,7 @@ public class JavaDecl {
 		@Override
 		protected void processTypeArraySubrange(TypeArraySub type) {
 			// RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE
-			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE");			
+			if (DEBUG_SHOW_TYPE) javaDecl.out.println("// TYPE - RECORD FIELD is SHORT POINTER to ARRAY-SUBRANGE");
 			Type targetType = field.type.realType().pointerTarget();
 			if (targetType instanceof TypeReference) {
 				// RECORD FIELD is SHORT POINTER to REFERENCE of ARRAY-SUBRANGE
