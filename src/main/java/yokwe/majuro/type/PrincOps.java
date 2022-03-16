@@ -1256,10 +1256,44 @@ public final class PrincOps {
             int longPointer = base + OFFSET_WORD;
             return LONG_POINTER.longPointer(longPointer, access);
         }
-        // reserved (2:0..11): UNSPECIFIED
-        // FIXME  Field is not aligned
-        // bit (2:12..15): CARDINAL
-        // FIXME  Field is not aligned
+        // BIT FIELD 16 in MULTI WORD
+        private static final int OFFSET_U2 = 2;
+        public MemoryData16 u2 = null;
+        // reserved (2:0..11):  UNSPECIFIED
+        // bit      (2:12..15): CARDINAL
+        
+        private static final int RESERVED_MASK  = 0b1111_1111_1111_0000;
+        private static final int RESERVED_SHIFT =                     4;
+        private static final int BIT_MASK       = 0b0000_0000_0000_1111;
+        private static final int BIT_SHIFT      =                     0;
+        
+        //
+        // Bit Field Access Methods
+        //
+        // reserved is BIT FIELD 16
+        public final UNSPECIFIED reserved() {
+            if (u2 == null) u2 = new MemoryData16(base + OFFSET_U2, access);
+            return UNSPECIFIED.value(Types.toCARD16((u2.value & RESERVED_MASK) >>> RESERVED_SHIFT));
+        }
+        public final BitAddress reserved(UNSPECIFIED newValue) {
+            if (u2 == null) u2 = new MemoryData16(base + OFFSET_U2, access);
+            u2.value = Types.toCARD16((u2.value & ~RESERVED_MASK) | ((newValue.value << RESERVED_SHIFT) & RESERVED_MASK));
+            if (u2.writable()) u2.write();
+            return this;
+        }
+        
+        // bit is BIT FIELD 16
+        public final CARDINAL bit() {
+            if (u2 == null) u2 = new MemoryData16(base + OFFSET_U2, access);
+            return CARDINAL.value(Types.toCARD16((u2.value & BIT_MASK) >>> BIT_SHIFT));
+        }
+        public final BitAddress bit(CARDINAL newValue) {
+            if (u2 == null) u2 = new MemoryData16(base + OFFSET_U2, access);
+            u2.value = Types.toCARD16((u2.value & ~BIT_MASK) | ((newValue.value << BIT_SHIFT) & BIT_MASK));
+            if (u2.writable()) u2.write();
+            return this;
+        }
+        
     }
     
     //
@@ -2623,6 +2657,13 @@ public final class PrincOps {
         //
         // Access to Field of Record
         //
+        // block (0): ARRAY PsbIndex OF ProcessStateBlock
+        private static final int OFFSET_BLOCK = 0;
+        public final ProcessStateBlock block(int index) {
+            if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(index);
+            int longPointer = base + OFFSET_BLOCK + (ProcessStateBlock.WORD_SIZE * index);
+            return ProcessStateBlock.longPointer(longPointer, access);
+        }
         // ready (0:0..15): Queue
         private static final int OFFSET_READY = 0;
         public Queue ready() {
@@ -2671,13 +2712,6 @@ public final class PrincOps {
         public FaultVector fault() {
             int longPointer = base + OFFSET_FAULT;
             return FaultVector.longPointer(longPointer, access);
-        }
-        // block (0): ARRAY PsbIndex OF ProcessStateBlock
-        private static final int OFFSET_BLOCK = 0;
-        public final ProcessStateBlock block(int index) {
-            if (Debug.ENABLE_CHECK_VALUE) PsbIndex.checkValue(index);
-            int longPointer = base + OFFSET_BLOCK + (ProcessStateBlock.WORD_SIZE * index);
-            return ProcessStateBlock.longPointer(longPointer, access);
         }
     }
     

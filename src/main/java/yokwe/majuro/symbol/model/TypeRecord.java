@@ -58,7 +58,7 @@ public abstract class TypeRecord extends Type {
 		}
 		
 		public int order() {
-			return (offset * Constants.WORD_BITS) + (hasStartBit() ? startBit : 0);
+			return (offset * (Constants.WORD_BITS + 1)) + (hasStartBit() ? (startBit + 1) : 0);
 		}
 		
 		@Override
