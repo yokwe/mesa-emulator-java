@@ -1,5 +1,6 @@
 package yokwe.majuro.symbol.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -182,6 +183,21 @@ public abstract class TypeRecord extends Type {
 				throw new UnexpectedException("found problem");
 			}
 		}
+	}
+	
+	public static Map<Integer, List<Field>> getFieldMap(List<Field> fieldList) {
+		// build map with TreeMap
+		Map<Integer, List<Field>> map = fieldList.stream().collect(Collectors.groupingBy(o -> o.offset, TreeMap::new, Collectors.toList()));
+		
+		// sort map value
+		for(var e: map.entrySet()) {
+			Collections.sort(e.getValue());
+		}
+		
+		return map;
+	}
+	public Map<Integer, List<Field>> getFieldMap() {
+		return getFieldMap(fieldList);
 	}
 	
 	@Override
