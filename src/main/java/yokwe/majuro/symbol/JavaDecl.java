@@ -4,8 +4,6 @@ import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.LEFT;
 import static yokwe.majuro.util.AutoIndentPrintWriter.Layout.RIGHT;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -1608,23 +1606,7 @@ public class JavaDecl {
 			out.println("// Access to Field of Record");
 			out.println("//");
 			
-			Map<Integer, List<Field>> fieldMap = new TreeMap<>();
-			//  offset
-			{
-				List<Field> fieldList;
-				for(var e: type.fieldList) {
-					if (fieldMap.containsKey(e.offset)) {
-						fieldList = fieldMap.get(e.offset);
-					} else {
-						fieldList = new ArrayList<>();
-						fieldMap.put(e.offset, fieldList);
-					}
-					fieldList.add(e);
-				}
-				for(var e: fieldMap.entrySet()) {
-					Collections.sort(e.getValue());
-				}
-			}
+			Map<Integer, List<Field>> fieldMap = type.getFieldMap();
 			for(var e: fieldMap.entrySet()) {
 				List<Field> fieldList = e.getValue();
 				int offset = e.getKey();
