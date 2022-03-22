@@ -50,26 +50,18 @@ public class MemoryData32 {
     	return access;
     }
     public final boolean writable() {
-        switch(access) {
-        case READ_WRITE:
-        case WRITE:
-        case WRITE_READ:
-        	return true;
-        default:
-            return false;
-        }
+    	return access.writable();
+    }
+    public final boolean readable() {
+    	return access.readable();
     }
 
     public final void write() {
-        switch(access) {
-        case READ_WRITE:
-        case WRITE:
-        case WRITE_READ:
+    	if (writable()) {
         	Memory.writeReal32(ra0, ra1, value);
-            break;
-        default:
+    	} else {
             throw new UnexpectedException("Unexpected");
-        }
+    	}
     }
     public final void write(@Mesa.CARD32 int newValue) {
     	value = newValue;
@@ -81,15 +73,12 @@ public class MemoryData32 {
     }
     
     public final @Mesa.CARD32 int read() {
-        switch(access) {
-        case READ:
-        case READ_WRITE:
-        case WRITE_READ:
+    	if (readable()) {
         	value = Memory.readReal32(ra0, ra1);
-            return value;
-        default:
+    		return value;
+    	} else {
             throw new UnexpectedException("Unexpected");
-        }
+    	}
     }
     
 }
