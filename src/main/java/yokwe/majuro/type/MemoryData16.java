@@ -46,10 +46,10 @@ public class MemoryData16 {
     	return access;
     }
     public final boolean writable() {
-    	return access.writable();
+    	return access.writable;
     }
     public final boolean readable() {
-    	return access.readable();
+    	return access.readable;
     }
 
     public final void write() {
