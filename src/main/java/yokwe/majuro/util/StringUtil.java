@@ -277,6 +277,9 @@ public final class StringUtil {
 		}
 	}
 	public static String toString(Object o) {
+		// handle special case
+		if (o == null) return "null";
+		
 		try {
 			ClassInfo classInfo = ClassInfo.get(o);
 
